@@ -110,7 +110,7 @@ my $playreason = `tail -n 1 logs/$playlist`;
 open (FAVFILE, "$basedir/favmode");
 my $favmode = <FAVFILE>;
 chomp($favmode);
-close(BEZEICHNER);
+close(FAVFILE);
 chomp($playreason);
 $playreason =~ s/^[^\ ]*\ //;
 $playreason =~ s/\ .*$//;
