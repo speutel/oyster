@@ -146,7 +146,7 @@ sub interpret_control {
 		case /^VOTE\ / {
 			# vote for file $1
 			$control =~ s/\\//g;
-			$control =~ /^V\ (.*)$/;
+			$control =~ /^VOTE\ (.*)$/;
 			process_vote($1);
 			get_control();
 			interpret_control();
