@@ -166,7 +166,7 @@ sub get_ogg_tags {
     my $filename = $_[0];
 	
     $tag{'format'} = 'OGG Vorbis';
-    open (OGG, "ogginfo \"$filename\"|") or die $!;
+    open (OGG, "ogginfo '$filename'|") or die $!;
 	
     while (my $line = <OGG>) {
 	$line =~ s/^\s*//;
