@@ -61,7 +61,9 @@ my (
 	$votedfiles,  # Number of files played because of voting
 	$randomfiles, # Number of files played at random
 	$scoredfiles, # Number of files played because of scoring
-) = 0;
+);
+
+$votedfiles = $randomfiles = $scoredfiles = 0;
 
 my $check = ''; # Check, if a file was blacklisted before counting it
 
