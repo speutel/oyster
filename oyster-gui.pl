@@ -107,6 +107,8 @@ $info = uri_escape("/$info", "^A-Za-z");
 
 my $playlist = oyster::conf->get_playlist();
 my $playreason = `tail -n 1 logs/$playlist`;
+my $favmode = `tail -n 1 $basedir/favmode`;
+chomp($favmode);
 chomp($playreason);
 $playreason =~ s/^[^\ ]*\ //;
 $playreason =~ s/\ .*$//;
@@ -120,6 +122,13 @@ if ($playreason eq 'PLAYLIST') {
 } elsif ($playreason eq 'VOTED') {
 	$playreason = '(voted)';
 }
+
+# If FAVMODE is on, every "scored" is substituded to "favorites only", but
+# enqueued and voted remain. (random should not be possible ;))
+if ($favmode eq 'on' && !($playreason eq '(voted)' or $playreason eq '(enqueued)')) {
+	$playreason = '(favoristes only)';
+}
+
 
 my $statusstr = '';
 if ($status eq 'paused') {
