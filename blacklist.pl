@@ -83,13 +83,13 @@ sub print_affects {
 
     # Add all matching lines to @results
 
+    my $mediadir = $config{'mediadir'};
+    $mediadir =~ s/\/$//;
+
     while (my $line = <LIST>) {
 	chomp($line);
-	my $mediadir = $config{'mediadir'};
-	$mediadir =~ s/\/$//;
 	$line =~ s/^\Q$mediadir\E//;
 	if ($line =~ /$affects/i) {
-	    $line =~ s/^\///;
 	    push (@results, $line);
 	}
     }
@@ -121,7 +121,7 @@ sub print_affects {
 	@results = sort_results($maxdepth);
 	$maxdepth--;
     }
-    listdir("", 0);
+    listdir('/', 0);
 }
 
 sub add_to_blacklist {
@@ -159,32 +159,37 @@ sub listdir {
     my $basepath = $_[0];
     my $counter = $_[1];
 
-    while (($counter < @results) && (($results[$counter] =~ /^\Q$basepath\E\//) || ($basepath eq ''))) {
+    while (($counter < @results) && ($results[$counter] =~ /^\Q$basepath\E/)) {
 	my $newpath = $results[$counter];
-	$newpath =~ s/^\Q$basepath\E\///;
+	$newpath =~ s/^\Q$basepath\E//;
 	if ($newpath =~ /\//) {
-	    $newpath =~ /^([^\/]*)/;
+	    $newpath =~ /^([^\/]*\/)/;
 	    $newpath = $1;
-	    if (!($basepath eq '')) {
-		my $escapeddir = uri_escape("$basepath/$newpath", "^A-Za-z");
-		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
-		$newpath = "$basepath/$newpath";
+
+	    my $cutnewpath = $newpath;
+	    $cutnewpath =~ s/\/$//;
+
+	    if (!($basepath eq '/')) {
+		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
+		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		$newpath = "$basepath$newpath";
 	    }  else {
-		my $escapeddir = uri_escape("$newpath", "^A-Za-z");
-		print "<strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
+		my $escapeddir = uri_escape("$cutnewpath", "^A-Za-z");
+		print "<strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		$newpath = "/$newpath";
 	    }
-	    $counter = listdir("$newpath",$counter);
+	    $counter = listdir($newpath,$counter);
 	    if (!($basepath eq '')) {
 		print "</div>\n";
 	    }
 	} else {
 	    print "<div style='padding-left: 1em;'>";
-	    while ($results[$counter] =~ /^\Q$basepath\E\//) {
+	    while ($results[$counter] =~ /^\Q$basepath\E/) {
 		my $filename = $results[$counter];
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
-		my $escapedfile = uri_escape("$basepath/$filename", "^A-Za-z");
+		my $escapedfile = uri_escape("$basepath$filename", "^A-Za-z");
 		if ($cssclass eq 'file') {
 		    $cssclass = 'file2';
 		} else {
