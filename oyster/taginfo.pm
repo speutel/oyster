@@ -111,6 +111,7 @@ sub get_mp3_tags {
     my $filename = $_[0];
     
     $tag{'format'} = 'MP3';
+    $filename =~ s/\`/\\\`/;
     open (MP3, "id3v2 -R \"$filename\"|") or die $!;
 	
     while (my $line = <MP3>) {
@@ -167,7 +168,8 @@ sub get_ogg_tags {
     my $filename = $_[0];
 	
     $tag{'format'} = 'OGG Vorbis';
-    open (OGG, "ogginfo '$filename'|") or die $!;
+    $filename =~ s/\`/\\\`/;
+    open (OGG, "ogginfo \"$filename\"|") or die $!;
 	
     while (my $line = <OGG>) {
 	$line =~ s/^\s*//;
