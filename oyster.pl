@@ -537,7 +537,7 @@ sub choose_file {
 			open(BLACKLIST, "$savedir/blacklist");
 			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
-				if ( $file =~ /\Q$regexp/ ) {
+				if ( $file =~ /$regexp/ ) {
 					add_log($file, "BLACKLIST");
 					choose_file();
 				}
