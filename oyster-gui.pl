@@ -77,7 +77,7 @@ my @votes = <VOTES>;
 
 if (-s "${basedir}votes") {
     print "<table width='100%' style='margin-top:3em;'><tr>";
-    print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th>";
+    print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th><th></th></tr>";
     foreach my $vote (@votes) {
 	chomp ($vote);
 	my ($numvotes, $title);
@@ -86,7 +86,7 @@ if (-s "${basedir}votes") {
 	my $display = oyster::taginfo->get_tag_light($title);
 	$title =~ s/^\Q$config{'mediadir'}\E//;
 	my $escapedtitle = uri_escape("$title", "^A-Za-z");
-	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td></tr>\n";
+	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td><td><a href='oyster-gui.pl?action=unvote&file=$escapedtitle'>Unvote</a></td></tr>\n";
     }
     print "</table>";
 }
