@@ -9,14 +9,18 @@ use oyster::conf;
 
 my $savedir = `pwd`;
 chomp($savedir);
-$conffile = "$savedir/oyster.conf";
+my $conffile = "$savedir/oyster.conf";
+my %config;
+
 my $basedir = "/tmp/oyster";
 my $media_dir = "/";
 my $lastvotes_file = "$savedir/lastvotes";
 my $list_dir = "$savedir/lists";
 my $voteplay_percentage = 10;
-my $lastvotes_size = $config{'maxlastvotes'};
+my $lastvotes_size = 30;
 my $votefile = "$basedir/votes";
+
+
 
 
 my ($lastvotes_pointer, @lastvotes);
@@ -87,6 +91,7 @@ sub interpret_control {
 		
 		case /^NEXT/	{ 
 			system("killall play.pl mpg321 ogg123"); 
+			sleep(3);
 		}
 		case /^done/ { 
 		}
@@ -160,7 +165,7 @@ sub interpret_control {
 		}
 		case /^PAUSE/ {
 			get_player_pid();
-			system("kill -19 $play_pid");
+			#system("kill -19 $play_pid");
 			get_control();
 			interpret_control();
 		}
@@ -169,6 +174,14 @@ sub interpret_control {
 			get_control();
 			interpret_control();
 		}
+		case /^UNVOTE/ {
+			# TODO test this
+			$control =~ s/\\//g;
+			$control =~ /^UNVOTE\ (.*)$/;
+			unvote($1);
+			get_control();
+			interpret_control();
+		}	
 		else {
 			# fall through
 			get_control();
@@ -178,13 +191,35 @@ sub interpret_control {
 }
 
 sub get_player_pid {
-	open(PS, "ps ax |");
+	open(PS, "ps x |") || print STDERR "ps x | failed\n";
 	while( $line = <PS> ) {
-		if ( $line =~ /\ ([0-9]*)\ [^\ ]*\ [^\ ]\ (mpg321|ogg123)/ ) {
-			print STDERR "$1\n";
+		print STDERR $line;
+		# " 1545 pts/1    RN     0:04 mpg321 -q"
+		if ( $line =~ /\ ([0-9]*)\ [^\ ]*[\ ]*[^\ ]*[\ ]*[^\ ]*\ (mpg321|ogg123)/ ) {
+			print STDERR "Match!\n";
+			$line =~ /\ ([0-9]*)\ [^\ ]*\ [^\ ]*\ [^\ ]*\ (mpg321|ogg123)/;
+			$pid = $1;
+			print STDERR "$pid\n";
 		}
 	}
 }
+
+sub unvote {
+
+	my $unvote_file = $_[0];
+	print STDERR "unvoting $unvote_file\n";
+	for ( my $i = 0; $i <= $#votelist; $i++ ) {
+		if ($unvote_file eq $votelist[$i]) {
+			splice(@votelist, $i, 1);
+			last;
+		}
+	}
+
+	unlink("$basedir/playnext");
+
+	process_vote();
+}
+
 
 sub process_vote {
 	
@@ -319,8 +354,8 @@ sub init {
 	$lastvotes_file = "$config{savedir}/lastvotes";
 	$votefile = "$config{basedir}/votes";
 	$media_dir = $config{"mediadir"};
-	$voteplay_percentage = 10;
-	$lastvotes_size = 30;
+	$voteplay_percentage = $config{"voteplay"};
+	$lastvotes_size = $config{'maxlastvotes'};
 	
 
 	# setup $basedir
