@@ -133,12 +133,12 @@ sub listdir {
 		print "<div style='padding-left: 1em;'>";
 		print "<table width='100%'><tr><td>";
 		$escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
+		print b($cutnewpath);
 		$newpath = "$basepath$newpath";
 	    }  else {
 		print "<table width='100%'><tr><td>";
 		$escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
+		print b($cutnewpath);
 		$newpath = "/$newpath";
 	    }
 	    print "</td><td align='right'><a href='editplaylist.pl?action=deletedir&" .
