@@ -52,17 +52,36 @@ my $encplaylist = uri_escape($playlist, "^A-Za-z");
 my @playlist = ();
 my @results = ();
 
-if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir')) {
+if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') || ($action eq 'movelistsave')) {
 	my $delfile = param('file') || '';
 	my $deldir = param('dir') || '';
 
+	if ($action eq 'movelistsave') {
+
+		my $newplaylist = $playlist;
+		$newplaylist =~ s/^.*_//;
+
+		if (param('sectiontype') eq 'existing') {
+			$newplaylist = param('existingsection') . "_$newplaylist";
+		} elsif (param('sectiontype') eq 'new') {
+			$newplaylist = param('newsection') . "_$newplaylist";
+		}
+
+		rename("$config{savedir}lists/$playlist", "$config{savedir}lists/$newplaylist");
+
+		$playlist = $newplaylist;
+		$encplaylist = uri_escape($playlist, "^A-Za-z");
+	}
+	
 	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${encplaylist}${framestr}"},$playlist));
 	print a({href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist&dir=/${framestr}"},
 		'Add files to this list...'),br;
 	print a({href=>"editplaylist.pl?action=addlist&playlist=$encplaylist"},
 		'Add another playlist to this list...'),br;
 	print a({href=>"editplaylist.pl?action=search&playlist=$encplaylist${framestr}"},
-      'Search for files to add...'),br,br;
+      'Search for files to add...'),br;
+	print a({href=>"editplaylist.pl?action=move&playlist=$encplaylist${framestr}"},
+      'Move playlist to another section...'),br,br;
 
 	# Get all entries from playlist and filter
 
@@ -202,6 +221,51 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir'))
 } elsif ($action eq 'search') {
 
 	searchform();
+
+} elsif ($action eq 'move') {
+
+	my $globdir = "$config{savedir}lists/";
+	my @entries = <$globdir*>;
+
+	my %section = ();
+
+	foreach my $entry (@entries) {
+		if ((-f $entry) && ($entry =~ /_/)) {
+			$entry =~ s/$globdir//;
+			$entry =~ s/_.*//;
+			$section{$entry} = 1;
+		}
+	}
+
+	my @sections = ();
+
+	foreach my $section (sort keys(%section)) {
+		push (@sections, $section);
+	}
+
+	my $title = $playlist;
+	$title =~ s/^.*_//;
+
+	print h2($title);
+
+	print start_form;
+
+	print "<input type='hidden' name='action' value='movelistsave'>";
+	print hidden('frames','no') if (! $frames);
+	print hidden('playlist', $playlist);
+
+	print "<input type='radio' name='sectiontype' value='existing' checked> " .
+			"in existing Section ";
+
+	print popup_menu(	-name=>'existingsection',
+							-values=>\@sections),br,br;
+	
+	print "<input type='radio' name='sectiontype' value='new'> " .
+			"in new Section <input type='text' name='newsection'>",br,br;
+
+	print submit(-value=>'Move');
+
+	print end_form;
 
 } elsif (param('search')) {
 

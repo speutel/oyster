@@ -58,11 +58,16 @@ my $globdir = "${savedir}lists/";
 my @entries = <$globdir*>;
 
 my @files = ();
+my %section = ();
 
 foreach my $entry (@entries) {
 	if (-f "$entry") {
 		$entry =~ s/$globdir//;
 		push (@files, "$entry");
+		if ($entry =~ /_/) {
+			$entry =~ s/_.*//;
+			$section{$entry} = 1;
+		}
 	}
 }
 
@@ -76,6 +81,12 @@ if ((param('action') eq 'loadlist') && param('listname')) {
 
 print "<table width='100%' style='margin-bottom: 2em;'>";
 
+print "<tr colspan='4'><td>";
+print h2('Default');
+print "</td></tr>";
+
+# Print playlists without a section
+
 if ($playlist eq 'default') {
 	print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td>currently playing</td>";
 	print "<td></td><td></td></tr>";
@@ -86,21 +97,19 @@ if ($playlist eq 'default') {
 }
 
 foreach my $file (@files) {
-	my $encfile = uri_escape($file, "^A-Za-z");
-	if (($file eq $playlist) && ($file ne 'default')) {
-		print "<tr><td><i>$file</i></td><td>currently playing</td>";
-		print "<td><a href='editplaylist.pl?action=edit&amp;" .
-		"playlist=${encfile}${framestr}'>Edit List</a></td><td></td></tr>";
+	if (!($file =~ /_/)) {
+		print_playlist($file);
 	}
-	elsif ($file ne 'default') {
-		print "<tr><td>$file</td>" .
-		"<td><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
-		"Load List</a></td>";
-		print "<td><a href='editplaylist.pl?action=edit&amp;" .
-		"playlist=${encfile}${framestr}'>Edit List</a></td>\n";
-		print "<td><a href='playlists.pl?action=confirmdelete&amp;" .
-		"listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
+}
 
+# Print all sections
+
+foreach my $section (sort keys(%section)) {
+	print "<tr colspan='4'><td>". h2($section) . "</td></tr>";
+	foreach my $file(@files) {
+		if ($file =~ /^\Q${section}_\E/) {
+			print_playlist($file);
+		}
 	}
 }
 
@@ -130,4 +139,27 @@ sub confirmdelete {
 		print a({-href=>"playlists.pl?frames=no"},'No, return to overview');
 	}
 	print end_html;
+}
+
+sub print_playlist {
+	my $file = $_[0];
+	my $title = $file;
+	$title =~ s/^.*_//;
+	my $encfile = uri_escape($file, "^A-Za-z");
+
+	if (($file eq $playlist) && ($file ne 'default')) {
+		print "<tr><td><i>$title</i></td><td>currently playing</td>";
+		print "<td><a href='editplaylist.pl?action=edit&amp;" .
+		"playlist=${encfile}${framestr}'>Edit List</a></td><td></td></tr>";
+	}
+	elsif ($file ne 'default') {
+		print "<tr><td>$title</td>" .
+		"<td><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
+		"Load List</a></td>";
+		print "<td><a href='editplaylist.pl?action=edit&amp;" .
+		"playlist=${encfile}${framestr}'>Edit List</a></td>\n";
+		print "<td><a href='playlists.pl?action=confirmdelete&amp;" .
+		"listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
+
+	}
 }
