@@ -153,6 +153,7 @@ sub get_lastplayed {
 
     my @played = ();
     my @lastplayed = ();
+    my $check = '';
 
     open (LOG, "${config{'savedir'}}log");
     while (my $line = <LOG>) {
@@ -161,17 +162,20 @@ sub get_lastplayed {
 	$_ = $line;
         ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
             m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
+	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
+	    push (@played, "$check");
+	    $check = '';
+	}
 	if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
-	    push (@played, "$filename, $playreason");
+	    $check = "$filename, $playreason";
 	}
     }
     close LOG;
 
     my $counter = @played - 10;
-    my $count = @played;
-    #print "played hat $count Eintraege<br>";
-    #print "counter ist $counter<br>";
-    #print "Naechstes ware $played[$counter]<br>";
+    if (@played < 10) {
+	$counter = 0;
+    }
 
     while ($counter < @played) {
 	push (@lastplayed, $played[$counter]);
