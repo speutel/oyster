@@ -22,7 +22,9 @@ if (param('action')) {
 	sleep 4;
     } elsif ($action eq 'start') {
 	system("perl oyster.pl &");
-	sleep 5;
+	while (!(-e "${config{'basedir'}}info")) {
+	    sleep 1;
+	}
     } elsif ($action eq 'pause') {
 	open (CONTROL, ">${basedir}control");
 	if ($status eq 'paused') {
