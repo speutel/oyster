@@ -29,6 +29,10 @@ if (param('vote')) {
     oyster::fifocontrol->do_vote(param('vote'));
 }
 
+if (param('votelist')) {
+    oyster::fifocontrol->do_votelist(param('votelist'));
+}
+
 print
     header,
     start_html(-title=>'Oyster-GUI',
