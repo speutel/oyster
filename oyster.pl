@@ -15,7 +15,7 @@ my $media_dir = "/";
 my $lastvotes_file = "$savedir/lastvotes";
 my $list_dir = "$savedir/lists";
 my $voteplay_percentage = 10;
-my $lastvotes_size = $config{'maxvotes'};
+my $lastvotes_size = $config{'maxlastvotes'};
 my $votefile = "$basedir/votes";
 
 
