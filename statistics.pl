@@ -16,7 +16,7 @@ my @log = <LOG>;
 my @worklog = @log;
 close (LOG);
 
-my @played = ();
+my @lastplayed = ();
 my $votedfiles = 0;
 my $randomfiles = 0;
 my $scoredfiles = 0;
@@ -48,15 +48,12 @@ foreach my $line (@mostplayed) {
 }
 print "</table>";
 
-my @lastplayed = get_lastplayed();
-
 print h1('Recently played songs');
 
 my $cssclass = 'file2';
 
 print "<table width='100%'>";
 print "<tr><th align='left'>Song</th><th>Playreason</th></tr>";
-
 
 foreach my $line (@lastplayed) {
     $line =~ /(.*)\,\ ([A-Z]*)$/;
@@ -116,7 +113,10 @@ sub get_mostplayed {
 	$_ = $line;
 	($playreason, $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
 	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
-	    push (@played, "$check");
+	    push (@lastplayed, "$check");
+	}
+	if ($#lastplayed > 9) {
+	    shift (@lastplayed);
 	}
 	$check = '';
 	if ($playreason eq 'DONE') {
@@ -152,24 +152,6 @@ sub get_mostplayed {
     }
 
     return @mostplayed;
-
-}
-
-sub get_lastplayed {
-
-    my @lastplayed = ();
-
-    my $counter = @played - 10;
-    if (@played < 10) {
-	$counter = 0;
-    }
-
-    while ($counter < @played) {
-	push (@lastplayed, $played[$counter]);
-	$counter++;
-    }
-
-    return @lastplayed;
 
 }
 
