@@ -25,6 +25,7 @@ my $lastvotes_size = 30;
 my $votefile = "$basedir/votes";
 
 my ($lastvotes_pointer, @lastvotes);
+my $lastvotes_exist = "false";
 my (@filelist, $file, $control, %votehash, @votelist);
 my ($file_override); 
 my $skipped = "false";
@@ -270,6 +271,14 @@ sub interpret_control {
 				}
 			}
 		}
+		
+		open(LASTVOTES, ">$lastvotes_file");
+		print LASTVOTES $lastvotes_pointer . "\n";
+		foreach my $entry ( @lastvotes ) {
+			print LASTVOTES $entry;
+		}
+		close(LASTVOTES);
+		
 		get_control();
 		interpret_control();
 	}
@@ -338,6 +347,15 @@ sub process_vote {
 		
 		$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
 		$lastvotes[$lastvotes_pointer] = $voted_file . "\n";
+		$lastvotes_exist = "true";
+		
+		open(LASTVOTES, ">$lastvotes_file");
+		print LASTVOTES $lastvotes_pointer . "\n";
+		foreach my $entry ( @lastvotes ) {
+			print LASTVOTES $entry;
+		}
+		close(LASTVOTES);
+		
 	} else {
 		
 		my $tmpfile = $file;
@@ -482,6 +500,7 @@ sub init {
 		chomp($lastvotes_pointer);
 		@lastvotes = <LASTVOTES>;
 		close(LASTVOTES);
+		$lastvotes_exist = "true";
 	}
 
 	# initialize random
@@ -513,7 +532,7 @@ sub choose_file {
 		unlink "$basedir/playnext";
 
 		add_log($file, "VOTED");
-		# playnext is set by processvotes
+		# playnext is set by process_vote
 		# set votes for the played file to 0 and reprocess votes
 		# (write next winner to playnext, 
 		# no winner -> no playnext -> normal play)
@@ -521,11 +540,13 @@ sub choose_file {
 		$votehash{$voteentry} = 0;
 		&process_vote;
 	} else {
-		if ( int(rand(100)) < $voteplay_percentage ) {
-			# choose file from lastvotes with a chance of $voteplay_percentage/100
-			my $index = rand @lastvotes;
-			$file = $lastvotes[$index];
-			add_log($file, "LASTVOTES");
+		if ( $lastvotes_exist eq "true" ) {
+			if ( int(rand(100)) < $voteplay_percentage ) {
+				# choose file from lastvotes with a chance of $voteplay_percentage/100
+				my $index = rand @lastvotes;
+				$file = $lastvotes[$index];
+				add_log($file, "LASTVOTES");
+			}
 		} else {
 			# choose file from "normal" filelist
 			my $index = rand @filelist;
