@@ -45,14 +45,26 @@ close (LASTVOTES);
 print "<table width='100%'>";
 print "<tr><th>Song</th><th>Score</th></tr>";
 
+my $cssclass='file2';
+
 foreach my $key (sort keys (%score)) {
     my $escapedfile = $key;
     $escapedfile =~ s/\Q$config{'mediadir'}\E//;
     $escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
     my $display = oyster::taginfo->get_tag_light($key);
-    print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
-    print "<td align='center'><a href='score.pl?action=scoredown&file=$escapedfile'>-</a> $score{$key}";
-    print " <a href='score.pl?action=scoreup&file=$escapedfile'>+</a></td></tr>";
+
+    # $cssclass changes to give each other file
+    # another color
+
+    if ($cssclass eq 'file') {
+	$cssclass = 'file2';
+    } else {
+	$cssclass = 'file';
+    }
+
+    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
+    print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&file=$escapedfile'>-</a> <span class='$cssclass'>$score{$key}</span>";
+    print " <a class='$cssclass' href='score.pl?action=scoreup&file=$escapedfile'>+</a></td></tr>";
 }
 
 print "</table>";
