@@ -18,44 +18,49 @@ print "<hr>";
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-my $basedir = $config{'mediadir'};
-my $rootdir=$basedir;
+my $mediadir = $config{'mediadir'};
+my $rootdir=$mediadir;
 
 if (param()) {
-    $basedir=param('dir') . "/";
-    $basedir =~ s@//$@/@;
-    $basedir =~ s/\.\.\///g;
-    $basedir = $rootdir if (($basedir eq "..") || ($basedir eq ""));
+    $mediadir=param('dir') . "/";
+    $mediadir =~ s@//$@/@;
+    $mediadir =~ s/\.\.\///g;
+    $mediadir = $rootdir if (($mediadir eq "..") || ($mediadir eq ""));
 }
 
-$basedir = $rootdir if (!($basedir =~ /^\Q$rootdir\E/));
+$mediadir = $rootdir . $mediadir if (!($mediadir =~ /^\Q$rootdir\E/));
 
-my $shortdir = $basedir;
+my $shortdir = $mediadir;
 $shortdir =~ s/^\Q$rootdir\E//;
 
-if (!($basedir eq $rootdir)) {
+if (!($mediadir eq $rootdir)) {
 
     print "<p><strong>Current directory: ";
 
     my @dirs = split(/\//, $shortdir);
     my $incdir = '';
     foreach my $partdir (@dirs) {
-	my $escapeddir = uri_escape("$rootdir$incdir$partdir", "^A-Za-z");
+	my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
 	print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
 	$incdir = $incdir . "$partdir/";
     }
 
     print "</strong></p>";
 
-    my $topdir = $basedir;
-    $topdir =~ s/\/[^\/]*\/$//;
+    my $topdir = $mediadir;
+    $topdir =~ s/\Q$rootdir\E//;
+    if ($topdir =~ /^[^\/]*\/$/) {
+	$topdir = '';
+    } else {
+	$topdir =~ s/\/[^\/]*\/$//;
+    }
 
     my $escapeddir = uri_escape($topdir, "^A-Za-z");
     print "<a href='browse.pl?dir=$escapeddir'>One level up</a><br><br>";
 
 }
 
-my $globdir = $basedir;
+my $globdir = "$mediadir";
 $globdir =~ s/\ /\\\ /g;
 my @entries = <$globdir*>;
 
@@ -72,8 +77,10 @@ foreach my $entry (@entries) {
 }
 
 foreach my $dir (@dirs) {
-    $dir =~ s/\Q$basedir\E//;
-    my $escapeddir = uri_escape("$basedir$dir", "^A-Za-z");
+    $dir =~ s/\Q$rootdir\E//;
+    $dir =~ s/^\///;
+    my $escapeddir = uri_escape("$dir", "^A-Za-z");
+    $dir =~ s/^.*\///;
     print "<tr>";
     print "<td><a href='browse.pl?dir=$escapeddir'>$dir</a></td>";
     print "<td></td>";
@@ -83,10 +90,12 @@ foreach my $dir (@dirs) {
 my $cssclass = 'file2';
 
 foreach my $file (@files) {
-    $file =~ s/\Q$basedir\E//;
+    $file =~ s/\Q$mediadir\E//;
     print "<tr>";
     if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
-	my $escapeddir = uri_escape("$basedir$file", "^A-Za-z");
+	my $escapeddir = "$mediadir$file";
+	$escapeddir =~ s/\Q$rootdir\E//;
+	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
 	if ($cssclass eq 'file') {
 	    $cssclass = 'file2';
 	} else {

@@ -62,11 +62,11 @@ sub listdir {
 	    $newpath =~ /^([^\/]*)/;
 	    $newpath = $1;
 	    if (!($basepath eq '')) {
-		my $escapeddir = uri_escape("$basedir$basepath/$newpath", "^A-Za-z");
+		my $escapeddir = uri_escape("$basepath/$newpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
 		$newpath = "$basepath/$newpath";
 	    }  else {
-		my $escapeddir = uri_escape("$basedir/$newpath", "^A-Za-z");
+		my $escapeddir = uri_escape("$newpath", "^A-Za-z");
 		print "<strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
 	    }
 	    $counter = listdir("$newpath",$counter);
@@ -80,7 +80,7 @@ sub listdir {
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
-		my $escapedfile = uri_escape("$basedir$basepath/$filename", "^A-Za-z");
+		my $escapedfile = uri_escape("$basepath/$filename", "^A-Za-z");
 		if ($cssclass eq 'file') {
 		    $cssclass = 'file2';
 		} else {

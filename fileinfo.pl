@@ -19,41 +19,39 @@ print "<hr>";
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-my $basedir = $config{'mediadir'};
-my $rootdir=$basedir;
+my $mediadir = $config{'mediadir'};
+my $rootdir=$mediadir;
 my $file;
 
-if (param()) {
-    $basedir = param('file');
-    $basedir =~ s@//$@/@;
-    $basedir =~ s/\.\.\///g;
-    $basedir = $rootdir if (($basedir eq "..") || ($basedir eq ""));
-    $file = $basedir;
-    $basedir =~ s/\/[^\/]*$//;
+if (param('file')) {
+    $mediadir = param('file');
+    $mediadir =~ s@//$@/@;
+    $mediadir =~ s/\.\.\///g;
+    $mediadir = $rootdir if (($mediadir eq "..") || ($mediadir eq ""));
+    $file = $mediadir;
+    $mediadir =~ s/\/[^\/]*$//;
     $file =~ s/.*\///;
-    $basedir = $rootdir if (($basedir eq "..") || ($basedir eq ""));
+    $mediadir = $rootdir if (($mediadir eq "..") || ($mediadir eq ""));
 }
-
-$basedir = $rootdir if (!($basedir =~ /^\Q$rootdir\E/));
 
 print "<p>Tag-Info for ";
 
-my $subdir = $basedir;
+my $subdir = $mediadir;
 $subdir =~ s/^\Q$rootdir\E//;
 my @dirs = split(/\//, $subdir);
 my $incdir = '';
 foreach my $partdir (@dirs) {
-    my $escapeddir = uri_escape("$rootdir$incdir$partdir", "^A-Za-z");
+    my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
     print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
     $incdir = $incdir . "$partdir/";
 }
 
 print "$file</p>\n";
 
-print "<p><a class='file' href='oyster-gui.pl?vote=$basedir/$file' target='curplay'>Vote for this song</a></p>\n";
+print "<p><a class='file' href='oyster-gui.pl?vote=$mediadir/$file' target='curplay'>Vote for this song</a></p>\n";
 
 if ($file =~ /mp3$/) {
-    open (MP3, "id3v2 -l \"$basedir/$file\"|") or die $!;
+    open (MP3, "id3v2 -l \"$rootdir$mediadir/$file\"|") or die $!;
     my @output = <MP3>;
 
     foreach my $line (@output) {
@@ -63,7 +61,7 @@ if ($file =~ /mp3$/) {
     close (MP3);
 
 } elsif ($file =~ /ogg$/) {
-    open (OGG, "ogginfo \"$basedir/$file\"|") or die $!;
+    open (OGG, "ogginfo \"$rootdir$mediadir/$file\"|") or die $!;
     my @output = <OGG>;
     
     foreach my $line (@output) {

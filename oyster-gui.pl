@@ -38,6 +38,7 @@ if (param('action')) {
 
 if (param('vote')) {
     my $votefile=param('vote');
+    $votefile = $config{'mediadir'} . $votefile;
     open (CONTROL, ">${basedir}control");
     print CONTROL "VOTE $votefile";
     close CONTROL;
@@ -71,6 +72,7 @@ close(INFO);
 
 my %tag = oyster::taginfo->get_tag($info);
 
+$info =~ s/^\Q$config{'mediadir'}\E//;
 $info = uri_escape("$info", "^A-Za-z");
 
 my $statusstr = '';
@@ -96,6 +98,7 @@ if (-s "${basedir}votes") {
 	$_ = $vote;
 	($title, $numvotes) = m@(.*),([0-9]*)@;
 	%tag = oyster::taginfo->get_tag($title);
+	$title =~ s/^\Q$config{'mediadir'}\E//;
 	my $escapedtitle = uri_escape("$title", "^A-Za-z");
 	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$tag{'display'}</a></td><td align='center'>$numvotes</td></tr>\n";
     }
