@@ -123,3 +123,4 @@ foreach my $file (@files) {
 }
 
 print "</table>";
+print end_html;
