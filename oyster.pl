@@ -24,10 +24,12 @@ my $voteplay_percentage = 10;
 my $lastvotes_size = 30;
 my $votefile = "$basedir/votes";
 
+my $voted_file = "platzhalter";
+
 my ($lastvotes_pointer, @lastvotes);
 my $lastvotes_exist = "false";
 my (@filelist, $file, $control, %votehash, @votelist);
-my ($file_override); 
+my $file_override="false"; 
 my $skipped = "false";
 
 
@@ -79,6 +81,7 @@ sub play_file {
 	system("./play.pl &");
 
 	open(KIDPLAY, ">/tmp/oyster/kidplay");
+	print STDERR "play.pl: $file";
 	print KIDPLAY "$file\n";
 	close(KIDPLAY);
 		
@@ -350,7 +353,7 @@ sub unvote {
 
 sub process_vote {
 	
-	my $voted_file = $_[0];
+	$voted_file = $_[0];
 	
 	print STDERR "voted for $voted_file\n";
 	
@@ -560,6 +563,8 @@ sub choose_file {
 		close( FILEIN );
 		unlink "$basedir/playnext";
 
+		print STDERR "playnext: $file";
+		
 		add_log($file, "VOTED");
 		# playnext is set by process_vote
 		# set votes for the played file to 0 and reprocess votes
@@ -588,12 +593,9 @@ sub choose_file {
 		if ( -e "$savedir/blacklist" ) {
 			my $tmpfile = $file;
 			$tmpfile =~ s/\Q$media_dir//;
-			print STDERR "mediadir is $media_dir\n";
-			print STDERR "blacklist: trying to match $tmpfile with ";
 			open(BLACKLIST, "$savedir/blacklist");
 			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
-				print STDERR $regexp . "\n";
 				if ( $tmpfile =~ /$regexp/ ) {
 					add_log($file, "BLACKLIST");
 					choose_file();

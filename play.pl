@@ -11,8 +11,8 @@ close(FILENAME);
 $file =~ /.*\.([^\.]*$)/;
 
 $suffix = $1;
-chop($suffix);
-chop($file);
+chomp($suffix);
+chomp($file);
 
 if ( $suffix eq "mp3" ){
   $command = $mp3_player . ' ' . '"' . $file . '"';
