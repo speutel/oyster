@@ -19,7 +19,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
     my $delfile = param('file') || '';
     my $deldir = param('dir') || '';
 
-    print h1($playlist);
+    print h1(a({href=>"editplaylist.pl?action=edit&playlist=$playlist"},$playlist));
     print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/"},
 	    'Add files to this list...'),br,br;
 
@@ -50,7 +50,10 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	}
 
 	foreach my $line (@playlist) {
-	    print PLAYLIST $line . "\n";
+	    my $printline = $line;
+	    $printline =~ s/^\///;
+	    $printline = $config{mediadir} . $printline;
+	    print PLAYLIST $printline . "\n";
 	}
 	close PLAYLIST;
 
@@ -73,8 +76,9 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	$filelist{$line} = 1;
     }
 
+    $toadd =~ s/^\///;
+
     if ($action eq 'adddir') {
-	$toadd =~ s/^\///;
 	find( { wanted => \&is_audio_file, no_chdir => 1 },
 	      "$config{mediadir}$toadd");
 
@@ -84,7 +88,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	    }
 	}
     } elsif ($action eq 'addfile') {
-	$filelist{$toadd . "\n"} = 1;
+	$filelist{$config{mediadir} . $toadd . "\n"} = 1;
     }
 	
     open (FILELIST, ">$config{savedir}lists/$playlist") || error_msg();
@@ -193,7 +197,7 @@ sub listdir {
 
 sub browse {
 
-    print h1($playlist);
+    print h1(a({href=>"editplaylist.pl?action=edit&playlist=$playlist"},$playlist));
 
     my $givendir = '/';
 
@@ -288,7 +292,7 @@ sub browse {
 	    print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>" .
 		"$escapedfile</a></td>";
 	    print "<td align='right'><a class='$cssfileclass' href='editplaylist.pl" .
-		"?action=addfile&amp;playlist=$playlist&amp;toadd=$escapeddir'>Add</a></td>";
+		"?action=addfile&amp;playlist=$playlist&amp;toadd=$escapeddir&dir=$givendir'>Add</a></td>";
 	}# elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) {
 #	    my $escapeddir = "$givendir$file";
 #	    $escapeddir =~ s/\Q$config{mediadir}\E//;
