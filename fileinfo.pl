@@ -50,7 +50,7 @@ foreach my $partdir (@dirs) {
 
 print "$file</p>\n";
 
-print "<p><a class='file' href='vote.pl?vote=$basedir/$file'>Vote for this song</a></p>\n";
+print "<p><a class='file' href='oyster-gui.pl?vote=$basedir/$file' target='curplay'>Vote for this song</a></p>\n";
 
 if ($file =~ /mp3$/) {
     open (MP3, "id3v2 -l \"$basedir/$file\"|") or die $!;

@@ -87,7 +87,7 @@ sub listdir {
 		}
 		print "<table width='100%'><tr>";
 		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>$nameonly</a></td>";
-		print "<td align='right'><a href='vote.pl?vote=$escapedfile' class='$cssclass'>Vote</a></td>";
+		print "<td align='right'><a href='oyster-gui.pl?vote=$escapedfile' class='$cssclass' target='curplay'>Vote</a></td>";
 		print "</tr></table>\n";
 		$counter++;
 	    }

@@ -92,7 +92,7 @@ foreach my $file (@files) {
 	    $cssclass = 'file';
 	}
 	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
-	print "<td><a class='$cssclass' href='vote.pl?vote=$escapeddir'>Vote</a></td>";
+	print "<td><a class='$cssclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
     } else {
 	print "<td>$file</td>";
 	print "<td></td>";
