@@ -14,7 +14,7 @@ if (param('action')) {
 	open (CONTROL, ">${basedir}control");
 	print CONTROL 'NEXT';
 	close CONTROL;
-	sleep 1;
+	sleep 4;
     } elsif ($action eq 'start') {
 	system("perl oyster.pl &");
 	sleep 5;
