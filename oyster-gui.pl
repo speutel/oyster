@@ -66,7 +66,7 @@ if ($status eq 'paused') {
 }
 
 print "<table width='100%' border='0'>";
-print "<tr><td><strong>Now playing:</strong></td><td align='center' width='65'><strong>Score</strong></td></tr>";
+print "<tr><td><strong>Now playing:</strong></td><td align='center' width='75'><strong>Score</strong></td></tr>";
 print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$display</a>$statusstr</strong></td>";
 print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong> ";
