@@ -9,20 +9,23 @@ my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 my $savedir = $config{'savedir'};
 
-my $playlist = oyster::conf->get_playlist();
-
 oyster::common->navigation_header();
 
-if (param('action') && param('listname')) {
+if (param('action') && (param('listname') || param('newlistname'))) {
     if (param('action') eq 'addnewlist') {
-	my $newlist = param('listname');
+	my $newlist = param('newlistname');
 	$newlist =~ s/.*\///;
 	open (NEWLIST, ">$config{savedir}lists/$newlist");
 	close (NEWLIST);
+	open (NEWBLACKLIST, ">$config{savedir}blacklists/$newlist");
+	close (NEWBLACKLIST);
     } elsif (param('action') eq 'delete') {
 	my $dellist = param('listname');
 	$dellist =~ s/.*\///;
+	unlink("$config{savedir}blacklists/$dellist");
 	unlink("$config{savedir}lists/$dellist");
+	unlink("$config{savedir}logs/$dellist");
+	unlink("$config{savedir}scores/$dellist");
     }
 }
 
@@ -64,7 +67,7 @@ print start_form;
 
 print hidden(-name=>'action', -default=>'addnewlist');
 
-print textfield(-name=>'listname',-default=>'');
+print textfield(-name=>'newlistname',-default=>'');
 print submit(-value=>'Create new list',-style=>'margin-left: 2em;');
 
 print end_form;
