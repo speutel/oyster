@@ -107,8 +107,10 @@ $info = uri_escape("/$info", "^A-Za-z");
 
 my $playlist = oyster::conf->get_playlist();
 my $playreason = `tail -n 1 logs/$playlist`;
-my $favmode = `tail -n 1 $basedir/favmode`;
+open (FAVFILE, "$basedir/favmode");
+my $favmode = <FAVFILE>;
 chomp($favmode);
+close(BEZEICHNER);
 chomp($playreason);
 $playreason =~ s/^[^\ ]*\ //;
 $playreason =~ s/\ .*$//;
