@@ -94,7 +94,7 @@ sub do_votelist {
     $votelist =~ s/^\///;
     $votelist = $config{'mediadir'} . $votelist;
     open (CONTROL, ">${config{basedir}}control");
-    print CONTROL "ENQLIST $votelist";    
+    print CONTROL "ENQLIST $votelist\n";    
     close CONTROL;
-    sleep 1;    
+    sleep 1;
 }

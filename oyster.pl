@@ -363,7 +363,7 @@ sub interpret_control {
 		interpret_control();
 	}
 	
-	elsif ( $control = /^ENQLIST/ ) {
+	elsif ( $control =~ /^ENQLIST/ ) {
 		
 		## takes an m3u-list and enqueues the playlist
 		$control =~ /^ENQLIST\ (.*)/;
@@ -405,12 +405,18 @@ sub enqueue_list {
 	
 	my $list_path = $list;
 	$list_path =~ s@/[^/]*$@/@;
+	$list_path =~ s/\ /\\\ /g;
 	
 	open(LIST, $list) || print STDERR "enqueue_list: could not open playlist\n";
 	while( my $line = <LIST> ) {
 		chomp($line);
-		my $enqueue_file = oyster::conf->rel_to_abs($line, $list_path);
+		$line = $list_path . $line;
+		$line =~ s/([^\\])\ /$1\\\ /g;
+		open( REALPATH, "realpath $line |" );
+		my $enqueue_file = <REALPATH>;
+		chomp($enqueue_file);
 		enqueue($enqueue_file);
+		close( REALPATH );
 	}
 	close(LIST);
 	process_vote();
