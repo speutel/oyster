@@ -48,6 +48,7 @@ my $cssdirclass = 'dir2';
 my $cssfileclass = 'file2';
 my $action = param('action') || '';
 my $playlist = param('playlist') || '';
+my $encplaylist = uri_escape($playlist, "^A-Za-z");
 my @playlist = ();
 my @results = ();
 
@@ -55,12 +56,12 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir'))
 	my $delfile = param('file') || '';
 	my $deldir = param('dir') || '';
 
-	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
-	print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/${framestr}"},
+	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${encplaylist}${framestr}"},$playlist));
+	print a({href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist&dir=/${framestr}"},
 		'Add files to this list...'),br;
-	print a({href=>"editplaylist.pl?action=addlist&playlist=$playlist"},
+	print a({href=>"editplaylist.pl?action=addlist&playlist=$encplaylist"},
 		'Add another playlist to this list...'),br;
-	print a({href=>"editplaylist.pl?action=search&playlist=$playlist${framestr}"},
+	print a({href=>"editplaylist.pl?action=search&playlist=$encplaylist${framestr}"},
       'Search for files to add...'),br,br;
 
 	# Get all entries from playlist and filter
@@ -167,12 +168,12 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir'))
 	if (($action eq 'adddir') || ($action eq 'addfile')) {
 		browse();
 	} elsif ($action eq 'addlistsave') {
-		print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
-		print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/${framestr}"},
+		print h1(a({href=>"editplaylist.pl?action=edit&playlist=${encplaylist}${framestr}"},$playlist));
+		print a({href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist&dir=/${framestr}"},
 			'Add files to this list...'),br;
-		print a({href=>"editplaylist.pl?action=addlist&playlist=$playlist"},
+		print a({href=>"editplaylist.pl?action=addlist&playlist=$encplaylist"},
 			'Add another playlist to this list...'),br;
-		print a({href=>"editplaylist.pl?action=search&playlist=$playlist${framestr}"},
+		print a({href=>"editplaylist.pl?action=search&playlist=$encplaylist${framestr}"},
 			'Search for files to add...'),br,br;
 		listdir('/', 0);
 	}
@@ -193,7 +194,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir'))
 			$entry =~ s/$globdir//;
 			if ($entry ne $playlist) {
 				print a({-href=>"editplaylist.pl?action=addlistsave" .
-						"&playlist=$playlist&toadd=$entry${framestr}"},$entry),br;
+						"&playlist=$encplaylist&toadd=$entry${framestr}"},$entry),br;
 			}
 		}
 	}
@@ -256,7 +257,7 @@ sub listdir {
 			print a({
 					class=>$cssdirclass,
 					href=>"editplaylist.pl?action=deletedir&dir=$escapeddir&" .
-					"playlist=${playlist}${framestr}"
+					"playlist=${encplaylist}${framestr}"
 				}, 'Delete');
 
 			print "</td></tr></table>";
@@ -301,7 +302,7 @@ sub listdir {
 				print "<td align='right'>";
 
 				print a({href=>"editplaylist.pl?action=deletefile" .
-						"&file=$escapedfile&playlist=${playlist}${framestr}",
+						"&file=$escapedfile&playlist=${encplaylist}${framestr}",
 						class=>$cssfileclass}, 'Delete');
 
 				print "</td>";
@@ -319,7 +320,7 @@ sub listdir {
 
 sub browse {
 
-	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
+	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${encplaylist}${framestr}"},$playlist));
 
 	my $givendir = '/';
 
@@ -340,7 +341,7 @@ sub browse {
 			my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
 			my $escapedpartdir = $partdir;
 			$escapedpartdir =~ s/&/&amp;/g;
-			print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist" .
+			print a({href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist" .
 					"&dir=${escapeddir}${framestr}"}, $escapedpartdir);
 
 			print "/ ";
@@ -359,7 +360,7 @@ sub browse {
 
 		my $escapeddir = uri_escape($topdir, "^A-Za-z");
 		print a({href=>"editplaylist.pl?action=addbrowse" .
-				"&playlist=$playlist&dir=${escapeddir}${framestr}"}, 'One level up'), br, br;
+				"&playlist=$encplaylist&dir=${escapeddir}${framestr}"}, 'One level up'), br, br;
 
 	} elsif (!(-e "$config{mediadir}$givendir")) {   
 		print h1('Error!');
@@ -403,13 +404,13 @@ sub browse {
 		print "<tr>";
 		print "<td><a name='a" . $anchorcounter . "'></a>";
 		print a({class=>$cssdirclass,
-				href=>"editplaylist.pl?action=addbrowse&playlist=$playlist" .
+				href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist" .
 				"&dir=${escapeddir}${framestr}"}, $dir);
 		print "</td>";
 
 		print "<td align='right'>";
 		print a({class=>$cssdirclass,
-				href=>"editplaylist.pl?action=adddir&playlist=$playlist" .
+				href=>"editplaylist.pl?action=adddir&playlist=$encplaylist" .
 				"&toadd=$escapeddir&dir=${givendir}${framestr}#a" . $anchorcounter++}, 'Add');
 
 		print "</td></tr>\n";
@@ -438,7 +439,7 @@ sub browse {
 			print "<td align='right'>";
 
 			print a({class=>$cssfileclass,
-					href=>"editplaylist.pl?action=addfile&playlist=$playlist" .
+					href=>"editplaylist.pl?action=addfile&playlist=$encplaylist" .
 					"&toadd=$escapeddir&dir=${givendir}${framestr}#a" . $anchorcounter++}, 'Add');
 
 		}
@@ -557,20 +558,20 @@ sub listsearch {
 				print "<div style='padding-left: 1em;'>";
 
 				print "<table width='100%'><tr><td align='left'>";
-				print strong(a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&" .
+				print strong(a({href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist&" .
 								"dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
 				print "</td><td align='right'>";
-				print a({href=>"editplaylist.pl?action=adddir&playlist=$playlist" .
+				print a({href=>"editplaylist.pl?action=adddir&playlist=$encplaylist" .
 						"&toadd=${escapeddir}&dir=${escapeddir}${framestr}"}, 'Add');
 				print "</td></tr></table>\n";
 				$newpath = "$basepath$newpath";
 			}  else {
 				my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
 				print "<table width='100%'><tr><td align='left'>";
-				print strong(a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&" .
+				print strong(a({href=>"editplaylist.pl?action=addbrowse&playlist=$encplaylist&" .
 								"dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
 				print "</td><td align='right'>";
-				print a({href=>"editplaylist.pl?action=adddir&playlist=$playlist" .
+				print a({href=>"editplaylist.pl?action=adddir&playlist=$encplaylist" .
 						"&toadd=${escapeddir}&dir=${escapeddir}${framestr}"}, 'Add');
 				print "</td></tr></table>\n";
 				$newpath = "/$newpath";
@@ -611,7 +612,7 @@ sub listsearch {
 				print "class='$cssfileclass'>" . escapeHTML($nameonly) . "</a></td>";
 				print "<td align='right'>";
 				print a({class=>$cssfileclass,
-						href=>"editplaylist.pl?action=addfile&playlist=$playlist" .
+						href=>"editplaylist.pl?action=addfile&playlist=$encplaylist" .
 						"&toadd=${escapedfile}&dir=${escapeddir}${framestr}"}, 'Add');
 				print "</td></tr></table>\n";
 				$counter++;
