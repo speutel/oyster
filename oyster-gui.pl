@@ -53,6 +53,11 @@ if ((!(-e "$basedir")) || ($action eq 'stop')) {
     exit 0;
 }
 
+if (!(-e "${basedir}info") || !(-e "${basedir}votes")) {
+    print "<p>Oyster has not created needed files in ${basedir}";
+    exit 0;
+}
+
 open(INFO, "${basedir}info");
 my $info = <INFO>;
 chomp($info);
@@ -78,9 +83,6 @@ print "<td align='center' style='padding-left:10px; padding-right:10px'><a href=
 print "<strong>$tag{'score'}</strong> ";
 print "<a href='oyster-gui.pl?action=scoreup&amp;file=$info'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>\n";
-
-#print "<p><a href='oyster-gui.pl?action=scoreup&amp;file=$info'>Score up</a></p>";
-#print "<p><a href='oyster-gui.pl?action=scoredown&amp;file=$info'>Score down</a></p>\n";
 
 open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
