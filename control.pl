@@ -2,6 +2,9 @@
 use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
+use oyster::conf;
+
+my %config = oyster::conf->get_config('oyster.conf');
 
 if (param()) {
     my $action=param('action');
@@ -26,7 +29,7 @@ if (param()) {
 print
     header,
     start_html(-title=>'Oyster-GUI',
-	       -style=>{'src'=>'layout.css'},
+	       -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
 

@@ -7,7 +7,7 @@ use oyster::conf;
 my %config = oyster::conf->get_config('oyster.conf');
 
 print header, start_html(-title=>'Oyster-GUI',
-			 -style=>{'src'=>'layout.css'},
+			 -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
 			 -head=>CGI::meta({-http_equiv => 'Content-Type',
                                            -content    => 'text/html; charset=iso-8859-1'}));
 

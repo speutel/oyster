@@ -4,8 +4,10 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 
+my %config = oyster::conf->get_config('oyster.conf');
+
 print header, start_html(-title=>'Oyster-GUI',
-			 -style=>{'src'=>'layout.css'},
+			 -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
 			 -head=>CGI::meta({-http_equiv => 'Content-Type',
                                            -content    => 'text/html; charset=iso-8859-1'}));
 
@@ -15,8 +17,6 @@ print "<td align='center' width='40%'><a href='search.pl'>Search</a></td>";
 print "<td align='right' width='30%'><a href='blacklist.pl'>Blacklist</a></td>";
 print "</tr></table>";
 print "<hr>";
-
-my %config = oyster::conf->get_config('oyster.conf');
 
 my $mediadir = $config{'mediadir'};
 my $givendir = '';
