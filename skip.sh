@@ -2,6 +2,15 @@
 
 BASEDIR="/tmp/oyster";
 
-echo "next" >> $BASEDIR/control
+echo "NEXT" >> $BASEDIR/control
 
-perl oyster-gui.pl
+cat<<EOF
+Content-Type: text/html; charset=ISO-8859-1
+
+<html>
+<head>
+<meta http-equiv="refresh" content="0; URL=oyster-gui.pl">
+</head>
+<body><a href="oyster.html">Zur&uuml;ck</a></body>
+</html>
+EOF
