@@ -73,7 +73,18 @@ sub do_action {
     } elsif (($action eq 'enqueue') && ($file)) {
 	print CONTROL "ENQUEUE $file";
 	close CONTROL;
+    } elsif (($action eq 'addnewlist') && ($file)) {
+	$file =~ s/.*\///;
+	open (NEWLIST, ">$config{savedir}lists/$file");
+	close (NEWLIST);
+    } elsif (($action eq 'delete') && ($file)) {
+	$file =~ s/.*\///;
+	unlink("$config{savedir}blacklists/$file");
+	unlink("$config{savedir}lists/$file");
+	unlink("$config{savedir}logs/$file");
+	unlink("$config{savedir}scores/$file");
     }
+
 
     return $status;
 
