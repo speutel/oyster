@@ -282,11 +282,32 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+	elsif ( $control = /^M3U/ ) {
+		$control =~ /^M3U\ (.*)/;
+		add_m3u($1);
+		get_control();
+		interpret_control();
+	}
 	else {
 		# fall through
 		get_control();
 		interpret_control();
 	}
+}
+
+sub add_m3u {
+	my $m3u = $_[0];
+	
+	open(M3U, $m3u);
+	while( $line = <M3U> ) {
+		chomp($line);
+		enqueue($line);
+	}
+	close(M3U);
+}
+
+sub enqueue {
+	$file = $_[0];
 }
 
 sub get_player_pid {
@@ -540,8 +561,8 @@ sub choose_file {
 		$votehash{$voteentry} = 0;
 		&process_vote;
 	} else {
-		if ( $lastvotes_exist eq "true" ) {
-			if ( int(rand(100)) < $voteplay_percentage ) {
+		if ( int(rand(100)) < $voteplay_percentage ) {
+			if ( $lastvotes_exist eq "true" ) {
 				# choose file from lastvotes with a chance of $voteplay_percentage/100
 				my $index = rand @lastvotes;
 				$file = $lastvotes[$index];
