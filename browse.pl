@@ -2,6 +2,7 @@
 use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
+use oyster::conf;
 
 print header, start_html(-title=>'Oyster-GUI',
 			 -style=>{'src'=>'layout.css'},
@@ -14,7 +15,9 @@ print "<td align='center' width='50%'><a href='search.pl'>Search</a></td>";
 print "</tr></table>";
 print "<hr>";
 
-my $basedir = '/Multimedia/Audio/';
+my %config = oyster::conf->get_config('oyster.conf');
+
+my $basedir = $config{'mediadir'};
 my $rootdir=$basedir;
 
 if (param()) {
