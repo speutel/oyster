@@ -144,12 +144,9 @@ if ($search ne '') {
 		}
 	}
 
-	# Sort directories before files in every depth
+	# Sort directories before files
 
-	while ($maxdepth >= 0) {
-		@results = sort_results($maxdepth);
-		$maxdepth--;
-	}
+	@results = sort_results($maxdepth);
 
 	# List directory in browser
 
@@ -251,7 +248,7 @@ sub listdir {
 sub sort_results {
 
 	# sort_results sorts a directory by
-	# "first dirs, then files in a given depth
+	# "first dirs, then files" in a given depth
 
 	my $depth = $_[0];
 	my (@dirs, @files) = ();
