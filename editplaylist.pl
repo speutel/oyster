@@ -51,13 +51,15 @@ my $playlist = param('playlist') || '';
 my @playlist = ();
 my @results = ();
 
-if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')) {
+if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir')) {
 	my $delfile = param('file') || '';
 	my $deldir = param('dir') || '';
 
 	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
 	print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/${framestr}"},
 		'Add files to this list...'),br;
+	print a({href=>"editplaylist.pl?action=addlist&playlist=$playlist"},
+		'Add another playlist to this list...'),br;
 	print a({href=>"editplaylist.pl?action=search&playlist=$playlist${framestr}"},
       'Search for files to add...'),br,br;
 
@@ -72,6 +74,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 			push (@playlist, $line);
 		}
 	}
+	close (PLAYLIST);
 
 	@playlist = sort @playlist;
 
@@ -109,7 +112,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 
 	browse();
 
-} elsif (($action eq 'adddir') || ($action eq 'addfile')) {
+} elsif (($action eq 'adddir') || ($action eq 'addfile') || ($action eq 'addlistsave')) {
 	my %filelist = ();
 	my $toadd = param('toadd') || '';
 
@@ -132,6 +135,11 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		}
 	} elsif ($action eq 'addfile') {
 		$filelist{$config{mediadir} . $toadd . "\n"} = 1;
+	} elsif ($action eq 'addlistsave') {
+		open (ADDLIST, "$config{savedir}lists/$toadd") or die $!;
+		while (my $file = <ADDLIST>) {
+			$filelist{$file} = 1;
+		}
 	}
 
 	open (FILELIST, ">$config{savedir}lists/$playlist") || error_msg();
@@ -144,6 +152,9 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 
 	foreach my $key (sort (keys %filelist)) {
 		print FILELIST $key;
+		chomp($key);
+		$key =~ s/^\Q$config{mediadir}\E/\//;
+		push (@playlist, $key);
 	}
 	close(FILELIST);
 
@@ -153,7 +164,39 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		oyster::fifocontrol->do_action('loadlist', $playlist, '');
 	}
 
-	browse();
+	if (($action eq 'adddir') || ($action eq 'addfile')) {
+		browse();
+	} elsif ($action eq 'addlistsave') {
+		print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
+		print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/${framestr}"},
+			'Add files to this list...'),br;
+		print a({href=>"editplaylist.pl?action=addlist&playlist=$playlist"},
+			'Add another playlist to this list...'),br;
+		print a({href=>"editplaylist.pl?action=search&playlist=$playlist${framestr}"},
+			'Search for files to add...'),br,br;
+		listdir('/', 0);
+	}
+
+} elsif ($action eq 'addlist') {
+
+	my $globdir = "$config{savedir}lists/";
+	my @entries = <$globdir*>;
+
+	my @files = ();
+
+	print h1($playlist);
+
+	print h2('Which playlist should be added?');
+
+	foreach my $entry (@entries) {
+		if (-f "$entry") {
+			$entry =~ s/$globdir//;
+			if ($entry ne $playlist) {
+				print a({-href=>"editplaylist.pl?action=addlistsave" .
+						"&playlist=$playlist&toadd=$entry${framestr}"},$entry),br;
+			}
+		}
+	}
 
 } elsif ($action eq 'search') {
 
