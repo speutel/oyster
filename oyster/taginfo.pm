@@ -110,7 +110,7 @@ sub get_mp3_tags {
     my $filename = $_[0];
     
     $tag{'format'} = 'MP3';
-    open (MP3, "id3v2 -l \"$filename\"|") or die $!;
+    open (MP3, "id3v2 -R \"$filename\"|") or die $!;
 	
     while (my $line = <MP3>) {
 	if ($line =~ /^Title/) {
@@ -121,13 +121,17 @@ sub get_mp3_tags {
 		$tag{'title'} =~ s/[\ ]*$//;
 		$tag{'artist'} =~ s/[\ ]*$//;
 	    } else {
-		# id3v2                                                 
+		# id3v2, old version
 		$_ = oyster::common->remove_html($line);
 		($tag{'title'}) = m/:\ (.*)$/;
 	    }
+	} elsif ($line =~ /^TIT2\ \(.*\)\:\ (.*)$/) {
+	    $tag{'title'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Lead/) {
+	    $tag{'artist'} = oyster::common->remove_html($1);
+	} elsif ($line =~ /^TPE1\ \(.*\)\:\ (.*)$/) {
 	    $_ = oyster::common->remove_html($line);
-	    ($tag{'artist'}) = m/:\ (.*)$/;
+	    $tag{'artist'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)/) {
 	    $tag{'album'} = oyster::common->remove_html($1);
 	    $tag{'year'} = oyster::common->remove_html($2);
@@ -136,13 +140,21 @@ sub get_mp3_tags {
 	    $tag{'genre'} =~ s/\ \(.*//;
 	} elsif ($line =~ /^Album\/Movie\/Show\ title\:\ (.*)/) {
 	    $tag{'album'} = oyster::common->remove_html($1);
+	} elsif ($line =~ /^TALB\ \(.*\)\:\ (.*)$/) {
+	    $tag{'album'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Year\:\ ([0-9]*)/) {
 	    $tag{'year'} = oyster::common->remove_html($1);
+	} elsif ($line =~ /^TYER\ \(Year\)\:\ (.*)$/) {
+	    $tag{'year'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Content\ type\:\ \([0-9]*\)(.*)/ ) {
+	    $tag{'genre'} = oyster::common->remove_html($1);
+	} elsif ($line =~ /^TCON\ \(.*\)\:\ (.*)\ \([0-9]*\)$$/) {
 	    $tag{'genre'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Comment.*Track\:\ ([0-9]*)/) {
 	    $tag{'track'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Track\ number\/Position\ in\ set\:\ (.*)/) {
+	    $tag{'track'} = oyster::common->remove_html($1);
+	} elsif ($line =~ /^TRCK\ \(.*\)\:\ (.*)$/) {
 	    $tag{'track'} = oyster::common->remove_html($1);
 	}
     }
