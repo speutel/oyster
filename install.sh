@@ -136,7 +136,7 @@ echo -n "Copying files... "
 $CP *.pl $PATH
 $CP -r oyster themes $PATH
 $CP conf.sample $PATH/oyster.conf
-
+$CP index.html $PATH
 
 echo done.
 
