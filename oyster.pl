@@ -78,6 +78,10 @@ sub play_file {
 	open(KIDPLAY, ">/tmp/oyster/kidplay");
 	print KIDPLAY "$file\n";
 	close(KIDPLAY);
+		
+	open(STATUS, ">$basedir/status");
+	print STATUS "playing\n";
+	close(STATUS);
 
 }
 
@@ -169,11 +173,22 @@ sub interpret_control {
 	elsif ( $control =~ /^PAUSE/) {
 		get_player_pid();
 		system("kill -19 $player_pid");
+		
+		open(STATUS, ">$basedir/status");
+		print STATUS "paused\n";
+		close(STATUS);
+
 		get_control();
 		interpret_control();
 	}
 	elsif ( $control =~ /^UNPAUSE/) {
+		get_player_pid();
 		system("kill -18 $player_pid");
+		
+		open(STATUS, ">$basedir/status");
+		print STATUS "playing\n";
+		close(STATUS);
+		
 		get_control();
 		interpret_control();
 	}
@@ -202,6 +217,8 @@ sub get_player_pid {
 			last;
 		}
 	}
+	close(PS);
+	return $player_pid;
 }
 
 sub unvote {
