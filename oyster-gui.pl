@@ -103,8 +103,7 @@ my $display = oyster::taginfo->get_tag_light($info);
 my %tag = oyster::taginfo->get_tag($info);
 
 $info =~ s/^\Q$config{'mediadir'}\E//;
-$info = "/$info";
-$info = uri_escape("$info", "^A-Za-z");
+$info = uri_escape("/$info", "^A-Za-z");
 
 my $statusstr = '';
 if ($status eq 'paused') {
