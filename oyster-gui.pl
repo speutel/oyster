@@ -69,12 +69,19 @@ if ($title eq "") {
 
 $info = uri_escape("$info", "^A-Za-z");
 
-print
-    h1('Oyster'),
-    strong("Now playing: <a href='fileinfo.pl?file=$info' target='browse'>$title</a>"),p,
-    a({href=>'skip.sh'},'Skip'),p,
-    a({href=>'oyster-gui.pl'},'Refresh'),p,
-    a({href=>'stop.sh'},'Stop'),p,
-    a({href=>'search.pl',-target=>'browse'},'Search'),
-    end_html;
+print h1('Oyster');
+print "<table width='100%'>";
+print "<tr><td><strong>Now playing: <a href='fileinfo.pl?file=$info' target='browse'>$title</a></strong></td>";
+print "<td><a href='oyster-gui.pl'>Refresh</a></td></tr>";
+print "</table>";
+
+print "<br><br>";
+
+print "<table width='100%'>";
+print "<tr><td align='center' width='30%'><a href='start.sh'>Start</a></td>";
+print "<td align='center' width='40%'><a href='skip.sh'>Skip</a></td>";
+print "<td align='center' width='30%'><a href='stop.sh'>Stop</a></td>";
+print "</tr></table>\n";
+
+print end_html;
 
