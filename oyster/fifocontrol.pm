@@ -41,8 +41,10 @@ sub do_action {
     } elsif ($action eq 'start') {
 	close CONTROL;
 	system("perl oyster.pl &");
-	while (!(-e "${config{'basedir'}}info")) {
+	my $waitmax = 100;
+	while (!(-e "${config{'basedir'}}info") && ($waitmax > 0)) {
 	    sleep 1;
+	    $waitmax--;
 	}
     } elsif ($action eq 'stop') {
 	print CONTROL "QUIT";
