@@ -3,22 +3,11 @@ use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
 use oyster::conf;
+use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-print header, start_html(-title=>'Oyster-GUI',
-			 -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
-			 -head=>CGI::meta({-http_equiv => 'Content-Type',
-                                           -content    => 'text/html; charset=iso-8859-1'}));
-
-print "<table width='100%'><tr>";
-print "<td align='center' width='20%'><a href='browse.pl'>Browse</a></td>";
-print "<td align='center' width='20%'><a href='search.pl'>Search</a></td>";
-print "<td align='center' width='20%'><a href='blacklist.pl'>Blacklist</a></td>";
-print "<td align='center' width='20%'><a href='score.pl'>Scoring</a></td>";
-print "<td align='center' width='20%'><a href='statistics.pl'>Statistics</a></td>";
-print "</tr></table>";
-print "<hr>";
+oyster::common->navigation_header();
 
 my $mediadir = $config{'mediadir'};
 my $givendir = '/';
