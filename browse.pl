@@ -60,6 +60,7 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 
 my $globdir = "$mediadir$givendir";
 $globdir =~ s/\ /\\\ /g;
+$globdir =~ s/\'/\\\'/g;
 my @entries = <$globdir*>;
 
 print "<table width='100%'>";
