@@ -118,8 +118,6 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	}
 	close (PLAYLIST);
 
-	@playlist = sort @playlist;
-
 	if (($action eq 'deletefile') || ($action eq 'deletedir')) {
 
 		# Write new playlist
@@ -158,7 +156,6 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	my %filelist = ();
 	my $toadd = param('toadd') || '';
 
-
 	open (PLAYLIST, "$config{savedir}lists/$playlist") or die $!;
 	while (my $line = <PLAYLIST>) {
 		$filelist{$line} = 1;
@@ -192,7 +189,10 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		exit 0;
 	}
 
-	foreach my $key (sort (keys %filelist)) {
+	@results = sort(keys %filelist);
+	@results = sort_results('/');
+
+	foreach my $key (@results) {
 		print FILELIST $key;
 		chomp($key);
 		$key =~ s/^\Q$config{mediadir}\E/\//;
@@ -601,28 +601,7 @@ sub search {
 
 		@results = sort @results;
 
-   	# Determine maximum depth of directories for
-      # further sorting
-   
-		my $maxdepth = -1;
-		foreach my $result (@results) {
-			my $line = $result;
-			my $counter = 0;
-			while ($counter < $maxdepth) {
-				$line =~ s/^[^\/]*\///;
-				$counter++;
-			}                                                                                                                       
-			if ($line =~ /\//) {
-				$maxdepth++;
-			}
-		}
-
-		# Sort directories before files in every depth
-
-		while ($maxdepth >= 0) {
-			@results = sort_results($maxdepth);
-			$maxdepth--;
-		}
+		@results = sort_results('/');
 
 		# List directory in browser
 
@@ -765,30 +744,26 @@ sub searchform {
 
 sub sort_results {
 
-   # sort_results sorts a directory by
-   # "first dirs, then files in a given depth
-        
-	my $depth = $_[0];
+	# sort_results sorts a directory and its subdirectories by
+   # "first dirs, then files"
+
+	my $topdir = $_[0];
+	my $skip = ''; # Do not add directories twice
 	my (@dirs, @files) = ();
 
-	foreach my $result (@results) {
-		my $line = $result;
-		my $counter = $depth;
-		while ($counter > 0) {
-			$line =~ s/^[^\/]*\///;
-			$counter--;
-		}
-
-	# If $line contains a '/', it is added to @dirs
-
-		if ($line =~ /\//) {
-			push (@dirs, $result);
-		} else {
-			push (@files, $result);
+	foreach my $line (@results) {
+		if ((($skip ne '') && !($line =~ /^\Q$skip\E/)) || ($skip eq '')) {
+			if ($line =~ /^\Q$topdir\E([^\/]*\/)/) {
+				# $line is a directory
+				$skip = "${topdir}${1}";
+				push (@dirs, sort_results($skip));
+			} elsif ($line =~ /^\Q$topdir\E[^\/]*$/) {
+				# $line is a file
+				push (@files, $line);
+			}
 		}
 	}
-
-	return (@dirs, @files);
+	
+	return(@dirs, @files);
 
 }
-

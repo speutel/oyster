@@ -127,26 +127,7 @@ if ($search ne '') {
 	# Sort @results alphabetically
 
 	@results = sort @results;
-
-	# Determine maximum depth of directories for
-	# further sorting
-
-	my $maxdepth = -1;
-	foreach my $result (@results) {
-		my $line = $result;
-		my $counter = 0;
-		while ($counter < $maxdepth) {
-			$line =~ s/^[^\/]*\///;
-			$counter++;
-		}
-		if ($line =~ /\//) {
-			$maxdepth++;
-		}
-	}
-
-	# Sort directories before files
-
-	@results = sort_results($maxdepth);
+	@results = sort_results('/');
 
 	# List directory in browser
 
@@ -247,29 +228,26 @@ sub listdir {
 
 sub sort_results {
 
-	# sort_results sorts a directory by
-	# "first dirs, then files" in a given depth
+	# sort_results sorts a directory and its subdirectories by
+   # "first dirs, then files"
 
-	my $depth = $_[0];
+	my $topdir = $_[0];
+	my $skip = ''; # Do not add directories twice
 	my (@dirs, @files) = ();
 
-	foreach my $result (@results) {
-		my $line = $result;
-		my $counter = $depth;
-		while ($counter > 0) {
-			$line =~ s/^[^\/]*\///;
-			$counter--;
-		}
-
-		# If $line contains a '/', it is added to @dirs
-
-		if ($line =~ /\//) {
-			push (@dirs, $result);
-		} else {
-			push (@files, $result);
+	foreach my $line (@results) {
+		if ((($skip ne '') && !($line =~ /^\Q$skip\E/)) || ($skip eq '')) {
+			if ($line =~ /^\Q$topdir\E([^\/]*\/)/) {
+				# $line is a directory
+				$skip = "${topdir}${1}";
+				push (@dirs, sort_results($skip));
+			} elsif ($line =~ /^\Q$topdir\E[^\/]*$/) {
+				# $line is a file
+				push (@files, $line);
+			}
 		}
 	}
-
-	return (@dirs, @files);
+	
+	return(@dirs, @files);
 
 }

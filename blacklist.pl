@@ -178,29 +178,7 @@ sub print_affects {
 	# Sort @results alphabetically
 
 	@results = sort @results;
-
-	# Determine maximum depth of directories for further sorting
-
-	my $maxdepth = 0;
-	foreach my $result (@results) {
-		my $line = $result;
-		my $counter = 0;
-		while ($counter < $maxdepth) {
-			$line =~ s/^[^\/]*\///;
-			$counter++;
-		}
-		if ($line =~ /\//) {
-			$maxdepth++;
-		}
-	}
-	$maxdepth--;
-
-	# Sort @results by a given depth
-
-	while ($maxdepth >= 0) {
-		@results = sort_results($maxdepth);
-		$maxdepth--;
-	}
+	@results = sort_results('/');
 
 	if (@results > 0) {
 		listdir('/', 0);
@@ -312,29 +290,28 @@ sub listdir {
 
 }
 
-
 sub sort_results {
 
-	# sorts @results by a given directory depth
-	# directories first, then regular files
+	# sort_results sorts a directory and its subdirectories by
+   # "first dirs, then files"
 
-	my $depth = $_[0];
+	my $topdir = $_[0];
+	my $skip = ''; # Do not add directories twice
 	my (@dirs, @files) = ();
 
-	foreach my $result (@results) {
-		my $line = $result;
-		my $counter = $depth;
-		while ($counter > 0) {
-			$line =~ s/^[^\/]*\///;
-			$counter--;
-		}
-		if ($line =~ /\//) {
-			push (@dirs, $result);
-		} else {
-			push (@files, $result);
+	foreach my $line (@results) {
+		if ((($skip ne '') && !($line =~ /^\Q$skip\E/)) || ($skip eq '')) {
+			if ($line =~ /^\Q$topdir\E([^\/]*\/)/) {
+				# $line is a directory
+				$skip = "${topdir}${1}";
+				push (@dirs, sort_results($skip));
+			} elsif ($line =~ /^\Q$topdir\E[^\/]*$/) {
+				# $line is a file
+				push (@files, $line);
+			}
 		}
 	}
-
-	return (@dirs, @files);
+	
+	return(@dirs, @files);
 
 }
