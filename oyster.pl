@@ -1,22 +1,34 @@
 #!/usr/bin/perl
 
+# $basedir is where oyster puts all it's runtime-files.
+# It will be deleted after oyster has quit.
 my $basedir = "/tmp/oyster";
 my (@filelist, $file, $control, $file_override);
 my $fifo="false";
 
 
 init();
+
 while ( 1 ) {
 	main();
 }
-unlink </tmp/oyster/*>;
-rmdir "/tmp/oyster";
 
+#cleaning up our files
+unlink <$basedir/*>;
+rmdir "$basedir";
+
+#because of some obscure error this use-statement does not work when 
+#I put it in the beginning of the file
 use Switch 'Perl5', 'Perl6';
 
 
-###################
 
+
+
+
+#########################
+## defining procedures ##
+#########################
 
 sub main {
 		
@@ -51,8 +63,7 @@ sub play_file {
 
 
 sub interpret_control {
-	$sw = $control;
-	switch ($sw) {
+	switch ($control) {
 
 		case /^next/	{ 
 			system("killall play.pl mpg321 ogg123"); 
@@ -73,14 +84,13 @@ sub interpret_control {
 sub init {
 
 	open (FILELIST, $ARGV[0]);
-	#open (STDERR, ">>/tmp/oyster/err");
+	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
 	srand;
 	
 	@filelist = <FILELIST>;
 	
 	mkdir($basedir);	
-	open(INFO, ">$basedir/info");
 	print STDERR "making fifos...";
 	system("/usr/bin/mkfifo /tmp/oyster/control");
 	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
@@ -96,16 +106,29 @@ sub choose_file {
 	if ( $file_override eq "true") {
 		#don't touch $file
 		$file_override = "false";
+	} elsif ( -e "$basedir/votes" ) {
+		$file = evaluate_votes();
+	} elsif ( -e "$basedir/playnext" ) {
+		open( FILEIN, "$basedir/playnext" );
+		$file = <FILEIN>;
+		close( FILEIN );
+		unlink "$basedir/playnext";
 	} else {
 		$index = rand @filelist;
 		$file = $filelist[$index];
 	}
-	print STDERR $file;
 }
 
 
+sub evaluate_votes {
+	#Does nothing yet
+}
+
 sub info_out {
 	
+	open(INFO, ">$basedir/info");
 	print INFO "np: " . $file;
+	close(INFO);
 	print STDERR "info_out zuende\n";
+	
 }
