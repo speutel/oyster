@@ -660,7 +660,10 @@ sub init {
 		close(OTHER);
 		chomp($otherpid);
 		
-		my $othercmd = `ps -o command= -p $otherpid`;
+		if ( $otherpid ne "" ) {
+			my $othercmd = `ps -o command= -p $otherpid`;
+		}
+		
 		if ( $othercmd =~ /oyster\.pl/ ) {
 			open(OTHER, ">$basedir/control");
 			print OTHER "UNPAUSE\n";
