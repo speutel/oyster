@@ -101,7 +101,7 @@ sub get_mostplayed {
     my %timesplayed = ();
     my $maxplayed = 0;
 
-    open (LOG, "${config{'savedir'}}log");
+    open (LOG, "${config{'savedir'}}logs/$playlist");
     my @log = <LOG>;
     my @worklog = @log;
     close (LOG);
@@ -151,7 +151,7 @@ sub get_lastplayed {
     my @lastplayed = ();
     my $check = '';
 
-    open (LOG, "${config{'savedir'}}log");
+    open (LOG, "${config{'savedir'}}logs/$playlist");
     while (my $line = <LOG>) {
 	my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
 	chomp($line);
@@ -187,7 +187,7 @@ sub get_numfiles {
     my $numfiles = 0;
     my $type = $_[0];
 
-    open (LOG, "${config{'savedir'}}log");
+    open (LOG, "${config{'savedir'}}logs/$playlist");
     while (my $line = <LOG>) {
         my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
         chomp($line);
