@@ -299,7 +299,7 @@ sub add_m3u {
 	my $m3u = $_[0];
 	
 	open(M3U, $m3u);
-	while( $line = <M3U> ) {
+	while( my $line = <M3U> ) {
 		chomp($line);
 		enqueue($line);
 	}
