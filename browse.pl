@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
+use URI::Escape;
 
 print header, start_html(-title=>'Oyster-GUI',-style=>{'src'=>'layout.css'});
 
@@ -18,16 +19,32 @@ $basedir = $rootdir if (!($basedir =~ /^\Q$rootdir\E/));
 my $shortdir = $basedir;
 $shortdir =~ s/^\Q$rootdir\E//;
 
-print h1("$shortdir");
+if (!($basedir eq $rootdir)) {
+
+    print "<p><strong>Aktuelles Verzeichnis: ";
+
+    my @dirs = split(/\//, $shortdir);
+    my $incdir = '';
+    foreach my $partdir (@dirs) {
+	my $escapeddir = uri_escape("$rootdir$incdir$partdir", "^A-Za-z");
+	print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
+	$incdir = $incdir . "$partdir/";
+    }
+
+    print "</strong></p>";
+
+    my $topdir = $basedir;
+    $topdir =~ s/\/[^\/]*\/$//;
+
+    my $escapeddir = uri_escape($topdir, "^A-Za-z");
+    print "<a href='browse.pl?dir=$escapeddir'>Eine Ebene h&ouml;her</a><br><br>";
+
+}
 
 my $globdir = $basedir;
 $globdir =~ s/\ /\\\ /g;
 my @entries = <$globdir*>;
 
-my $topdir = $basedir;
-$topdir =~ s/\/[^\/]*\/$//;
-
-print "<a href='browse.pl?dir=$topdir/'>Eine Ebene h&ouml;her</a><br><br>";
 print "<table width='100%'>";
 
 my @files = my @dirs = ();
@@ -42,23 +59,25 @@ foreach my $entry (@entries) {
 
 foreach my $dir (@dirs) {
     $dir =~ s/\Q$basedir\E//;
+    my $escapeddir = uri_escape("$basedir$dir", "^A-Za-z");
     print "<tr>";
-    print "<td><a href='browse.pl?dir=$basedir$dir'>$dir</a></td>";
+    print "<td><a href='browse.pl?dir=$escapeddir'>$dir</a></td>";
     print "<td></td>";
-    print "</tr>";
+    print "</tr>\n";
 }
 
 foreach my $file (@files) {
     $file =~ s/\Q$basedir\E//;
     print "<tr>";
     if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
-	print "<td><a href='fileinfo.pl?file=$basedir$file'>$file</a></td>";
-	print "<td><a href='vote.pl?vote=$basedir$file'>Vote</a></td>";
+	my $escapeddir = uri_escape("$basedir$file", "^A-Za-z");
+	print "<td><a href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
+	print "<td><a href='vote.pl?vote=$escapeddir'>Vote</a></td>";
     } else {
 	print "<td>$file</td>";
 	print "<td></td>";
     }
-    print "</tr>";
+    print "</tr>\n";
 }
 
 print "</table>";
