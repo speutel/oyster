@@ -83,5 +83,15 @@ print "<td align='center' width='40%'><a href='skip.sh'>Skip</a></td>";
 print "<td align='center' width='30%'><a href='stop.sh'>Stop</a></td>";
 print "</tr></table>\n";
 
+my $volume = `aumix -w q`;
+$volume =~ s/^pcm\ //;
+$volume =~ s/,.*//;
+
+print "<table width='100%'>";
+print "<tr><td align='center' width='40%'><a href='volume.pl?vol=down'>Volume Down</a></td>";
+print "<td align='center' width='20%'><a href='volume.pl?vol=50'>$volume</a></td>";
+print "<td align='center' width='40%'><a href='volume.pl?vol=up'>Volume Up</a></td>";
+print "</tr></table>\n";
+
 print end_html;
 
