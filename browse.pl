@@ -126,7 +126,8 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 	print end_html;
 }
 
-my @files = my @dirs = (); # All files and directories which should be displayed
+my @files = ();
+my @dirs = (); # All files and directories which should be displayed
 
 if (param('playlist')) {
 
