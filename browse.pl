@@ -76,13 +76,20 @@ foreach my $dir (@dirs) {
     print "</tr>\n";
 }
 
+my $cssclass = 'file2';
+
 foreach my $file (@files) {
     $file =~ s/\Q$basedir\E//;
     print "<tr>";
     if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
 	my $escapeddir = uri_escape("$basedir$file", "^A-Za-z");
-	print "<td><a class='file' href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
-	print "<td><a class='file' href='vote.pl?vote=$escapeddir'>Vote</a></td>";
+	if ($cssclass eq 'file') {
+	    $cssclass = 'file2';
+	} else {
+	    $cssclass = 'file';
+	}
+	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
+	print "<td><a class='$cssclass' href='vote.pl?vote=$escapeddir'>Vote</a></td>";
     } else {
 	print "<td>$file</td>";
 	print "<td></td>";
