@@ -21,6 +21,10 @@ perl-scripts to be executed.
 | </Location>
 
 --Installation--
+Launch the install-script
+
+ OR
+
 Just untar oyster into a directory which is reachable to your
 webserver. Now make sure that the webserver is able to read this
 directory and its contents.
