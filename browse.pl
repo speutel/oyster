@@ -87,7 +87,8 @@ foreach my $dir (@dirs) {
     print "</tr>\n";
 }
 
-my $cssclass = 'file2';
+my $cssfileclass = 'file2';
+my $csslistclass = 'playlist2';
 
 foreach my $file (@files) {
     $file =~ s/\Q$mediadir$givendir\E//;
@@ -96,13 +97,24 @@ foreach my $file (@files) {
 	my $escapeddir = "$givendir$file";
 	$escapeddir =~ s/\Q$mediadir\E//;
 	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
-	if ($cssclass eq 'file') {
-	    $cssclass = 'file2';
+	if ($cssfileclass eq 'file') {
+	    $cssfileclass = 'file2';
 	} else {
-	    $cssclass = 'file';
+	    $cssfileclass = 'file';
 	}
-	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
-	print "<td><a class='$cssclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
+	print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
+	print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
+    } elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) {
+	my $escapeddir = "$givendir$file";
+	$escapeddir =~ s/\Q$mediadir\E//;
+	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
+	if ($csslistclass eq 'playlist') {
+	    $csslistclass = 'playlist2';
+	} else {
+	    $csslistclass = 'playlist';
+	}
+	print "<td><a class='$csslistclass' href='viewlist.pl?list=$escapeddir'>$file</a></td>";
+	print "<td><a class='$csslistclass' href='oyster-gui.pl?votelist=$escapeddir' target='curplay'>Vote</a></td>";
     } else {
 	print "<td>$file</td>";
 	print "<td></td>";
