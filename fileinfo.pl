@@ -60,6 +60,7 @@ print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>";
 print "<tr><td><strong>Albu</strong>m</td><td>$tag{'album'}</td></tr>";
 print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
 print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
+print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
 print "</table>";
 
 print end_html;
