@@ -26,7 +26,8 @@ print "<hr>";
 my %score = ();
 
 open (LASTVOTES, "${config{'savedir'}}lastvotes") or die $!;
-while (my $line = <LASTVOTES>) {
+my $line = <LASTVOTES>;
+while ($line = <LASTVOTES>) {
     chomp($line);
     if ($score{$line}) {
 	$score{$line}++;
