@@ -83,7 +83,7 @@ print "<img src='themes/${config{theme}}/stop.png' border='0' alt='Stop'></a></t
 if ($favmode eq 'on') {
 	print "<td align='center'><a href='oyster-gui.pl?action=nofavmode${framestr2}' target='curplay' title='Deactivate FAV Mode'>";
 	print "<img src='themes/${config{theme}}/favmodeon.png' border='0' alt='FAV on'></a></td>";
-} elsif ($favmode eq 'off') {
+} else {
 	print "<td align='center'><a href='oyster-gui.pl?action=favmode${framestr2}' target='curplay' title='Activate FAV Mode'>";
 	print "<img src='themes/${config{theme}}/favmodeoff.png' border='0' alt='FAV off'></a></td>";
 }
