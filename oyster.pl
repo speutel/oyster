@@ -73,9 +73,7 @@ sub interpret_control {
 sub init {
 
 	open (FILELIST, $ARGV[0]);
-	system("/usr/bin/mkfifo /tmp/oyster/control");
-	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
-	open (STDERR, ">>/tmp/oyster/err");
+	#open (STDERR, ">>/tmp/oyster/err");
 	open (STDOUT, ">>/dev/null");
 	srand;
 	
@@ -83,6 +81,10 @@ sub init {
 	
 	mkdir($basedir);	
 	open(INFO, ">$basedir/info");
+	print STDERR "making fifos...";
+	system("/usr/bin/mkfifo /tmp/oyster/control");
+	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
+	print STDERR " done\n";
 
 }
 
