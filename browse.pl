@@ -126,7 +126,7 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 	print end_html;
 }
 
-my @entries = (); # All files and directories which should be displayed
+my @files = my @dirs = (); # All files and directories which should be displayed
 
 if (param('playlist')) {
 
@@ -145,7 +145,7 @@ if (param('playlist')) {
 	while (my $line = <PLAYLIST>) {
 		if ($line =~ /^\Q$mediadir$givendir\E[^\/]*$/) {
 			chomp($line);
-			push (@entries, $line);
+			push (@files, $line);
 		}
 		if ($line =~ /^(\Q$mediadir$givendir\E[^\/]*)\//) {
 			$dirs{$1} = 1;
@@ -156,7 +156,7 @@ if (param('playlist')) {
 	# Add all directories to @entries
 
 	foreach my $key (sort (keys %dirs)) {
-		push (@entries, $key);
+		push (@dirs, $key);
 	}
 } else {
 
@@ -165,29 +165,24 @@ if (param('playlist')) {
 	my $globdir = "$mediadir$givendir";
 
 	# Escape whitespaces and apostrophe
-	$globdir =~ s/\ /\\\ /g;
-	$globdir =~ s/\'/\\\'/g;
-	$globdir =~ s/\[/\\\[/g;
-	$globdir =~ s/\]/\\\]/g;
-	@entries = <$globdir*>;
-}
 
-print "<table width='100%'>";
-
-my (@files, @dirs) = ();
-
-# If files and directories exist, add them to @files and @dirs
-
-foreach my $entry (@entries) {
-	if (-d $entry) {
-		push (@dirs, $entry);
-	} elsif (-f $entry) {
-		push (@files, $entry);
+	opendir(DIR, $globdir);
+	while (my $dir = readdir(DIR)) {
+		if (!($dir =~ /^\./)) {
+			# If files and directories exist, add them to @files and @dirs
+			if (-d $globdir . $dir) {
+				push(@dirs, $globdir . $dir);
+			} elsif (-f $globdir . $dir) {
+				push(@files, $globdir . $dir);
+			}
+		}
 	}
 }
 
 @dirs = sort (@dirs);
 @files = sort (@files);
+
+print "<table width='100%'>";
 
 # First, display all directories
 
