@@ -26,10 +26,11 @@ if ( ! $pid ) {
 	chomp($file);
 
 	if ( $suffix eq "mp3" ){
-		$command = $mp3_player . ' ' . '"' . $file . '" 2&>>' . $basedir . '/err';
+		$command = $mp3_player . ' ' . '"' . $file . '"';
 		exec($command);
 	} elsif ( ($suffix eq "ogg") ) {
-		$command = $ogg_player . ' ' . '"' . $file . '" 2&>>' . $basedir . '/err';
+		$command = $ogg_player . ' ' . '"' . $file . '"';
+		#$command = $ogg_player . ' ' . '"' . $file . '" 2&>>' . $basedir . '/err';
 		exec($command);
 	} else {
 		print STDERR "no player found for file $file";
