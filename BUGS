@@ -1,3 +1,0 @@
-- under some circumstances it is possible to lose votes, e.g. when you unvote a
-	file and the file just played is also in the votelist, you lose the this
-	file. (process_votes with no parameter removes the played file from the list)
