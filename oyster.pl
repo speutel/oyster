@@ -18,7 +18,6 @@ my @history;
 
 my $basedir = "/tmp/oyster";
 my $media_dir = "/";
-my $lastvotes_file = "$savedir/lastvotes";
 my $list_dir = "$savedir/lists";
 my $voteplay_percentage = 10;
 my $lastvotes_size = 30;
@@ -31,6 +30,9 @@ my $lastvotes_exist = "false";
 my (@filelist, $file, $control, %votehash, @votelist);
 my $file_override="false"; 
 my $skipped = "false";
+
+my $playlist = "default";
+my $lastvotes_file = "$savedir/lastvotes/$playlist";
 
 
 
@@ -394,7 +396,7 @@ sub enqueue_list {
 	my $list = $_[0];
 	
 	my $list_path = $list;
-	$list_path =~ s@/[^/]*@/@;
+	$list_path =~ s@/[^/]*$@/@;
 	
 	open(LIST, $list) || print STDERR "enqueue_list: could not open playlist\n";
 	while( my $line = <LIST> ) {
@@ -545,10 +547,18 @@ sub load_list {
 	
 	my $listname = $_[0];
 
-	open(LISTIN, "$list_dir/$listname") || print STDERR "load_list: could not open list\n";
-	@filelist = <LISTIN>;
-	close(LISTIN);
-
+	if ( open(LISTIN, "$list_dir/$listname") ) {
+		@filelist = <LISTIN>;
+		close(LISTIN);
+		open(PLAYLIST, ">$basedir/playlist");
+		print PLAYLIST $listname . "\n";
+		close(PLAYLIST);
+		$playlist = $listname;
+		$lastvotes_file = "$savedir/lastvotes/$playlist";
+	} else {
+		print STDERR "load_list: could not open list\n";
+	}
+	
 }
 
 sub save_list {
@@ -567,7 +577,12 @@ sub save_list {
 	print LISTOUT @filelist;
 	close(LISTOUT);
 
-	
+	open(PLAYLIST, ">$basedir/playlist");
+	print PLAYLIST $listname . "\n";
+	close(PLAYLIST);
+
+	$playlist = $listname;
+	$lastvotes_file = "$savedir/lastvotes/$playlist";
 }
 
 sub get_list {
@@ -584,8 +599,10 @@ sub init {
 	## set values from config
 	%config = oyster::conf->get_config($conffile);
 	
+	$savedir = "$config{savedir}";
+	$savedir =~ s/\/$//;
 	$list_dir = "$config{savedir}/lists";
-	$lastvotes_file = "$config{savedir}/lastvotes";
+	$lastvotes_file = "$config{savedir}/lastvotes/$playlist";
 	$votefile = "$config{basedir}/votes";
 	$media_dir = $config{"mediadir"};
 	if ( ! ($media_dir =~ /.*\/$/) ) {
@@ -618,39 +635,48 @@ sub init {
 			
 		mkdir($basedir);
 	}
-	
-	my $mypid = fork();
 
-	if ( $mypid ) {
+	# setup $savedir
+	if ( ! -e $savedir ) {
+		mkdir($savedir);
+	}
+	if ( ! -e "$savedir/lists" ) {
+		mkdir("$savedir/lists");
+	}
+	if ( ! -e "$savedir/blacklists" ) {
+		mkdir("$savedir/blacklists"); 
+	}
+	if ( ! -e "$savedir/lastvotes" ) {
+		mkdir("$savedir/lastvotes" )
+	}
 	
-		#open(PID, "grep ^Pid /proc/self/status|") || die("No /proc/self?\n$!");
-		#my $line = <PID>;
-		#$line =~ /Pid:[\W]*([0-9]*)/;
-		#print "line is: $line";
-		#my $mypid = $1;
-		#close(PID);
-
-		print "pid is: $mypid\n";
-	
+	# get my pid
+#	my $mypid = fork();
+#
+#	if ( $mypid ) {
+#	
+#		print "pid is: $mypid\n";
+#	
 		open(PID, ">$basedir/pid");
-		print PID "$mypid\n";
+		print PID "$$\n";
 		close(PID);
+#	
+#		exit;
+#	}
+
+	#build default filelist - list all files in $media_dir
+	system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
+	open (FILELIST, "$list_dir/default") || die "init: could not open default filelist";
+	@filelist = <FILELIST>;
+	close(FILELIST);
+
+	open (PLAYLIST, ">$basedir/playlist");
+	print PLAYLIST "default\n";
+	close (PLAYLIST);
 	
-		exit;
-	}
-	# open filelist and read it into memory
-	if ($ARGV[0]) {
-		open (FILELIST, $ARGV[0]) || die "init: could not read filelist";
-		@filelist = <FILELIST>;
-		close(FILELIST);
-	} else {
-		#build default filelist - list all files in $media_dir
-		system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
-		open (FILELIST, "$list_dir/default") || die "init: could not open default filelist";
-		@filelist = <FILELIST>;
-		close(FILELIST);
-	}
-	
+	$playlist = "default";
+	$lastvotes_file = "$savedir/lastvotes/$playlist";
+
 	$media_dir =~ s/\/$//;
 	
 	# read last votes
@@ -718,10 +744,11 @@ sub choose_file {
 
 		# read regexps from $savedir/blacklist (one line per regexp)
 		# and if $file matches, choose again
-		if ( -e "$savedir/blacklist" ) {
+		if ( -e "$savedir/blacklists/$playlist" ) {
 			my $tmpfile = $file;
 			$tmpfile =~ s/\Q$media_dir//;
-			open(BLACKLIST, "$savedir/blacklist");
+			print "$savedir/blacklists/$playlist\n";
+			open(BLACKLIST, "$savedir/blacklists/$playlist");
 			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
 				if ( $tmpfile =~ /$regexp/ ) {
