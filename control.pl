@@ -7,12 +7,6 @@ use oyster::conf;
 my %config = oyster::conf->get_config('oyster.conf');
 
 if (param()) {
-    my $action=param('action');
-    if ($action eq 'stop') {
-	open (CONTROL, '>/tmp/oyster/control');
-	print CONTROL 'QUIT';
-	close CONTROL;
-    }
     my $volume=param('vol');
     if ($volume eq 'down') {
 	system ('/usr/bin/aumix -w -5');
@@ -36,7 +30,7 @@ print "<a href='control.pl' style='position:absolute; top:2px; right:2px'><img s
 print "<table width='80%' style='margin-left:auto; margin-right:auto;'>";
 print "<tr><td align='left' width='30%'><a href='oyster-gui.pl?action=start' target='curplay'>Start</a></td>";
 print "<td align='center'><a href='oyster-gui.pl?action=pause' target='curplay'>Pause</a></td>";
-print "<td align='right' width='30%'><a href='control.pl?action=stop'>Stop</a></td>";
+print "<td align='right' width='30%'><a href='oyster-gui.pl?action=stop' target='curplay'>Stop</a></td>";
 print "</tr></table>\n";
 
 my $volume = `aumix -w q`;
