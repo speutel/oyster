@@ -384,15 +384,11 @@ sub add_m3u {
 sub get_player_pid {
 	#TODO add support for players set in the config file
 	my $player_pid;
-	open(PS, "ps x -o pid=,comm= |") || print STDERR "ps x -o pid=,comm= | failed\n";
-	while( my $line = <PS> ) {
-		if ( $line =~ /(mpg321|ogg123)/ ) {
-			$line =~ /^[\ ]*([0-9][0-9]*)\ /;
-			$player_pid = $1;
-			last;
-		}
-	}
-	close(PS);
+	
+	open(PLAYERPID, "$basedir/player_pid");
+	$player_pid = <PLAYERPID>;
+	close(PLAYERPID);
+	chomp($player_pid);
 	return $player_pid;
 }
 
@@ -556,7 +552,7 @@ sub get_list {
 
 sub init {
 	# well, it's called "init". guess.
-
+	
 	## set values from config
 	%config = oyster::conf->get_config($conffile);
 	
@@ -577,15 +573,46 @@ sub init {
 	if ( ! -e $basedir) {
 		mkdir($basedir);
 	} else {
-		print "/tmp/oyster exists\n";
-		open(OTHER, ">$basedir/control");
-		print OTHER "QUIT\n";
+		print "/tmp/oyster exists ";
+		open(OTHER, "$basedir/pid");
+		my $otherpid = <OTHER>;
 		close(OTHER);
-		sleep 1;
-		unlink($basedir);
+		chomp($otherpid);
+		
+		my $othercmd = `ps -o comm= $otherpid`;
+		if ( $othercmd =~ /oyster\.pl/ ) {
+			print "and oyster is running. Trying to QUIT... ";
+			open(OTHER, ">$basedir/control");
+			print OTHER "QUIT\n";
+			close(OTHER);
+			sleep 1;
+			print "success!\n"
+		} else {
+			print "but oyster is not running.\n";
+			unlink($basedir);
+		}
 		mkdir($basedir);
 	}
+	
+	my $mypid = fork();
 
+	if ( $mypid ) {
+	
+		#open(PID, "grep ^Pid /proc/self/status|") || die("No /proc/self?\n$!");
+		#my $line = <PID>;
+		#$line =~ /Pid:[\W]*([0-9]*)/;
+		#print "line is: $line";
+		#my $mypid = $1;
+		#close(PID);
+
+		print "pid is: $mypid\n";
+	
+		open(PID, ">$basedir/pid");
+		print PID "$mypid\n";
+		close(PID);
+	
+		exit;
+	}
 	# open filelist and read it into memory
 	if ($ARGV[0]) {
 		open (FILELIST, $ARGV[0]);
