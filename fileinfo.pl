@@ -3,6 +3,7 @@ use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
 use oyster::conf;
+use oyster::taginfo;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
@@ -51,25 +52,14 @@ print "$fileonly</p>\n";
 
 print "<p><a class='file' href='oyster-gui.pl?vote=$file' target='curplay'>Vote for this song</a></p>\n";
 
-if ($file =~ /mp3$/) {
-    open (MP3, "id3v2 -l \"$mediadir$file\"|") or die $!;
-    my @output = <MP3>;
+my %tag = oyster::taginfo->get_tag("${config{'mediadir'}}$file");
 
-    foreach my $line (@output) {
-	print $line . "<br>";
-    }
-
-    close (MP3);
-
-} elsif ($file =~ /ogg$/) {
-    open (OGG, "ogginfo \"$mediadir$file\"|") or die $!;
-    my @output = <OGG>;
-    
-    foreach my $line (@output) {
-	print $line . "<br>";
-    }
-
-    close (OGG);
-}
+print "<table cellpadding='10'>";
+print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>";
+print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>";
+print "<tr><td><strong>Albu</strong>m</td><td>$tag{'album'}</td></tr>";
+print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
+print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
+print "</table>";
 
 print end_html;
