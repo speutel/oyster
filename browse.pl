@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,14 +29,18 @@ my %config = oyster::conf->get_config('oyster.conf');
 oyster::common->navigation_header();
 
 my $mediadir = $config{'mediadir'};
+$mediadir =~ s/\/$//;
 my $givendir = '/';
 
 if (param('dir')) {
+    # Check given parameter for possible security risks
     $givendir=param('dir') . "/";
     $givendir =~ s@//$@/@;
     $givendir =~ s/\.\.\///g;
     $givendir = '/' if ($givendir eq "..");
 }
+
+# Is oyster currently running?
 
 my $oysterruns = 0;
 
@@ -42,9 +48,23 @@ if (-e $config{'basedir'}) {
     $oysterruns = 1;
 }
 
+# Give an option to browse all files or only the playlist
+
+my $playlist = oyster::conf->get_playlist();
+
+if (param('playlist')) {
+    print "<p align='right'><a class='file' href='browse.pl" .
+	"?dir=" . param('dir') . "'>Browse all files</a></p>";
+} elsif ($playlist ne 'default' ) {
+    print "<p align='right'><a class='file' href='browse.pl?playlist=" .
+	$playlist . "'>Browse in current playlist</a></p>";
+}
+
 if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 
     print "<p>" . oyster::common->get_cover($mediadir . $givendir, "100");
+
+    # Create links for all directories above this
 
     print "<strong>Current directory: ";
 
@@ -53,22 +73,36 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
     foreach my $partdir (@dirs) {
 	my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
 	my $escapedpartdir = oyster::common->remove_html($partdir);
-	print "<a href='browse.pl?dir=$escapeddir'>$escapedpartdir</a> / ";
+	if (param('playlist')) {
+	    print "<a href='browse.pl?dir=$escapeddir&playlist=" .
+		param('playlist') . "'>$escapedpartdir</a> / ";
+	} else {
+	    print "<a href='browse.pl?dir=$escapeddir'>$escapedpartdir</a> / ";
+	}
 	$incdir = $incdir . "$partdir/";
     }
 
     print "</strong></p><br clear='all'>";
 
-    my $topdir = $givendir;
-    $topdir =~ s/\Q$mediadir\E//;
-    if ($topdir =~ /^[^\/]*\/$/) {
-	$topdir = '';
+    # Get the parent directory
+
+    my $parentdir = $givendir;
+    $parentdir =~ s/\Q$mediadir\E//;
+    if ($parentdir =~ /^[^\/]*\/$/) {
+	$parentdir = '';
     } else {
-	$topdir =~ s/\/[^\/]*\/$//;
+	$parentdir =~ s/\/[^\/]*\/$//;
     }
 
-    my $escapeddir = uri_escape($topdir, "^A-Za-z");
-    print "<a href='browse.pl?dir=$escapeddir'>One level up</a><br><br>";
+    # Create a link to the parent directory
+
+    $parentdir = uri_escape($parentdir, "^A-Za-z");
+    if (param('playlist')) {
+	print "<a href='browse.pl?dir=$parentdir&playlist=" .
+	    param('playlist') . "'>One level up</a><br><br>";
+    } else {
+	print "<a href='browse.pl?dir=$parentdir'>One level up</a><br><br>";
+    }
 
 } elsif (!(-e "$mediadir$givendir")) {   
     print h1('Error!');
@@ -76,22 +110,68 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
     print end_html;
 }
 
-my $globdir = "$mediadir$givendir";
-$globdir =~ s/\ /\\\ /g;
-$globdir =~ s/\'/\\\'/g;
-my @entries = <$globdir*>;
+my @entries = (); # All files and directories which should be displayed
+
+if (param('playlist')) {
+
+    # Browse playlist
+
+    my $playlist = param('playlist');
+    $playlist =~ s@//$@/@;
+    $playlist =~ s/\.\.\///g;
+    $playlist = '' if ($playlist eq "..");
+
+    my %dirs = (); # All directories in a hash to prevent doubles
+
+    # Collect all matching files and directories
+
+    open (PLAYLIST, "$config{'savedir'}lists/$playlist");
+    while (my $line = <PLAYLIST>) {
+	if ($line =~ /^\Q$mediadir$givendir\E[^\/]*$/) {
+	    chomp($line);
+	    push (@entries, $line);
+	}
+	if ($line =~ /^(\Q$mediadir$givendir\E[^\/]*)\//) {
+	    $dirs{$1} = 1;
+	}
+    }
+    close (PLAYLIST);
+
+    # Add all directories to @entries
+
+    foreach my $key (sort (keys %dirs)) {
+	push (@entries, $key);
+    }
+} else {
+
+    # Browse all files
+
+    my $globdir = "$mediadir$givendir";
+
+    # Escape whitespaces and apostrophe
+    $globdir =~ s/\ /\\\ /g;
+    $globdir =~ s/\'/\\\'/g;
+    @entries = <$globdir*>;
+}
 
 print "<table width='100%'>";
 
 my (@files, @dirs) = ();
 
+# If files and directories exist, add them to @files and @dirs
+
 foreach my $entry (@entries) {
-    if (-d "$entry") {
-	push (@dirs, "$entry");
-    } elsif (-f "$entry") {
-	push (@files, "$entry");
+    if (-d $entry) {
+	push (@dirs, $entry);
+    } elsif (-f $entry) {
+	push (@files, $entry);
     }
 }
+
+@dirs = sort (@dirs);
+@files = sort (@files);
+
+# First, display all directories
 
 foreach my $dir (@dirs) {
     $dir =~ s/\Q$mediadir\E//;
@@ -101,10 +181,17 @@ foreach my $dir (@dirs) {
     $dir =~ s/</&lt;/g;
     $dir =~ s/>/&gt;/g;    
     print "<tr>";
-    print "<td><a href='browse.pl?dir=$escapeddir'>$dir</a></td>";
+    if (param('playlist')) {
+	print "<td><a href='browse.pl?dir=$escapeddir&playlist=" .
+	    param('playlist') . "'>$dir</a></td>";
+    } else {
+	print "<td><a href='browse.pl?dir=$escapeddir'>$dir</a></td>";
+    }
     print "<td></td>";
     print "</tr>\n";
 }
+
+# Now display all files
 
 my $cssfileclass = 'file2';
 my $csslistclass = 'playlist2';
