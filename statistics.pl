@@ -86,7 +86,7 @@ print "<tr><td><strong>Total files played</strong></td><td>$totalfilesplayed</td
 print "<tr><td><strong>Files played because of vote</strong></td><td>$votedfiles</td></tr>";
 print "<tr><td><strong>Files played because of scoring</strong></td><td>$scoredfiles</td></tr>";
 print "<tr><td><strong>Files played from playlist at random</strong></td><td>$randomfiles</td></tr>";
-print "<tr><td><strong>Ratio Scoring/Random (should be ~ $config{'voteplay'})</td>";
+print "<tr><td><strong>Ratio Scoring/Random (should be ~ $config{'voteplay'})</strong></td>";
 print "<td>" . int(($scoredfiles/($scoredfiles+$randomfiles)*100)) . "</td></tr>";
 print "</table>";
 
