@@ -37,6 +37,14 @@ a.playlist2 {
   color: #ff5500;
 }
 
+b.dir {
+  color: #08c0e0;;
+}
+
+b.dir2 {
+  color: #1080A0;
+}
+
 span.blacklisted {
   color: #FF0000;
   font-weight: bold;
