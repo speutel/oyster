@@ -16,17 +16,16 @@ sub get_tag_light {
 
     my $filename = $_[1];
 
-    dbmopen(%CACHE, "${config{'basedir'}}tagcache", 0644);
+    dbmopen(%CACHE, "${config{'savedir'}}tagcache", 0644);
     if ($CACHE{$filename}) {
 	$tag{'display'} = $CACHE{$filename};
     } else {
 	%tag = get_tag('', $_[1]);
-	$CACHE{$filename} = $tag{'display'};
     }
 
-    $CACHE{$filename} = $tag{'display'};
     dbmclose(%CACHE);
-    $tag{'display'};
+
+    return $tag{'display'};
 
 }
 
@@ -128,7 +127,7 @@ sub get_tag {
 	$tag{'display'} = "$tag{'artist'} - $tag{'title'}";
     }
 
-    dbmopen(%CACHE, "${config{'basedir'}}tagcache", 0644);
+    dbmopen(%CACHE, "${config{'savedir'}}tagcache", 0644);
     $CACHE{$filename} = $tag{'display'};
     dbmclose(%CACHE);    
 
