@@ -47,24 +47,47 @@ print "<tr><th>Song</th><th>Score</th></tr>";
 
 my $cssclass='file2';
 
-foreach my $key (sort keys (%score)) {
-    my $escapedfile = $key;
-    $escapedfile =~ s/\Q$config{'mediadir'}\E//;
-    $escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
-    my $display = oyster::taginfo->get_tag_light($key);
+my $maxscore = (sort {$b <=> $a} values(%score))[0];
 
-    # $cssclass changes to give each other file
-    # another color
+while ($maxscore > 0) {
+    my @files = ();
 
-    if ($cssclass eq 'file') {
-	$cssclass = 'file2';
-    } else {
-	$cssclass = 'file';
+    foreach my $key (keys(%score)) {
+	if ($score{$key} == $maxscore) { 
+	    push(@files, $key);
+	}
     }
 
-    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
-    print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&file=$escapedfile'>-</a> <span class='$cssclass'>$score{$key}</span>";
-    print " <a class='$cssclass' href='score.pl?action=scoreup&file=$escapedfile'>+</a></td></tr>";
+    @files = sort(@files);
+
+    foreach my $file (@files) {
+
+	my $escapedfile = $file;
+	$escapedfile =~ s/\Q$config{'mediadir'}\E//;
+	$escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
+	my $display = oyster::taginfo->get_tag_light($file);
+	
+	# $cssclass changes to give each other file
+	# another color
+	
+	if ($cssclass eq 'file') {
+	    $cssclass = 'file2';
+	} else {
+	    $cssclass = 'file';
+	}
+	
+	print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
+	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&file=$escapedfile'>-</a> <span class='$cssclass'>$score{$file}</span>";
+	print " <a class='$cssclass' href='score.pl?action=scoreup&file=$escapedfile'>+</a></td></tr>";	
+    }
+
+    $maxscore--;
+
+}
+
+
+foreach my $key (sort {$b <=> $a} values(%score)) {
+
 }
 
 print "</table>";
