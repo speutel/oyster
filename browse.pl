@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
 
-print header, start_html('Oyster-GUI');
+print header, start_html(-title=>'Oyster-GUI',-style=>{'src'=>'layout.css'});
 
 my $basedir = '/Multimedia/Audio/';
 my $rootdir=$basedir;
@@ -27,7 +27,7 @@ my @entries = <$globdir*>;
 my $topdir = $basedir;
 $topdir =~ s/\/[^\/]*\/$//;
 
-print "<a href='browse.pl?dir=$topdir/'>Eine Ebene h&ouml;her</a><br>";
+print "<a href='browse.pl?dir=$topdir/'>Eine Ebene h&ouml;her</a><br><br>";
 print "<table width='100%'>";
 
 my @files = my @dirs = ();
@@ -51,8 +51,13 @@ foreach my $dir (@dirs) {
 foreach my $file (@files) {
     $file =~ s/\Q$basedir\E//;
     print "<tr>";
-    print "<td>$file</td>";
-    print "<td><a href='vote.pl?vote=$basedir$file'>Vote</a></td>";
+    if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
+	print "<td><a href='fileinfo.pl?file=$basedir$file'>$file</a></td>";
+	print "<td><a href='vote.pl?vote=$basedir$file'>Vote</a></td>";
+    } else {
+	print "<td>$file</td>";
+	print "<td></td>";
+    }
     print "</tr>";
 }
 
