@@ -6,6 +6,7 @@ use oyster::conf;
 
 my %tag;
 
+$ENV{LANG} = 'de_DE@euro';
 
 my $VERSION = '1.0';
 
