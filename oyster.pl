@@ -2,8 +2,8 @@
 
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, 
-#  Stephan Windmüller <windy@white-hawk.de>, 
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -25,33 +25,45 @@ use strict;
 use oyster::conf;
 use File::Find;
 use POSIX qw(strftime);
+use Cwd;
 
-my $savedir = `pwd`;
-chomp($savedir);
-my $conffile = "$savedir/oyster.conf";
-my %config;
+
+my $conffile = cwd() . "/oyster.conf"; # Config in current directory
+my %config; # Holds all config-values
 
 my $logtime_format="%Y%m%d-%H%M%S";
 my @history;
 
-my $basedir = "/tmp/oyster";
-my $media_dir = "/";
-my $list_dir = "$savedir/lists";
-my $voteplay_percentage = 10;
-my $scores_size = 30;
-my $votefile = "$basedir/votes";
+my (
+    $savedir,             
+    $basedir,             # Directory for FIFO and other temporarily files
+    $media_dir,           # Where to search for music
+    $list_dir,            # Place for playlists
+    $voteplay_percentage, # probability that one of the files from lastvotes is played
+    $scores_size,         # Maximum number of scored songs
+    $votefile,            # Save scoring in this file
+    $voted_file,          # The currently voted file
+    $scores_pointer,      # 
+    $file,                # Currently playing file
+    $control,             # Filename of the FIFO
+    $scores_file          # Where to save scoring-info
+    );
 
-my $voted_file = "platzhalter";
 
-my ($scores_pointer, @scores);
-my $scores_exist = "false";
-my (@filelist, $file, $control, %votehash, @votelist);
-my $file_override="false"; 
+my $scores_exist = "false"; # Are there any entries in scorefile?
+my (
+    @scores,    #
+    @filelist,  # Current loaded playlist
+    %votehash,  #
+    @votelist   #
+    );
+
+my $file_override = "false"; 
 my $skipped = "false";
 
 my $log_playlist = "default";
 my $playlist = "default";
-my $scores_file = "$savedir/scores/$playlist";
+
 
 
 
@@ -94,18 +106,16 @@ sub init {
 	## set values from config
 	%config = oyster::conf->get_config($conffile);
 
-	$savedir = "$config{savedir}";
+	$savedir = $config{savedir};
 	$savedir =~ s/\/$//;
-	$list_dir = "$config{savedir}/lists";
-	$scores_file = "$config{savedir}/scores/$playlist";
-	$votefile = "$config{basedir}/votes";
-	$media_dir = $config{"mediadir"};
-	if ( ! ($media_dir =~ /.*\/$/) ) {
-		$media_dir = $media_dir . "/";
-	}
-	$basedir = $config{basedir};
-
-	$voteplay_percentage = $config{"voteplay"};
+	$list_dir = "$savedir/lists";
+	$scores_file = "$savedir/scores/$playlist";
+	$votefile = "$config{'basedir'}/votes";
+	$media_dir = $config{'mediadir'};
+	$media_dir =~ s/\/$//;
+	$basedir = $config{'basedir'};
+	$basedir =~ s/\/$//;
+	$voteplay_percentage = $config{'voteplay'};
 	$scores_size = $config{'maxscored'};
 
 
@@ -113,23 +123,31 @@ sub init {
 	if ( ! -e $basedir) {
 		mkdir($basedir);
 	} else {
+	        # There exists a basedir. Check if another
+	        # oyster is running and unpause it.
+	        # Otherwise, remove the basedir
+
+	        # First get PID, if there is any
 		open(OTHER, "$basedir/pid");
 		my $otherpid = <OTHER>;
 		close(OTHER);
 		chomp($otherpid);
 
-		my $othercmd = "platzhalter";
+		my $othercmd = "";
 
 		if ( $otherpid ne "" ) {
 			$othercmd = `ps -o command= -p $otherpid`;
+			# FIXME
 		}
 
 		if ( $othercmd =~ /oyster\.pl/ ) {
+		        # Another oyster is running, unpause it
 			open(OTHER, ">$basedir/control");
 			print OTHER "UNPAUSE\n";
 			close(OTHER);
 			exit;
 		} else {
+		        # Perhaps oyster crashed, remove basedir
 			unlink($basedir);
 		}
 
@@ -154,23 +172,21 @@ sub init {
 	}
 
 
+	# Write current PID
 	open(PID, ">$basedir/pid");
 	print PID "$$\n";
 	close(PID);
 
+	# Write name of current playlist
 	open (PLAYLIST, ">$basedir/playlist");
 	print PLAYLIST "default\n";
 	close (PLAYLIST);
-
-	$playlist = "default";
 
 	# read old default-playlist (choose_file needs this for the first start)
 	open(DEFAULTLIST, "$savedir/lists/default");
 	@filelist = <DEFAULTLIST>;
 	close(DEFAULTLIST);
 	
-	$media_dir =~ s/\/$//;
-
 	update_scores();
 
 	# initialize random
@@ -185,9 +201,9 @@ sub init {
 	open (RANDOM, $randomfile);
 
 	# make fifos
-	system("/usr/bin/mkfifo /tmp/oyster/control");
-	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
-	system("/bin/chmod 666 /tmp/oyster/control");
+	system("/usr/bin/mkfifo $basedir/control");
+	system("/usr/bin/mkfifo $basedir/kidplay");
+	chmod 0666, "$basedir/control";
 }
 
 sub choose_file {
@@ -209,7 +225,8 @@ sub choose_file {
 		# set votes for the played file to 0 and reprocess votes
 		# (write next winner to playnext, 
 		# no winner -> no playnext -> normal play)
-		my $voteentry = $file; chomp($voteentry);
+		my $voteentry = $file;
+		chomp($voteentry);
 		$votehash{$voteentry} = 0;
 		&process_vote;
 	} else {
@@ -249,6 +266,7 @@ sub choose_file {
 					choose_file();
 				}
 			}
+			close(BLACKLIST);
 		}	
 	}
 }
@@ -272,7 +290,7 @@ sub play_file {
 	
 	system("./play.pl &");
 
-	open(KIDPLAY, ">/tmp/oyster/kidplay");
+	open(KIDPLAY, ">$basedir/kidplay");
 	print STDERR "play.pl: $file";
 	print STDERR "escaped:$escaped_file";
 	print KIDPLAY "$escaped_file\n";
@@ -292,10 +310,8 @@ sub play_file {
 sub add_log {
 	# log ( $file, $cause )
 	
-	my ($logged_file, $comment);
-	
-	$comment = $_[1];
-	$logged_file = $_[0];
+	my $comment = $_[1];
+	my $logged_file = $_[0];
 	chomp($logged_file);
 
 	print LOG strftime($logtime_format, localtime) . " $comment $logged_file\n";
@@ -305,7 +321,6 @@ sub add_log {
 		close(LOG);
 		open(LOG, ">>$savedir/logs/$playlist");
 	}
-	
 }
 
 sub interpret_control {
@@ -318,8 +333,7 @@ sub interpret_control {
 		add_log($file, "SKIPPED");
 		
 		$skipped = "true";
-		my $command = "kill " . &get_player_pid;
-		system($command); 
+		kill 15, &get_player_pid;
 		
 		# wait for player to empty cache (without sleep: next player raises an
 		# error because /dev/dsp is in use)
@@ -356,8 +370,7 @@ sub interpret_control {
 
 		add_log($file, "VOTED");
 		
-		my $command = "kill " . &get_player_pid;
-		system($command); 
+		kill 15, &get_player_pid;
 		
 		get_control();
 		interpret_control();
@@ -365,12 +378,11 @@ sub interpret_control {
 	
 	elsif ( $control =~ /^PREV/ ) {
 
-		my $command = "kill " . &get_player_pid;
+		kill 15, &get_player_pid;
 		
 		add_log($file, "SKIPPED");
 		$skipped = "true";
 		
-		system($command); 
 		$file = $history[$#history-1];
 		$file_override = "true";
 
@@ -385,8 +397,7 @@ sub interpret_control {
 		## quits oyster
 
 		# kill player
-		my $command = "kill " . &get_player_pid;
-		system($command); 
+	        kill 15, &get_player_pid;
 		
 		add_log($file, "QUIT");
 		
@@ -505,8 +516,7 @@ sub interpret_control {
 		## pauses play
 
 		# send SIGSTOP to player process
-		my $command = "kill -19 " . &get_player_pid;
-		system($command);
+		kill 19,  &get_player_pid;
 
 		add_log($file, "PAUSED");
 
@@ -524,8 +534,7 @@ sub interpret_control {
 		## continues play
 
 		#send SIGCONT to player process
-		my $command = "kill -18 " . &get_player_pid;
-		system($command);
+		kill 18, &get_player_pid;
 
 		add_log($file, "UNPAUSED");
 
@@ -586,11 +595,11 @@ sub interpret_control {
 }
 
 sub remove_score {
-	# $myfile mit newline am Ende!
-	my $myfile = $_[0];
+	# $file with newline at end
+	my $file = $_[0];
 
 	for ( my $i = 0; $i <= $#scores; $i++ ) {
-		if ( $scores[$i] eq ($myfile . "\n") ) {
+		if ( $scores[$i] eq ($file . "\n") ) {
 			splice(@scores, $i, 1);
 			if ( $scores_pointer > $#scores ) {
 				--$scores_pointer;
@@ -598,6 +607,9 @@ sub remove_score {
 			last;
 		}
 	}
+
+	# Write new scorefile
+
 	open(SCORED, ">$scores_file");
 	print SCORED $scores_pointer . "\n";
 	foreach my $entry ( @scores ) {
@@ -688,6 +700,8 @@ sub add_score {
 	$scores[$scores_pointer] = $added_file . "\n";
 	$scores_exist = "true";
 
+	# Write new scorefile
+
 	open(SCORED, ">$scores_file") || print STDERR "add_score: could not open scores_file\n";
 	print SCORED $scores_pointer . "\n";
 	foreach my $entry ( @scores ) {
@@ -699,8 +713,6 @@ sub add_score {
 sub process_vote {
 
 	$voted_file = $_[0];
-
-	print STDERR "voted for $voted_file\n";
 
 	my $winner = "";
 	my $max_votes = 0;
@@ -825,7 +837,7 @@ sub update_scores {
 
 	$scores_file = "$savedir/scores/$playlist";
 
-	@scores = "";
+	@scores = ();
 
 	if ( -e $scores_file ) {
 		open (SCORED, $scores_file) || die $!;
@@ -841,7 +853,6 @@ sub update_scores {
 
 		$scores_exist = "true";
 	} else {
-		@scores = "";
 		$scores_pointer = 0;
 		$scores_exist = "false";
 	}
@@ -850,9 +861,7 @@ sub update_scores {
 
 sub build_playlist {
 	#build default filelist - list all files in $media_dir
-	#system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
-	print STDERR "old maxindex filelist: " . $#filelist . "\n";
-	@filelist = "";
+	@filelist = ();
 	find( { wanted => \&is_audio_file, no_chdir => 1 }, $media_dir);
 
 	sub is_audio_file {

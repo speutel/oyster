@@ -28,7 +28,7 @@ my $VERSION = '1.0';
 sub get_config {
 	my $conffile = $_[1];
 
-	open(CONF, $conffile) || die $!;
+	open(CONF, $conffile) || die "Could not open $conffile";
 	
 	while ( my $line = <CONF> ) {
 		if ( $line =~ /^[a-z]/ ) {
