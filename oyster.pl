@@ -31,6 +31,7 @@ my (@filelist, $file, $control, %votehash, @votelist);
 my $file_override="false"; 
 my $skipped = "false";
 
+my $log_playlist = "default";
 my $playlist = "default";
 my $scores_file = "$savedir/scores/$playlist";
 
@@ -108,6 +109,12 @@ sub add_log {
 	chomp($logged_file);
 
 	print LOG strftime($logtime_format, localtime) . " $comment $logged_file\n";
+	
+	if ( $playlist ne $log_playlist ) {
+		$log_playlist = $playlist;
+		close(LOG);
+		open(LOG, ">>$savedir/logs/$playlist");
+	}
 	
 }
 
@@ -676,6 +683,9 @@ sub init {
 	if ( ! -e "$savedir/scores" ) {
 		mkdir("$savedir/scores" )
 	}
+	if ( ! -e "$savedir/logs" ) {
+		mkdir("$savedir/logs" )
+	}
 	
 	# get my pid
 #	my $mypid = fork();
@@ -714,7 +724,7 @@ sub init {
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
 	#open (DEBUG, ">/tmp/debug");
-	open (LOG, ">>$savedir/log");
+	open (LOG, ">>$savedir/logs/$playlist");
 
 	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
