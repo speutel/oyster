@@ -101,7 +101,14 @@ sub do_action {
 		unlink("$config{savedir}lists/$file");
 		unlink("$config{savedir}logs/$file");
 		unlink("$config{savedir}scores/$file");
+	} elsif ($action eq 'favmode') {
+		print CONTROL "FAVMODE";
+		close CONTROL;
+	} elsif ($action eq 'nofavmode') {
+		print CONTROL "NOFAVMODE";
+		close CONTROL;
 	}
+
 
 
 	return $status;

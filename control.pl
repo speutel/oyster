@@ -69,12 +69,25 @@ my $volume = `aumix -w q`;
 $volume =~ s/^pcm\ //;
 $volume =~ s/,.*//;
 
+open (FAVFILE, "${config{basedir}}/favmode");
+my $favmode = <FAVFILE>;
+chomp($favmode);
+close(FAVFILE);
+
 print "<table border='0' width='80%' align='center'><tr>";
 print "<td align='center'><a href='oyster-gui.pl?action=start${framestr2}' target='curplay' title='Start Oyster'>";
 print "<img src='themes/${config{theme}}/play.png' border='0' alt='Start'></a></td>";
 print "<td align='center'><a href='oyster-gui.pl?action=stop${framestr2}' target='curplay' title='Stop Oyster'>";
 print "<img src='themes/${config{theme}}/stop.png' border='0' alt='Stop'></a></td>";
-print "<td>&nbsp;</td>";
+
+if ($favmode eq 'on') {
+	print "<td align='center'><a href='oyster-gui.pl?action=nofavmode${framestr2}' target='curplay' title='Deactivate FAV Mode'>";
+	print "<img src='themes/${config{theme}}/favmodeon.png' border='0' alt='FAV on'></a></td>";
+} elsif ($favmode eq 'off') {
+	print "<td align='center'><a href='oyster-gui.pl?action=favmode${framestr2}' target='curplay' title='Activate FAV Mode'>";
+	print "<img src='themes/${config{theme}}/favmodeoff.png' border='0' alt='FAV off'></a></td>";
+}
+
 print "<td rowspan='2' align='center' style='line-height:180%'><a href='control.pl?vol=up${framestr2}'";
 print "title='Volume up'><img src='themes/${config{theme}}/volup.png' border='0' alt='Volume Up'></a><br>";
 print "<a href='control.pl?vol=50${framestr2}' title='Set volume to 50%'>Volume $volume</a><br>";
