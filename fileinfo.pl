@@ -15,16 +15,18 @@ print
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
 print "<table width='100%'><tr>";
-print "<td align='center' width='25%'><a href='browse.pl'>Browse</a></td>";
-print "<td align='center' width='25%'><a href='search.pl'>Search</a></td>";
-print "<td align='center' width='25%'><a href='blacklist.pl'>Blacklist</a></td>";
-print "<td align='center' width='25%'><a href='logview.pl'>Logfile</a></td>";
+print "<td align='center' width='20%'><a href='browse.pl'>Browse</a></td>";
+print "<td align='center' width='20%'><a href='search.pl'>Search</a></td>";
+print "<td align='center' width='20%'><a href='blacklist.pl'>Blacklist</a></td>";
+print "<td align='center' width='20%'><a href='logview.pl'>Logfile</a></td>";
+print "<td align='center' width='20%'><a href='score.pl'>Scoring</a></td>";
 print "</tr></table>";
 print "<hr>";
 
 my %config = oyster::conf->get_config('oyster.conf');
 
 my $mediadir = $config{'mediadir'};
+$mediadir =~ s/\/$//;
 my $file;
 
 if (param('file')) {
@@ -34,7 +36,7 @@ if (param('file')) {
     $file = '' if ($file eq "..");
 }
 
-print "<p>Tag-Info for ";
+print "<p>Info for ";
 
 my $subdir = my $fileonly = $file;
 $subdir =~ s/^\Q$mediadir\E//;
@@ -54,15 +56,17 @@ my $escapedfile = uri_escape("$file", "^A-Za-z");
 
 print "<p><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></p>\n";
 
-my %tag = oyster::taginfo->get_tag("${config{'mediadir'}}$file");
+my %tag = oyster::taginfo->get_tag("$mediadir$file");
 
 print "<table cellpadding='10'>";
 print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>";
 print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>";
 print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>";
+print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>";
 print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
 print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
+print "<tr><td><strong>Current Oyster-Score</strong></td><td>$tag{'score'}</td></tr>";
 print "</table>";
 
 print end_html;
