@@ -142,11 +142,11 @@ sub listdir {
 	    # do not add padding for the top level directory
 
 	    if (!($basepath eq '')) {
-		my $escapeddir = uri_escape("$basepath/$newpath", "^A-Za-z");
+		my $escapeddir = uri_escape("/$basepath/$newpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
 		$newpath = "$basepath/$newpath";
 	    }  else {
-		my $escapeddir = uri_escape("$newpath", "^A-Za-z");
+		my $escapeddir = uri_escape("/$newpath", "^A-Za-z");
 		print "<strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
 	    }
 
@@ -169,7 +169,7 @@ sub listdir {
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
-		my $escapedfile = uri_escape("$basepath/$filename", "^A-Za-z");
+		my $escapedfile = uri_escape("/$basepath/$filename", "^A-Za-z");
 
 		# $cssclass changes to give each other file
 		# another color
