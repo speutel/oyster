@@ -1,8 +1,13 @@
 #!/usr/bin/perl
 
+# commandline parameters:
+# only parameter is a file with a list of musicfiles to choose from randomly.
+
 # $basedir is where oyster puts all it's runtime-files.
 # It will be deleted after oyster has quit.
 my $basedir = "/tmp/oyster";
+my $savedir = ".";
+
 my (@filelist, $file, $control, $file_override);
 my $fifo="false";
 
@@ -36,12 +41,13 @@ sub main {
 	info_out();
 	play_file();
 	get_control();
-	interpret_control($control);
+	interpret_control();
 	
 }
 
 
 sub get_control {
+	# get control-string from control-FIFO
 	
 	#CONTROL ist eine named pipe, open blockt!
 	open(CONTROL, "$basedir/control");
@@ -52,7 +58,8 @@ sub get_control {
 
 
 sub play_file {
-
+	# start play.pl and tell it which file to play
+	
 	system("./play.pl &");
 	
 	open(KIDPLAY, ">/tmp/oyster/kidplay");
@@ -63,8 +70,20 @@ sub play_file {
 
 
 sub interpret_control {
-	switch ($control) {
+	# find out what to do by checking $control
 
+	## TODO: Listenverwaltung: 
+	#"L $listname" fürs Laden einer Liste, 
+	#"S $listname" fürs speichern, 
+	#"LISTS" fürs Auflisten aller gespeicherten, 
+	#"NEW $name" für das Erstellen einer neuen Liste (Einträge zeilenweise über das FIFO lesen).
+	
+	## TODO: Voteverwaltung
+	#"V $votefile"
+
+	
+	switch ($control) {
+		
 		case /^next/	{ 
 			system("killall play.pl mpg321 ogg123"); 
 		}
@@ -76,25 +95,67 @@ sub interpret_control {
 			$file_override = "true";
 			system("killall play.pl mpg321 ogg123");
 		}	
-		case /^quit/	{ system("killall play.pl mpg321 ogg123"); exit; }
+		case /^quit/	{ 
+			system("killall play.pl mpg321 ogg123"); 
+			exit; 
+		}
+		case /^S\ / {
+			$control =~ /^S\ (.*)$/;
+			save_list($1);
+		}
+		case /^L\ / {
+			$control =~ /^L\ (.*)$/;
+			load_list($1);
+		}
+		case /^N\ / {
+			$control =~ /^N\ (.*)$/;
+			save_list($1);
+		}
+		case /^LISTS/ {
+			# lists filelists into the FIFO
+		}
+		else {
+			interpret_control();
+		}
+
+			
 	}
 }
 
+sub load_list {
+	# $_[0] ist Name der Liste
+	
+}
+
+sub save_list {
+	# $_[0] ist Name der Liste
+	
+}
+
+sub get_list {
+	# $_[0] ist Name der Liste
+
+}
 
 sub init {
-
+	# well, it's called "init". guess.
+	
+	
+	# open filelist and read it into memory
 	open (FILELIST, $ARGV[0]);
+	@filelist = <FILELIST>;
+
+	# tell STDERR and STDOUT where they can dump their messages
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
+	
+	# initialize random
 	srand;
 	
-	@filelist = <FILELIST>;
-	
+	# setup $basedir, make fifos
 	mkdir($basedir);	
-	print STDERR "making fifos...";
 	system("/usr/bin/mkfifo /tmp/oyster/control");
 	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
-	print STDERR " done\n";
 
 }
 
@@ -106,8 +167,6 @@ sub choose_file {
 	if ( $file_override eq "true") {
 		#don't touch $file
 		$file_override = "false";
-	} elsif ( -e "$basedir/votes" ) {
-		$file = evaluate_votes();
 	} elsif ( -e "$basedir/playnext" ) {
 		open( FILEIN, "$basedir/playnext" );
 		$file = <FILEIN>;
@@ -119,10 +178,6 @@ sub choose_file {
 	}
 }
 
-
-sub evaluate_votes {
-	#Does nothing yet
-}
 
 sub info_out {
 	
