@@ -79,12 +79,12 @@ while (my $line = <LOG>) {
 close LOG;
 
 print "<table cellpadding='10'>";
-print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>";
-print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>";
-print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>";
-print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>";
-print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
-print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
+print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>" if ($tag{'title'});
+print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>" if ($tag{'artist'});
+print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{'album'});
+print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>" if ($tag{'track'});
+print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>" if ($tag{'year'});
+print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>" if ($tag{'genre'});
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
 print "<tr><td><strong>Times played</strong></td><td>$timesplayed</td></tr>";
