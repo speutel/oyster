@@ -1,5 +1,5 @@
 # basedir tells oyster where it should put its dynamic files,
-# its the FIFOs it needs and the log and infofile.
+# the FIFOs it needs and the log and infofile.
 basedir=/tmp/oyster/
 # savedir tells oyster where to save files that it needs for 
 # more than one session, for example the votes you did and
@@ -12,7 +12,7 @@ savedir=/var/www/oyster/
 mediadir=/Multimedia/Audio/
 # theme specifies the chosen theme
 theme=default
-# maxlastvotes sets the maximum number of saved votes
+# maxscored sets the maximum number of saved votes
 # (oyster chooses songs at random from this list)
 maxscored=30
 # voteplay sets the probability in percent that one of the

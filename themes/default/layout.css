@@ -64,6 +64,12 @@ input {
   border-color:#000000;
 }
 
+select {
+  background-color: #222222;
+  color: #08c0e0;
+  border-color:#000000;
+}
+
 td.fileinfo {
   padding-top:10px;
   padding-bottom:10px;
@@ -74,4 +80,9 @@ td.fileinfoimage {
   padding-left:10px; 
   padding-right:0px; 
   padding-top:0px;
+}
+
+p.configdescription {
+  width: 30em;
+  margin-bottom: 2em;
 }
