@@ -773,12 +773,12 @@ sub choose_file {
 		&process_vote;
 	} else {
 		my $random = int(rand(100));
-		print RANDOM "Zufallszahl fuer voteplay ist: $random (<$voteplay_percentage fuer scores)\n";
+		#print RANDOM "Zufallszahl fuer voteplay ist: $random (<$voteplay_percentage fuer scores)\n";
 		if ( $random < $voteplay_percentage ) {
 			if ( $scores_exist eq "true" ) {
 				# choose file from scores with a chance of $voteplay_percentage/100
 				my $index = int(rand($#scores));
-				print RANDOM "Zufallszahl fuer scores: $index (index von scores ist $#scores)\n";
+				print RANDOM "$playlist scores: $index (index ist $#scores)\n";
 				#my $index = rand @scores;
 				$file = $scores[$index];
 				add_log($file, "SCORED");
@@ -786,7 +786,7 @@ sub choose_file {
 		} else {
 			# choose file from "normal" filelist
 			my $index = int(rand($#filelist));
-			print RANDOM "Zufallszahl fuer filelist: $index (index der filelist ist $#filelist)\n";
+			print RANDOM "$playlist filelist: $index (index ist $#filelist)\n";
 			#my $index = rand @filelist;
 			$file = $filelist[$index];
 			add_log($file, "PLAYLIST");
