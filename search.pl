@@ -21,13 +21,35 @@ print "<hr>";
 
 my $mediadir = $config{'mediadir'};
 my $search='';
+my $searchtype = 'normal';
+
+if (param('searchtype')) {
+    if ((param('searchtype') eq 'regex')) {
+	$searchtype = 'regex';
+    }
+}
 
 if (param('search')) {
     $search=param('search');
 }
 
-print "<form action='search.pl'><input type='text' name='search' value='$search'>";
-print "<input type='submit' value='Search'></form>";
+my ($normalchecked, $regexchecked) = '';
+
+if ($searchtype eq 'regex') {
+    $regexchecked = 'checked';
+} else {
+    $normalchecked = 'checked';
+}
+
+print "<form action='search.pl'>";
+print "<table><tr>";
+print "<td><input type='text' name='search' value='$search'></td>";
+
+print "<td><input type='radio' name='searchtype' value='normal' $normalchecked> Normal<br>";
+print "<input type='radio' name='searchtype' value='regex' $regexchecked> Regular Expression</td>";
+print "<td style='padding-left: 2em;'><input type='submit' value='Search'></td>";
+print "</table>";
+print "</form>";
 
 my @results = ();
 my $cssclass='file2';
@@ -35,11 +57,21 @@ my $cssclass='file2';
 if (!($search eq '')) {
     open (LIST, "lists/default");
     my @list = <LIST>;
-    foreach my $line (@list) {
-	$line =~ s/\Q$mediadir\E//;
-	if ($line =~ /\Q$search\E/i) {
-	    chomp($line);
-	    push (@results, $line);
+    if ($searchtype eq 'normal') {
+	foreach my $line (@list) {
+	    $line =~ s/\Q$mediadir\E//;
+	    if ($line =~ /\Q$search\E/i) {
+		chomp($line);
+		push (@results, $line);
+	    }
+	}
+    } elsif ($searchtype eq 'regex') {
+	foreach my $line (@list) {
+	    $line =~ s/\Q$mediadir\E//;
+	    if ($line =~ /$search/i) {
+		chomp($line);
+		push (@results, $line);
+	    }
 	}
     }
     @results = sort @results;
