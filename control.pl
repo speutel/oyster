@@ -8,9 +8,7 @@ my %config = oyster::conf->get_config('oyster.conf');
 
 if (param()) {
     my $action=param('action');
-    if ($action eq 'start') {
-	system("perl oyster.pl &");
-    } elsif ($action eq 'stop') {
+    if ($action eq 'stop') {
 	open (CONTROL, '>/tmp/oyster/control');
 	print CONTROL 'QUIT';
 	close CONTROL;
@@ -36,7 +34,7 @@ print
 print "<a href='control.pl' style='position:absolute; top:2px; right:2px'><img src='refresh.gif' border='0'></a>";
 
 print "<table width='80%' style='margin-left:auto; margin-right:auto;'>";
-print "<tr><td align='left' width='30%'><a href='control.pl?action=start'>Start</a></td>";
+print "<tr><td align='left' width='30%'><a href='oyster-gui.pl?action=start' target='curplay'>Start</a></td>";
 print "<td align='center'><a href='oyster-gui.pl?action=pause' target='curplay'>Pause</a></td>";
 print "<td align='right' width='30%'><a href='control.pl?action=stop'>Stop</a></td>";
 print "</tr></table>\n";
