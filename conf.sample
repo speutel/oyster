@@ -20,5 +20,6 @@ maxscored=30
 voteplay=10
 # coverfilenames is a comma-seperated list, which lists
 # all possible names for album-covers relative to the album.
-# Use ${album} to reference in filenames
+# Use ${album} to reference in filenames and ${albumus} if
+# you like to use underscores instead of whitespaces
 coverfilenames=../${album}.png,../${album}.jpg
