@@ -1,18 +1,23 @@
 #!/usr/bin/perl
 
 # commandline parameters:
-# only parameter is a file with a list of musicfiles to choose from randomly.
+# only parameter is a file with a list of musicfiles to choose from randomly. (optional)
 
-# $basedir is where oyster puts all it's runtime-files.
-# It will be deleted after oyster has quit.
+#use warnings;
+#use strict;
+
+my $conffile = "oyster.conf";
+my %config;
+
 my $basedir = "/tmp/oyster";
 my $savedir = ".";
-my $list_dir = "$savedir/lists";
+my $media_dir = "/";
+my $lastvotes_file = "$savedir/lastvotes";
 
-my ($lastvotes_pointer, @lastvotes, $lastvotes_file);
+my ($lastvotes_pointer, @lastvotes);
 my (@filelist, $file, $control, %votelist);
 my ($file_override); 
-#use warnings;
+
 
 init();
 
@@ -35,19 +40,19 @@ use Switch 'Perl5', 'Perl6';
 #########################
 
 sub main {
-		
+
 	choose_file();
 	info_out();
 	play_file();
 	get_control();
 	interpret_control();
-	
+
 }
 
 
 sub get_control {
 	# get control-string from control-FIFO
-	
+
 	#CONTROL ist eine named pipe, open blockt!
 	open(CONTROL, "$basedir/control");
 	$control = <CONTROL>;
@@ -73,14 +78,15 @@ sub interpret_control {
 
 	switch ($control) {
 		
-		case /^next/	{ 
+		case /^NEXT/	{ 
 			system("killall play.pl mpg321 ogg123"); 
 		}
 		case /^done/ { 
 		}
-		case /^F\ / {
+		case /^FILE\ / {
+			# set $file and play it *now*
 			$control =~ s/\\//g;
-			$control =~ /^F\ (.*)$/;
+			$control =~ /^FILE\ (.*)$/;
 			$file = $1;
 			$file_override = "true";
 			system("killall play.pl mpg321 ogg123");
@@ -90,47 +96,55 @@ sub interpret_control {
 			cleanup();
 			exit; 
 		}
-		case /^S\ / {
-			$control =~ /^S\ (.*)$/;
+		case /^SAVE\ / {
+			# save @filelist with name $1
+			$control =~ /^SAVE\ (.*)$/;
 			save_list($1);
 			get_control();
 			interpret_control();
 		}
-		case /^L\ / {
-			$control =~ /^L\ (.*)$/;
+		case /^LOAD\ / {
+			# load @filelist with name $1
+			$control =~ /^LOAD\ (.*)$/;
 			load_list($1);
 			get_control();
 			interpret_control();
 		}
 		case /^NEWLIST/ {
+			# read list from CONTROL
 			get_list();
 			get_control();
 			interpret_control();
 		}
-		case /^P/ {
-			$control =~ /^P\ (.*)$/;
-			open(CONTROL, "$basedir/control");
+		case /^PRINT/ {
+			# print list to CONTROL
+			$control =~ /^PRINT\ (.*)$/;
+			open(CONTROL, ">$basedir/control");
+
+			# if $1 is present print list $1
+			# else print list in memory
 			if ( ! $1 ) {
 				print CONTROL @filelist;
 			} else {
-				open(LIST, "$savedir/lists/$1") || print CONTROL "No such list!\n" && next;
-				@files = <LIST>;
+				open(LIST, "$list_dir/$1") || print CONTROL "No such list!\n" && next;
+				my @files = <LIST>;
 				print CONTROL @files;
-			}
-			close(CONTROL);
-		}
-		case /^LISTS/ {
-			# lists filelists into the FIFO
-			open(CONTROL, ">$basedir/control");
-			@lists = <./lists/*>;
-			foreach $list ( @lists ) {
-				print CONTROL $list . "\n";
 			}
 			close(CONTROL);
 			get_control();
 			interpret_control();
 		}
-		case /^V\ / {
+		case /^LISTS/ {
+			# lists filelists into the FIFO
+			open(CONTROL, ">$basedir/control");
+			my @lists = <$list_dir/*>;
+			foreach my $list ( @lists ) {
+				print CONTROL $list . "\n";
+			}
+			close(CONTROL);
+		}
+		case /^VOTE\ / {
+			# vote for file $1
 			$control =~ s/\\//g;
 			$control =~ /^V\ (.*)$/;
 			process_vote($1);
@@ -138,6 +152,7 @@ sub interpret_control {
 			interpret_control();
 		}
 		else {
+			# fall through
 			get_control();
 			interpret_control();
 		}
@@ -145,7 +160,7 @@ sub interpret_control {
 }
 
 sub process_vote {
-	## FIXME test this!
+	
 	my $voted_file = $_[0];
 	
 	print STDERR "voted for $voted_file\n";
@@ -163,7 +178,7 @@ sub process_vote {
 	$lastvotes[$lastvotes_pointer] = $voted_file . "\n";
 	}
 	
-	foreach $key (keys %votelist) { 
+	foreach my $key (keys %votelist) { 
 		if ($votelist{$key} > $max_votes) {
 			$winner = $key; $max_votes = $votelist{$key};
 		}
@@ -192,12 +207,12 @@ sub cleanup {
 	# save lastvotes-list
 	open(LASTVOTES, ">$lastvotes_file");
 	print LASTVOTES $lastvotes_pointer . "\n";
-	foreach $entry ( @lastvotes ) {
+	foreach my $entry ( @lastvotes ) {
 		print LASTVOTES $entry;
 	}
 	close(LASTVOTES);
 	
-	#cleaning up our files
+	# cleaning up our files
 	unlink <$basedir/*>;
 	rmdir "$basedir";
 
@@ -205,7 +220,7 @@ sub cleanup {
 
 sub load_list {
 	
-	$listname = $_[0];
+	my $listname = $_[0];
 
 	open(LISTIN, "$list_dir/$listname");
 	@filelist = <LISTIN>;
@@ -215,7 +230,7 @@ sub load_list {
 
 sub save_list {
 	
-	$listname = $_[0];
+	my $listname = $_[0];
 
 	if ( ! -d $list_dir ) {
 		print STDERR "list_dir is no directory!\n";
@@ -241,37 +256,67 @@ sub get_list {
 
 }
 
+sub read_config {
+	
+	open(CONFIG, $conffile) || die "no config found (wanted $conffile)";
+	while (  $confline = <CONFIG> ) {
+		chop($confline);
+		if ( $confline =~ /^[^#]/ ) {
+			my ($key, $value) = split("=", $confline);
+			$config{$key} = $value;
+		}
+	}
+	
+	$basedir = $config{"basedir"};
+	$savedir = $config{"savedir"};
+	$media_dir = $config{"mediadir"};
+
+}
+
 sub init {
 	# well, it's called "init". guess.
+
+	# set dirs
+	read_config();
 	
-	$lastvotes_file = "$savedir/lastvotes";
+	my $list_dir = "$savedir/lists";
+	my $lastvotes_file = "$savedir/lastvotes";
 	
+	# setup $basedir
+	if ( ! -x $basedir) {
+		mkdir($basedir);
+	} else {
+		unlink($basedir);
+		mkdir($basedir);
+	}
+
 	# open filelist and read it into memory
 	if ($ARGV[0]) {
 		open (FILELIST, $ARGV[0]);
 		@filelist = <FILELIST>;
-	} elsif ( -e "$list_dir/default" ) {
-		open(FILELIST, "$list_dir/default");
-		@filelist = <FILELIST>;
-	} else { die("No filelist available in $list_dir"); }
-	
+		close(FILELIST);
+	} else {
+		#build default filelist - list all files in $media_dir
+		system("find $media_dir -type f -and -iname '*ogg' -or -iname '*mp3' -print >$list_dir/default");
+		open (FILELIST, "$list_dir/default");
+    @filelist = <FILELIST>;
+		close(FILELIST);
+	}
+
 	# read last votes
 	open (LASTVOTES, $lastvotes_file);
 	$lastvotes_pointer = <LASTVOTES>;
 	chomp($lastvotes_pointer);
 	@lastvotes = <LASTVOTES>;
 	close(LASTVOTES);
-	
+
 	# initialize random
 	srand;
-	
-	# setup $basedir
-	mkdir($basedir);	
-	
+
 	# tell STDERR and STDOUT where they can dump their messages
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
-	
+
 	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
 	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
@@ -281,30 +326,39 @@ sub init {
 
 sub choose_file {
 
-	
 	if ( $file_override eq "true") {
-		#don't touch $file
+		# don't touch $file when $file_override ist set
 		$file_override = "false";
 	} elsif ( -e "$basedir/playnext" ) {
+		# set $file to the content of $basedir/playnext		
 		open( FILEIN, "$basedir/playnext" );
 		$file = <FILEIN>;
 		close( FILEIN );
 		unlink "$basedir/playnext";
-		$voteentry = $file; chomp($voteentry);
+
+		# playnext is set by processvotes
+		# set votes for the played file to 0 and reprocess votes
+		# (write next winner to playnext, 
+		# no winner -> no playnext -> normal play)
+		my $voteentry = $file; chomp($voteentry);
 		$votelist{$voteentry} = 0;
 		&process_vote;
 	} else {
 		if ( int(rand(30)) < 10 ) {
-			$index = rand @lastvotes;
+			# choose file from lastvotes with a chance of 10/30 = 30%
+			my $index = rand @lastvotes;
 			$file = $lastvotes[$index];
-		} else {		
-			$index = rand @filelist;
+		} else {
+			# choose file from "normal" filelist
+			my $index = rand @filelist;
 			$file = $filelist[$index];
 		}
 
+		# read regexps from $savedir/blacklist (one line per regexp)
+		# and if $file matches, choose again
 		if ( -e "$savedir/blacklist" ) {
 			open(BLACKLIST, "$savedir/blacklist");
-			while( $regexp = <BLACKLIST> ) {
+			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
 				if ( $file =~ /\Q$regexp/ ) {
 					choose_file();
@@ -316,10 +370,10 @@ sub choose_file {
 
 
 sub info_out {
-	
+
 	open(INFO, ">$basedir/info");
 	print INFO $file; 
 	close(INFO);
 	print STDERR "info_out zuende\n";
-	
+
 }
