@@ -26,7 +26,9 @@ use oyster::conf;
 use File::Find;
 use POSIX qw(strftime);
 use Cwd;
+use oyster::hooks;
 
+#do "oyster/hooks.pm";
 
 my $conffile = cwd() . "/oyster.conf"; # Config in current directory
 my %config; # Holds all config-values
@@ -115,6 +117,8 @@ sub init {
 	$basedir =~ s/\/$//;
 	$voteplay_percentage = $config{'voteplay'};
 	$scores_size = $config{'maxscored'};
+
+	oyster::hooks::init();
 
 
 	# setup $basedir
@@ -209,6 +213,7 @@ sub choose_file {
 	if ( $file_override eq "true") {
 		# don't touch $file when $file_override ist set
 		$file_override = "false";
+		add_log($file, "VOTED");
 	} elsif ( -e "$basedir/playnext" ) {
 		# set $file to the content of $basedir/playnext		
 		open( FILEIN, "$basedir/playnext" );
@@ -216,7 +221,10 @@ sub choose_file {
 		close( FILEIN );
 		unlink "$basedir/playnext";
 
+		oyster::hooks->preplay($file, $vote_reason{$file});
+
 		add_log($file, $vote_reason{$file});
+		
 
 		# playnext is set by process_vote
 		# set votes for the played file to 0 and reprocess votes
@@ -235,6 +243,7 @@ sub choose_file {
 				#print RANDOM "$playlist scores: $index (index ist $#scores)\n";
 				#my $index = rand @scores;
 				$file = $scores[$index];
+				oyster::hooks->preplay($file, "SCORED");
 				add_log($file, "SCORED");
 			} else {
 				# yes, this does not terminate when you set
@@ -248,6 +257,7 @@ sub choose_file {
 			#print RANDOM "$playlist filelist: $index (index ist $#filelist)\n";
 			#my $index = rand @filelist;
 			$file = $filelist[$index];
+			oyster::hooks->preplay($file, "PLAYLIST");
 			add_log($file, "PLAYLIST");
 		}
 
@@ -262,11 +272,12 @@ sub choose_file {
 				chomp($regexp);
 				if ( $tmpfile =~ /$regexp/ ) {
 					add_log($file, "BLACKLIST");
+					oyster::hooks->postplay($file, "BLACKLIST");
 					choose_file();
 				}
 			}
 			close(BLACKLIST);
-		}	
+		}
 	}
 }
 
@@ -334,6 +345,8 @@ sub interpret_control {
 		$skipped = "true";
 		kill 15, &get_player_pid;
 
+		oyster::hooks->postplay($file, "SKIPPED");
+
 		# wait for player to empty cache (without sleep: next player raises an
 		# error because /dev/dsp is in use)
 		sleep(2);
@@ -345,6 +358,7 @@ sub interpret_control {
 
 		if ( $skipped ne "true" ) {
 			add_log($file, "DONE");
+			oyster::hooks->postplay($file, "DONE");
 		} else { 
 			$skipped = "false";
 		}
@@ -383,11 +397,12 @@ sub interpret_control {
 
 		add_log($file, "SKIPPED");
 		$skipped = "true";
+		
+		oyster::hooks->postplay($file, "SKIPPED");
 
 		$file = $history[$#history-1];
 		$file_override = "true";
 
-		add_log($file, "VOTED");
 	}
 
 	elsif ( $control =~ /^QUIT/	) {  
@@ -398,6 +413,7 @@ sub interpret_control {
 		kill 15, &get_player_pid;
 
 		add_log($file, "QUIT");
+		oyster::hooks->postplay($file, "QUIT");
 
 		# wait for "done" from play.pl
 		get_control();

@@ -25,3 +25,6 @@ coverfilenames=../${album}.png,../${album}.jpg
 # coverwidth is the width of the cover displayed in
 # File Information
 coverwidth=150
+# shall oyster use hooks or shall it ignore them?
+# use_hooks=true for using them
+use_hooks=false
