@@ -48,6 +48,7 @@ my $cssfileclass = 'file2';
 my $action = param('action') || '';
 my $playlist = param('playlist') || '';
 my @playlist = ();
+my @results = ();
 
 if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')) {
 	my $delfile = param('file') || '';
@@ -55,7 +56,9 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 
 	print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
 	print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/${framestr}"},
-		'Add files to this list...'),br,br;
+		'Add files to this list...'),br;
+	print a({href=>"editplaylist.pl?action=search&playlist=$playlist${framestr}"},
+      'Search for files to add...'),br,br;
 
 	# Get all entries from playlist and filter
 
@@ -78,7 +81,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		open (PLAYLIST, ">$config{savedir}lists/$playlist") || error_msg();
 
 		sub error_msg {
-			print strong('Error: Could not save playlist!');
+			print strong("Error: Could not save playlist $playlist!");
 			print end_html;
 			exit 0;
 		}
@@ -92,7 +95,6 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		close PLAYLIST;
 
 	}
-
 
 	listdir('/',0);
 
@@ -128,7 +130,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	open (FILELIST, ">$config{savedir}lists/$playlist") || error_msg();
 
 	sub error_msg {
-		print strong('Error: Could not save playlist!');
+		print strong("Error: Could not save playlist $playlist!");
 		print end_html;
 		exit 0;
 	}
@@ -139,6 +141,14 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	close(FILELIST);
 
 	browse();
+
+} elsif ($action eq 'search') {
+
+	searchform();
+
+} elsif (param('search')) {
+
+	search();
 
 }
 
@@ -366,13 +376,13 @@ sub browse {
 			print "<td><a name='a" . $anchorcounter . "'></a>";
 
 			print a({class=>$cssfileclass,
-					href="fileinfo.pl?file=${escapeddir}${framestr}"}, $escapedfile);
+					href=>"fileinfo.pl?file=${escapeddir}${framestr}"}, $escapedfile);
 			print "</td>";
 
 			print "<td align='right'>";
 
 			print a({class=>$cssfileclass,
-					href="editplaylist.pl?action=addfile&playlist=$playlist" .
+					href=>"editplaylist.pl?action=addfile&playlist=$playlist" .
 					"&toadd=$escapeddir&dir=${givendir}${framestr}#a" . $anchorcounter++}, 'Add');
 
 		}
@@ -384,3 +394,221 @@ sub browse {
 
 
 }
+
+sub search {
+
+   my $search = param('search') || '';
+	my $searchtype = param('searchtype') || '';
+	my $mediadir = $config{'mediadir'};
+	$mediadir =~ s/\/$//;
+
+	searchform();
+
+	if ($search ne '') {
+
+		open (LIST, "${config{savedir}}lists/default");
+		my @list = <LIST>;
+
+		# Compare filenames with $search and add
+		# them to @results
+
+		if ($searchtype eq 'normal') {
+			foreach my $line (@list) {
+				$line =~ s/\Q$mediadir\E//;
+				if ($line =~ /\Q$search\E/i) {
+					chomp($line);
+					push (@results, $line);
+				}  
+			}  
+		} elsif ($searchtype eq 'regex') {
+			foreach my $line (@list) {
+				$line =~ s/\Q$mediadir\E//;
+				if ($line =~ /$search/i) {
+					chomp($line);
+					push (@results, $line);
+				}  
+			}  
+		}  
+
+		# Sort @results alphabetically
+
+		@results = sort @results;
+
+   	# Determine maximum depth of directories for
+      # further sorting
+   
+		my $maxdepth = -1;
+		foreach my $result (@results) {
+			my $line = $result;
+			my $counter = 0;
+			while ($counter < $maxdepth) {
+				$line =~ s/^[^\/]*\///;
+				$counter++;
+			}                                                                                                                       
+			if ($line =~ /\//) {
+				$maxdepth++;
+			}
+		}
+
+		# Sort directories before files in every depth
+
+		while ($maxdepth >= 0) {
+			@results = sort_results($maxdepth);
+			$maxdepth--;
+		}
+
+		# List directory in browser
+
+		if (@results > 0) {
+			listsearch('/',0);
+		} else {
+			print p('No songs found.');
+		}
+
+	}
+
+	print end_html;
+
+	exit 0;
+
+}
+
+sub listsearch {
+
+   # listdir shows files from @results, sorted by directories
+   # $basepath is cut away for recursive use
+   
+	my $basepath = $_[0];
+	my $counter = $_[1];
+
+	while (($counter < @results) && ($results[$counter] =~ /^\Q$basepath\E/)) {
+		my $newpath = $results[$counter];
+		$newpath =~ s/^\Q$basepath\E//;
+		if ($newpath =~ /\//) {
+
+			# $newpath is directory and becomes the top one
+
+			$newpath =~ /^([^\/]*\/)/;
+			$newpath = $1;
+
+			# do not add padding for the top level directory
+
+			my $cutnewpath = $newpath;
+			$cutnewpath =~ s/\/$//;
+
+			if (!($basepath eq '/')) {
+				my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
+				print "<div style='padding-left: 1em;'>";
+				print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
+				$newpath = "$basepath$newpath";
+			}  else {
+				my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
+				print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
+				$newpath = "/$newpath";
+			}
+
+			# Call listdir recursive, then quit padding with <div>
+
+			$counter = listsearch($newpath,$counter);
+			if (!($basepath eq '/')) {
+				print "</div>\n";
+			}
+		} else {
+
+		# $newpath is a regular file without leading directory
+
+			print "<div style='padding-left: 1em;'>";
+			while ($results[$counter] =~ /^\Q$basepath\E/) {
+
+				#	Print all filenames in $basedir
+
+				my $filename = $results[$counter];
+				$filename =~ s/^.*\///;
+				$filename =~ /(.*)\.(...)$/;
+				my $nameonly = $1;
+				my $escapedfile = uri_escape("$basepath$filename", "^A-Za-z");
+				my $escapeddir = uri_escape($basepath, "^A-Za-z");
+
+				# $cssclass changes to give each other file
+				# another color
+
+				if ($cssfileclass eq 'file') {
+					$cssfileclass = 'file2';
+				} else {
+					$cssfileclass = 'file';
+				}
+				print "<table width='100%'><tr>";
+				print "<td align='left'><a href='fileinfo.pl?file=${escapedfile}${framestr}' ";
+				print "class='$cssfileclass'>" . escapeHTML($nameonly) . "</a></td>";
+				print "<td align='right'>";
+				print a({class=>$cssfileclass,
+						href=>"editplaylist.pl?action=addfile&playlist=$playlist" .
+						"&toadd=${escapedfile}&dir=${escapeddir}${framestr}"}, 'Add');
+				print "</td></tr></table>\n";
+				$counter++;
+			}
+			print "</div>\n";
+		}
+	}
+
+	return ($counter);
+
+}
+
+sub searchform {
+
+   # Create form
+	
+	my %labels = ('normal' => ' Normal', 'regex' => ' Regular Expression');
+
+	print h1("Add files to " . param('playlist'));
+
+	print start_form;
+
+	my $textfield = textfield(-name=>'search',-default=>'');
+	my $radiobuttons = radio_group(-name=>'searchtype',-values=>['normal','regex'],-default=>'normal',
+			-linebreak=>'true',-labels=>\%labels);
+	my $submit = submit(-value=>'Search',-style=>'margin-left: 2em;');
+	print table({-border=>'0'},
+			Tr([
+				td([$textfield,$radiobuttons,$submit]),
+				])
+			);
+
+	print hidden('frames','no') if (! $frames);
+	print hidden('playlist', $playlist);
+
+	print end_form;
+
+
+}
+
+sub sort_results {
+
+   # sort_results sorts a directory by
+   # "first dirs, then files in a given depth
+        
+	my $depth = $_[0];
+	my (@dirs, @files) = ();
+
+	foreach my $result (@results) {
+		my $line = $result;
+		my $counter = $depth;
+		while ($counter > 0) {
+			$line =~ s/^[^\/]*\///;
+			$counter--;
+		}
+
+	# If $line contains a '/', it is added to @dirs
+
+		if ($line =~ /\//) {
+			push (@dirs, $result);
+		} else {
+			push (@files, $result);
+		}
+	}
+
+	return (@dirs, @files);
+
+}
+
