@@ -806,6 +806,8 @@ sub choose_file {
 				#my $index = rand @scores;
 				$file = $scores[$index];
 				add_log($file, "SCORED");
+			} else {
+				$file = " ";
 			}
 		} else {
 			# choose file from "normal" filelist
