@@ -21,16 +21,16 @@ print "</tr></table>";
 print "<hr>";
 
 my $mediadir = $config{'mediadir'};
-my $givendir = '';
+my $givendir = '/';
 
 if (param('dir')) {
     $givendir=param('dir') . "/";
     $givendir =~ s@//$@/@;
     $givendir =~ s/\.\.\///g;
-    $givendir = '' if ($givendir eq "..");
+    $givendir = '/' if ($givendir eq "..");
 }
 
-if ((!($givendir eq '')) && (-e "$mediadir$givendir")) {
+if ((!($givendir eq '/')) && (-e "$mediadir$givendir")) {
 
     print "<p><strong>Current directory: ";
 
@@ -46,6 +46,7 @@ if ((!($givendir eq '')) && (-e "$mediadir$givendir")) {
 
     my $topdir = $givendir;
     $topdir =~ s/\Q$mediadir\E//;
+    $topdir = "/$topdir";
     if ($topdir =~ /^[^\/]*\/$/) {
 	$topdir = '';
     } else {
@@ -79,7 +80,6 @@ foreach my $entry (@entries) {
 
 foreach my $dir (@dirs) {
     $dir =~ s/\Q$mediadir\E//;
-    $dir =~ s/^\///;
     my $escapeddir = uri_escape("$dir", "^A-Za-z");
     $dir =~ s/^.*\///;
     print "<tr>";
