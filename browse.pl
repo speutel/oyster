@@ -64,8 +64,8 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 
     print "<p>" . oyster::common->get_cover($mediadir . $givendir, "100");
 
-    # Create links for all directories above this
-
+    # split path along "/", create link for every part
+    
     print "<strong>Current directory: ";
 
     my @dirs = split(/\//, $givendir);
@@ -104,7 +104,7 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 	print "<a href='browse.pl?dir=$parentdir'>One level up</a><br><br>";
     }
 
-} elsif (!(-e "$mediadir$givendir")) {   
+} elsif (!(-e "$mediadir$givendir")) { # if $mediadir == "/": just build filelist, no dir-splitting needed  
     print h1('Error!');
     print "The directory $givendir could not be found.";
     print end_html;
@@ -199,10 +199,12 @@ my $csslistclass = 'playlist2';
 foreach my $file (@files) {
     $file =~ s/\Q$mediadir$givendir\E//;
     print "<tr>";
-    if (($file =~ /mp3$/i) || ($file =~ /ogg$/i)) {
+    if (($file =~ /mp3$/i) || ($file =~ /ogg$/i)) { # if we have music ...
 	my $escapeddir = "$givendir$file";
 	$escapeddir =~ s/\Q$mediadir\E//;
 	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
+	
+	# alternate colors
 	if ($cssfileclass eq 'file') {
 	    $cssfileclass = 'file2';
 	} else {
@@ -211,15 +213,19 @@ foreach my $file (@files) {
 	my $escapedfile = oyster::common->remove_html($file);
 
 	print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>$escapedfile</a></td>";
+
+	# only generate "Vote"-link if oyster is running
 	if ($oysterruns) {
 	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
 	} else {
 	    print "<td></td>";
 	}
-    } elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) {
+    } elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) { # if we have a list...
 	my $escapeddir = "$givendir$file";
 	$escapeddir =~ s/\Q$mediadir\E//;
 	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
+
+	# alternate colors
 	if ($csslistclass eq 'playlist') {
 	    $csslistclass = 'playlist2';
 	} else {
@@ -227,12 +233,14 @@ foreach my $file (@files) {
 	}
 	my $escapedfile = oyster::common->remove_html($file);
 	print "<td><a class='$csslistclass' href='viewlist.pl?list=$escapeddir'>$escapedfile</a></td>";
+
+	#only generate "Vote"-Link if oyster is running
 	if ($oysterruns) {
 	    print "<td><a class='$csslistclass' href='oyster-gui.pl?votelist=$escapeddir' target='curplay'>Vote</a></td>";
 	} else {
 	    print "<td></td>";
 	}
-    } else {
+    } else { # some other kind of file
 	my $iscover = 0;
 	my @coverfiles = split(/,/, $config{'coverfilenames'});
 	foreach my $cover (@coverfiles) {
@@ -241,6 +249,8 @@ foreach my $file (@files) {
 		$iscover = 1;
 	    }
 	}
+
+	# if we can do nothing - just print it.
 	if ($iscover == 0) {
 	    print "<td>$file</td>";
 	    print "<td></td>";

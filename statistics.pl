@@ -55,12 +55,19 @@ my $check = ''; # Check, if a file was blacklisted before counting it
 foreach (@worklog) {
     chomp($_);
     (my $playreason, my $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
+
+    # second turn: if file is checked and not blacklisted,
+    # add it to the last played files.
     if (($playreason ne 'BLACKLIST') && ($check ne '')) {
 	push (@lastplayed, "$check");
     }
+
+    # never more than 10 entries
     if ($#lastplayed > 9) {
 	shift (@lastplayed);
     }
+
+    # add files to the appropriate counters
     $check = '';
     if ($playreason eq 'DONE') {
 	if ($timesplayed{$filename}) {
@@ -82,6 +89,7 @@ foreach (@worklog) {
 
 # Get the maximum value for $maxplayed
 
+
 my $maxplayed = 0;   # How often the Top-1-Song has been played
 
 foreach my $filename (keys %timesplayed) {
@@ -89,7 +97,7 @@ foreach my $filename (keys %timesplayed) {
 }
 
 # Put the Top-10-Songs in @mostplayed
-
+# inefficient ... someone got a better idea? :)
 my $counter = 10;
 while (($maxplayed > 0) && ($counter > 0)) {
     foreach my $filename (keys %timesplayed) {
@@ -107,64 +115,76 @@ my $totalfilesplayed = $votedfiles + $randomfiles + $scoredfiles;
 
 print h1('Most played songs');
 
-my $cssclass = 'file2';
+print_songs(@mostplayed, "Times played");
 
-print "<table width='100%'>";
-print "<tr><th align='left'>Song</th><th>Times played</th></tr>";
-foreach my $line (@mostplayed) {
-    $line =~ /(.*)\,\ ([0-9]*)$/;
-    my $filename = $1;
-    my $timesplayed = $2;
-    my $displayname = oyster::taginfo->get_tag_light($filename);
-    $filename =~ s/^\Q$config{'mediadir'}\E//;
-    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
-
-    if ($cssclass eq 'file') {
-	$cssclass = 'file2';
-    } else {
-	$cssclass = 'file';
-    }
-
-    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
-    print "<td class='$cssclass' align='center'>$timesplayed</td></tr>\n";
-}
-print "</table>";
+#my $cssclass = 'file2';
+#
+#print "<table width='100%'>";
+#print "<tr><th align='left'>Song</th><th>Times played</th></tr>";
+#
+## for every song in mostplayed
+##  print artist/title
+#foreach my $line (@mostplayed) {
+#    $line =~ /(.*)\,\ ([0-9]*)$/;
+#    my $filename = $1;
+#    my $timesplayed = $2;
+#    my $displayname = oyster::taginfo->get_tag_light($filename);
+#    $filename =~ s/^\Q$config{'mediadir'}\E//;  # remove mediadir from filename
+#    						# (does not turn up in oyster-gui)
+#    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
+#
+#    # switch colors
+#    if ($cssclass eq 'file') {
+#	$cssclass = 'file2';
+#    } else {
+#	$cssclass = 'file';
+#    }
+#
+#    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
+#    print "<td class='$cssclass' align='center'>$timesplayed</td></tr>\n";
+#}
+#print "</table>";
 
 # Recently played songs
 
 print h1('Recently played songs');
 
-my $cssclass = 'file2';
+print_songs(@lastplayed, "Playreason");
 
-print "<table width='100%'>";
-print "<tr><th align='left'>Song</th><th>Playreason</th></tr>";
-
-foreach my $line (@lastplayed) {
-    $line =~ /(.*)\,\ ([A-Z]*)$/;
-    my $filename = $1;
-    my $playreason = $2;
-    my $displayname = oyster::taginfo->get_tag_light($filename);
-    $filename =~ s/^\Q$config{'mediadir'}\E//;
-    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
-
-    if ($cssclass eq 'file') {
-	$cssclass = 'file2';
-    } else {
-	$cssclass = 'file';
-    }
-
-    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
-    print "<td class='$cssclass' align='center'>$playreason</td></tr>\n";
-
-
-}
-
-print "</table>";
+#my $cssclass = 'file2';
+#
+#print "<table width='100%'>";
+#print "<tr><th align='left'>Song</th><th>Playreason</th></tr>";
+#
+## for every song in lastplayed
+##  print artist/title
+#foreach my $line (@lastplayed) {
+#    $line =~ /(.*)\,\ ([A-Z]*)$/;
+#    my $filename = $1;
+#    my $playreason = $2;
+#    my $displayname = oyster::taginfo->get_tag_light($filename);
+#    $filename =~ s/^\Q$config{'mediadir'}\E//;
+#    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
+#
+#    # switch colors
+#    if ($cssclass eq 'file') {
+#	$cssclass = 'file2';
+#    } else {
+#	$cssclass = 'file';
+#    }
+#
+#    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
+#    print "<td class='$cssclass' align='center'>$playreason</td></tr>\n";
+#
+#}
+#
+#print "</table>";
 
 # Some numbers
 
 print h1('Some numbers');
 
+# FIXME perl function for wc?
 my $totalfiles = `wc -l  "${config{savedir}}lists/$playlist"`;
 $totalfiles =~ /^[\ ]*([0-9]*)/;
 $totalfiles = $1;
@@ -216,4 +236,38 @@ sub get_blacklisted {
 
     return $count;
     
+}
+
+sub print_songs {
+
+    my $filearray = $_[0];
+    my $title = $_[1];
+    
+    my $cssclass = 'file2';
+
+    print "<table width='100%'>";
+    print "<tr><th align='left'>Song</th><th>$title</th></tr>";
+
+    # for every song in mostplayed
+    #  print artist/title
+    foreach my $line (@filearray) {
+	$line =~ /(.*)\,\ ([0-9]*)$/;
+	my $filename = $1;
+	my $reason = $2;
+	my $displayname = oyster::taginfo->get_tag_light($filename);
+	$filename =~ s/^\Q$config{'mediadir'}\E//;  # remove mediadir from filename
+	# (does not turn up in oyster-gui)
+	my $escapedfilename = uri_escape("$filename", "^A-Za-z");
+
+	# switch colors
+	if ($cssclass eq 'file') {
+	    $cssclass = 'file2';
+	} else {
+	    $cssclass = 'file';
+	}
+
+	print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
+	print "<td class='$cssclass' align='center'>$reason</td></tr>\n";
+    }
+    print "</table>";
 }
