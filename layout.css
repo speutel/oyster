@@ -14,7 +14,11 @@ a:hover {
 }
 
 a.file {
-  color: #FFCC00;
+  color: #FFBB00;
+}
+
+a.file2 {
+  color: #FFFF00;
 }
 
 input {
