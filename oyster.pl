@@ -108,13 +108,14 @@ sub interpret_control {
 			load_list($1);
 		}
 		case /^N\ / {
-			$control =~ /^N\ (.*)$/;
-			save_list($1);
+			$control =~ /^NEWLIST/;
+			get_list();
 		}
 		case /^LISTS/ {
 			# lists filelists into the FIFO
 		}
 		else {
+			get_control();
 			interpret_control();
 		}
 
@@ -125,16 +126,49 @@ sub interpret_control {
 sub load_list {
 	# $_[0] ist Name der Liste
 	
+	$listname = $_[0];
+	$list_dir = "$savedir/lists";
+
+	open(LISTIN, "$list_dir/$listname");
+	@filelist = <LISTIN>;
+	close(LISTIN);
+
+	get_control();
+	interpret_control();
 }
 
 sub save_list {
 	# $_[0] ist Name der Liste
 	
+	$listname = $_[0];
+	$list_dir = "$savedir/lists";
+
+	if ( ! -d $list_dir ) {
+		print STDERR "list_dir is no directory!\n";
+		if ( -e $list_dir ) {
+			unlink($list_dir);
+		}
+		mkdir($list_dir);
+	}
+
+	open(LISTOUT, ">$list_dir/$listname");
+	print LISTOUT @filelist;
+	close(LISTOUT);
+
+	get_control();
+	interpret_control();
+	
 }
 
 sub get_list {
-	# $_[0] ist Name der Liste
+	
+	#CONTROL ist eine named pipe, open blockt!
+	open(CONTROL, "$basedir/control");
+	@filelist = <CONTROL>;
+	close(CONTROL);
 
+	get_control();
+	interpret_control();
 }
 
 sub init {
@@ -162,7 +196,6 @@ sub init {
 
 sub choose_file {
 
-	print STDERR $file;
 	
 	if ( $file_override eq "true") {
 		#don't touch $file
@@ -175,6 +208,16 @@ sub choose_file {
 	} else {
 		$index = rand @filelist;
 		$file = $filelist[$index];
+		if ( -e "$savedir/blacklist" ) {
+			print STDERR "Blacklist existiert.\n";
+			open(BLACKLIST, "$savedir/blacklist");
+			while( $regexp = <BLACKLIST> ) {
+				print STDERR "File : $file regexp: $regexp\n";
+				if ( $file =~ /\Q$regexp/ ) {
+					choose_file();
+				}
+			}
+		}	
 	}
 }
 
