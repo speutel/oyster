@@ -65,7 +65,7 @@ sub listdir {
 	    }
 	    $counter = listdir("$newpath",$counter);
 	    if (!($basepath eq '')) {
-		print "</div>";
+		print "</div>\n";
 	    }
 	} else {
 	    print "<div style='padding-left: 1em;'>";
