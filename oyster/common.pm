@@ -32,8 +32,11 @@ sub navigation_header {
 
 	print header, start_html(-title=>'Oyster-GUI',
 		-style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
-		-head=>CGI::meta({-http_equiv => 'Content-Type',
-				-content    => 'text/html; charset=iso-8859-1'}));
+		-head=>[
+					CGI::meta({-http_equiv => 'Content-Type',
+									-content => 'text/html; charset=iso-8859-1'}),
+					Link({-rel=>'shortcut icon', -href=>"themes/${config{theme}}/favicon.png"})
+		]);
 
 	print "<table width='100%'><tr>";
 	print "<td align='center' width='17%'><a href='browse.pl'>Browse</a></td>";
