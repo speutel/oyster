@@ -62,3 +62,11 @@ sub get_cover {
     }
 
 }
+
+sub remove_html {
+    my $input = $_[1];
+    $input =~ s/&/&amp;/g;
+    $input =~ s/</&lt;/g;
+    $input =~ s/>/&gt;/g;
+    return $input;
+}
