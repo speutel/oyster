@@ -8,6 +8,7 @@ use oyster::fifocontrol;
 use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
+my $playlist = oyster::conf->get_playlist();
 
 oyster::common->navigation_header();
 
@@ -76,7 +77,7 @@ if ($isblacklisted) {
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
 
 my $timesplayed = 0;
-open (LOG, "${config{'savedir'}}log");
+open (LOG, "${config{'savedir'}}logs/$playlist");
 while (my $line = <LOG>) {
     my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
     chomp($line);
