@@ -60,6 +60,8 @@ if ($info =~ /mp3$/) {
 if ($title eq "") {
     $title = $info;
     $title =~ s@.*/@@;
+    $title =~ s/\.mp3//;
+    $title =~ s/\.ogg//;
 } else {
     $title = "$artist - $title";
 }
