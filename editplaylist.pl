@@ -52,13 +52,15 @@ my $encplaylist = uri_escape($playlist, "^A-Za-z");
 my @playlist = ();
 my @results = ();
 
-if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') || ($action eq 'movelistsave')) {
+if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir') ||
+	($action eq 'movelistsave') || ($action eq 'rename')) {
 	my $delfile = param('file') || '';
 	my $deldir = param('dir') || '';
+	my $newplaylist = $playlist;
 
 	if ($action eq 'movelistsave') {
 
-		my $newplaylist = $playlist;
+		# Get section only
 		$newplaylist =~ s/^.*_//;
 
 		if (param('sectiontype') eq 'existing') {
@@ -67,7 +69,28 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 			$newplaylist = param('newsection') . "_$newplaylist";
 		}
 
+		if ($newplaylist =~ /^Default_/) {
+			$newplaylist =~ s/^Default_//;
+		}
+
+	}
+	
+	if ($action eq 'rename') {
+	
+		my $section = '';
+
+		if ($playlist =~ /^(.*_)/) {
+			$section = $1;
+		}
+
+		$newplaylist = $section . param('newname');
+	}
+
+	if (($action eq 'movelistsave') || ($action eq 'rename')) {
+		rename("$config{savedir}blacklists/$playlist", "$config{savedir}blacklists/$newplaylist");
 		rename("$config{savedir}lists/$playlist", "$config{savedir}lists/$newplaylist");
+		rename("$config{savedir}logs/$playlist", "$config{savedir}logs/$newplaylist");
+		rename("$config{savedir}scores/$playlist", "$config{savedir}scores/$newplaylist");
 
 		$playlist = $newplaylist;
 		$encplaylist = uri_escape($playlist, "^A-Za-z");
@@ -81,7 +104,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 	print a({href=>"editplaylist.pl?action=search&playlist=$encplaylist${framestr}"},
       'Search for files to add...'),br;
 	print a({href=>"editplaylist.pl?action=move&playlist=$encplaylist${framestr}"},
-      'Move playlist to another section...'),br,br;
+      'Move/Rename playlist...'),br,br;
 
 	# Get all entries from playlist and filter
 
@@ -89,7 +112,8 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 	while (my $line = <PLAYLIST>) {
 		chomp($line);
 		$line =~ s/^\Q$config{mediadir}\E/\//;
-		if ($action eq 'movelistsave' || $action eq 'edit' || (($action eq 'deletefile') && ($line ne $delfile))
+		if ($action eq 'movelistsave' || $action eq 'edit' || $action eq 'rename' ||
+			(($action eq 'deletefile') && ($line ne $delfile))
 			|| (($action eq 'deletedir') && !($line =~ /^\Q$deldir\E\/[^\/]*/))) {
 			push (@playlist, $line);
 		}
@@ -237,7 +261,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 		}
 	}
 
-	my @sections = ();
+	my @sections = ('Default');
 
 	foreach my $section (sort keys(%section)) {
 		push (@sections, $section);
@@ -246,7 +270,11 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 	my $title = $playlist;
 	$title =~ s/^.*_//;
 
-	print h2($title);
+	print h1($title);
+
+	print h2('Move to another section');
+
+	print "<div style='padding-left: 2em;'>";
 
 	print start_form;
 
@@ -266,6 +294,26 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 	print submit(-value=>'Move');
 
 	print end_form;
+
+	print "</div>",br;
+
+	print h2('Rename');
+
+	print "<div style='padding-left: 2em;'>";
+
+	print start_form;
+
+	print "<input type='hidden' name='action' value='rename'>";
+	print hidden('frames','no') if (! $frames);
+	print hidden('playlist', $playlist);
+
+	print textfield('newname'),br,br;
+
+	print submit(-value=>'Rename');
+
+	print end_form;
+
+	print "</div>";
 
 } elsif (param('search')) {
 

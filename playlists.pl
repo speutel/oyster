@@ -88,11 +88,11 @@ print "</td></tr>";
 # Print playlists without a section
 
 if ($playlist eq 'default') {
-	print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td>currently playing</td>";
-	print "<td></td><td></td></tr>";
+	print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td class='playlists' colspan='3'><strong>currently playing</strong></td>";
+	print "</tr>";
 } else {
 	print "<tr style='height:3em;'><td>default (All songs)</td>" .
-	"<td><a href='playlists.pl?action=loadlist&amp;listname=default${framestr}'>" .
+	"<td class='playlists'><a href='playlists.pl?action=loadlist&amp;listname=default${framestr}'>" .
 	"Load List</a></td><td></td><td></td></tr>";
 }
 
@@ -148,17 +148,17 @@ sub print_playlist {
 	my $encfile = uri_escape($file, "^A-Za-z");
 
 	if (($file eq $playlist) && ($file ne 'default')) {
-		print "<tr><td><i>$title</i></td><td>currently playing</td>";
-		print "<td><a href='editplaylist.pl?action=edit&amp;" .
+		print "<tr><td><i>$title</i></td><td class='playlists'>currently playing</td>";
+		print "<td class='playlists'><a href='editplaylist.pl?action=edit&amp;" .
 		"playlist=${encfile}${framestr}'>Edit List</a></td><td></td></tr>";
 	}
 	elsif ($file ne 'default') {
 		print "<tr><td>$title</td>" .
-		"<td><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
+		"<td class='playlists'><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
 		"Load List</a></td>";
-		print "<td><a href='editplaylist.pl?action=edit&amp;" .
+		print "<td class='playlists'><a href='editplaylist.pl?action=edit&amp;" .
 		"playlist=${encfile}${framestr}'>Edit List</a></td>\n";
-		print "<td><a href='playlists.pl?action=confirmdelete&amp;" .
+		print "<td class='playlists'><a href='playlists.pl?action=confirmdelete&amp;" .
 		"listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
 
 	}

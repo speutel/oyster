@@ -84,6 +84,10 @@ td.fileinfoimage {
   padding-top:0px;
 }
 
+td.playlists {
+  text-align: center;
+}
+
 p.configdescription {
   width: 30em;
   margin-bottom: 2em;
