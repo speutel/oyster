@@ -24,7 +24,7 @@ print "<table><tr>";
 print "<td><input type='text' name='affects' value='$affects'></td>";
 print "<td><input type='radio' name='action' value='test' checked> Test only<br>";
 print "<input type='radio' name='action' value='add'> Add to Blacklist</td>";
-print "<td style='padding-left: 2em;'><input type='submit' value='Go'></td></tr></table>\n";
+print "<td style='padding-left: 2em;'><input type='submit' value='Go'></td></tr></table>\n</form>\n";
 
 print p("<a href='blacklist.pl'>Show current blacklist</a>");
 
@@ -52,7 +52,6 @@ sub print_blacklist {
 
     my @blacklistlines = ();
     open (FILE, "${savedir}blacklist");
-    print "<table width='100%'>";
     while (my $line = <FILE>) {
 	chomp($line);
 	push (@blacklistlines, $line);
