@@ -5,9 +5,9 @@
 
 #use warnings;
 #use strict;
+use oyster::conf;
 
-my $conffile = "oyster.conf";
-my %config;
+my %config = oyster::conf->get_config('oyster.conf');
 
 my $basedir = "/tmp/oyster";
 my $savedir = ".";
@@ -15,7 +15,7 @@ my $media_dir = "/";
 my $lastvotes_file = "$savedir/lastvotes";
 my $list_dir = "$savedir/lists";
 my $voteplay_percentage = 10;
-my $lastvotes_size = 30;
+my $lastvotes_size = $config{'maxvotes'};
 my $votefile = "$basedir/votes";
 
 
@@ -286,15 +286,6 @@ sub get_list {
 }
 
 sub read_config {
-	
-	open(CONFIG, $conffile) || die "no config found (wanted $conffile)";
-	while (  $confline = <CONFIG> ) {
-		chop($confline);
-		if ( $confline =~ /^[^#]/ ) {
-			my ($key, $value) = split("=", $confline);
-			$config{$key} = $value;
-		}
-	}
 	
 	$basedir = $config{"basedir"};
 	$savedir = $config{"savedir"};
