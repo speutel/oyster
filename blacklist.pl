@@ -12,10 +12,11 @@ print header, start_html(-title=>'Oyster-GUI',
                                            -content    => 'text/html; charset=iso-8859-1'}));
 
 print "<table width='100%'><tr>";
-print "<td align='center' width='25%'><a href='browse.pl'>Browse</a></td>";
-print "<td align='center' width='25%'><a href='search.pl'>Search</a></td>";
-print "<td align='center' width='25%'><a href='blacklist.pl'>Blacklist</a></td>";
-print "<td align='center' width='25%'><a href='logview.pl'>Logfile</a></td>";
+print "<td align='center' width='20%'><a href='browse.pl'>Browse</a></td>";
+print "<td align='center' width='20%'><a href='search.pl'>Search</a></td>";
+print "<td align='center' width='20%'><a href='blacklist.pl'>Blacklist</a></td>";
+print "<td align='center' width='20%'><a href='logview.pl'>Logfile</a></td>";
+print "<td align='center' width='20%'><a href='score.pl'>Scoring</a></td>";
 print "</tr></table>";
 print "<hr>";
 
