@@ -1,0 +1,22 @@
+Ich schreib hier einfach mal so rein, was alles noch fehlt und/oder
+nicht funktioniert, nicht dass das vergessen wird :)
+
+
+
+- Wenn Oyster in Pause ist, sollte Start dafür sorgen, dass die Pause
+beendet wird. (-> Intuitive Bedienbarkeit)
+
+- Unvote ist nicht direkt in der GUI sichtbar, erst nach Klick auf
+Reload
+
+- Lieder, die man Unvoted hat, können nicht wieder gevotet werden
+
+- Clear votes? (In Zusammenhang mit nächstem Punkt vielleicht sinnvoll)
+
+- Voten von kompletten Playlisten (m3u, pls). Effekt sollte sein, dass
+alle Lieder in die votes aufgenommen werden, aber die Score
+unverändert bleibt.  In diesem Zusammenhang macht es vermutlich sinn
+eine Funktion zu schreiben, die zu einer Playlist (die ja durchaus
+relative Pfadnamen oder ../../ und so enthalten darf) absolute Pfade
+zurückliefert. Das könnte man dann auch gleich in der viewlist.pl
+benutzen
