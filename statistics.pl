@@ -6,8 +6,6 @@ use oyster::conf;
 use oyster::taginfo;
 use oyster::common;
 
-my %config = oyster::conf->get_config('oyster.conf');
-
 oyster::common->navigation_header();
 
 my %config = oyster::conf->get_config('oyster.conf');
