@@ -296,16 +296,17 @@ sub interpret_control {
 		if ( ! ($file =~ /^$media_dir/) ) {
 			## TODO use perl replacement for realpath
 			$file = $media_dir . "/" . $file;
-			$file =~ s/\ /\\\ /g;
-			$file =~ s/\(/\\\(/g;
-			$file =~ s/\)/\\\)/g;
-			$file =~ s/\`/\\\`/g;
-			$file =~ s/\"/\\\"/g;
-			$file =~ s/\'/\\\'/g;
-			open ( RP, "realpath $file |" );
-			$file = <RP>;
-			close(RP);
-			chomp($file);
+			$file =~ s/\/\//\//g;
+			#$file =~ s/\ /\\\ /g;
+			#$file =~ s/\(/\\\(/g;
+			#$file =~ s/\)/\\\)/g;
+			#$file =~ s/\`/\\\`/g;
+			#$file =~ s/\"/\\\"/g;
+			#$file =~ s/\'/\\\'/g;
+			#open ( RP, "realpath $file |" );
+			#$file = <RP>;
+			#close(RP);
+			#chomp($file);
 		}
 		print STDERR $file;
 		enqueue($file);
@@ -421,7 +422,6 @@ sub remove_score {
 }
 
 sub enqueue_list {
-	# TODO add support for relative paths
 	my $list = $_[0];
 
 	my $list_path = $list;
@@ -430,14 +430,23 @@ sub enqueue_list {
 
 	open(LIST, $list) || print STDERR "enqueue_list: could not open playlist\n";
 	while( my $line = <LIST> ) {
-		chomp($line);
-		$line = $list_path . $line;
-		$line =~ s/([^\\])\ /$1\\\ /g;
-		open( REALPATH, "realpath $line |" );
-		my $enqueue_file = <REALPATH>;
-		chomp($enqueue_file);
-		enqueue($enqueue_file);
-		close( REALPATH );
+		if ( $line =~ /^\#/ ) {
+			next;
+		} elsif ( $line =~ /^[^\/]/ ) {
+			chomp($line);
+			$line = $list_path . $line;
+			#$line =~ s/([^\\])\ /$1\\\ /g;
+			#open( REALPATH, "realpath $line |" );
+			#my $enqueue_file = <REALPATH>;
+			#chomp($enqueue_file);
+			enqueue($line);
+			#close( REALPATH );
+		} elsif ( $line =~ /^$media_dir/ ) {
+			chomp($line);
+			enqueue($line);
+		} else {
+			print STDERR "file not inside media_dir: $line";
+		}
 	}
 	close(LIST);
 	process_vote();
