@@ -106,7 +106,7 @@ $info =~ s/^\Q$config{'mediadir'}\E//;
 $info = uri_escape("/$info", "^A-Za-z");
 
 my $playlist = oyster::conf->get_playlist();
-my $playreason = `tail -n 1 logs/$playlist`;
+my $playreason = `tail -n 1 "logs/$playlist"`;
 open (FAVFILE, "$basedir/favmode");
 my $favmode = <FAVFILE>;
 chomp($favmode);
