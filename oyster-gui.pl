@@ -126,7 +126,7 @@ if ($playreason eq 'PLAYLIST') {
 # If FAVMODE is on, every "scored" is substituded to "favorites only", but
 # enqueued and voted remain. (random should not be possible ;))
 if ($favmode eq 'on' && !($playreason eq '(voted)' or $playreason eq '(enqueued)')) {
-	$playreason = '(favoristes only)';
+	$playreason = '(favorites only)';
 }
 
 
