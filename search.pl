@@ -21,6 +21,7 @@ print "</tr></table>";
 print "<hr>";
 
 my $mediadir = $config{'mediadir'};
+$mediadir =~ s/\/$//;
 my $search='';
 my $searchtype = 'normal';
 
@@ -114,7 +115,7 @@ if (!($search eq '')) {
 
     # List directory in browser
 
-    listdir('',0);
+    listdir('/',0);
 
 }
     
@@ -130,30 +131,34 @@ sub listdir {
     my $basepath = $_[0];
     my $counter = $_[1];
 
-    while (($counter < @results) && (($results[$counter] =~ /^\Q$basepath\E\//) || ($basepath eq ''))) {
+    while (($counter < @results) && ($results[$counter] =~ /^\Q$basepath\E/)) {
 	my $newpath = $results[$counter];
-	$newpath =~ s/^\Q$basepath\E\///;
+	$newpath =~ s/^\Q$basepath\E//;
 	if ($newpath =~ /\//) {
 
 	    # $newpath is directory and becomes the top one
 
-	    $newpath =~ /^([^\/]*)/;
+	    $newpath =~ /^([^\/]*\/)/;
 	    $newpath = $1;
 
 	    # do not add padding for the top level directory
 
-	    if (!($basepath eq '')) {
-		my $escapeddir = uri_escape("/$basepath/$newpath", "^A-Za-z");
-		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
-		$newpath = "$basepath/$newpath";
+	    my $cutnewpath = $newpath;
+	    $cutnewpath =~ s/\/$//;
+
+	    if (!($basepath eq '/')) {
+		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
+		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		$newpath = "$basepath$newpath";
 	    }  else {
-		my $escapeddir = uri_escape("/$newpath", "^A-Za-z");
-		print "<strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
+		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
+		print "<strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		$newpath = "/$newpath";
 	    }
 
 	    # Call listdir recursive, then quit padding with <div>
 
-	    $counter = listdir("$newpath",$counter);
+	    $counter = listdir($newpath,$counter);
 	    if (!($basepath eq '')) {
 		print "</div>\n";
 	    }
@@ -162,7 +167,7 @@ sub listdir {
 	    # $newpath is a regular file without leading directory
 
 	    print "<div style='padding-left: 1em;'>";
-	    while ($results[$counter] =~ /^\Q$basepath\E\//) {
+	    while ($results[$counter] =~ /^\Q$basepath\E/) {
 
 		# Print all filenames in $basedir
 
@@ -170,7 +175,7 @@ sub listdir {
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
-		my $escapedfile = uri_escape("/$basepath/$filename", "^A-Za-z");
+		my $escapedfile = uri_escape("$basepath$filename", "^A-Za-z");
 
 		# $cssclass changes to give each other file
 		# another color
