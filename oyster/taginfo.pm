@@ -11,7 +11,7 @@ sub get_tag {
     my $filename = $_[1];
     my ($title, $artist, $display) = "";
 
-    if ($filename =~ /mp3$/) {
+    if ($filename =~ /mp3$/i) {
 	open (MP3, "id3v2 -l \"$filename\"|") or die $!;
 	
 	while (my $line = <MP3>) {
@@ -33,7 +33,7 @@ sub get_tag {
 	    
 	close (MP3);
 	
-    } elsif ($filename =~ /ogg$/) {
+    } elsif ($filename =~ /ogg$/i) {
 	open (OGG, "ogginfo \"$filename\"|") or die $!;
 	
 	while (my $line = <OGG>) {
@@ -56,8 +56,8 @@ sub get_tag {
     if ($title eq "") {
 	$display = $filename;
 	$display =~ s@.*/@@;
-	$display =~ s/\.mp3//;
-	$display =~ s/\.ogg//;
+	$display =~ s/\.mp3//i;
+	$display =~ s/\.ogg//i;
     } else {
 	$display = "$artist - $title";
     }
