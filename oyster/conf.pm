@@ -29,6 +29,21 @@ sub get_config {
 	return %config;
 }
 
+sub get_playlist {
+
+    my %config = get_config('','oyster.conf');
+    my $playlist = 'default';
+
+    if (-e "${config{basedir}}playlist") {
+	open (PLAYLIST, "${config{basedir}}playlist");
+	$playlist = <PLAYLIST>;
+	close PLAYLIST;
+
+	chomp($playlist);
+    }
+    return $playlist;
+}
+
 sub rel_to_abs {
 		my $path = $_[1];
 		my $dir = $_[2];
