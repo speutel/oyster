@@ -17,10 +17,13 @@ sub do_action {
     $file =~ s/\.\.\///g;
     $file = '' if ($file eq "..");
 
-    open(STATUS, "${config{'basedir'}}status");
-    my $status = <STATUS>;
-    chomp($status);
-    close(STATUS);
+    my $status = '';
+    if (-e "${config{'basedir'}}status") {
+	open(STATUS, "${config{'basedir'}}status");
+	$status = <STATUS>;
+	chomp($status);
+	close(STATUS);
+    }
 
     my $mediadir = $config{'mediadir'};
     $mediadir =~ s/\/$//;
