@@ -123,9 +123,9 @@ sub init {
 	if ( ! -e $basedir) {
 		mkdir($basedir);
 	} else {
-		# There exists a basedir. Check if another
+		# There is already a basedir. Check if another
 		# oyster is running and unpause it.
-		# Otherwise, remove the basedir
+		# Otherwise, remove it.
 
 		# First get PID, if there is any
 		open(OTHER, "$basedir/pid");
@@ -490,23 +490,12 @@ sub interpret_control {
 		my $file=$1;
 		# test for media
 		if ( ! ($file =~ /^$media_dir/) ) {
-			## TODO use perl replacement for realpath
 			$file = $media_dir . "/" . $file;
 			$file =~ s/\/\//\//g;
-			#$file =~ s/\ /\\\ /g;
-			#$file =~ s/\(/\\\(/g;
-			#$file =~ s/\)/\\\)/g;
-			#$file =~ s/\`/\\\`/g;
-			#$file =~ s/\"/\\\"/g;
-			#$file =~ s/\'/\\\'/g;
-			#open ( RP, "realpath $file |" );
-			#$file = <RP>;
-			#close(RP);
-			#chomp($file);
 		}
 		print STDERR $file;
 		enqueue($file);
-		process_vote();
+		process_vote("noremove");
 		get_control();
 		interpret_control();
 	}
