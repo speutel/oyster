@@ -88,7 +88,7 @@ sub print_blacklist {
 	chomp($line);
 	$line =~ s/^\Q$mediadir\E//;
 	foreach my $blacklistline (@blacklistlines) {
-	    if ($line =~ /$blacklistline/i) {
+	    if ($line =~ /$blacklistline/) {
 		$isblacklisted = 1;
 		if ($lineaffects{$blacklistline}) {
 		    $lineaffects{$blacklistline}++;
@@ -131,7 +131,7 @@ sub print_affects {
     while (my $line = <LIST>) {
 	chomp($line);
 	$line =~ s/^\Q$mediadir\E//;
-	if ($line =~ /$affects/i) {
+	if ($line =~ /$affects/) {
 	    push (@results, $line);
 	}
     }
@@ -221,16 +221,15 @@ sub listdir {
 
 	    my $cutnewpath = $newpath;
 	    $cutnewpath =~ s/\/$//;
-	    $cutnewpath = escapeHTML($cutnewpath);
 
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'>";
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
 		$newpath = "/$newpath";
 	    }
 
