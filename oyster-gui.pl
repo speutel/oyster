@@ -3,13 +3,14 @@ use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
 
-open(INFO, "/tmp/oyster/info");
-my $info = <INFO>;
-chomp($info);
-$info =~ s/^np:\ //;
-close(INFO);
-
-my ($title, $artist) = "";
+if (param()) {
+    my $action=param('action');
+    if ($action eq 'skip') {
+	open (CONTROL, '>/tmp/oyster/control');
+	print CONTROL 'NEXT';
+	close CONTROL;
+    }
+}
 
 print
     header,
@@ -19,6 +20,14 @@ print
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
 print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
+
+open(INFO, "/tmp/oyster/info");
+my $info = <INFO>;
+chomp($info);
+$info =~ s/^np:\ //;
+close(INFO);
+
+my ($title, $artist) = "";
 
 if ($info =~ /mp3$/) {
     open (MP3, "id3v2 -l \"$info\"|") or die $!;
@@ -80,7 +89,7 @@ $info = uri_escape("$info", "^A-Za-z");
 print h1('Oyster');
 print "<table width='100%'>";
 print "<tr><td><strong>Now playing: <a href='fileinfo.pl?file=$info' target='browse'>$title</a></strong></td>";
-print "<td><a href='oyster-gui.pl'>Refresh</a></td></tr>";
+print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
 print "</table>";
 
 open (VOTES, '/tmp/oyster/votes');
