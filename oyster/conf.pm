@@ -28,3 +28,20 @@ sub get_config {
 
 	return %config;
 }
+
+sub rel_to_abs {
+		my $path = $_[1];
+		my $dir = $_[2];
+		print "path: $path, dir: $dir\n";
+		
+		if ( ! ($path =~ /^\//) ) {
+			$path = $dir . $path;
+		}
+
+		print $path . "\n";
+		
+		$path =~ s@[^/]*/\.\./@@g;
+
+		return $path;	
+	
+}
