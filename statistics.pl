@@ -163,7 +163,7 @@ print "</table>";
 
 print h1('Some numbers');
 
-my $totalfiles = `wc -l  ${config{savedir}}lists/$playlist`;
+my $totalfiles = `wc -l  "${config{savedir}}lists/$playlist"`;
 $totalfiles =~ /^[\ ]*([0-9]*)/;
 $totalfiles = $1;
 
