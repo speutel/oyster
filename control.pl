@@ -29,7 +29,8 @@ print "<a href='control.pl' style='position:absolute; top:2px; right:2px'><img s
 
 print "<table width='80%' style='margin-left:auto; margin-right:auto;'>";
 print "<tr><td align='left' width='30%'><a href='oyster-gui.pl?action=start' target='curplay'>Start</a></td>";
-print "<td align='center'><a href='oyster-gui.pl?action=pause' target='curplay'>Pause</a></td>";
+print "<td align='left'><a href='oyster-gui.pl?action=pause' target='curplay'>Pause</a></td>";
+print "<td align='right'><a href='oyster-gui.pl?action=skip' target='curplay'>Skip</a></td>";
 print "<td align='right' width='30%'><a href='oyster-gui.pl?action=stop' target='curplay'>Stop</a></td>";
 print "</tr></table>\n";
 
