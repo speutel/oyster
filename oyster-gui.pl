@@ -15,6 +15,9 @@ close(STATUS);
 
 my $action = '';
 
+my $mediadir = $config{'mediadir'};
+$mediadir =~ s/\/$//;
+
 if (param('action')) {
     open (CONTROL, ">${basedir}control");
     $action=param('action');
@@ -37,9 +40,9 @@ if (param('action')) {
 	    $status = 'paused';
 	}
     } elsif (($action eq 'scoreup') && (param('file'))) {
-	print CONTROL "SCORE + " . param('file');
+	print CONTROL "SCORE + $mediadir" . param('file');
     } elsif (($action eq 'scoredown') && (param('file'))) {
-	print CONTROL "SCORE - " . param('file');
+	print CONTROL "SCORE - $mediadir" . param('file');
     } 
     close CONTROL;
 }
@@ -59,6 +62,7 @@ print
 	       -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
+
 
 print h1('Oyster');
 print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
