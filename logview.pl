@@ -44,7 +44,7 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
     if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
 	do {
 	    $line = <LOG>;
-	} while ($line =~ /PAUSED\ /);
+	} while ($line =~ /^[0-9]{8}\-[0-9]{6}\ [UN]{0,2}PAUSED\ /);
 	chomp($line);
 	$_ = $line;
 	my ($endreason, $filename2) = '';
