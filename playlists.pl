@@ -43,20 +43,22 @@ print "<table width='100%' style='margin-bottom: 2em;'>";
 foreach my $file (@files) {
     if ($file eq $playlist) {
 	print "<tr><td><i>$file</i></td><td>currently playing</td>";
+	print "<td></td><td></td>";
     }
     else {
 	print "<tr><td>$file</td>" .
 	    "<td><a href='oyster-gui.pl?action=loadlist&amp;file=$file'" .
 	    "target='curplay'>Load List</a></td>";
+	print "<td><a href='editplaylist.pl?action=edit&amp;" .
+	    "playlist=$file'>Edit List</a></td>\n";
+	print "<td><a href='playlists.pl?action=delete&amp;" .
+	    "listname=$file'>Delete List</a></td>\n";
+
     }
-    print "<td><a href='editplaylist.pl?action=edit&amp;" .
-	"playlist=$file'>Edit List</a></td>\n";
-    print "<td><a href='playlists.pl?action=delete&amp;" .
-	"listname=$file'>Delete List</a></td>\n";
 
 }
 
-print "</table>";
+print "</tr></table>";
 
 print start_form;
 
