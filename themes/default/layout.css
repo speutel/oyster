@@ -1,10 +1,10 @@
 body {
-  background-color: #FFFFFF;
-  color: #000099;
+  background-color: #111111;
+  color: #08c0e0;
 }
 
 a { 
-  color: #000099;
+  color: #08c0e0;
   text-decoration: underline;
   font-weight: bold;
 }
@@ -22,11 +22,11 @@ a.dir2 {
 }
 
 a.file {
-  color: #CC0099;
+  color: #FFCC00;
 }
 
 a.file2 {
-  color: #FF0033;
+  color: #ff8800;
 }
 
 a.playlist {
@@ -51,11 +51,11 @@ span.blacklisted {
 }
 
 .file {
-  color: #CC0099;
+  color: #FFCC00;
 }
 
 .file2 {
-  color: #FF0033;
+  color: #ff8800;
 }
 
 input {
