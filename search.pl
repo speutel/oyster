@@ -26,6 +26,7 @@ print "<form action='search.pl'><input type='text' name='search' value='$search'
 print "<input type='submit' value='Search'></form>";
 
 my @results = ();
+my $cssclass='file2';
 
 if (!($search eq '')) {
     open (LIST, "lists/default");
@@ -76,9 +77,14 @@ sub listdir {
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
 		my $escapedfile = uri_escape("$basedir$basepath/$filename", "^A-Za-z");
+		if ($cssclass eq 'file') {
+		    $cssclass = 'file2';
+		} else {
+		    $cssclass = 'file';
+		}
 		print "<table width='100%'><tr>";
-		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='file'>$nameonly</a></td>";
-		print "<td align='right'><a href='vote.pl?vote=$escapedfile' class='file'>Vote</a></td>";
+		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>$nameonly</a></td>";
+		print "<td align='right'><a href='vote.pl?vote=$escapedfile' class='$cssclass'>Vote</a></td>";
 		print "</tr></table>\n";
 		$counter++;
 	    }
