@@ -14,8 +14,13 @@ sub get_config {
 	
 	while ( my $line = <CONF> ) {
 		if ( $line =~ /^[a-z]/ ) {
-			my ($key, $value) = split("=", $line);
-			$config{$key} = $value;
+		    chomp($line);
+		    my ($key, $value) = split("=", $line);
+		    if (($key eq 'mediadir') || ($key eq 'basedir') || ($key eq 'savedir')) {
+			$value =~ s/\/$//;
+			$value .= '/';
+		    }
+		    $config{$key} = $value;
 		}
 	}
 
