@@ -26,7 +26,7 @@ my $votefile = "$basedir/votes";
 my ($lastvotes_pointer, @lastvotes);
 my (@filelist, $file, $control, %votehash, @votelist);
 my ($file_override); 
-my ($play_pid);
+my ($player_pid);
 
 init();
 
@@ -37,7 +37,7 @@ while ( 1 ) {
 
 #because of some obscure error this use-statement does not work when 
 #I put it in the beginning of the file
-use Switch 'Perl5', 'Perl6';
+#use Switch 'Perl5', 'Perl6';
 
 
 
@@ -75,8 +75,6 @@ sub play_file {
 	
 	system("./play.pl &");
 
-	print STDERR "Supposed pid of mp3/ogg-player: $play_pid\n";
-	
 	open(KIDPLAY, ">/tmp/oyster/kidplay");
 	print KIDPLAY "$file\n";
 	close(KIDPLAY);
@@ -87,119 +85,121 @@ sub play_file {
 sub interpret_control {
 	# find out what to do by checking $control
 
-	switch ($control) {
-		
-		case /^NEXT/	{ 
-			system("killall play.pl mpg321 ogg123"); 
-			sleep(3);
-		}
-		case /^done/ { 
-		}
-		case /^FILE\ / {
-			# set $file and play it *now*
-			$control =~ s/\\//g;
-			$control =~ /^FILE\ (.*)$/;
-			$file = $1;
-			$file_override = "true";
-			system("killall play.pl mpg321 ogg123");
-		}	
-		case /^QUIT/	{ 
-			system("killall play.pl mpg321 ogg123"); 
-			cleanup();
-			exit; 
-		}
-		case /^SAVE\ / {
-			# save @filelist with name $1
-			$control =~ /^SAVE\ (.*)$/;
-			save_list($1);
-			get_control();
-			interpret_control();
-		}
-		case /^LOAD\ / {
-			# load @filelist with name $1
-			$control =~ /^LOAD\ (.*)$/;
-			load_list($1);
-			get_control();
-			interpret_control();
-		}
-		case /^NEWLIST/ {
-			# read list from CONTROL
-			get_list();
-			get_control();
-			interpret_control();
-		}
-		case /^PRINT/ {
-			# print list to CONTROL
-			$control =~ /^PRINT\ (.*)$/;
-			open(CONTROL, ">$basedir/control");
+	if ( $control =~ /^NEXT/)  { 
+		get_player_pid();
+		system("kill $player_pid"); 
+		sleep(3);
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^done/) { 
+		print STDERR "play.pl is done.\n";
+	}
+	elsif ( $control =~ /^FILE/) {
+		# set $file and play it *now*
+		$control =~ s/\\//g;
+		$control =~ /^FILE\ (.*)$/;
+		$file = $1;
+		$file_override = "true";
+		system("kill $player_pid");
+		get_control();
+		interpret_control();
+	}	
+	elsif ( $control =~ /^QUIT/	) {  
+		system("kill $player_pid"); 
+		get_control();
+		cleanup();
+		exit;
+	}
+	elsif ( $control =~ /^SAVE/ ) {
+		# save @filelist with name $1
+		$control =~ /^SAVE\ (.*)$/;
+		save_list($1);
+		get_control();
+		interpret_control();
+	}
+		elsif ( $control =~ /^LOAD/ ) {
+		# load @filelist with name $1
+		$control =~ /^LOAD\ (.*)$/;
+		load_list($1);
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^NEWLIST/ )  {
+		# read list from CONTROL
+		get_list();
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^PRINT/)  {
+		# print list to CONTROL
+		$control =~ /^PRINT\ (.*)$/;
+		open(CONTROL, ">$basedir/control");
 
-			# if $1 is present print list $1
-			# else print list in memory
-			if ( ! $1 ) {
-				print CONTROL @filelist;
-			} else {
-				open(LIST, "$list_dir/$1") || print CONTROL "No such list!\n" && next;
-				my @files = <LIST>;
-				print CONTROL @files;
-			}
-			close(CONTROL);
-			get_control();
-			interpret_control();
+		# if $1 is present print list $1
+		# else print list in memory
+		if ( ! $1 ) {
+			print CONTROL @filelist;
+		} else {
+			open(LIST, "$list_dir/$1") || print CONTROL "No such list!\n" && next;
+			my @files = <LIST>;
+			print CONTROL @files;
 		}
-		case /^LISTS/ {
-			# lists filelists into the FIFO
-			open(CONTROL, ">$basedir/control");
-			my @lists = <$list_dir/*>;
-			foreach my $list ( @lists ) {
-				print CONTROL $list . "\n";
-			}
-			close(CONTROL);
+		close(CONTROL);
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^LISTS/)  {
+		# lists filelists into the FIFO
+		open(CONTROL, ">$basedir/control");
+		my @lists = <$list_dir/*>;
+		foreach my $list ( @lists ) {
+			print CONTROL $list . "\n";
 		}
-		case /^VOTE\ / {
-			# vote for file $1
-			$control =~ s/\\//g;
-			$control =~ /^VOTE\ (.*)$/;
-			process_vote($1);
-			get_control();
-			interpret_control();
+		close(CONTROL);
 		}
-		case /^PAUSE/ {
-			get_player_pid();
-			#system("kill -19 $play_pid");
-			get_control();
-			interpret_control();
-		}
-		case /^UNPAUSE/ {
-			system("kill -18 $play_pid");
-			get_control();
-			interpret_control();
-		}
-		case /^UNVOTE/ {
-			# TODO test this
-			$control =~ s/\\//g;
-			$control =~ /^UNVOTE\ (.*)$/;
-			unvote($1);
-			get_control();
-			interpret_control();
-		}	
-		else {
-			# fall through
-			get_control();
-			interpret_control();
-		}
+	elsif ( $control =~ /^VOTE/ ) {
+		# vote for file $1
+		$control =~ s/\\//g;
+		$control =~ /^VOTE\ (.*)$/;
+		process_vote($1);
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^PAUSE/) {
+		get_player_pid();
+		system("kill -19 $player_pid");
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^UNPAUSE/) {
+		system("kill -18 $player_pid");
+		get_control();
+		interpret_control();
+	}
+	elsif ( $control =~ /^UNVOTE/) {
+		# TODO test this
+		$control =~ s/\\//g;
+		$control =~ /^UNVOTE\ (.*)$/;
+		unvote($1);
+		get_control();
+		interpret_control();
+	}	
+	else {
+		# fall through
+		get_control();
+		interpret_control();
 	}
 }
 
 sub get_player_pid {
 	open(PS, "ps x |") || print STDERR "ps x | failed\n";
 	while( $line = <PS> ) {
-		print STDERR $line;
 		# " 1545 pts/1    RN     0:04 mpg321 -q"
 		if ( $line =~ /\ ([0-9]*)\ [^\ ]*[\ ]*[^\ ]*[\ ]*[^\ ]*\ (mpg321|ogg123)/ ) {
-			print STDERR "Match!\n";
-			$line =~ /\ ([0-9]*)\ [^\ ]*\ [^\ ]*\ [^\ ]*\ (mpg321|ogg123)/;
-			$pid = $1;
-			print STDERR "$pid\n";
+			$line =~ /^\ ([0-9]*)\ /;
+			$player_pid = $1;
+			last;
 		}
 	}
 }
@@ -207,7 +207,9 @@ sub get_player_pid {
 sub unvote {
 
 	my $unvote_file = $_[0];
-	print STDERR "unvoting $unvote_file\n";
+
+	print STDERR "Unvoting $unvote_file\n";
+	
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
 		if ($unvote_file eq $votelist[$i]) {
 			splice(@votelist, $i, 1);
