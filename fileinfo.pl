@@ -50,7 +50,9 @@ foreach my $partdir (@dirs) {
 
 print "$fileonly</p>\n";
 
-print "<p><a class='file' href='oyster-gui.pl?vote=$file' target='curplay'>Vote for this song</a></p>\n";
+my $escapedfile = uri_escape("$file", "^A-Za-z");
+
+print "<p><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></p>\n";
 
 my %tag = oyster::taginfo->get_tag("${config{'mediadir'}}$file");
 
