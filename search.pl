@@ -18,8 +18,7 @@ print "<td align='right' width='30%'><a href='blacklist.pl'>Blacklist</a></td>";
 print "</tr></table>";
 print "<hr>";
 
-my $basedir = $config{'mediadir'};
-my $rootdir=$basedir;
+my $mediadir = $config{'mediadir'};
 my $search='';
 
 if (param('search')) {
@@ -36,7 +35,7 @@ if (!($search eq '')) {
     open (LIST, "lists/default");
     my @list = <LIST>;
     foreach my $line (@list) {
-	$line =~ s/\Q$basedir\E//;
+	$line =~ s/\Q$mediadir\E//;
 	if ($line =~ /\Q$search\E/i) {
 	    chomp($line);
 	    push (@results, $line);

@@ -19,25 +19,20 @@ print "<hr>";
 my %config = oyster::conf->get_config('oyster.conf');
 
 my $mediadir = $config{'mediadir'};
-my $rootdir=$mediadir;
+my $givendir = '';
 
-if (param()) {
-    $mediadir=param('dir') . "/";
-    $mediadir =~ s@//$@/@;
-    $mediadir =~ s/\.\.\///g;
-    $mediadir = $rootdir if (($mediadir eq "..") || ($mediadir eq ""));
+if (param('dir')) {
+    $givendir=param('dir') . "/";
+    $givendir =~ s@//$@/@;
+    $givendir =~ s/\.\.\///g;
+    $givendir = '' if ($givendir eq "..");
 }
 
-$mediadir = $rootdir . $mediadir if (!($mediadir =~ /^\Q$rootdir\E/));
-
-my $shortdir = $mediadir;
-$shortdir =~ s/^\Q$rootdir\E//;
-
-if (!($mediadir eq $rootdir)) {
+if (!($givendir eq '')) {
 
     print "<p><strong>Current directory: ";
 
-    my @dirs = split(/\//, $shortdir);
+    my @dirs = split(/\//, $givendir);
     my $incdir = '';
     foreach my $partdir (@dirs) {
 	my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
@@ -47,8 +42,8 @@ if (!($mediadir eq $rootdir)) {
 
     print "</strong></p>";
 
-    my $topdir = $mediadir;
-    $topdir =~ s/\Q$rootdir\E//;
+    my $topdir = $givendir;
+    $topdir =~ s/\Q$mediadir\E//;
     if ($topdir =~ /^[^\/]*\/$/) {
 	$topdir = '';
     } else {
@@ -60,7 +55,7 @@ if (!($mediadir eq $rootdir)) {
 
 }
 
-my $globdir = "$mediadir";
+my $globdir = "$mediadir$givendir";
 $globdir =~ s/\ /\\\ /g;
 my @entries = <$globdir*>;
 
@@ -77,7 +72,7 @@ foreach my $entry (@entries) {
 }
 
 foreach my $dir (@dirs) {
-    $dir =~ s/\Q$rootdir\E//;
+    $dir =~ s/\Q$mediadir\E//;
     $dir =~ s/^\///;
     my $escapeddir = uri_escape("$dir", "^A-Za-z");
     $dir =~ s/^.*\///;
@@ -90,11 +85,11 @@ foreach my $dir (@dirs) {
 my $cssclass = 'file2';
 
 foreach my $file (@files) {
-    $file =~ s/\Q$mediadir\E//;
+    $file =~ s/\Q$mediadir$givendir\E//;
     print "<tr>";
     if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
-	my $escapeddir = "$mediadir$file";
-	$escapeddir =~ s/\Q$rootdir\E//;
+	my $escapeddir = "$givendir$file";
+	$escapeddir =~ s/\Q$mediadir\E//;
 	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
 	if ($cssclass eq 'file') {
 	    $cssclass = 'file2';
