@@ -41,12 +41,11 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
     $_ = $line;
     ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
 	m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-#    print "$line<br>";
     if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
 	$line = <LOG>;
 	chomp($line);
 	$_ = $line;
-	my ($endreason, $filename2);
+	my ($endreason, $filename2) = '';
 	($endreason, $filename2) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
 	my %tag = oyster::taginfo->get_tag($filename);
 	if ($cssclass eq 'file') {
@@ -54,19 +53,17 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
 	} else {
 	    $cssclass = 'file';
 	}
-	if ($filename eq $filename2) {
-	    $filename =~ s/^\Q$config{'mediadir'}\E//;
-	    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
-	    print "<tr><td>$playreason</td><td>$endreason</td>";
-	    print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapedfilename'>$tag{'display'}</a></td></tr>\n";
-	} else {
-	    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
-	    print "<tr><td>$playreason</td><td></td>";
-	    print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapedfilename'>$tag{'display'}</td></tr>\n";
+	if (!($endreason eq '')) {
+	    $endreason = " / $endreason";
+	}
+	$filename =~ s/^\Q$config{'mediadir'}\E//;
+	my $escapedfilename = uri_escape("$filename", "^A-Za-z");
+	print "<tr><td>$playreason$endreason</td>";
+	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapedfilename'>$tag{'display'}</a></td></tr>\n";
+	if (!($filename eq $filename2)) {
 	    $next = $line;
 	}
     }
-#    print $line;
 }
 
 print "</table>";
