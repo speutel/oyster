@@ -164,8 +164,8 @@ sub get_lastplayed {
             m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
 	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
 	    push (@played, "$check");
-	    $check = '';
 	}
+	$check = '';
 	if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
 	    $check = "$filename, $playreason";
 	}
