@@ -71,25 +71,33 @@ if ((param('action') eq 'loadlist') && param('listname')) {
 
 print "<table width='100%' style='margin-bottom: 2em;'>";
 
+if ($playlist eq 'default') {
+    print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td>currently playing</td>";
+    print "<td></td><td></td></tr>";
+} else {
+    print "<tr style='height:3em;'><td>default (All songs)</td>" .
+	"<td><a href='playlists.pl?action=loadlist&amp;listname=default${framestr}'>" .
+	"Load List</a></td><td></td><td></td></tr>";
+}
+
 foreach my $file (@files) {
-    if ($file eq $playlist) {
+    if (($file eq $playlist) && ($file ne 'default')) {
 	print "<tr><td><i>$file</i></td><td>currently playing</td>";
-	print "<td></td><td></td>";
+	print "<td></td><td></td></tr>";
     }
-    else {
+    elsif ($file ne 'default') {
 	print "<tr><td>$file</td>" .
 	    "<td><a href='playlists.pl?action=loadlist&amp;listname=${file}${framestr}'>" .
 	    "Load List</a></td>";
 	print "<td><a href='editplaylist.pl?action=edit&amp;" .
 	    "playlist=${file}${framestr}'>Edit List</a></td>\n";
 	print "<td><a href='playlists.pl?action=delete&amp;" .
-	    "listname=${file}${framestr}'>Delete List</a></td>\n";
+	    "listname=${file}${framestr}'>Delete List</a></td></tr>\n";
 
     }
-
 }
 
-print "</tr></table>";
+print "</table>";
 
 print start_form;
 

@@ -73,7 +73,7 @@ print start_form;
 my $textfield = textfield(-name=>'search',-default=>'');
 my $radiobuttons = radio_group(-name=>'searchtype',-values=>['normal','regex'],-default=>'normal',
 			-linebreak=>'true',-labels=>\%labels);
-my $playlists = radio_group(-name=>'playlist',-values=>['all','current'],-default=>'all',
+my $playlists = radio_group(-name=>'playlist',-values=>['current','all'],-default=>'current',
 			-linebreak=>'true',-labels=>\%playlistlabels);
 my $submit = submit(-value=>'Search',-style=>'margin-left: 2em;');
 
