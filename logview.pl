@@ -50,7 +50,7 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
 	$_ = $line;
 	my ($endreason, $filename2) = '';
 	($endreason, $filename2) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
-	my %tag = oyster::taginfo->get_tag($filename);
+	my $display = oyster::taginfo->get_tag_light($filename);
 	if ($cssclass eq 'file') {
 	    $cssclass = 'file2';
 	} else {
@@ -62,7 +62,7 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
 	$filename =~ s/^\Q$config{'mediadir'}\E//;
 	my $escapedfilename = uri_escape("$filename", "^A-Za-z");
 	print "<tr><td>$playreason$endreason</td>";
-	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapedfilename'>$tag{'display'}</a></td></tr>\n";
+	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapedfilename'>$display</a></td></tr>\n";
 	if (!($filename eq $filename2)) {
 	    $next = $line;
 	}

@@ -44,8 +44,8 @@ foreach my $key (sort keys (%score)) {
     my $escapedfile = $key;
     $escapedfile =~ s/\Q$config{'mediadir'}\E//;
     $escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
-    my %tag = oyster::taginfo->get_tag($key);
-    print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedfile'>$tag{'display'}</a></td><td align='center'>$score{$key}</td>";
+    my $display = oyster::taginfo->get_tag_light($key);
+    print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedfile'>$display</a></td><td align='center'>$score{$key}</td>";
     print "<td><a href='oyster-gui.pl?action=scoredown&file=$escapedfile' target='curplay'>Down</a>";
     print " <a href='oyster-gui.pl?action=scoreup&file=$escapedfile' target='curplay'>Up</a></td></tr>\n";
 }

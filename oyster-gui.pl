@@ -82,7 +82,7 @@ chomp($info);
 $info =~ s/^np:\ //;
 close(INFO);
 
-my %tag = oyster::taginfo->get_tag($info);
+my $display = oyster::taginfo->get_tag_light($info);
 
 $info =~ s/^\Q$config{'mediadir'}\E//;
 $info = "/$info";
@@ -95,7 +95,7 @@ if ($status eq 'paused') {
 
 print "<strong>Now playing:</strong>";
 print "<table width='100%'>";
-print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a>$statusstr</strong></td>";
+print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$display</a>$statusstr</strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
 print "</table>\n";
 print "<p><a href='oyster-gui.pl?action=scoreup&amp;file=$info'>Score up</a></p>";
@@ -112,10 +112,10 @@ if (-s "${basedir}votes") {
 	my ($numvotes, $title);
 	$_ = $vote;
 	($title, $numvotes) = m@(.*),([0-9]*)@;
-	%tag = oyster::taginfo->get_tag($title);
+	my $display = oyster::taginfo->get_tag_light($title);
 	$title =~ s/^\Q$config{'mediadir'}\E//;
 	my $escapedtitle = uri_escape("$title", "^A-Za-z");
-	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$tag{'display'}</a></td><td align='center'>$numvotes</td></tr>\n";
+	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td></tr>\n";
     }
     print "</table>";
 }
