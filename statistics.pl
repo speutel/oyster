@@ -83,6 +83,7 @@ $totalfiles = $1;
 
 print "<table width='100%'>";
 print "<tr><td><strong>Total files in playlist</strong></td><td>$totalfiles</td></tr>";
+print "<tr><td><strong>Files blacklisted</strong></td><td>" . get_blacklisted() . "</td></tr>";
 print "<tr><td><strong>Total files played</strong></td><td>$totalfilesplayed</td></tr>";
 print "<tr><td><strong>Files played because of vote</strong></td><td>$votedfiles</td></tr>";
 print "<tr><td><strong>Files played because of scoring</strong></td><td>$scoredfiles</td></tr>";
@@ -200,4 +201,38 @@ sub get_numfiles {
 
     return $numfiles;
 
+}
+
+sub get_blacklisted {
+
+    # Counts all files, which are affected by a blacklist-rule
+
+    my $count = 0;
+    my @affectlines = ();
+
+    my $mediadir = $config{'mediadir'};
+    $mediadir =~ s/\/$//;
+
+    open (BLACKLIST, "${config{savedir}}blacklist");
+    while (my $line = <BLACKLIST>) {
+	chomp($line);
+	push (@affectlines, $line);
+    }
+    close (BLACKLIST);
+
+    open (LIST, "${config{savedir}}lists/default");
+
+    while (my $line = <LIST>) {
+	my $isaffected = 0;
+	chomp($line);
+	$line =~ s/^\Q$mediadir\E//;
+	foreach my $affects (@affectlines) {
+	    $isaffected = 1 if ($line =~ /$affects/i);
+	}
+	$count++ if ($isaffected);
+    }
+    close (LIST);
+
+    return $count;
+    
 }
