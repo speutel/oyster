@@ -56,7 +56,9 @@ foreach my $partdir (@dirs) {
 print "$fileonly</p>\n";
 
 my $escapedfile = uri_escape("$file", "^A-Za-z");
-print "<p><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></p>\n";
+print "<table width='100%'><tr><td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
+$escapedfile = uri_escape("^$file\$", "^A-Za-z");
+print "<td align='right'><a class='file' href='blacklist.pl?affects=${escapedfile}&amp;action=add'>Add this song to Blacklist</td></tr></table>";
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
 
