@@ -91,7 +91,7 @@ sub interpret_control {
 			$file_override = "true";
 			system("killall play.pl mpg321 ogg123");
 		}	
-		case /^quit/	{ 
+		case /^QUIT/	{ 
 			system("killall play.pl mpg321 ogg123"); 
 			cleanup();
 			exit; 
