@@ -65,6 +65,7 @@ sub do_action {
 
 sub do_vote {
     my $votefile=$_[1];
+    $votefile =~ s/^\///;
     $votefile = $config{'mediadir'} . $votefile;
     open (CONTROL, ">${config{basedir}}control");
     print CONTROL "VOTE $votefile";
