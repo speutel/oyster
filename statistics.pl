@@ -11,10 +11,15 @@ oyster::common->navigation_header();
 my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 
+open (LOG, "${config{'savedir'}}logs/$playlist");
+my @log = <LOG>;
+my @worklog = @log;
+close (LOG);
+
+my $votedfiles = 0;
+my $randomfiles = 0;
+my $scoredfiles = 0;
 my @mostplayed = get_mostplayed();
-my $votedfiles = get_numfiles('VOTED');
-my $randomfiles = get_numfiles('PLAYLIST');
-my $scoredfiles = get_numfiles('SCORED');
 my $totalfilesplayed = $votedfiles + $randomfiles + $scoredfiles;
 
 print h1('Most played songs');
@@ -101,10 +106,6 @@ sub get_mostplayed {
     my %timesplayed = ();
     my $maxplayed = 0;
 
-    open (LOG, "${config{'savedir'}}logs/$playlist");
-    my @log = <LOG>;
-    my @worklog = @log;
-    close (LOG);
     foreach my $line (@worklog) {
 	my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
 	chomp($line);
@@ -119,7 +120,14 @@ sub get_mostplayed {
 		$timesplayed{$filename} = 1;
 		$maxplayed = 1 if ($maxplayed == 0);
 	    }
-	}
+	} elsif ($playreason eq 'VOTED') {
+            $votedfiles++;
+        } elsif ($playreason eq 'PLAYLIST') {
+            $randomfiles++;
+        } elsif ($playreason eq 'SCORED') {
+            $scoredfiles++;
+        }
+
     }
 
     my $counter = 10;
@@ -151,8 +159,7 @@ sub get_lastplayed {
     my @lastplayed = ();
     my $check = '';
 
-    open (LOG, "${config{'savedir'}}logs/$playlist");
-    while (my $line = <LOG>) {
+    foreach my $line (@worklog) {
 	my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
 	chomp($line);
 	$_ = $line;
@@ -166,7 +173,6 @@ sub get_lastplayed {
 	    $check = "$filename, $playreason";
 	}
     }
-    close LOG;
 
     my $counter = @played - 10;
     if (@played < 10) {
@@ -179,26 +185,6 @@ sub get_lastplayed {
     }
 
     return @lastplayed;
-
-}
-
-sub get_numfiles {
-
-    my $numfiles = 0;
-    my $type = $_[0];
-
-    open (LOG, "${config{'savedir'}}logs/$playlist");
-    while (my $line = <LOG>) {
-        my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
-        chomp($line);
-        $_ = $line;
-        ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
-            m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-	$numfiles++ if ($playreason eq $type);
-    }
-    close LOG;
-
-    return $numfiles;
 
 }
 
