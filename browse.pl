@@ -131,7 +131,8 @@ foreach my $file (@files) {
 	my $iscover = 0;
 	my @coverfiles = split(/,/, $config{'coverfilenames'});
 	foreach my $cover (@coverfiles) {
-	    if ($file eq $cover) {
+	    $cover =~ s/^.*\.//;
+	    if ($file =~ /\Q$cover\E$/) {
 		$iscover = 1;
 	    }
 	}
