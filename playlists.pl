@@ -37,6 +37,12 @@ if ((param('frames') && (param('frames') eq 'no'))) {
 	$framestr = '&amp;frames=no';
 }
 
+my $oysterruns = 0;
+
+if (-e $config{'basedir'}) {
+	$oysterruns = 1;
+}
+
 if ($frames) {
 	oyster::common->navigation_header();
 } else {
@@ -90,8 +96,12 @@ if ($playlist eq 'default') {
 	print "</tr>";
 } else {
 	print "<tr style='height:3em;'><td>default (All songs)</td>" .
-	"<td class='playlists'><a href='playlists.pl?action=loadlist&amp;listname=default${framestr}'>" .
-	"Load</a></td><td></td><td></td><td></td></tr>";
+		"<td class='playlists'>";
+	if ($oysterruns) {
+		print "<a href='playlists.pl?action=loadlist&amp;" .
+			"listname=default${framestr}'>Load</a>";
+	}
+	print "</td><td></td><td></td><td></td></tr>";
 }
 
 foreach my $file (@files) {
@@ -151,9 +161,12 @@ sub print_playlist {
 		"playlist=${encfile}${framestr}'>Edit</a></td><td></td></tr>";
 	}
 	elsif ($file ne 'default') {
-		print "<tr><td>$title</td>" .
-		"<td class='playlists'><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
-		"Load</a></td>";
+		print "<tr><td>$title</td><td class='playlists'>";
+		if ($oysterruns) {
+			print "<a href='playlists.pl?action=loadlist&amp;" .
+				"listname=${encfile}${framestr}'>Load</a>";
+			}
+		print	"</td>";
 		print "<td class='playlists'><a href='editplaylist.pl?action=edit&amp;" .
 		"playlist=${encfile}${framestr}'>Edit</a></td>\n";
 		print "<td class='playlists'><a href='editplaylist.pl?action=move&amp;" .
