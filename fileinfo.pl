@@ -57,7 +57,7 @@ my %tag = oyster::taginfo->get_tag("${config{'mediadir'}}$file");
 print "<table cellpadding='10'>";
 print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>";
 print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>";
-print "<tr><td><strong>Albu</strong>m</td><td>$tag{'album'}</td></tr>";
+print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>";
 print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
 print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
