@@ -76,7 +76,7 @@ if (! $frames) {
 	oyster::common->noframe_navigation_noheader();
 }
 
-print h1('Oyster');
+print "<img src='themes/${config{'theme'}}/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/>";
 print "<a href='oyster-gui.pl${framestr}' style='position:absolute; top:2px; right:2px' title='Refresh'>";
 print "<img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
 
