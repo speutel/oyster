@@ -40,7 +40,10 @@ my $scores_file = "$savedir/scores/$playlist";
 ## main program ##
 ##################
 
-
+get_config();
+choose_file();
+info_out();
+play_file();
 init();
 
 while ( 1 ) {
@@ -57,11 +60,11 @@ while ( 1 ) {
 
 sub main {
 
+	get_control();
+	interpret_control();
 	choose_file();
 	info_out();
 	play_file();
-	get_control();
-	interpret_control();
 
 }
 
@@ -651,9 +654,7 @@ sub update_scores {
 
 }
 
-sub init {
-	# well, it's called "init". guess.
-
+get_config {
 	## set values from config
 	%config = oyster::conf->get_config($conffile);
 
@@ -670,6 +671,10 @@ sub init {
 
 	$voteplay_percentage = $config{"voteplay"};
 	$scores_size = $config{'maxscored'};
+}
+
+sub init {
+	# well, it's called "init". guess.
 
 
 	# setup $basedir
