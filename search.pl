@@ -24,25 +24,24 @@ if (param('search')) {
     $search=param('search');
 }
 
-# These variables control, which radio button is selected
+# Create form
 
-my ($normalchecked, $regexchecked) = '';
+my %labels = ('normal' => 'Normal', 'regex' => 'Regular Expression');
 
-if ($searchtype eq 'regex') {
-    $regexchecked = 'checked';
-} else {
-    $normalchecked = 'checked';
-}
+print start_form;
 
-print "<form action='search.pl'>";
-print "<table><tr>";
-print "<td><input type='text' name='search' value='$search'></td>";
+my $textfield = textfield(-name=>'search',-default=>'');
+my $radiobuttons = radio_group(-name=>'searchtype',-values=>['normal','regex'],-default=>'normal',
+			-linebreak=>'true',-labels=>\%labels);
+my $submit = submit(-name=>'button_name',-value=>'Search',-style=>'margin-left: 2em;');
 
-print "<td><input type='radio' name='searchtype' value='normal' $normalchecked> Normal<br>";
-print "<input type='radio' name='searchtype' value='regex' $regexchecked> Regular Expression</td>";
-print "<td style='padding-left: 2em;'><input type='submit' value='Search'></td>";
-print "</table>";
-print "</form>";
+print table({-border=>'0'},
+	    Tr([
+		td([$textfield,$radiobuttons,$submit])
+		])
+	    );
+
+print end_form;
 
 my @results = ();
 my $cssclass='file2';
@@ -138,16 +137,16 @@ sub listdir {
 
 	    my $cutnewpath = $newpath;
 	    $cutnewpath =~ s/\/$//;
+	    $cutnewpath = escapeHTML($cutnewpath);
 
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
-		$cutnewpath =~ s/&/&amp;/g;
-		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		print "<div style='padding-left: 1em;'>";
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		$cutnewpath =~ s/&/&amp;/g;
-		print "<strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
 		$newpath = "/$newpath";
 	    }
 
@@ -181,7 +180,7 @@ sub listdir {
 		    $cssclass = 'file';
 		}
 		print "<table width='100%'><tr>";
-		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>$nameonly</a></td>";
+		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>" . escapeHTML($nameonly) . "</a></td>";
 		print "<td align='right'><a href='oyster-gui.pl?vote=$escapedfile' class='$cssclass' target='curplay'>Vote</a></td>";
 		print "</tr></table>\n";
 		$counter++;
