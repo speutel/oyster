@@ -834,7 +834,8 @@ sub update_scores {
 
 		}
 
-		if ( $#scores == 0 ) {
+		print STDERR "groesse des score-arrays: $#scores\n";
+		if ( $#scores == -1 ) {
 			$scores_exist = "false";
 		} else {
 			$scores_exist = "true";
