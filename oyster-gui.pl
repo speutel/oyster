@@ -83,5 +83,26 @@ print "<tr><td><strong>Now playing: <a href='fileinfo.pl?file=$info' target='bro
 print "<td><a href='oyster-gui.pl'>Refresh</a></td></tr>";
 print "</table>";
 
+open (VOTES, '/tmp/oyster/votes');
+my @votes = <VOTES>;
+
+if (-s '/tmp/oyster/votes') {
+    print "<table width='100%' style='margin-top:3em;'><tr>";
+    print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th>";
+    foreach my $vote (@votes) {
+	chomp ($vote);
+	my ($numvotes, $title);
+	$_ = $vote;
+	($title, $numvotes) = m@.*\/(.*),(.*)@;
+	$title =~ s/\.mp3$//;
+	$title =~ s/\.ogg$//;
+	my $escapedvote = $vote;
+	$escapedvote =~ s/,[1-9]*$//;
+	$escapedvote = uri_escape("$escapedvote", "^A-Za-z");
+	print "<tr><td><a href='fileinfo.pl?file=$escapedvote' target='browse'>$title</a></td><td align='center'>$numvotes</td></tr>\n";
+    }
+    print "</table>";
+}
+
 print end_html;
 
