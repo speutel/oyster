@@ -834,7 +834,11 @@ sub update_scores {
 
 		}
 
-		$scores_exist = "true";
+		if ( $#scores == 0 ) {
+			$scores_exist = "false";
+		} else {
+			$scores_exist = "true";
+		}
 	} else {
 		$scores_pointer = 0;
 		$scores_exist = "false";
