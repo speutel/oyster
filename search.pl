@@ -15,8 +15,8 @@ print "<table width='100%'><tr>";
 print "<td align='center' width='20%'><a href='browse.pl'>Browse</a></td>";
 print "<td align='center' width='20%'><a href='search.pl'>Search</a></td>";
 print "<td align='center' width='20%'><a href='blacklist.pl'>Blacklist</a></td>";
-print "<td align='center' width='20%'><a href='logview.pl'>Logfile</a></td>";
 print "<td align='center' width='20%'><a href='score.pl'>Scoring</a></td>";
+print "<td align='center' width='20%'><a href='statistics.pl'>Statistics</a></td>";
 print "</tr></table>";
 print "<hr>";
 
