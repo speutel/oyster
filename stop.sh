@@ -1,8 +1,8 @@
 #!/bin/sh
 
-BASEDIR="/tmp/oyster";
+source oyster.conf
 
-echo "QUIT" >> $BASEDIR/control
+echo "QUIT" >> $basedir/control
 
 cat<<EOF
 Content-Type: text/html; charset=ISO-8859-1
