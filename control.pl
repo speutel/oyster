@@ -32,14 +32,14 @@ $volume =~ s/^pcm\ //;
 $volume =~ s/,.*//;
 
 print "<table border='0' width='80%' align='center'><tr>";
-print "<td align='center'><a href='oyster-gui.pl?action=start' target='curplay'>Start</a></td>";
-print "<td align='center'><a href='oyster-gui.pl?action=stop' target='curplay'>Stop</a></td>";
+print "<td align='center'><a href='oyster-gui.pl?action=start' target='curplay'><img src='themes/${config{theme}}/play.png' border='0' alt='Start'></a></td>";
+print "<td align='center'><a href='oyster-gui.pl?action=stop' target='curplay'><img src='themes/${config{theme}}/stop.png' border='0' alt='Stop'></a></td>";
 print "<td rowspan='2' align='center' style='line-height:180%'><a href='control.pl?vol=up'><img src='themes/${config{theme}}/volup.png' border='0'></a><br>";
 print "<a href='control.pl?vol=50'>Volume $volume</a><br>";
 print "<a href='control.pl?vol=down'><img src='themes/${config{theme}}/voldown.png' border='0'></a></td>";
 print "</tr><tr>";
-print "<td align='center'><a href='oyster-gui.pl?action=pause' target='curplay'>Pause</td>";
-print "<td align='center'><a href='oyster-gui.pl?action=skip' target='curplay'>Skip</a></td>";
+print "<td align='center'><a href='oyster-gui.pl?action=pause' target='curplay'><img src='themes/${config{theme}}/pause.png' border='0' alt='Pause'></td>";
+print "<td align='center'><a href='oyster-gui.pl?action=skip' target='curplay'><img src='themes/${config{theme}}/skip.png' border='0' alt='Skip'></a></td>";
 print "</tr></table>";
 
 print end_html;
