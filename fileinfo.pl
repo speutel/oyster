@@ -57,8 +57,8 @@ print "$fileonly</p>\n";
 
 my $escapedfile = uri_escape("$file", "^A-Za-z");
 print "<table width='100%'><tr><td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
-$escapedfile = uri_escape("^$file\$", "^A-Za-z");
-print "<td align='right'><a class='file' href='blacklist.pl?affects=${escapedfile}&amp;action=add'>Add this song to Blacklist</td></tr></table>";
+my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
+print "<td align='right'><a class='file' href='blacklist.pl?affects=${regexpfile}&amp;action=add'>Add this song to Blacklist</td></tr></table>";
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
 
