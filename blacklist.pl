@@ -19,6 +19,8 @@ if (param('affects') && (param('action') eq 'test')) {
     $affects = param('affects');
 }
 
+$affects =~ s/&/&amp;/g;
+
 print "<form action='blacklist.pl'>";
 print "<table><tr>";
 print "<td><input type='text' name='affects' value='$affects'></td>";
@@ -192,18 +194,20 @@ sub listdir {
 
 	    my $cutnewpath = $newpath;
 	    $cutnewpath =~ s/\/$//;
+	    my $escapedcutnewpath = $cutnewpath;
+	    $escapedcutnewpath =~ s/&/&amp;/g;
 
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
-		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$escapedcutnewpath</a></strong>\n";
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("$cutnewpath", "^A-Za-z");
-		print "<strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
+		print "<strong><a href='browse.pl?dir=$escapeddir'>$escapedcutnewpath</a></strong>";
 		$newpath = "/$newpath";
 	    }
 	    $counter = listdir($newpath,$counter);
-	    if (!($basepath eq '')) {
+	     if (!($basepath eq '/')) {
 		print "</div>\n";
 	    }
 	} else {
@@ -213,6 +217,7 @@ sub listdir {
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
+		$nameonly =~ s/&/&amp;/g;
 		my $escapedfile = uri_escape("$basepath$filename", "^A-Za-z");
 		if ($cssclass eq 'file') {
 		    $cssclass = 'file2';
