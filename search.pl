@@ -92,8 +92,6 @@ sub listdir {
 	}
     }
 
-    $counter++;
-    
     return ($counter);
 
 }
