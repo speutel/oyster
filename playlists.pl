@@ -9,6 +9,8 @@ my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 my $savedir = $config{'savedir'};
 
+my $playlist = oyster::conf->get_playlist();
+
 oyster::common->navigation_header();
 
 my $globdir = "${savedir}lists/";
@@ -26,7 +28,12 @@ foreach my $entry (@entries) {
 print "<table width='100%'>";
 
 foreach my $file (@files) {
-    print "<tr><td>$file</td><td><a href='oyster-gui.pl?action=loadlist&amp;file=$file' target='curplay'>Load List</a></td>";
+    if ($file eq $playlist) {
+	print "<tr><td><i>$file</i></td><td>currently playing</td>";
+    }
+    else {
+	print "<tr><td>$file</td><td><a href='oyster-gui.pl?action=loadlist&amp;file=$file' target='curplay'>Load List</a></td>";
+    }
 }
 
 print "</table>";
