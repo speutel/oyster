@@ -24,8 +24,6 @@ print "<td align='center' width='20%'><a href='score.pl'>Scoring</a></td>";
 print "</tr></table>";
 print "<hr>";
 
-my %config = oyster::conf->get_config('oyster.conf');
-
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
 my $file = param('file') || '';
@@ -33,6 +31,13 @@ my $file = param('file') || '';
 if (param('action')) {
     oyster::fifocontrol->do_action(param('action'), $file, '');
 }   
+
+if (!(-e "$mediadir$file")) {
+    print h1('Error!');
+    print "<p>File <strong>$file</strong> could not be found.</p>";
+    print end_html;
+    exit 0;
+}
 
 print "<p>Info for ";
 
