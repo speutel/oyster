@@ -4,6 +4,7 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 use oyster::taginfo;
+use oyster::fifocontrol;
 
 my %config = oyster::conf->get_config('oyster.conf');
 my $basedir = $config{'basedir'};
@@ -13,56 +14,28 @@ my $status = <STATUS>;
 chomp($status);
 close(STATUS);
 
-my $action = '';
+my $action = param('action') || '';
 
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
 
 if (param('action')) {
-    open (CONTROL, ">${basedir}control");
-    $action=param('action');
-    if ($action eq 'skip') {
-	print CONTROL 'NEXT';
-	sleep 4;
-    } elsif ($action eq 'start') {
-	system("perl oyster.pl &");
-	while (!(-e "${config{'basedir'}}info")) {
-	    sleep 1;
-	}
-    } elsif ($action eq 'stop') {
-	print CONTROL "QUIT";
-    } elsif ($action eq 'pause') {
-	if ($status eq 'paused') {
-	    print CONTROL "UNPAUSE";
-	    $status = 'playing';
-	} elsif ($status eq 'playing') {
-	    print CONTROL "PAUSE";
-	    $status = 'paused';
-	}
-    } elsif (($action eq 'scoreup') && (param('file'))) {
-	print CONTROL "SCORE + $mediadir" . param('file');
-    } elsif (($action eq 'scoredown') && (param('file'))) {
-	print CONTROL "SCORE - $mediadir" . param('file');
-    } 
-    close CONTROL;
+    $status = oyster::fifocontrol->do_action(param('action'), param('file'), $status);
 }
 
 if (param('vote')) {
-    my $votefile=param('vote');
-    $votefile = $config{'mediadir'} . $votefile;
-    open (CONTROL, ">${basedir}control");
-    print CONTROL "VOTE $votefile";
-    close CONTROL;
-    sleep 1;
+    oyster::fifocontrol->do_vote(param('vote'));
 }
 
 print
     header,
     start_html(-title=>'Oyster-GUI',
 	       -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
-	       -head=>CGI::meta({-http_equiv => 'Content-Type',
-				 -content    => 'text/html; charset=iso-8859-1'}));
-
+	       -head=>[CGI::meta({-http_equiv => 'Content-Type',
+				 -content    => 'text/html; charset=iso-8859-1'}),
+		       CGI::meta({-http_equiv => 'refresh',
+				 -content    => '30; URL=oyster-gui.pl'})]
+	       );
 
 print h1('Oyster');
 print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
@@ -73,8 +46,6 @@ if ((!(-e "$basedir")) || ($action eq 'stop')) {
     print end_html;
     exit 0;
 }
-
-print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
 
 open(INFO, "${basedir}info");
 my $info = <INFO>;
