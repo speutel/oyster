@@ -11,10 +11,6 @@ if (param()) {
 	open (CONTROL, '>/tmp/oyster/control');
 	print CONTROL 'QUIT';
 	close CONTROL;
-    } elsif ($action eq 'skip') {
-	open (CONTROL, '>/tmp/oyster/control');
-	print CONTROL 'NEXT';
-	close CONTROL;
     }
     my $volume=param('vol');
     if ($volume eq 'down') {
@@ -34,20 +30,20 @@ print
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
-print "<table width='100%'>";
-print "<tr><td align='center' width='30%'><a href='control.pl?action=start'>Start</a></td>";
-print "<td align='center' width='40%'><a href='control.pl?action=skip'>Skip</a></td>";
-print "<td align='center' width='30%'><a href='control.pl?action=stop'>Stop</a></td>";
+print "<table width='80%' style='margin-left:auto; margin-right:auto;'>";
+print "<tr><td align='left' width='30%'><a href='control.pl?action=start'>Start</a></td>";
+print "<td></td>";
+print "<td align='right' width='30%'><a href='control.pl?action=stop'>Stop</a></td>";
 print "</tr></table>\n";
 
 my $volume = `aumix -w q`;
 $volume =~ s/^pcm\ //;
 $volume =~ s/,.*//;
 
-print "<table width='100%'>";
-print "<tr><td align='center' width='40%'><a href='control.pl?vol=down'>Volume Down</a></td>";
+print "<table width='80%' style='margin-left:auto; margin-right:auto;'>";
+print "<tr><td align='left' width='40%'><a href='control.pl?vol=down'>Volume Down</a></td>";
 print "<td align='center' width='20%'><a href='control.pl?vol=50'>$volume</a></td>";
-print "<td align='center' width='40%'><a href='control.pl?vol=up'>Volume Up</a></td>";
+print "<td align='right' width='40%'><a href='control.pl?vol=up'>Volume Up</a></td>";
 print "</tr></table>\n";
 
 print end_html;
