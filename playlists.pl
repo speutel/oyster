@@ -102,7 +102,7 @@ print "</table>";
 
 print start_form;
 
-print hidden(-name=>'action', -default=>'addnewlist');
+print "<input type='hidden' name='action' value='addnewlist'>";
 
 print textfield(-name=>'newlistname',-default=>'');
 print submit(-value=>'Create new list',-style=>'margin-left: 2em;');
