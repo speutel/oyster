@@ -64,7 +64,7 @@ $info = uri_escape("$info", "^A-Za-z");
 
 my $statusstr = '';
 if ($status eq 'paused') {
-    $statusstr = ' (Paused)';
+    $statusstr = " (<a href='oyster-gui.pl?action=pause'>Paused</a>)";
 }
 
 print "<table width='100%' border='0'>";
