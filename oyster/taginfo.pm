@@ -106,9 +106,7 @@ sub get_tag {
 		$tag{'comment'} = $1;
 	    } elsif ($line =~ /playtime=(.*)/) {
 		$tag{'playtime'} = $1;
-		$tag{'playtime'} =~ s/([0-9]*)h/$1/;
-		$tag{'playtime'} =~ s/([0-9]*)m/$1/;
-		$tag{'playtime'} =~ s/([0-9]*)s/$1/;
+		$tag{'playtime'} =~ s/([0-9]*)[hms]/$1/g;
 	    }
 	}
     
