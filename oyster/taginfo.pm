@@ -101,6 +101,7 @@ sub get_score {
 	    chomp($line);
 	    $tag{'score'}++ if ($line eq $filename);
 	}
+	close(LASTVOTES);
     } else {
 	$tag{'score'} += 0;
     }    
