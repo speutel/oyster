@@ -297,6 +297,8 @@ sub interpret_control {
 			$file =~ s/\(/\\\(/g;
 			$file =~ s/\)/\\\)/g;
 			$file =~ s/\`/\\\`/g;
+			$file =~ s/\"/\\\"/g;
+			$file =~ s/\'/\\\'/g;
 			open ( RP, "realpath $file |" );
 			$file = <RP>;
 			close(RP);
