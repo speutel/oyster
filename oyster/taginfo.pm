@@ -9,7 +9,7 @@ my $VERSION = '1.0';
 	
 sub get_tag {
     my $filename = $_[1];
-    my ($title, $artist, $display) = "";
+    my ($title, $artist, $album, $year, $genre, $display) = "";
 
     if ($filename =~ /mp3$/i) {
 	open (MP3, "id3v2 -l \"$filename\"|") or die $!;
@@ -28,6 +28,10 @@ sub get_tag {
 	    } elsif ($line =~ /^Lead/) {
 		$_ = $line;
 		($artist) = m/:\ (.*)$/;
+	    } elsif ($line =~ /^Album/) {
+		$_ = $line;
+		($album, $year, $genre) = m@Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)@;
+		$album =~ s/[\ ]*$//;
 	    }
 	}
 	    
@@ -40,12 +44,19 @@ sub get_tag {
 	    $line =~ s/^\s*//;
 	    $line =~ s/TITLE=/title=/;
 	    $line =~ s/ARTIST=/artist=/;
+	    $line =~ s/ALBUM=/date=/;
+	    $line =~ s/DATE=/date=/;
+	    $_ = $line;
 	    if ($line =~ /title=/) {
-		$_ = $line;
 		($title) = m/title=(.*)/;
 	    } elsif ($line =~ /artist=/) {
-		$_ = $line;
 		($artist) = m/artist=(.*)/;
+	    } elsif ($line =~ /album=/) {
+		($album) = m/album=(.*)/;
+	    } elsif ($line =~ /date=/) {
+		($year) = m/date=(.*)/;
+	    } elsif ($line =~ /genre=/) {
+		($genre) = m/genre=(.*)/;
 	    }
 	}
     
@@ -65,5 +76,8 @@ sub get_tag {
     $tag{'artist'} = $artist;
     $tag{'title'} = $title;
     $tag{'display'} = $display;
+    $tag{'album'} = $album;
+    $tag{'year'} = $year;
+    $tag{'genre'} = $genre;
     return %tag;
 }
