@@ -3,14 +3,18 @@
 # commandline parameters:
 # only parameter is a file with a list of musicfiles to choose from randomly. (optional)
 
-#use warnings;
-#use strict;
+use warnings;
+use strict;
 use oyster::conf;
+use POSIX qw(strftime);
 
 my $savedir = `pwd`;
 chomp($savedir);
 my $conffile = "$savedir/oyster.conf";
 my %config;
+
+my $logtime_format="%Y%m%d-%H%M%S";
+my @history;
 
 my $basedir = "/tmp/oyster";
 my $media_dir = "/";
@@ -20,12 +24,11 @@ my $voteplay_percentage = 10;
 my $lastvotes_size = 30;
 my $votefile = "$basedir/votes";
 
-
-
-
 my ($lastvotes_pointer, @lastvotes);
 my (@filelist, $file, $control, %votehash, @votelist);
 my ($file_override); 
+my $skipped = "false";
+
 
 init();
 
@@ -82,34 +85,84 @@ sub play_file {
 	print STATUS "playing\n";
 	close(STATUS);
 
+	push(@history, $file);
+
+	open(HISTORY, ">>$basedir/history");
+	print HISTORY $file;
+	close(HISTORY);
 }
 
+sub add_log {
+	# log ( $file, $cause )
+	
+	my ($logged_file, $comment);
+	
+	$comment = $_[1];
+	$logged_file = $_[0];
+	chomp($logged_file);
+
+	print LOG strftime($logtime_format, localtime) . " $comment $logged_file\n";
+	
+	
+}
 
 sub interpret_control {
 	# find out what to do by checking $control
 
 	if ( $control =~ /^NEXT/)  { 
-		$command = "kill " . &get_player_pid;
+		add_log($file, "SKIPPED");
+		$skipped = "true";
+		my $command = "kill " . &get_player_pid;
 		system($command); 
 		sleep(2);
 		get_control();
 		interpret_control();
 	}
 	elsif ( $control =~ /^done/) { 
-		print STDERR "play.pl is done.\n";
+		#print STDERR "play.pl is done.\n";
+		if ( $skipped ne "true" ) {
+			add_log($file, "DONE");
+		} else { 
+			$skipped = "false";
+		}
 	}
 	elsif ( $control =~ /^FILE/) {
 		# set $file and play it *now*
 		$control =~ s/\\//g;
 		$control =~ /^FILE\ (.*)$/;
+	
+		add_log($file, "SKIPPED");
+		$skipped = "true";
+		
 		$file = $1;
 		$file_override = "true";
-		system("kill " . &get_player_pid);
+
+		add_log($file, "VOTED");
+		
+		my $command = "kill " . &get_player_pid;
+		system($command); 
+		
 		get_control();
 		interpret_control();
 	}	
+	elsif ( $control =~ /^PREV/ ) {
+		my $command = "kill " . &get_player_pid;
+		
+		add_log($file, "SKIPPED");
+		$skipped = "true";
+		
+		system($command); 
+		$file = $history[$#history-1];
+		$file_override = "true";
+
+		add_log($file, "VOTED");
+		
+		get_control();
+		interpret_control();
+	}
 	elsif ( $control =~ /^QUIT/	) {  
-		$command = "kill " . &get_player_pid;
+		my $command = "kill " . &get_player_pid;
+		add_log($file, "QUIT");
 		system($command); 
 		get_control();
 		cleanup();
@@ -171,7 +224,7 @@ sub interpret_control {
 		interpret_control();
 	}
 	elsif ( $control =~ /^PAUSE/) {
-		$command = "kill -19 " . &get_player_pid;
+		my $command = "kill -19 " . &get_player_pid;
 		system($command);
 		
 		open(STATUS, ">$basedir/status");
@@ -182,7 +235,7 @@ sub interpret_control {
 		interpret_control();
 	}
 	elsif ( $control =~ /^UNPAUSE/) {
-		$command = "kill -18 " . &get_player_pid;
+		my $command = "kill -18 " . &get_player_pid;
 		system($command);
 		
 		open(STATUS, ">$basedir/status");
@@ -202,7 +255,7 @@ sub interpret_control {
 	}	
 	elsif ( $control =~ /^SCORE/ ) {
 		$control =~ /^SCORE\ (.)\ (.*)/;
-		$scored_file = $2;
+		my $scored_file = $2;
 		if ( $1 eq "+" ) {
 			$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
 			$lastvotes[$lastvotes_pointer] = $scored_file . "\n";
@@ -230,7 +283,7 @@ sub interpret_control {
 sub get_player_pid {
 	my $player_pid;
 	open(PS, "ps x -o pid=,comm= |") || print STDERR "ps x -o pid=,comm= | failed\n";
-	while( $line = <PS> ) {
+	while( my $line = <PS> ) {
 		# " 1545 pts/1    RN     0:04 mpg321 -q"
 		if ( $line =~ /(mpg321|ogg123)/ ) {
 			$line =~ /^[\ ]*([0-9][0-9]*)\ /;
@@ -304,7 +357,7 @@ sub process_vote {
 	close(VOTEFILE);
 	
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
-		$entry= $votelist[$i]; 
+		my $entry = $votelist[$i]; 
 		if ($votehash{$entry} > $max_votes) {
 			$winner = $i; $max_votes = $votehash{$entry};
 		}
@@ -342,6 +395,7 @@ sub cleanup {
 	unlink <$basedir/*>;
 	rmdir "$basedir";
 
+	close(LOG);
 }
 
 sub load_list {
@@ -420,11 +474,13 @@ sub init {
 	}
 
 	# read last votes
-	open (LASTVOTES, $lastvotes_file);
-	$lastvotes_pointer = <LASTVOTES>;
-	chomp($lastvotes_pointer);
-	@lastvotes = <LASTVOTES>;
-	close(LASTVOTES);
+	if ( -e $lastvotes_file ) {
+		open (LASTVOTES, $lastvotes_file) || die $!;
+		$lastvotes_pointer = <LASTVOTES>;
+		chomp($lastvotes_pointer);
+		@lastvotes = <LASTVOTES>;
+		close(LASTVOTES);
+	}
 
 	# initialize random
 	srand;
@@ -432,7 +488,8 @@ sub init {
 	# tell STDERR and STDOUT where they can dump their messages
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
-	open (DEBUG, ">/tmp/debug");
+	#open (DEBUG, ">/tmp/debug");
+	open (LOG, ">>$savedir/log");
 
 	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
@@ -453,6 +510,7 @@ sub choose_file {
 		close( FILEIN );
 		unlink "$basedir/playnext";
 
+		add_log($file, "VOTED");
 		# playnext is set by processvotes
 		# set votes for the played file to 0 and reprocess votes
 		# (write next winner to playnext, 
@@ -465,10 +523,12 @@ sub choose_file {
 			# choose file from lastvotes with a chance of $voteplay_percentage/100
 			my $index = rand @lastvotes;
 			$file = $lastvotes[$index];
+			add_log($file, "LASTVOTES");
 		} else {
 			# choose file from "normal" filelist
 			my $index = rand @filelist;
 			$file = $filelist[$index];
+			add_log($file, "PLAYLIST");
 		}
 
 		# read regexps from $savedir/blacklist (one line per regexp)
@@ -478,6 +538,7 @@ sub choose_file {
 			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
 				if ( $file =~ /\Q$regexp/ ) {
+					add_log($file, "BLACKLIST");
 					choose_file();
 				}
 			}
