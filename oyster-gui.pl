@@ -13,9 +13,11 @@ my $status = <STATUS>;
 chomp($status);
 close(STATUS);
 
+my $action = '';
+
 if (param('action')) {
     open (CONTROL, ">${basedir}control");
-    my $action=param('action');
+    $action=param('action');
     if ($action eq 'skip') {
 	print CONTROL 'NEXT';
 	sleep 4;
@@ -61,7 +63,7 @@ print
 print h1('Oyster');
 print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
 
-if (!(-e "$basedir")) {
+if ((!(-e "$basedir")) || ($action eq 'stop')) {
     print "<p>Oyster has not been started yet!</p>";
     print "<p><a href='oyster-gui.pl?action=start'>Start</a></p>";
     print end_html;
