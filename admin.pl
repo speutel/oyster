@@ -104,7 +104,7 @@ if (param('action') && (param('action') eq 'set')) {
 
     print strong('Your settings were saved.');
     if ($remember) {
-	print p(strong('Please remember to restart oyster!'));
+	print p(strong('Changes only take effect after restarting Oyster!'));
     }
 }
 

@@ -66,17 +66,21 @@ if (param('search')) {
 # Create form
 
 my %labels = ('normal' => ' Normal', 'regex' => ' Regular Expression');
+my %playlistlabels = ('all' => ' All Songs', 'current' => ' Only current playlist');
 
 print start_form;
 
 my $textfield = textfield(-name=>'search',-default=>'');
 my $radiobuttons = radio_group(-name=>'searchtype',-values=>['normal','regex'],-default=>'normal',
 			-linebreak=>'true',-labels=>\%labels);
+my $playlists = radio_group(-name=>'playlist',-values=>['all','current'],-default=>'all',
+			-linebreak=>'true',-labels=>\%playlistlabels);
 my $submit = submit(-value=>'Search',-style=>'margin-left: 2em;');
 
 print table({-border=>'0'},
 	    Tr([
-		td([$textfield,$radiobuttons,$submit])
+		td([$textfield,$submit]),
+		td([$radiobuttons,$playlists])
 		])
 	    );
 
@@ -89,9 +93,12 @@ my $cssclass='file2';
 
 if ($search ne '') {
 
-    # Search for files in default list
+    # Check in which playlist to search
+    my $playlist = 'default';
 
-    my $playlist = oyster::conf->get_playlist();
+    if (param('playlist') eq 'current') {
+	$playlist = oyster::conf->get_playlist();
+    }
 
     open (LIST, "${config{savedir}}lists/$playlist");
     my @list = <LIST>;
