@@ -6,11 +6,12 @@ use oyster::conf;
 use oyster::taginfo;
 
 my %config = oyster::conf->get_config('oyster.conf');
+my $basedir = $config{'basedir'};
 
 if (param('action')) {
     my $action=param('action');
     if ($action eq 'skip') {
-	open (CONTROL, ">$config{'basedir'}" . "control");
+	open (CONTROL, ">${basedir}control");
 	print CONTROL 'NEXT';
 	close CONTROL;
 	sleep 1;
@@ -22,8 +23,7 @@ if (param('action')) {
 
 if (param('vote')) {
     my $votefile=param('vote');
-
-    open (CONTROL, ">$config{'basedir'}" . "control");
+    open (CONTROL, ">${basedir}control");
     print CONTROL "VOTE $votefile";
     close CONTROL;
     sleep 1;
@@ -36,10 +36,8 @@ print
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
-my $basedir = $config{'basedir'};
-
 print h1('Oyster');
-print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='refresh.gif' border='0'></a>";
+print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='refresh.gif' border='0' alt='Refresh'></a>";
 
 if (!(-e "$basedir")) {
     print "<p>Oyster has not been started yet!</p>";
@@ -50,7 +48,7 @@ if (!(-e "$basedir")) {
 
 print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
 
-open(INFO, "$basedir" . "info");
+open(INFO, "${basedir}info");
 my $info = <INFO>;
 chomp($info);
 $info =~ s/^np:\ //;
@@ -63,12 +61,12 @@ $info = uri_escape("$info", "^A-Za-z");
 print "<table width='100%'>";
 print "<tr><td><strong>Now playing: <a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a></strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
-print "</table>";
+print "</table>\n";
 
-open (VOTES, "$basedir" . 'votes');
+open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
 
-if (-s "$basedir" . 'votes') {
+if (-s "${basedir}votes") {
     print "<table width='100%' style='margin-top:3em;'><tr>";
     print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th>";
     foreach my $vote (@votes) {
