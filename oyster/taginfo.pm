@@ -66,6 +66,8 @@ sub get_tag {
 		$tag{'album'} = $1;
 	    } elsif ($line =~ /^Year\:\ ([0-9]*)/) {
 		$tag{'year'} = $1;
+	    } elsif ($line =~ /^Content\ type\:\ \([0-9]*\)(.*)/ ) {
+		$tag{'genre'} = $1;
 	    } elsif ($line =~ /^Comment.*Track\:\ ([0-9]*)/) {
 		$tag{'track'} = $1;
 	    } elsif ($line =~ /^Track\ number\/Position\ in\ set\:\ (.*)/) {
