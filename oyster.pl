@@ -1,20 +1,18 @@
 #!/usr/bin/perl
 
-use strict;
-
 my $basedir = "/tmp/oyster";
-my $mp3_player = "mpg123";
-my $ogg_player = "ogg123";
-my @filelist, $file, $control;
-
-
+my (@filelist, $file, $control, $file_override);
+my $fifo="false";
 
 
 init();
-while ( true ) {
+while ( 1 ) {
 	main();
 }
+unlink </tmp/oyster/*>;
+rmdir "/tmp/oyster";
 
+use Switch 'Perl5', 'Perl6';
 
 
 ###################
@@ -22,36 +20,68 @@ while ( true ) {
 
 sub main {
 		
-	$pid = open(KID_PLAY, "|-");
+	choose_file();
+	info_out();
+	play_file();
+	get_control();
+	interpret_control($control);
 	
-	if (! $pid) {
-		$file = <STDIN>;	
-		play($file);
-	} else {
-		choose_file();
-		info_out();
-		
-		print KID_PLAY "$file/n";
-		
-		#CONTROL ist eine named pipe, open blockt!
-		open(CONTROL, "$basedir/control");
-		$control = <CONTROL>;
-		close(CONTROL);
+}
 
+
+sub get_control {
+	
+	#CONTROL ist eine named pipe, open blockt!
+	open(CONTROL, "$basedir/control");
+	$control = <CONTROL>;
+	close(CONTROL);
+
+}
+
+
+sub play_file {
+
+	system("./play.pl &");
+	
+	open(KIDPLAY, ">/tmp/oyster/kidplay");
+	print KIDPLAY "$file\n";
+	close(KIDPLAY);
+
+}
+
+
+sub interpret_control {
+	$sw = $control;
+	switch ($sw) {
+
+		case /^next/	{ 
+			system("killall play.pl mpg321 ogg123"); 
+		}
+		case /^done/ { 
+		}
+		case /^F\ / {
+			$control =~ /^F\ (.*)$/;
+			$file = $1;
+			$file_override = "true";
+			system("killall play.pl mpg321 ogg123");
+		}	
+		case /^quit/	{ system("killall play.pl mpg321 ogg123"); exit; }
 	}
-
 }
 
 
 sub init {
 
 	open (FILELIST, $ARGV[0]);
-	
+	system("/usr/bin/mkfifo /tmp/oyster/control");
+	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
+	open (STDERR, ">>/tmp/oyster/err");
+	open (STDOUT, ">>/dev/null");
 	srand;
 	
 	@filelist = <FILELIST>;
 	
-	mkdir $basedir;	
+	mkdir($basedir);	
 	open(INFO, ">$basedir/info");
 
 }
@@ -59,39 +89,21 @@ sub init {
 
 sub choose_file {
 
-	$index = rand @filelist;
-	$file = $filelist[$index];
-
-}
-
-
-sub play {
+	print STDERR $file;
 	
-	$file =~ /.*\.([^\.]*$)/
-	
-	$suffix = $1;
-
-	if ( ($suffix eq "mp3") | ($suffix eq "MP3") ) {
-		$real_player = $mp3_player;
+	if ( $file_override eq "true") {
+		#don't touch $file
+		$file_override = "false";
+	} else {
+		$index = rand @filelist;
+		$file = $filelist[$index];
 	}
-	elsif ( ($suffix eq "ogg") | ($suffix eq "OGG") ) {
-		$real_player = $ogg_player;
-	}
-
-	system ($real_player $file);
-	
-
-	#CONTROL_OUT ist eine named pipe! open blockt!
-	open(CONTROL_OUT, ">$basedir/control");
-	print CONTROL_OUT "next\n";
-	close(CONTROL_OUT);
-	
-	exit;
+	print STDERR $file;
 }
 
 
 sub info_out {
 	
 	print INFO "np: " . $file;
-
+	print STDERR "info_out zuende\n";
 }
