@@ -37,7 +37,7 @@ sub get_tag {
 	open (OGG, "ogginfo \"$filename\"|") or die $!;
 	
 	while (my $line = <OGG>) {
-	    $line =~ s/^\w*//;
+	    $line =~ s/^\s*//;
 	    $line =~ s/TITLE=/title=/;
 	    $line =~ s/ARTIST=/artist=/;
 	    if ($line =~ /title=/) {
