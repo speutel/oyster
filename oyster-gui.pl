@@ -20,7 +20,7 @@ print
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
-print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
+# print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
 
 open(INFO, "/tmp/oyster/info");
 my $info = <INFO>;
@@ -88,6 +88,7 @@ if ($title eq "") {
 $info = uri_escape("$info", "^A-Za-z");
 
 print h1('Oyster');
+print "<a href='oyster-gui.pl' style='position:absolute; top:10px; right:15px'>Refresh</a>";
 print "<table width='100%'>";
 print "<tr><td><strong>Now playing: <a class='file' href='fileinfo.pl?file=$info' target='browse'>$title</a></strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
