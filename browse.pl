@@ -4,6 +4,12 @@ use URI::Escape;
 
 print header, start_html(-title=>'Oyster-GUI',-style=>{'src'=>'layout.css'});
 
+print "<table width='100%'><tr>";
+print "<td align='center' width='50%'><a href='browse.pl'>Browse</a></td>";
+print "<td align='center' width='50%'><a href='search.pl'>Search</a></td>";
+print "</tr></table>";
+print "<hr>";
+
 my $basedir = '/Multimedia/Audio/';
 my $rootdir=$basedir;
 
