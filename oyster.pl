@@ -81,11 +81,15 @@ sub get_control {
 sub play_file {
 	# start play.pl and tell it which file to play
 	
+	my $escaped_file = $file;
+	$escaped_file =~ s/\`/\\\`/g;
+	
 	system("./play.pl &");
 
 	open(KIDPLAY, ">/tmp/oyster/kidplay");
 	print STDERR "play.pl: $file";
-	print KIDPLAY "$file\n";
+	print STDERR "escaped:$escaped_file";
+	print KIDPLAY "$escaped_file\n";
 	close(KIDPLAY);
 		
 	open(STATUS, ">$basedir/status");
@@ -143,7 +147,6 @@ sub interpret_control {
 
 		## only used by play.pl to signal end of song
 		
-		#print STDERR "play.pl is done.\n";
 		if ( $skipped ne "true" ) {
 			add_log($file, "DONE");
 		} else { 
@@ -384,7 +387,7 @@ sub remove_score {
 	for ( my $i = 0; $i <= $#scores; $i++ ) {
 		if ( $scores[$i] eq ($myfile . "\n") ) {
 			splice(@scores, $i, 1);
-			if ( $scores_pointer != 0 ) {
+			if ( $scores_pointer > $#scores ) {
 				--$scores_pointer;
 			}
 			last;
@@ -431,15 +434,11 @@ sub unvote {
 	my $unvote_file = $_[0];
 
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
-		print STDERR "file to unvote: $unvote_file, ";
-		print STDERR "file in votelist: $votelist[$i], ";
 		if ($unvote_file eq $votelist[$i]) {
-			print STDERR "match: yes!\n";
 			$votehash{$votelist[$i]} = 0;
 			splice(@votelist, $i, 1);
 			last;
 		}
-		print STDERR "match: no\n";
 	}
 	
 }
@@ -498,7 +497,7 @@ sub process_vote {
 		# else remove the file that is playing at the moment from the votelist.
 		my $tmpfile = $file;
 		chomp $tmpfile;
-		print STDERR "process_vote: unvoting $tmpfile\n";
+		#print STDERR "process_vote: unvoting $tmpfile\n";
 		unvote($tmpfile);
 
 	}
@@ -522,7 +521,7 @@ sub process_vote {
 	
 	# write winner to playnext
 	if ($votehash{$votelist[$winner]} > 0) {
-		print STDERR "winner is $votelist[$winner]\n";
+		#print STDERR "winner is $votelist[$winner]\n";
 		
 		open(PLAYNEXT, ">$basedir/playnext") || print STDERR "process_vote: could not open playnext\n";
 		print PLAYNEXT $votelist[$winner] . "\n";
@@ -746,7 +745,7 @@ sub choose_file {
 		close( FILEIN );
 		unlink "$basedir/playnext";
 
-		print STDERR "playnext: $file";
+		#print STDERR "playnext: $file";
 		
 		add_log($file, "VOTED");
 		# playnext is set by process_vote
