@@ -739,7 +739,7 @@ sub init {
 	open (STDOUT, ">>/dev/null");
 	#open (DEBUG, ">/tmp/debug");
 	open (LOG, ">>$savedir/logs/$playlist");
-	my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d`;
+	my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d-%H%M`;
 	open (RANDOM, $randomfile);
 
 	# make fifos
