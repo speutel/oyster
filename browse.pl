@@ -6,7 +6,6 @@ use oyster::conf;
 use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
-
 oyster::common->navigation_header();
 
 my $mediadir = $config{'mediadir'};
@@ -27,7 +26,7 @@ if (-e $config{'basedir'}) {
 
 if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 
-    print "<p>" . oyster::common->get_cover($mediadir . $givendir);
+    print "<p>" . oyster::common->get_cover($mediadir . $givendir, "100");
 
     print "<strong>Current directory: ";
 

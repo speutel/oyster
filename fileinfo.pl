@@ -94,25 +94,25 @@ close LOG;
 
 my $albumdir = $mediadir . $file;
 $albumdir =~ s/[^\/]*$//;
-my $coverdata = oyster::common->get_cover($albumdir);
+my $coverdata = oyster::common->get_cover($albumdir, "200");
 
-print "<table cellpadding='10'>";
+print "<table border='0' width='100%'>";
 if ($tag{'title'}) {
-    print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td><td rowspan='6'>$coverdata</td></tr>";
+    print "<tr><td class='fileinfo'><strong>Title</strong></td><td>$tag{'title'}</td><td rowspan='6' class='fileinfoimage' width='120'>$coverdata</td></tr>";
 } else {
-    print "<tr><td></td><td rowspan='6'>$coverdata</td></tr>";
+    print "<tr><td class='fileinfo'></td><td rowspan='6'>$coverdata</td></tr>";
 }
-print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>" if ($tag{'artist'});
-print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{'album'});
-print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>" if ($tag{'track'});
-print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>" if ($tag{'year'});
-print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>" if ($tag{'genre'});
-print "<tr><td><strong>Comment</strong></td><td>$tag{'comment'}</td></tr>" if ($tag{'comment'});
-print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
-print "<tr><td><strong>Playtime</strong></td><td>$tag{'playtime'}</td></tr>" if ($tag{'playtime'});
+print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>" if ($tag{'artist'});
+print "<tr><td class='fileinfo'><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{'album'});
+print "<tr><td class='fileinfo'><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>" if ($tag{'track'});
+print "<tr><td class='fileinfo'><strong>Year</strong></td><td>$tag{'year'}</td></tr>" if ($tag{'year'});
+print "<tr><td class='fileinfo'><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>" if ($tag{'genre'});
+print "<tr><td class='fileinfo'><strong>Comment</strong></td><td>$tag{'comment'}</td></tr>" if ($tag{'comment'});
+print "<tr><td class='fileinfo'><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
+print "<tr><td class='fileinfo'><strong>Playtime</strong></td><td>$tag{'playtime'}</td></tr>" if ($tag{'playtime'});
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
-print "<tr><td><strong>Times played</strong></td><td>$timesplayed</td></tr>";
-print "<tr><td><strong>Current Oyster-Score</strong></td>";
+print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>$timesplayed</td></tr>";
+print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>";
 print "<td><a href='fileinfo.pl?action=scoredown&amp;file=$escapedfile'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong>";
 print " <a href='fileinfo.pl?action=scoreup&amp;file=$escapedfile'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";

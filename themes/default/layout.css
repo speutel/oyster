@@ -47,3 +47,15 @@ input {
   color: #08c0e0;
   border-color:#000000;
 }
+
+td.fileinfo {
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+td.fileinfoimage {
+  text-align:right;
+  padding-left:10px; 
+  padding-right:0px; 
+  padding-top:0px;
+}

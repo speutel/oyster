@@ -31,6 +31,7 @@ sub navigation_header {
 
 sub get_cover {
     my $albumdir = my $albumname = $_[1];
+    my $imagewidth = $_[2];
     $albumname =~ s/\/$//;
     $albumname =~ s/^.*\///;
     my $albumnameus = $albumname;
@@ -58,7 +59,7 @@ sub get_cover {
 	return '';
     } else {
 	return "<img src='data:image/$filetype;base64," . $base64 .
-	    "' width='100' style='float:right; margin-left:20px; margin-right: 20px;' alt='Cover'>";
+	    "' width='". $imagewidth . "' style='float:right' alt='Cover'>";
     }
 
 }
