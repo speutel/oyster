@@ -6,12 +6,13 @@ use warnings;
 my %tag;
 
 my $VERSION = '1.0';
-	
+
 sub get_tag {
+    %tag = [];
     my $filename = $_[1];
-    my ($title, $artist, $album, $year, $genre, $display) = "";
 
     if ($filename =~ /mp3$/i) {
+	$tag{'format'} = 'MP3';
 	open (MP3, "id3v2 -l \"$filename\"|") or die $!;
 	
 	while (my $line = <MP3>) {
@@ -19,25 +20,26 @@ sub get_tag {
 		$_ = $line;
 		if ($line =~ /^Title\ \ \:.*Artist/) {
 		    # id3v1                                                         
-		    ($title,$artist) = m/^Title\ \ \:\ (.*)Artist\:\ (.*)/;
-		    $title =~ s/[\ ]*$//;
+		    ($tag{'title'},$tag{'artist'}) = m/^Title\ \ \:\ (.*)Artist\:\ (.*)/;
+		    $tag{'title'} =~ s/[\ ]*$//;
 		} else {
 		    # id3v2                                                 
-		    ($title) = m/:\ (.*)$/;
+		    ($tag{'title'}) = m/:\ (.*)$/;
 		}
 	    } elsif ($line =~ /^Lead/) {
 		$_ = $line;
-		($artist) = m/:\ (.*)$/;
+		($tag{'artist'}) = m/:\ (.*)$/;
 	    } elsif ($line =~ /^Album/) {
 		$_ = $line;
-		($album, $year, $genre) = m@Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)@;
-		$album =~ s/[\ ]*$//;
+		($tag{'album'}, $tag{'year'}, $tag{'genre'}) = m@Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)\(@;
+		$tag{'album'} =~ s/[\ ]*$//;
 	    }
 	}
 	    
 	close (MP3);
 	
     } elsif ($filename =~ /ogg$/i) {
+	$tag{'format'} = 'OGG Vorbis';
 	open (OGG, "ogginfo \"$filename\"|") or die $!;
 	
 	while (my $line = <OGG>) {
@@ -48,15 +50,15 @@ sub get_tag {
 	    $line =~ s/DATE=/date=/;
 	    $_ = $line;
 	    if ($line =~ /title=/) {
-		($title) = m/title=(.*)/;
+		($tag{'title'}) = m/title=(.*)/;
 	    } elsif ($line =~ /artist=/) {
-		($artist) = m/artist=(.*)/;
+		($tag{'artist'}) = m/artist=(.*)/;
 	    } elsif ($line =~ /album=/) {
-		($album) = m/album=(.*)/;
+		($tag{'album'}) = m/album=(.*)/;
 	    } elsif ($line =~ /date=/) {
-		($year) = m/date=(.*)/;
+		($tag{'year'}) = m/date=(.*)/;
 	    } elsif ($line =~ /genre=/) {
-		($genre) = m/genre=(.*)/;
+		($tag{'genre'}) = m/genre=(.*)/;
 	    }
 	}
     
@@ -64,20 +66,14 @@ sub get_tag {
 
     }
 
-    if ($title eq "") {
-	$display = $filename;
-	$display =~ s@.*/@@;
-	$display =~ s/\.mp3//i;
-	$display =~ s/\.ogg//i;
+    if ($tag{'title'} eq "") {
+	$tag{'display'} = $filename;
+	$tag{'display'} =~ s@.*/@@;
+	$tag{'display'} =~ s/\.mp3//i;
+	$tag{'display'} =~ s/\.ogg//i;
     } else {
-	$display = "$artist - $title";
+	$tag{'display'} = "$tag{'artist'} - $tag{'title'}";
     }
 
-    $tag{'artist'} = $artist;
-    $tag{'title'} = $title;
-    $tag{'display'} = $display;
-    $tag{'album'} = $album;
-    $tag{'year'} = $year;
-    $tag{'genre'} = $genre;
     return %tag;
 }
