@@ -212,6 +212,7 @@ sub choose_file {
 			print STDERR "Blacklist existiert.\n";
 			open(BLACKLIST, "$savedir/blacklist");
 			while( $regexp = <BLACKLIST> ) {
+				chomp($regexp);
 				print STDERR "File : $file regexp: $regexp\n";
 				if ( $file =~ /\Q$regexp/ ) {
 					choose_file();
