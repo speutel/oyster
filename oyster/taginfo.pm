@@ -2,8 +2,10 @@ package oyster::taginfo;
 
 use strict;
 use warnings;
+use oyster::conf;
 
 my %tag;
+
 
 my $VERSION = '1.0';
 
@@ -36,6 +38,8 @@ sub get_tag {
 		$tag{'genre'} = $3;
 		$tag{'album'} =~ s/[\ ]*$//;
 		$tag{'genre'} =~ s/\ \(.*//;
+	    } elsif ($line =~ /^Comment.*Track\:\ ([0-9]*)/) {
+		$tag{'track'} = $1;
 	    }
 	}
 	    
@@ -49,24 +53,37 @@ sub get_tag {
 	    $line =~ s/^\s*//;
 	    $line =~ s/TITLE=/title=/;
 	    $line =~ s/ARTIST=/artist=/;
-	    $line =~ s/ALBUM=/date=/;
+	    $line =~ s/ALBUM=/album=/;
 	    $line =~ s/DATE=/date=/;
-	    $_ = $line;
-	    if ($line =~ /title=/) {
-		($tag{'title'}) = m/title=(.*)/;
-	    } elsif ($line =~ /artist=/) {
-		($tag{'artist'}) = m/artist=(.*)/;
-	    } elsif ($line =~ /album=/) {
-		($tag{'album'}) = m/album=(.*)/;
-	    } elsif ($line =~ /date=/) {
-		($tag{'year'}) = m/date=(.*)/;
-	    } elsif ($line =~ /genre=/) {
-		($tag{'genre'}) = m/genre=(.*)/;
+	    $line =~ s/TRACKNUMBER=/tracknumber=/;
+	    if ($line =~ /title=(.*)/) {
+		($tag{'title'}) = $1;
+	    } elsif ($line =~ /artist=(.*)/) {
+		($tag{'artist'}) = $1;
+	    } elsif ($line =~ /album=(.*)/) {
+		($tag{'album'}) = $1;
+	    } elsif ($line =~ /date=(.*)/) {
+		($tag{'year'}) = $1;
+	    } elsif ($line =~ /genre=(.*)/) {
+		($tag{'genre'}) = $1;
+	    } elsif ($line =~ /tracknumber=(.*)/) {
+		($tag{'track'}) = $1;
 	    }
 	}
     
 	close (OGG);
 
+    }
+
+    # Count current score
+
+    my %config = oyster::conf->get_config('oyster.conf');
+    $tag{'score'} = 0;
+
+    open (LASTVOTES, "${config{'savedir'}}lastvotes");
+    while (my $line = <LASTVOTES>) {
+	chomp($line);
+	$tag{'score'}++ if ($line eq $filename);
     }
 
     if ($tag{'title'} eq '') {
