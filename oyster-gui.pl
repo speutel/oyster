@@ -8,6 +8,11 @@ use oyster::taginfo;
 my %config = oyster::conf->get_config('oyster.conf');
 my $basedir = $config{'basedir'};
 
+open(STATUS, "${basedir}status");
+my $status = <STATUS>;
+chomp($status);
+close(STATUS);
+
 if (param('action')) {
     my $action=param('action');
     if ($action eq 'skip') {
@@ -18,6 +23,16 @@ if (param('action')) {
     } elsif ($action eq 'start') {
 	system("perl oyster.pl &");
 	sleep 5;
+    } elsif ($action eq 'pause') {
+	open (CONTROL, ">${basedir}control");
+	if ($status eq 'paused') {
+	    print CONTROL "UNPAUSE";
+	    $status = 'playing';
+	} elsif ($status eq 'playing') {
+	    print CONTROL "PAUSE";
+	    $status = 'paused';
+	}
+	close CONTROL;
     }
 }
 
@@ -58,8 +73,13 @@ my %tag = oyster::taginfo->get_tag($info);
 
 $info = uri_escape("$info", "^A-Za-z");
 
+my $statusstr = '';
+if ($status eq 'paused') {
+    $statusstr = ' (Paused)';
+}
+
 print "<table width='100%'>";
-print "<tr><td><strong>Now playing: <a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a></strong></td>";
+print "<tr><td><strong>Now playing: <a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a>$statusstr</strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
 print "</table>\n";
 
