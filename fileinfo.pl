@@ -72,9 +72,9 @@ print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
 print "<tr><td><strong>Current Oyster-Score</strong></td>";
-print "<td style='font-size:140%; vertical-align:middle'><a href='fileinfo.pl?action=scoredown&file=$escapedfile'><img src='themes/${config{'theme'}}/scoredown.png' border='0' alt='-'></a> ";
+print "<td><a href='fileinfo.pl?action=scoredown&file=$escapedfile'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong>";
-print " <a href='fileinfo.pl?action=scoreup&file=$escapedfile'><img src='themes/${config{'theme'}}/scoreup.png' border='0' alt='+'></a></td></tr>";
+print " <a href='fileinfo.pl?action=scoreup&file=$escapedfile'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>";
 
 print end_html;
