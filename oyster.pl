@@ -228,6 +228,8 @@ sub interpret_control {
 		my $command = "kill -19 " . &get_player_pid;
 		system($command);
 		
+		add_log($file, "PAUSED");
+		
 		open(STATUS, ">$basedir/status");
 		print STATUS "paused\n";
 		close(STATUS);
@@ -238,6 +240,8 @@ sub interpret_control {
 	elsif ( $control =~ /^UNPAUSE/) {
 		my $command = "kill -18 " . &get_player_pid;
 		system($command);
+		
+		add_log($file, "UNPAUSED");
 		
 		open(STATUS, ">$basedir/status");
 		print STATUS "playing\n";
@@ -487,7 +491,10 @@ sub init {
 	$lastvotes_file = "$config{savedir}/lastvotes";
 	$votefile = "$config{basedir}/votes";
 	$media_dir = $config{"mediadir"};
-	$media_dir =~ s/\/$//;
+	if ( $media_dir =~ /.*\/$/ ) {
+		$media_dir =~ /(.*)\/$/;
+		$media_dir = $1;
+	}
 	
 	$voteplay_percentage = $config{"voteplay"};
 	$lastvotes_size = $config{'maxlastvotes'};
