@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
+<<<<<<< oyster-gui.pl
 
 open(INFO, "/tmp/oyster/info");
 $info = <INFO>;
@@ -11,6 +12,7 @@ my $title = "";
 if ($info =~ /mp3$/) {
     @output = `id3v2 -l $info`;
     foreach my $line (@output) {
+	print $line . "<br>";
 	if ($line =~ /^Title/) {
 	    ($title) = m/:\ (.*)$/;
 	}
@@ -19,7 +21,7 @@ if ($info =~ /mp3$/) {
 
 print header,
     start_html('Oyster-GUI'),
-    h1('Oyster-GUI spielt $title'),
+    h1("Oyster-GUI spielt $title"),
     a({href=>'skip.pl'},'Skip'),
     end_html;
 
