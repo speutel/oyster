@@ -48,6 +48,8 @@ sub get_tag {
 		    # id3v1                                                         
 		    $tag{'title'} = $1;
 		    $tag{'artist'} = $2;
+		    $tag{'title'} =~ s/[\ ]*$//;
+		    $tag{'artist'} =~ s/[\ ]*$//;
 		} else {
 		    # id3v2                                                 
 		    $_ = $line;
