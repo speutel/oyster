@@ -42,7 +42,9 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
     ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
 	m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
     if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
-	$line = <LOG>;
+	do {
+	    $line = <LOG>;
+	} while ($line =~ /PAUSED\ /);
 	chomp($line);
 	$_ = $line;
 	my ($endreason, $filename2) = '';
