@@ -60,7 +60,7 @@ my $framestr2 = '';
 if ((param('frames') && (param('frames') eq 'no'))) {
     $frames = 0;
     $framestr = '?frames=no';
-    $framestr2 = '&amp;frames=no';
+    $framestr2 = '&frames=no';
 }
 
 print header,
@@ -82,7 +82,7 @@ print "<img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'
 
 if ((!(-e "$basedir")) || ($action eq 'stop')) {
     print p('Oyster has not been started yet!');
-    print p("<a href='oyster-gui.pl?action=start${framestr2}'>Start</a>");
+    print p(a({href=>"oyster-gui.pl?action=start${framestr2}"},'Start'));
     print end_html;
     exit 0;
 }
@@ -108,16 +108,21 @@ $info = uri_escape("$info", "^A-Za-z");
 
 my $statusstr = '';
 if ($status eq 'paused') {
-    $statusstr = " (<a href='oyster-gui.pl?action=pause${framestr2}'>Paused</a>)";
+    $statusstr = " " . a({href=>"oyster-gui.pl?action=pause${framestr2}"},'Paused');
 }
 
 print "<table width='100%' border='0'>";
 print "<tr><td><strong>Now playing:</strong></td><td align='center' width='75'><strong>Score</strong></td></tr>";
-print "<tr><td><strong><a class='file' href='fileinfo.pl?file=${info}${framestr2}' target='browse' title='View details'>$display</a>$statusstr</strong></td>";
-print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info${framestr2}' title='Score down'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
-print "<strong>$tag{'score'}</strong> ";
-print "<a href='oyster-gui.pl?action=scoreup&amp;file=$info${framestr2}' title='Score up'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
-print "</table>\n";
+print "<tr><td>";
+print strong(a({class=>'file', href=>"fileinfo.pl?file=${info}${framestr2}", target=>'browse', title=>'View details'},$display));
+print $statusstr . "</td>";
+print "<td align='center' style='padding-left:10px; padding-right:10px'>";
+print a({href=>"oyster-gui.pl?action=scoredown&file=$info${framestr2}", title=>'Score down'},
+	img({src=>"themes/${config{'theme'}}/scoredownfile.png", border=>'0', alt=>'-'}));
+print " " . strong($tag{'score'}) . " ";
+print a({href=>"oyster-gui.pl?action=scoreup&file=$info${framestr2}", title=>'Score up'},
+	img({src=>"themes/${config{'theme'}}/scoreupfile.png", border=>'0', alt=>'+'}));
+print "</td></tr></table>\n";
 
 open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
@@ -144,8 +149,12 @@ if (-s "${basedir}votes") {
 	    if ($numvotes == $maxvotes) {
 		my $display = oyster::taginfo->get_tag_light($title);
 		$title =~ s/^\Q$mediadir\E//;
-		my $escapedtitle = uri_escape("$title", "^A-Za-z");
-		print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle${framestr2}' target='browse'>$display</a></td><td align='center'>$numvotes</td><td><a href='oyster-gui.pl?action=unvote&amp;file=$escapedtitle${framestr2}'>Unvote</a></td></tr>\n";
+		my $escapedtitle = uri_escape($title, "^A-Za-z");
+		print "<tr><td>";
+		print a({class=>'file', href=>"fileinfo.pl?file=$escapedtitle${framestr2}", target=>'browse'},$display);
+		print "</td><td align='center'>$numvotes</td><td>";
+		print a({href=>"oyster-gui.pl?action=unvote&file=$escapedtitle${framestr2}"},'Unvote');
+		print "</td></tr>\n";
 	    }
 	}
 	$maxvotes--;
