@@ -65,6 +65,9 @@ sub do_action {
     } elsif (($action eq 'unvote') && ($file)) {
 	print CONTROL "UNVOTE $mediadir" . $file;
 	close CONTROL;
+    } elsif (($action eq 'loadlist') && ($file)) {
+	print CONTROL "LOAD $file";
+	close CONTROL;
     }
 
     return $status;
