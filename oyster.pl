@@ -9,9 +9,10 @@ my $basedir = "/tmp/oyster";
 my $savedir = ".";
 my $list_dir = "$savedir/lists";
 
-my (@filelist, $file, $control, $file_override);
-
-use warnings;
+my ($lastvotes_pointer, @lastvotes, $lastvotes_file);
+my (@filelist, $file, $control, %votelist);
+my ($file_override); 
+#use warnings;
 
 init();
 
@@ -19,9 +20,6 @@ while ( 1 ) {
 	main();
 }
 
-#cleaning up our files
-unlink <$basedir/*>;
-rmdir "$basedir";
 
 #because of some obscure error this use-statement does not work when 
 #I put it in the beginning of the file
@@ -73,16 +71,6 @@ sub play_file {
 sub interpret_control {
 	# find out what to do by checking $control
 
-	## TODO: Listenverwaltung: 
-	#"L $listname" fürs Laden einer Liste, 
-	#"S $listname" fürs speichern, 
-	#"LISTS" fürs Auflisten aller gespeicherten, 
-	#"NEW $name" für das Erstellen einer neuen Liste (Einträge zeilenweise über das FIFO lesen).
-	
-	## TODO: Voteverwaltung
-	#"V $votefile"
-
-	
 	switch ($control) {
 		
 		case /^next/	{ 
@@ -91,6 +79,7 @@ sub interpret_control {
 		case /^done/ { 
 		}
 		case /^F\ / {
+			$control =~ s/\\//g;
 			$control =~ /^F\ (.*)$/;
 			$file = $1;
 			$file_override = "true";
@@ -98,19 +87,37 @@ sub interpret_control {
 		}	
 		case /^quit/	{ 
 			system("killall play.pl mpg321 ogg123"); 
+			cleanup();
 			exit; 
 		}
 		case /^S\ / {
 			$control =~ /^S\ (.*)$/;
 			save_list($1);
+			get_control();
+			interpret_control();
 		}
 		case /^L\ / {
 			$control =~ /^L\ (.*)$/;
 			load_list($1);
+			get_control();
+			interpret_control();
 		}
-		case /^N\ / {
-			$control =~ /^NEWLIST/;
+		case /^NEWLIST/ {
 			get_list();
+			get_control();
+			interpret_control();
+		}
+		case /^P/ {
+			$control =~ /^P\ (.*)$/;
+			open(CONTROL, "$basedir/control");
+			if ( ! $1 ) {
+				print CONTROL @filelist;
+			} else {
+				open(LIST, "$savedir/lists/$1") || print CONTROL "No such list!\n" && next;
+				@files = <LIST>;
+				print CONTROL @files;
+			}
+			close(CONTROL);
 		}
 		case /^LISTS/ {
 			# lists filelists into the FIFO
@@ -123,31 +130,90 @@ sub interpret_control {
 			get_control();
 			interpret_control();
 		}
+		case /^V\ / {
+			$control =~ s/\\//g;
+			$control =~ /^V\ (.*)$/;
+			process_vote($1);
+			get_control();
+			interpret_control();
+		}
 		else {
 			get_control();
 			interpret_control();
 		}
-
-			
 	}
 }
 
+sub process_vote {
+	## FIXME test this!
+	my $voted_file = $_[0];
+	
+	print STDERR "voted for $voted_file\n";
+	
+	my $winner = "";
+	my $max_votes = 0;
+	
+	if ( $voted_file ne "") {
+		if ( $votelist{$voted_file} ne "" ) {
+			$votelist{$voted_file} += 1;
+		} else { 
+			$votelist{$voted_file} = 1;
+		}
+	$lastvotes_pointer = ++$lastvotes_pointer % 30;
+	$lastvotes[$lastvotes_pointer] = $voted_file . "\n";
+	}
+	
+	foreach $key (keys %votelist) { 
+		if ($votelist{$key} > $max_votes) {
+			$winner = $key; $max_votes = $votelist{$key};
+		}
+	}
+	
+	if ($votelist{$winner} > 0) {
+		print STDERR "winner is $winner\n";
+	
+		open(PLAYNEXT, ">$basedir/playnext") || die $!;
+		print PLAYNEXT $winner . "\n";
+		close(PLAYNEXT);
+	}
+	
+	# @lastvotes is an array which holds the recent 30 votes.
+	# &choose_file will choose a file from this array with a given probability.
+	# It will then choose one entry from this array, and there may be double 
+	# file-entries (if you vote one file more than once
+	# in 30 votes, for example ;). Yes, that means if you vote for one file more
+	# than once, the probability for it to be played in random play is higher than 
+	# for a file that got voted once in the last 30 votes.
+}
+
+sub cleanup {
+
+	## save permanent data
+	# save lastvotes-list
+	open(LASTVOTES, ">$lastvotes_file");
+	print LASTVOTES $lastvotes_pointer . "\n";
+	foreach $entry ( @lastvotes ) {
+		print LASTVOTES $entry;
+	}
+	close(LASTVOTES);
+	
+	#cleaning up our files
+	unlink <$basedir/*>;
+	rmdir "$basedir";
+
+}
+
 sub load_list {
-	# $_[0] ist Name der Liste
 	
 	$listname = $_[0];
-	$list_dir = "$savedir/lists";
 
 	open(LISTIN, "$list_dir/$listname");
 	@filelist = <LISTIN>;
 	close(LISTIN);
 
-	get_control();
-	interpret_control();
 }
 
 sub save_list {
-	# $_[0] ist Name der Liste
 	
 	$listname = $_[0];
 
@@ -163,8 +229,6 @@ sub save_list {
 	print LISTOUT @filelist;
 	close(LISTOUT);
 
-	get_control();
-	interpret_control();
 	
 }
 
@@ -175,35 +239,43 @@ sub get_list {
 	@filelist = <CONTROL>;
 	close(CONTROL);
 
-	get_control();
-	interpret_control();
 }
 
 sub init {
 	# well, it's called "init". guess.
 	
+	$lastvotes_file = "$savedir/lastvotes";
 	
 	# open filelist and read it into memory
 	if ($ARGV[0]) {
 		open (FILELIST, $ARGV[0]);
+		@filelist = <FILELIST>;
 	} elsif ( -e "$list_dir/default" ) {
 		open(FILELIST, "$list_dir/default");
-	}
-	@filelist = <FILELIST>;
+		@filelist = <FILELIST>;
+	} else { die("No filelist available in $list_dir"); }
 	
+	# read last votes
+	open (LASTVOTES, $lastvotes_file);
+	$lastvotes_pointer = <LASTVOTES>;
+	chomp($lastvotes_pointer);
+	@lastvotes = <LASTVOTES>;
+	close(LASTVOTES);
+	
+	# initialize random
+	srand;
+	
+	# setup $basedir
+	mkdir($basedir);	
 	
 	# tell STDERR and STDOUT where they can dump their messages
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
 	
-	# initialize random
-	srand;
-	
-	# setup $basedir, make fifos
-	mkdir($basedir);	
+	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
 	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
-
+	system("/bin/chmod 666 /tmp/oyster/control");
 }
 
 
@@ -218,9 +290,18 @@ sub choose_file {
 		$file = <FILEIN>;
 		close( FILEIN );
 		unlink "$basedir/playnext";
+		$voteentry = $file; chomp($voteentry);
+		$votelist{$voteentry} = 0;
+		&process_vote;
 	} else {
-		$index = rand @filelist;
-		$file = $filelist[$index];
+		if ( int(rand(30)) < 10 ) {
+			$index = rand @lastvotes;
+			$file = $lastvotes[$index];
+		} else {		
+			$index = rand @filelist;
+			$file = $filelist[$index];
+		}
+
 		if ( -e "$savedir/blacklist" ) {
 			open(BLACKLIST, "$savedir/blacklist");
 			while( $regexp = <BLACKLIST> ) {
@@ -237,7 +318,7 @@ sub choose_file {
 sub info_out {
 	
 	open(INFO, ">$basedir/info");
-	print INFO "np: " . $file;
+	print INFO $file; 
 	close(INFO);
 	print STDERR "info_out zuende\n";
 	
