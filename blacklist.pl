@@ -50,17 +50,53 @@ sub print_blacklist {
 
     # Opens current blacklist and prints each line
 
+    my @blacklistlines = ();
     open (FILE, "${savedir}blacklist");
     print "<table width='100%'>";
     while (my $line = <FILE>) {
 	chomp($line);
+	push (@blacklistlines, $line);
+    }
+    close (FILE);
+
+    open (LIST, "${savedir}lists/default");
+
+    my $mediadir = $config{'mediadir'};
+    $mediadir =~ s/\/$//;
+
+    my %lineaffects = ();
+
+    # Count affected files for each rule
+
+    while (my $line = <LIST>) {
+	chomp($line);
+	$line =~ s/^\Q$mediadir\E//;
+	foreach my $blacklistline (@blacklistlines) {
+	    if ($line =~ /$blacklistline/i) {
+		if ($lineaffects{$blacklistline}) {
+		    $lineaffects{$blacklistline}++;
+		} else {
+		    $lineaffects{$blacklistline} = 1;
+		}
+	    }
+	}
+    }
+    close (LIST);
+
+    my $totalaffected = 0;
+
+    print "<table width='100%'>";
+    foreach my $line (@blacklistlines) {
+	$totalaffected += $lineaffects{$line};
 	my $escapedline = uri_escape("$line", "^A-Za-z");
-	print "<tr><td width='70%'>$line</td>";
-	print "<td width='15%' align='center'><a href='blacklist.pl?action=test&amp;affects=$escapedline'>Affects</a></td>";
+	print "<tr><td width='60%'>$line</td>";
+	print "<td width='25%' align='left'><a href='blacklist.pl?action=test&amp;affects=$escapedline'>Affects</a> ($lineaffects{$line})</td>";
 	print "<td width='15%' align='center'><a href='blacklist.pl?action=delete&amp;affects=$escapedline'>Delete</a></td></tr>";
     }
 
     print "</table>\n";
+
+    print p(strong("Total files affected:"), $totalaffected);
 }
 
 sub print_affects {
