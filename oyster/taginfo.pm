@@ -8,7 +8,7 @@ my %tag;
 my $VERSION = '1.0';
 
 sub get_tag {
-    %tag = [];
+    %tag = ();
     my $filename = $_[1];
 
     if ($filename =~ /mp3$/i) {
