@@ -19,8 +19,10 @@ my $action = param('action') || '';
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
 
+my $file = param('file') || '';
+
 if (param('action')) {
-    $status = oyster::fifocontrol->do_action(param('action'), param('file'), $status);
+	$status = oyster::fifocontrol->do_action(param('action'), $file, $status);
 }
 
 if (param('vote')) {
