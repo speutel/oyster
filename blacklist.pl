@@ -73,8 +73,11 @@ sub print_affects {
     my $affects = $_[0];
     open (LIST, "${savedir}lists/default");
     while (my $line = <LIST>) {
-	$line =~ s/^\Q$config{'mediadir'}\E//;
+	my $mediadir = $config{'mediadir'};
+	$mediadir =~ s/\/$//;
+	$line =~ s/^\Q$mediadir\E//;
 	if ($line =~ /\Q$affects\E/i) {
+	    $line =~ s/^\///;
 	    push (@results, $line);
 	}
     }
