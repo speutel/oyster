@@ -95,8 +95,10 @@ my $escapedfile = uri_escape("$file", "^A-Za-z");
 
 print "<table width='100%'><tr>";
 if ($oysterruns) {
-    print "<td align='left'><a class='file' href='oyster-gui.pl?";
-    print "vote=${escapedfile}${framestr}' target='curplay'>Vote for this song</a></td>\n";
+    print "<td align='left'><span class='file'><a class='file' href='oyster-gui.pl?";
+    print "vote=${escapedfile}${framestr}' target='curplay'>Vote</a> / ";
+    print "<a class='file' href='oyster-gui.pl?action=enqueue&amp;file=${escapedfile}${framestr}'";
+    print "target='curplay'>Enqueue</a> this song</span></td>\n";
 } else {
     print "<td></td>\n";
 }

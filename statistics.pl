@@ -223,7 +223,10 @@ sub print_songs {
 	    $cssclass = 'file';
 	}
 
-	print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/${escapedfilename}${framestr}'>$displayname</a></td>";
+	print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=${escapedfilename}${framestr}' target='curplay' ";
+	print "title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png'";
+	print "border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?";
+	print "file=/${escapedfilename}${framestr}'>$displayname</a></td>";
 	print "<td class='$cssclass' align='center'>$reason</td></tr>\n";
     }
     print "</table>";

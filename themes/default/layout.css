@@ -52,10 +52,12 @@ span.blacklisted {
 
 .file {
   color: #FFCC00;
+  font-weight: bold;
 }
 
 .file2 {
   color: #ff8800;
+  font-weight: bold;
 }
 
 input {

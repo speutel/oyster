@@ -232,7 +232,7 @@ print p({class=>'configdescription'},
 
 
 print submit(value=>'Save settings');
-print " " . reset(value=>'Reset');
+print " " . reset('Reset');
 print end_form;
 
 print end_html;
