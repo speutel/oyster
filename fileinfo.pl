@@ -62,6 +62,22 @@ if ($isblacklisted) {
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
 
+my $timesplayed = 0;
+open (LOG, "${config{'savedir'}}log");
+while (my $line = <LOG>) {
+    my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
+    chomp($line);
+    $_ = $line;
+    ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
+	m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
+    if ($filename =~ /\Q$file\E/) {
+	if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
+	    $timesplayed++;
+	}
+    }
+}
+close LOG;
+
 print "<table cellpadding='10'>";
 print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>";
 print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>";
@@ -71,6 +87,7 @@ print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
 print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
+print "<tr><td><strong>Times played</strong></td><td>$timesplayed</td></tr>";
 print "<tr><td><strong>Current Oyster-Score</strong></td>";
 print "<td><a href='fileinfo.pl?action=scoredown&file=$escapedfile'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong>";
