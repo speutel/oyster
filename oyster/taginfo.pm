@@ -22,6 +22,7 @@ sub get_tag {
 		    # id3v1                                                         
 		    ($tag{'title'},$tag{'artist'}) = m/^Title\ \ \:\ (.*)Artist\:\ (.*)/;
 		    $tag{'title'} =~ s/[\ ]*$//;
+		    $tag{'artist'} =~ s/[\ ]*$//;
 		} else {
 		    # id3v2                                                 
 		    ($tag{'title'}) = m/:\ (.*)$/;
@@ -66,11 +67,13 @@ sub get_tag {
 
     }
 
-    if ($tag{'title'} eq "") {
+    if ($tag{'title'} eq '') {
 	$tag{'display'} = $filename;
 	$tag{'display'} =~ s@.*/@@;
 	$tag{'display'} =~ s/\.mp3//i;
 	$tag{'display'} =~ s/\.ogg//i;
+    } elsif ($tag{'artist'} eq '') {
+	$tag{'display'} = $tag{'title'};
     } else {
 	$tag{'display'} = "$tag{'artist'} - $tag{'title'}";
     }
