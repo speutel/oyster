@@ -28,7 +28,7 @@ if (param('dir')) {
     $givendir = '' if ($givendir eq "..");
 }
 
-if (!($givendir eq '')) {
+if ((!($givendir eq '')) && (-e "$mediadir$givendir")) {
 
     print "<p><strong>Current directory: ";
 
@@ -53,6 +53,10 @@ if (!($givendir eq '')) {
     my $escapeddir = uri_escape($topdir, "^A-Za-z");
     print "<a href='browse.pl?dir=$escapeddir'>One level up</a><br><br>";
 
+} elsif (!(-e "$mediadir$givendir")) {   
+    print h1('Error!');
+    print "The directory $givendir could not be found.";
+    print end_html;
 }
 
 my $globdir = "$mediadir$givendir";
