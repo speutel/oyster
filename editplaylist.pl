@@ -118,6 +118,10 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	}
 	close (PLAYLIST);
 
+	@results = sort(@playlist);
+	@results = sort_results('/');
+	@playlist = @results;
+
 	if (($action eq 'deletefile') || ($action eq 'deletedir')) {
 
 		# Write new playlist
