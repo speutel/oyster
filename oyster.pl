@@ -579,7 +579,7 @@ sub init {
 		close(OTHER);
 		chomp($otherpid);
 		
-		my $othercmd = `ps -o comm= $otherpid`;
+		my $othercmd = `ps -o cmd= $otherpid`;
 		if ( $othercmd =~ /oyster\.pl/ ) {
 			print "and oyster is running. Trying to UNPAUSE... ";
 			open(OTHER, ">$basedir/control");
@@ -592,6 +592,7 @@ sub init {
 			print "but oyster is not running.\n";
 			unlink($basedir);
 		}
+			
 		mkdir($basedir);
 	}
 	
