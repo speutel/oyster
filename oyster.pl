@@ -94,9 +94,6 @@ sub main {
 
 	get_control();
 	interpret_control();
-	choose_file();
-	info_out();
-	play_file();
 
 }
 
@@ -341,9 +338,6 @@ sub interpret_control {
 		# wait for player to empty cache (without sleep: next player raises an
 		# error because /dev/dsp is in use)
 		sleep(2);
-
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^done/) { 
@@ -355,6 +349,9 @@ sub interpret_control {
 		} else { 
 			$skipped = "false";
 		}
+		choose_file();
+		info_out();
+		play_file();
 	}
 
 	
@@ -392,9 +389,6 @@ sub interpret_control {
 		$file_override = "true";
 
 		add_log($file, "VOTED");
-
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^QUIT/	) {  
@@ -419,8 +413,6 @@ sub interpret_control {
 
 		$control =~ /^SAVE\ (.*)$/;
 		save_list($1);
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^LOAD/ ) {
@@ -429,8 +421,6 @@ sub interpret_control {
 
 		$control =~ /^LOAD\ (.*)$/;
 		load_list($1);
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^NEWLIST/ )  {
@@ -438,8 +428,6 @@ sub interpret_control {
 		## read list from basedir/control
 
 		get_list();
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^PRINT/)  {
@@ -459,8 +447,6 @@ sub interpret_control {
 			print CONTROL @files;
 		}
 		close(CONTROL);
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^LISTS/)  {
@@ -483,8 +469,6 @@ sub interpret_control {
 
 		$control =~ /^VOTE\ (.*)$/;
 		process_vote($1);
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^ENQUEUE/ ) {
@@ -501,8 +485,6 @@ sub interpret_control {
 		print STDERR $file;
 		enqueue($file);
 		process_vote("noremove");
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^PAUSE/) {
@@ -518,9 +500,6 @@ sub interpret_control {
 		open(STATUS, ">$basedir/status");
 		print STATUS "paused\n";
 		close(STATUS);
-
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^UNPAUSE/) {
@@ -536,9 +515,6 @@ sub interpret_control {
 		open(STATUS, ">$basedir/status");
 		print STATUS "playing\n";
 		close(STATUS);
-
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^UNVOTE/) {
@@ -553,8 +529,6 @@ sub interpret_control {
 		}
 		unvote($1);
 		process_vote("noremove");
-		get_control();
-		interpret_control();
 	}	
 
 	elsif ( $control =~ /^SCORE/ ) {
@@ -567,10 +541,6 @@ sub interpret_control {
 		} elsif ($1 eq "-" ) {
 			remove_score($scored_file);
 		}
-
-
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^ENQLIST/ ) {
@@ -578,8 +548,6 @@ sub interpret_control {
 		## takes an m3u-list and enqueues the playlist
 		$control =~ /^ENQLIST\ (.*)/;
 		enqueue_list($1);
-		get_control();
-		interpret_control();
 	}
 
 	elsif ( $control =~ /^RELOADCONFIG/ ) {
@@ -592,13 +560,10 @@ sub interpret_control {
 		$scores_size = $config{'maxscored'};
 		update_scores();
 
-		get_control();
-		interpret_control();
 	}
 
 	else { # fall through
-		get_control();
-		interpret_control();
+		# hm - nix mehr
 	}
 }
 
