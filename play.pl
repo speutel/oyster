@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
 my $basedir = "/tmp/oyster";
-my $mp3_player = "mpg321";
-my $ogg_player = "ogg123";
+my $mp3_player = "mpg321 -q";
+my $ogg_player = "ogg123 -q";
 
 
 open(FILENAME, "/tmp/oyster/kidplay");
