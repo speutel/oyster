@@ -102,7 +102,7 @@ if ($title eq "") {
 $info = uri_escape("$info", "^A-Za-z");
 
 print h1('Oyster');
-print "<a href='oyster-gui.pl' style='position:absolute; top:10px; right:15px'>Refresh</a>";
+print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='refresh.gif' border='0'></a>";
 print "<table width='100%'>";
 print "<tr><td><strong>Now playing: <a class='file' href='fileinfo.pl?file=$info' target='browse'>$title</a></strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
