@@ -74,12 +74,17 @@ sub set_display {
 
 sub get_score {
     my $filename = $_[0];
-    
-    open (LASTVOTES, "${config{'savedir'}}scores/$playlist");
+    my $scorefile = "${config{'savedir'}}scores/$playlist";
+
+    if(-f $scorefile ) {
+	open (LASTVOTES, "${config{'savedir'}}scores/$playlist");
 	while (my $line = <LASTVOTES>) {
-	chomp($line);
-	$tag{'score'}++ if ($line eq $filename);
-    }
+	    chomp($line);
+	    $tag{'score'}++ if ($line eq $filename);
+	}
+    } else {
+	$tag{'score'} += 0;
+    }    
 }
 
 sub get_mp3_tags {
