@@ -139,7 +139,8 @@ if ($tag{'title'}) {
 } else {
 	print "<tr><td class='fileinfo'></td><td rowspan='6'>$coverdata</td></tr>";
 }
-print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>" if ($tag{'artist'});
+print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>";
+print a({href=>"search.pl?searchtype=normal&playlist=current&search=$tag{'artist'}"},$tag{'artist'}) . "</td></tr>" if ($tag{'artist'});
 print "<tr><td class='fileinfo'><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{'album'});
 print "<tr><td class='fileinfo'><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>" if ($tag{'track'});
 print "<tr><td class='fileinfo'><strong>Year</strong></td><td>$tag{'year'}</td></tr>" if ($tag{'year'});
