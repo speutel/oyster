@@ -34,33 +34,83 @@ my @knownoptions = (
 		    'coverwidth'
 		    );
 
+my %needsrestart = (
+		    'basedir' => 1,
+		    'savedir' => 1,
+		    'mediadir' => 1,
+		    'theme' => 0,
+		    'maxscored' => 1,
+		    'voteplay' => 1,
+		    'coverfilenames' => 0,
+		    'coverwidth' => 0
+		    );
+
+my %isset = ();
+foreach my $option (@knownoptions) {
+    $isset{$option} = 0;
+}
+
+my %config = oyster::conf->get_config('oyster.conf');
+
+# Print HTML-Header
+
+print
+    header,
+    start_html(-title=>'Oyster-GUI',
+	       -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
+	       -head=>CGI::meta({-http_equiv => 'Content-Type',
+				 -content    => 'text/html; charset=iso-8859-1'}));
+
+
 # Set options
 
 if (param('action') && (param('action') eq 'set')) {
+
+    my $remember = 0;
+
     open (CONFFILE, 'oyster.conf');
     open (TMPFILE, '>oyster.conf.tmp') or die $!;
     while (my $line = <CONFFILE>) {
 	my $isoption = 0;
 	foreach my $option (@knownoptions) {
-	    if ($line =~ /^\Q$option\E/) {
+	    if ($line =~ /^\Q$option\E.*\=(.*)$/) {
+		my $oldvalue = $1;
+		chomp($oldvalue);
 		print TMPFILE "$option=" . param($option) . "\n";
+		$isset{$option} = 1;
 		$isoption = 1;
+		if ($needsrestart{$option} && ($oldvalue ne param($option))) {
+		    $remember = 1;
+		}
+		last;
 	    }
 	}
 	if (! $isoption) {
 	    print TMPFILE $line;
 	}
     }
+
+    foreach my $option (@knownoptions) {
+	if (!$isset{$option}) {
+	    print TMPFILE "$option=" . param($option) . "\n";
+	}
+    }
+
     close (TMPFILE);
     close (CONFFILE);
+
     unlink ('oyster.conf');
     rename 'oyster.conf.tmp', 'oyster.conf';
+
+    print strong('Your settings were saved.');
+    if ($remember) {
+	print p(strong('Please remember to restart oyster!'));
+    }
 }
 
 # Get current options
 
 my %currentvalue = ();
-my %config = oyster::conf->get_config('oyster.conf');
 
 foreach my $option (@knownoptions) {
     if ($config{$option}) {
@@ -81,13 +131,6 @@ foreach my $theme (@dirs) {
 
 
 # Print form with current values
-
-print
-    header,
-    start_html(-title=>'Oyster-GUI',
-	       -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
-	       -head=>CGI::meta({-http_equiv => 'Content-Type',
-				 -content    => 'text/html; charset=iso-8859-1'}));
 
 print h1('Oyster Admin Interface');
 
@@ -189,6 +232,7 @@ print p({class=>'configdescription'},
 
 
 print submit(value=>'Save settings');
-print " " . reset,end_form;
+print " " . reset(value=>'Reset');
+print end_form;
 
 print end_html;
