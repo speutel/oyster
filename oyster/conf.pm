@@ -24,21 +24,21 @@ use warnings;
 my %config;
 
 my $VERSION = '1.0';
-	
+
 sub get_config {
 	my $conffile = $_[1];
 
 	open(CONF, $conffile) || die "Could not open $conffile";
-	
+
 	while ( my $line = <CONF> ) {
 		if ( $line =~ /^[a-z]/ ) {
-		    chomp($line);
-		    my ($key, $value) = split("=", $line);
-		    if (($key eq 'mediadir') || ($key eq 'basedir') || ($key eq 'savedir')) {
-					$value =~ s/\/$//;
-					$value .= '/';
-		    }
-		    $config{$key} = $value;
+			chomp($line);
+			my ($key, $value) = split("=", $line);
+			if (($key eq 'mediadir') || ($key eq 'basedir') || ($key eq 'savedir')) {
+				$value =~ s/\/$//;
+				$value .= '/';
+			}
+			$config{$key} = $value;
 		}
 	}
 
@@ -49,32 +49,32 @@ sub get_config {
 
 sub get_playlist {
 
-    my %config = get_config('','oyster.conf');
-    my $playlist = 'default';
+	my %config = get_config('','oyster.conf');
+	my $playlist = 'default';
 
-    if (-e "${config{basedir}}playlist") {
-	open (PLAYLIST, "${config{basedir}}playlist");
-	$playlist = <PLAYLIST>;
-	close PLAYLIST;
+	if (-e "${config{basedir}}playlist") {
+		open (PLAYLIST, "${config{basedir}}playlist");
+		$playlist = <PLAYLIST>;
+		close PLAYLIST;
 
-	chomp($playlist);
-    }
-    return $playlist;
+		chomp($playlist);
+	}
+	return $playlist;
 }
 
 sub rel_to_abs {
-		my $path = $_[1];
-		my $dir = $_[2];
-		print "path: $path, dir: $dir\n";
-		
-		if ( ! ($path =~ /^\//) ) {
-			$path = $dir . $path;
-		}
+	my $path = $_[1];
+	my $dir = $_[2];
+	print "path: $path, dir: $dir\n";
 
-		print $path . "\n";
-		
-		$path =~ s@[^/]*/\.\./@@g;
+	if ( ! ($path =~ /^\//) ) {
+		$path = $dir . $path;
+	}
 
-		return $path;	
-	
+	print $path . "\n";
+
+	$path =~ s@[^/]*/\.\./@@g;
+
+	return $path;	
+
 }

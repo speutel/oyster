@@ -31,35 +31,35 @@ my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 
 if (param('action')) {
-    oyster::fifocontrol->do_action(param('action'), param('file'), '');
+	oyster::fifocontrol->do_action(param('action'), param('file'), '');
 }
 
 my $frames = 1;
 my $framestr = '';
 
 if ((param('frames') && (param('frames') eq 'no'))) {
-    $frames = 0;
-    $framestr = '&amp;frames=no';
+	$frames = 0;
+	$framestr = '&amp;frames=no';
 }
 
 if ($frames) {
-    oyster::common->navigation_header();
-  } else {
-      oyster::common->noframe_navigation();
-      print h1('Scoring');
-  }
+	oyster::common->navigation_header();
+} else {
+	oyster::common->noframe_navigation();
+	print h1('Scoring');
+}
 
 my %score = ();
 
 open (LASTVOTES, "${config{'savedir'}}scores/$playlist") or die $!;
 my $line = <LASTVOTES>;
 while ($line = <LASTVOTES>) {
-    chomp($line);
-    if ($score{$line}) {
-	$score{$line}++;
-    } else {
-	$score{$line} = 1;
-    }
+	chomp($line);
+	if ($score{$line}) {
+		$score{$line}++;
+	} else {
+		$score{$line} = 1;
+	}
 }
 close (LASTVOTES);
 
@@ -72,50 +72,50 @@ my $maxscore = (sort {$b <=> $a} values(%score))[0];
 
 while ($maxscore > 0) {
 
-    my $printed = 0;
+	my $printed = 0;
 
-    my @files = ();
+	my @files = ();
 
-    foreach my $key (keys(%score)) {
-	if ($score{$key} == $maxscore) { 
-	    push(@files, $key);
+	foreach my $key (keys(%score)) {
+		if ($score{$key} == $maxscore) { 
+			push(@files, $key);
+		}
 	}
-    }
 
-    @files = sort(@files);
+	@files = sort(@files);
 
-    foreach my $file (@files) {
+	foreach my $file (@files) {
 
-	$printed = 1;
+		$printed = 1;
 
-	my $escapedfile = $file;
-	$escapedfile =~ s/\Q$config{'mediadir'}\E//;
-	$escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
-	my $display = oyster::taginfo->get_tag_light($file);
-	
-	# $cssclass changes to give each other file
-	# another color
-	
-	if ($cssclass eq 'file') {
-	    $cssclass = 'file2';
-	} else {
-	    $cssclass = 'file';
+		my $escapedfile = $file;
+		$escapedfile =~ s/\Q$config{'mediadir'}\E//;
+		$escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
+		my $display = oyster::taginfo->get_tag_light($file);
+
+		# $cssclass changes to give each other file
+		# another color
+
+		if ($cssclass eq 'file') {
+			$cssclass = 'file2';
+		} else {
+			$cssclass = 'file';
+		}
+
+		print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=${escapedfile}${framestr}' target='curplay' ";
+		print "title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png'";
+		print "border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?file=${escapedfile}${framestr}'>$display</a></td>";
+
+		print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&amp;file=${escapedfile}${framestr}' ";
+		print "title='Score down'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' ";
+		print "border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
+		print " <a class='$cssclass' href='score.pl?action=scoreup&amp;file=${escapedfile}${framestr}' ";
+		print "title='Score up'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
 	}
-	
-	print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=${escapedfile}${framestr}' target='curplay' ";
-	print "title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png'";
-	print "border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?file=${escapedfile}${framestr}'>$display</a></td>";
 
-	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&amp;file=${escapedfile}${framestr}' ";
-	print "title='Score down'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' ";
-	print "border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
-	print " <a class='$cssclass' href='score.pl?action=scoreup&amp;file=${escapedfile}${framestr}' ";
-	print "title='Score up'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
-    }
+	$maxscore--;
 
-    $maxscore--;
-
-    if ($printed) { print "<tr><td colspan=2>&nbsp;</td></tr>"; }
+	if ($printed) { print "<tr><td colspan=2>&nbsp;</td></tr>"; }
 
 }
 

@@ -35,28 +35,28 @@ my $logtime_format="%Y%m%d-%H%M%S";
 my @history;
 
 my (
-    $savedir,             
-    $basedir,             # Directory for FIFO and other temporarily files
-    $media_dir,           # Where to search for music
-    $list_dir,            # Place for playlists
-    $voteplay_percentage, # probability that one of the files from lastvotes is played
-    $scores_size,         # Maximum number of scored songs
-    $votefile,            # Save scoring in this file
-    $voted_file,          # The currently voted file
-    $scores_pointer,      # 
-    $file,                # Currently playing file
-    $control,             # Filename of the FIFO
-    $scores_file          # Where to save scoring-info
-    );
+	$savedir,             
+	$basedir,             # Directory for FIFO and other temporarily files
+	$media_dir,           # Where to search for music
+	$list_dir,            # Place for playlists
+	$voteplay_percentage, # probability that one of the files from lastvotes is played
+	$scores_size,         # Maximum number of scored songs
+	$votefile,            # Save scoring in this file
+	$voted_file,          # The currently voted file
+	$scores_pointer,      # 
+	$file,                # Currently playing file
+	$control,             # Filename of the FIFO
+	$scores_file          # Where to save scoring-info
+);
 
 
 my $scores_exist = "false"; # Are there any entries in scorefile?
 my (
-    @scores,    #
-    @filelist,  # Current loaded playlist
-    %votehash,  #
-    @votelist   #
-    );
+	@scores,    #
+	@filelist,  # Current loaded playlist
+	%votehash,  #
+	@votelist   #
+);
 
 my $file_override = "false"; 
 my $skipped = "false";
@@ -123,11 +123,11 @@ sub init {
 	if ( ! -e $basedir) {
 		mkdir($basedir);
 	} else {
-	        # There exists a basedir. Check if another
-	        # oyster is running and unpause it.
-	        # Otherwise, remove the basedir
+		# There exists a basedir. Check if another
+		# oyster is running and unpause it.
+		# Otherwise, remove the basedir
 
-	        # First get PID, if there is any
+		# First get PID, if there is any
 		open(OTHER, "$basedir/pid");
 		my $otherpid = <OTHER>;
 		close(OTHER);
@@ -141,19 +141,19 @@ sub init {
 		}
 
 		if ( $othercmd =~ /oyster\.pl/ ) {
-		        # Another oyster is running, unpause it
+			# Another oyster is running, unpause it
 			open(OTHER, ">$basedir/control");
 			print OTHER "UNPAUSE\n";
 			close(OTHER);
 			exit;
 		} else {
-		        # Perhaps oyster crashed, remove basedir
+			# Perhaps oyster crashed, remove basedir
 			unlink($basedir);
 		}
 
 		mkdir($basedir);
 	}
-	
+
 	# setup $savedir
 	if ( ! -e $savedir ) {
 		mkdir($savedir);
@@ -186,7 +186,7 @@ sub init {
 	open(DEFAULTLIST, "$savedir/lists/default");
 	@filelist = <DEFAULTLIST>;
 	close(DEFAULTLIST);
-	
+
 	update_scores();
 
 	# initialize random
@@ -284,10 +284,10 @@ sub get_control {
 
 sub play_file {
 	# start play.pl and tell it which file to play
-	
+
 	my $escaped_file = $file;
 	$escaped_file =~ s/\`/\\\`/g;
-	
+
 	system("./play.pl &");
 
 	open(KIDPLAY, ">$basedir/kidplay");
@@ -295,7 +295,7 @@ sub play_file {
 	print STDERR "escaped:$escaped_file";
 	print KIDPLAY "$escaped_file\n";
 	close(KIDPLAY);
-		
+
 	open(STATUS, ">$basedir/status");
 	print STATUS "playing\n";
 	close(STATUS);
@@ -309,13 +309,13 @@ sub play_file {
 
 sub add_log {
 	# log ( $file, $cause )
-	
+
 	my $comment = $_[1];
 	my $logged_file = $_[0];
 	chomp($logged_file);
 
 	print LOG strftime($logtime_format, localtime) . " $comment $logged_file\n";
-	
+
 	if ( $playlist ne $log_playlist ) {
 		$log_playlist = $playlist;
 		close(LOG);
@@ -329,118 +329,118 @@ sub interpret_control {
 	if ( $control =~ /^NEXT/)  { 
 
 		## skips song
-		
+
 		add_log($file, "SKIPPED");
-		
+
 		$skipped = "true";
 		kill 15, &get_player_pid;
-		
+
 		# wait for player to empty cache (without sleep: next player raises an
 		# error because /dev/dsp is in use)
 		sleep(2);
-		
+
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^done/) { 
 
 		## only used by play.pl to signal end of song
-		
+
 		if ( $skipped ne "true" ) {
 			add_log($file, "DONE");
 		} else { 
 			$skipped = "false";
 		}
 	}
-	
+
 	elsif ( $control =~ /^FILE/) {
 
 		## plays file directly (skips song)
-		
+
 		# set $file and play it *now*
 		$control =~ s/\\//g;
 		$control =~ /^FILE\ (.*)$/;
-	
+
 		add_log($file, "SKIPPED");
 		$skipped = "true";
-		
+
 		$file = $1;
 		$file_override = "true";
 
 		add_log($file, "VOTED");
-		
+
 		kill 15, &get_player_pid;
-		
+
 		get_control();
 		interpret_control();
 	}	
-	
+
 	elsif ( $control =~ /^PREV/ ) {
 
 		kill 15, &get_player_pid;
-		
+
 		add_log($file, "SKIPPED");
 		$skipped = "true";
-		
+
 		$file = $history[$#history-1];
 		$file_override = "true";
 
 		add_log($file, "VOTED");
-		
+
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^QUIT/	) {  
 
 		## quits oyster
 
 		# kill player
-	        kill 15, &get_player_pid;
-		
+		kill 15, &get_player_pid;
+
 		add_log($file, "QUIT");
-		
+
 		# wait for "done" from play.pl
 		get_control();
-		
+
 		cleanup();
 		exit;
 	}
-	
+
 	elsif ( $control =~ /^SAVE/ ) {
-		
+
 		## save playlist with name $1
-		
+
 		$control =~ /^SAVE\ (.*)$/;
 		save_list($1);
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^LOAD/ ) {
 
 		## load playlist with name $1
-		
+
 		$control =~ /^LOAD\ (.*)$/;
 		load_list($1);
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^NEWLIST/ )  {
-		
+
 		## read list from basedir/control
 
 		get_list();
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^PRINT/)  {
 
 		## print playlist to basedir/control
-		
+
 		$control =~ /^PRINT\ (.*)$/;
 		open(CONTROL, ">$basedir/control");
 
@@ -457,7 +457,7 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^LISTS/)  {
 
 		# lists filelists into the FIFO
@@ -468,14 +468,14 @@ sub interpret_control {
 		}
 		close(CONTROL);
 	}
-	
+
 	elsif ( $control =~ /^VOTE/ ) {
 
 		## vote for a file
 
 		# remove backslashes (Tab-Completion adds these)
 		$control =~ s/\\//g;
-		
+
 		$control =~ /^VOTE\ (.*)$/;
 		process_vote($1);
 		get_control();
@@ -485,7 +485,7 @@ sub interpret_control {
 	elsif ( $control =~ /^ENQUEUE/ ) {
 
 		## enqueue a file (vote without add-scores
-		
+
 		$control =~ /^ENQUEUE\ (.*)$/;
 		my $file=$1;
 		# test for media
@@ -869,9 +869,9 @@ sub build_playlist {
 			push(@filelist, $_ . "\n");
 		}
 	}
-	
+
 	print STDERR "new maxindex filelist: " . $#filelist . "\n";
-	
+
 	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
 	print FILELIST @filelist;
 	close(FILELIST);

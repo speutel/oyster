@@ -30,16 +30,16 @@ my $frames = 1;
 my $framestr = '';
 
 if ((param('frames') && (param('frames') eq 'no'))) {
-    $frames = 0;
-    $framestr = '&amp;frames=no';
+	$frames = 0;
+	$framestr = '&amp;frames=no';
 }
 
 if ($frames) {
-    oyster::common->navigation_header();
-  } else {
-      oyster::common->noframe_navigation();
-      print h1('Statistics');
-  }
+	oyster::common->navigation_header();
+} else {
+	oyster::common->noframe_navigation();
+	print h1('Statistics');
+}
 
 my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
@@ -52,52 +52,52 @@ my @worklog = @log;
 close (LOG);
 
 my (
-    @lastplayed, # The last 10 played songs
-    @mostplayed, # The "Top 10"
-    %timesplayed # Stores, how often a file has been played
-    ) = ();
+	@lastplayed, # The last 10 played songs
+	@mostplayed, # The "Top 10"
+	%timesplayed # Stores, how often a file has been played
+) = ();
 
 my (
-    $votedfiles,  # Number of files played because of voting
-    $randomfiles, # Number of files played at random
-    $scoredfiles, # Number of files played because of scoring
-    ) = 0;
+	$votedfiles,  # Number of files played because of voting
+	$randomfiles, # Number of files played at random
+	$scoredfiles, # Number of files played because of scoring
+) = 0;
 
 my $check = ''; # Check, if a file was blacklisted before counting it
 
 foreach (@worklog) {
-    chomp($_);
-    (my $playreason, my $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
+	chomp($_);
+	(my $playreason, my $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
 
-    # second turn: if file is checked and not blacklisted,
-    # add it to the last played files.
-    if (($playreason ne 'BLACKLIST') && ($check ne '')) {
-	push (@lastplayed, "$check");
-    }
-
-    # never more than 10 entries
-    if ($#lastplayed > 9) {
-	shift (@lastplayed);
-    }
-
-    # add files to the appropriate counters
-    $check = '';
-    if ($playreason eq 'DONE') {
-	if ($timesplayed{$filename}) {
-	    $timesplayed{$filename}++;
-	} else {
-	    $timesplayed{$filename} = 1;
+	# second turn: if file is checked and not blacklisted,
+	# add it to the last played files.
+	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
+		push (@lastplayed, "$check");
 	}
-    } elsif ($playreason eq 'VOTED') {
-	$votedfiles++;
-	$check = "$filename, $playreason";
-    } elsif ($playreason eq 'PLAYLIST') {
-	$randomfiles++;
-	$check = "$filename, $playreason";
-    } elsif ($playreason eq 'SCORED') {
-	$scoredfiles++;
-	$check = "$filename, $playreason";
-    }
+
+	# never more than 10 entries
+	if ($#lastplayed > 9) {
+		shift (@lastplayed);
+	}
+
+	# add files to the appropriate counters
+	$check = '';
+	if ($playreason eq 'DONE') {
+		if ($timesplayed{$filename}) {
+			$timesplayed{$filename}++;
+		} else {
+			$timesplayed{$filename} = 1;
+		}
+	} elsif ($playreason eq 'VOTED') {
+		$votedfiles++;
+		$check = "$filename, $playreason";
+	} elsif ($playreason eq 'PLAYLIST') {
+		$randomfiles++;
+		$check = "$filename, $playreason";
+	} elsif ($playreason eq 'SCORED') {
+		$scoredfiles++;
+		$check = "$filename, $playreason";
+	}
 }
 
 # Get the maximum value for $maxplayed
@@ -106,20 +106,20 @@ foreach (@worklog) {
 my $maxplayed = 0;   # How often the Top-1-Song has been played
 
 foreach my $filename (keys %timesplayed) {
-    $maxplayed = $timesplayed{$filename} if $timesplayed{$filename} > $maxplayed;
+	$maxplayed = $timesplayed{$filename} if $timesplayed{$filename} > $maxplayed;
 }
 
 # Put the Top-10-Songs in @mostplayed
 # inefficient ... someone got a better idea? :)
 my $counter = 10;
 while (($maxplayed > 0) && ($counter > 0)) {
-    foreach my $filename (keys %timesplayed) {
-	if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
-	    push (@mostplayed, "${filename}, $timesplayed{$filename}");
-	    $counter--;
+	foreach my $filename (keys %timesplayed) {
+		if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
+			push (@mostplayed, "${filename}, $timesplayed{$filename}");
+			$counter--;
+		}
 	}
-    }
-    $maxplayed--;
+	$maxplayed--;
 }
 
 my $totalfilesplayed = $votedfiles + $randomfiles + $scoredfiles;
@@ -162,72 +162,72 @@ exit 0;
 
 sub get_blacklisted {
 
-    # Counts all files, which are affected by a blacklist-rule
+	# Counts all files, which are affected by a blacklist-rule
 
-    my $count = 0;
-    my @affectlines = ();
+	my $count = 0;
+	my @affectlines = ();
 
-    my $mediadir = $config{'mediadir'};
-    $mediadir =~ s/\/$//;
+	my $mediadir = $config{'mediadir'};
+	$mediadir =~ s/\/$//;
 
-    open (BLACKLIST, "${config{savedir}}blacklists/$playlist");
-    while (my $line = <BLACKLIST>) {
-	chomp($line);
-	push (@affectlines, $line);
-    }
-    close (BLACKLIST);
-
-    open (LIST, "${config{savedir}}lists/$playlist");
-
-    while (my $line = <LIST>) {
-	my $isaffected = 0;
-	chomp($line);
-	$line =~ s/^\Q$mediadir\E//;
-	foreach my $affects (@affectlines) {
-	    $isaffected = 1 if ($line =~ /$affects/i);
+	open (BLACKLIST, "${config{savedir}}blacklists/$playlist");
+	while (my $line = <BLACKLIST>) {
+		chomp($line);
+		push (@affectlines, $line);
 	}
-	$count++ if ($isaffected);
-    }
-    close (LIST);
+	close (BLACKLIST);
 
-    return $count;
-    
+	open (LIST, "${config{savedir}}lists/$playlist");
+
+	while (my $line = <LIST>) {
+		my $isaffected = 0;
+		chomp($line);
+		$line =~ s/^\Q$mediadir\E//;
+		foreach my $affects (@affectlines) {
+			$isaffected = 1 if ($line =~ /$affects/i);
+		}
+		$count++ if ($isaffected);
+	}
+	close (LIST);
+
+	return $count;
+
 }
 
 sub print_songs {
 
-    my $header = $_[0];
-    shift @_;
-    my @filearray = @_;
-    
-    my $cssclass = 'file2';
+	my $header = $_[0];
+	shift @_;
+	my @filearray = @_;
 
-    print "<table width='100%'>";
-    print "<tr><th align='left'>Song</th><th>$header</th></tr>";
+	my $cssclass = 'file2';
 
-    # for every song in mostplayed
-    #  print artist/title
-    foreach my $line (@filearray) {
-	$line =~ /(.*)\,\ ([A-Z0-9]*)$/;
-	my $filename = $1;
-	my $reason = $2;
-	my $displayname = oyster::taginfo->get_tag_light($filename);
-	$filename =~ s/^\Q$config{'mediadir'}\E//;  # remove mediadir from filename
-	# (does not turn up in oyster-gui)
-	my $escapedfilename = uri_escape("$filename", "^A-Za-z");
+	print "<table width='100%'>";
+	print "<tr><th align='left'>Song</th><th>$header</th></tr>";
 
-	# switch colors
-	if ($cssclass eq 'file') {
-	    $cssclass = 'file2';
-	} else {
-	    $cssclass = 'file';
+	# for every song in mostplayed
+	#  print artist/title
+	foreach my $line (@filearray) {
+		$line =~ /(.*)\,\ ([A-Z0-9]*)$/;
+		my $filename = $1;
+		my $reason = $2;
+		my $displayname = oyster::taginfo->get_tag_light($filename);
+		$filename =~ s/^\Q$config{'mediadir'}\E//;  # remove mediadir from filename
+		# (does not turn up in oyster-gui)
+		my $escapedfilename = uri_escape("$filename", "^A-Za-z");
+
+		# switch colors
+		if ($cssclass eq 'file') {
+			$cssclass = 'file2';
+		} else {
+			$cssclass = 'file';
+		}
+
+		print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=${escapedfilename}${framestr}' target='curplay' ";
+		print "title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png'";
+		print "border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?";
+		print "file=/${escapedfilename}${framestr}'>$displayname</a></td>";
+		print "<td class='$cssclass' align='center'>$reason</td></tr>\n";
 	}
-
-	print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=${escapedfilename}${framestr}' target='curplay' ";
-	print "title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png'";
-	print "border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?";
-	print "file=/${escapedfilename}${framestr}'>$displayname</a></td>";
-	print "<td class='$cssclass' align='center'>$reason</td></tr>\n";
-    }
-    print "</table>";
+	print "</table>";
 }

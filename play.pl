@@ -38,7 +38,7 @@ if ( ! $pid ) {
 	open(FILENAME, "/tmp/oyster/kidplay");
 	$file = <FILENAME>;
 	close(FILENAME);
-	
+
 	$file =~ /.*\.([^\.]*$)/;
 	$suffix = $1;
 

@@ -46,11 +46,11 @@ if (param('action')) {
 }
 
 if (param('vote')) {
-    oyster::fifocontrol->do_vote(param('vote'));
+	oyster::fifocontrol->do_vote(param('vote'));
 }
 
 if (param('votelist')) {
-    oyster::fifocontrol->do_votelist(param('votelist'));
+	oyster::fifocontrol->do_votelist(param('votelist'));
 }
 
 my $frames = 1;
@@ -58,22 +58,22 @@ my $framestr = '';
 my $framestr2 = '';
 
 if ((param('frames') && (param('frames') eq 'no'))) {
-    $frames = 0;
-    $framestr = '?frames=no';
-    $framestr2 = '&frames=no';
+	$frames = 0;
+	$framestr = '?frames=no';
+	$framestr2 = '&frames=no';
 }
 
 print header,
-    start_html(-title=>'Oyster-GUI',
-		 -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
-		 -head=>[CGI::meta({-http_equiv => 'Content-Type',
-				    -content    => 'text/html; charset=iso-8859-1'}),
-			 CGI::meta({-http_equiv => 'refresh',
-				    -content    => "30; URL=oyster-gui.pl$framestr"})]
-		 );
+start_html(-title=>'Oyster-GUI',
+	-style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
+	-head=>[CGI::meta({-http_equiv => 'Content-Type',
+			-content    => 'text/html; charset=iso-8859-1'}),
+	CGI::meta({-http_equiv => 'refresh',
+			-content    => "30; URL=oyster-gui.pl$framestr"})]
+);
 
 if (! $frames) {
-    oyster::common->noframe_navigation_noheader();
+	oyster::common->noframe_navigation_noheader();
 }
 
 print h1('Oyster');
@@ -81,16 +81,16 @@ print "<a href='oyster-gui.pl${framestr}' style='position:absolute; top:2px; rig
 print "<img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
 
 if ((!(-e "$basedir")) || ($action eq 'stop')) {
-    print p('Oyster has not been started yet!');
-    print p(a({href=>"oyster-gui.pl?action=start${framestr2}"},'Start'));
-    print end_html;
-    exit 0;
+	print p('Oyster has not been started yet!');
+	print p(a({href=>"oyster-gui.pl?action=start${framestr2}"},'Start'));
+	print end_html;
+	exit 0;
 }
 
 if (!(-e "${basedir}info")) {
-    print p("Oyster has not created needed files in ${basedir}");
-    print end_html;
-    exit 0;
+	print p("Oyster has not created needed files in ${basedir}");
+	print end_html;
+	exit 0;
 }
 
 open(INFO, "${basedir}info");
@@ -107,7 +107,7 @@ $info = uri_escape("/$info", "^A-Za-z");
 
 my $statusstr = '';
 if ($status eq 'paused') {
-    $statusstr = " " . a({href=>"oyster-gui.pl?action=pause${framestr2}"},'Paused');
+	$statusstr = " " . a({href=>"oyster-gui.pl?action=pause${framestr2}"},'Paused');
 }
 
 print "<table width='100%' border='0'>";
@@ -127,38 +127,38 @@ open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
 
 if (-s "${basedir}votes") {
-    my @workvotes = @votes;
-    my $maxvotes = 0;
+	my @workvotes = @votes;
+	my $maxvotes = 0;
 
-    foreach my $vote (@workvotes) {
-	$vote =~ /\,([0-9]*)$/;
-	$maxvotes = $1 if ($1 > $maxvotes);
-    }
-
-    print "<table width='100%' style='margin-top:3em;'><tr>";
-    print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th><th></th></tr>";
-
-    while ($maxvotes > 0) {
 	foreach my $vote (@workvotes) {
-	    chomp ($vote);
-	    $vote =~ /(.*),([0-9]*)/;
-	    my ($numvotes, $title);
-	    $title = $1;
-	    $numvotes = $2;
-	    if ($numvotes == $maxvotes) {
-		my $display = oyster::taginfo->get_tag_light($title);
-		$title =~ s/^\Q$mediadir\E//;
-		my $escapedtitle = uri_escape($title, "^A-Za-z");
-		print "<tr><td>";
-		print a({class=>'file', href=>"fileinfo.pl?file=$escapedtitle${framestr2}", target=>'browse'},$display);
-		print "</td><td align='center'>$numvotes</td><td>";
-		print a({href=>"oyster-gui.pl?action=unvote&file=$escapedtitle${framestr2}"},'Unvote');
-		print "</td></tr>\n";
-	    }
+		$vote =~ /\,([0-9]*)$/;
+		$maxvotes = $1 if ($1 > $maxvotes);
 	}
-	$maxvotes--;
-    }
-    print "</table>";
+
+	print "<table width='100%' style='margin-top:3em;'><tr>";
+	print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th><th></th></tr>";
+
+	while ($maxvotes > 0) {
+		foreach my $vote (@workvotes) {
+			chomp ($vote);
+			$vote =~ /(.*),([0-9]*)/;
+			my ($numvotes, $title);
+			$title = $1;
+			$numvotes = $2;
+			if ($numvotes == $maxvotes) {
+				my $display = oyster::taginfo->get_tag_light($title);
+				$title =~ s/^\Q$mediadir\E//;
+				my $escapedtitle = uri_escape($title, "^A-Za-z");
+				print "<tr><td>";
+				print a({class=>'file', href=>"fileinfo.pl?file=$escapedtitle${framestr2}", target=>'browse'},$display);
+				print "</td><td align='center'>$numvotes</td><td>";
+				print a({href=>"oyster-gui.pl?action=unvote&file=$escapedtitle${framestr2}"},'Unvote');
+				print "</td></tr>\n";
+			}
+		}
+		$maxvotes--;
+	}
+	print "</table>";
 }
 
 close VOTES;

@@ -24,30 +24,30 @@ use strict;
 use oyster::conf;
 
 my @knownoptions = (
-		    'basedir',
-		    'savedir',
-		    'mediadir',
-		    'theme',
-		    'maxscored',
-		    'voteplay',
-		    'coverfilenames',
-		    'coverwidth'
-		    );
+	'basedir',
+	'savedir',
+	'mediadir',
+	'theme',
+	'maxscored',
+	'voteplay',
+	'coverfilenames',
+	'coverwidth'
+);
 
 my %needsrestart = (
-		    'basedir' => 1,
-		    'savedir' => 1,
-		    'mediadir' => 1,
-		    'theme' => 0,
-		    'maxscored' => 1,
-		    'voteplay' => 1,
-		    'coverfilenames' => 0,
-		    'coverwidth' => 0
-		    );
+	'basedir' => 1,
+	'savedir' => 1,
+	'mediadir' => 1,
+	'theme' => 0,
+	'maxscored' => 1,
+	'voteplay' => 1,
+	'coverfilenames' => 0,
+	'coverwidth' => 0
+);
 
 my %isset = ();
 foreach my $option (@knownoptions) {
-    $isset{$option} = 0;
+	$isset{$option} = 0;
 }
 
 my %config = oyster::conf->get_config('oyster.conf');
@@ -58,57 +58,57 @@ my $csstheme = $config{'theme'};
 $csstheme = param('theme') if param('theme');
 
 print
-    header,
-    start_html(-title=>'Oyster Admin Interface',
-	       -style=>{'src'=>"themes/$csstheme/layout.css"},
-	       -head=>CGI::meta({-http_equiv => 'Content-Type',
-				 -content    => 'text/html; charset=iso-8859-1'}));
+header,
+start_html(-title=>'Oyster Admin Interface',
+	-style=>{'src'=>"themes/$csstheme/layout.css"},
+	-head=>CGI::meta({-http_equiv => 'Content-Type',
+			-content    => 'text/html; charset=iso-8859-1'}));
 
 
 # Set options
 
 if (param('action') && (param('action') eq 'set')) {
 
-    my $remember = 0;
+	my $remember = 0;
 
-    open (CONFFILE, 'oyster.conf');
-    open (TMPFILE, '>oyster.conf.tmp') or die $!;
-    while (my $line = <CONFFILE>) {
-	my $isoption = 0;
-	foreach my $option (@knownoptions) {
-	    if ($line =~ /^\Q$option\E.*\=(.*)$/) {
-		my $oldvalue = $1;
-		chomp($oldvalue);
-		print TMPFILE "$option=" . param($option) . "\n";
-		$isset{$option} = 1;
-		$isoption = 1;
-		if ($needsrestart{$option} && ($oldvalue ne param($option))) {
-		    $remember = 1;
+	open (CONFFILE, 'oyster.conf');
+	open (TMPFILE, '>oyster.conf.tmp') or die $!;
+	while (my $line = <CONFFILE>) {
+		my $isoption = 0;
+		foreach my $option (@knownoptions) {
+			if ($line =~ /^\Q$option\E.*\=(.*)$/) {
+				my $oldvalue = $1;
+				chomp($oldvalue);
+				print TMPFILE "$option=" . param($option) . "\n";
+				$isset{$option} = 1;
+				$isoption = 1;
+				if ($needsrestart{$option} && ($oldvalue ne param($option))) {
+					$remember = 1;
+				}
+				last;
+			}
 		}
-		last;
-	    }
+		if (! $isoption) {
+			print TMPFILE $line;
+		}
 	}
-	if (! $isoption) {
-	    print TMPFILE $line;
+
+	foreach my $option (@knownoptions) {
+		if (!$isset{$option}) {
+			print TMPFILE "$option=" . param($option) . "\n";
+		}
 	}
-    }
 
-    foreach my $option (@knownoptions) {
-	if (!$isset{$option}) {
-	    print TMPFILE "$option=" . param($option) . "\n";
+	close (TMPFILE);
+	close (CONFFILE);
+
+	unlink ('oyster.conf');
+	rename 'oyster.conf.tmp', 'oyster.conf';
+
+	print strong('Your settings were saved.');
+	if ($remember) {
+		print p(strong('Changes only take effect after restarting Oyster!'));
 	}
-    }
-
-    close (TMPFILE);
-    close (CONFFILE);
-
-    unlink ('oyster.conf');
-    rename 'oyster.conf.tmp', 'oyster.conf';
-
-    print strong('Your settings were saved.');
-    if ($remember) {
-	print p(strong('Changes only take effect after restarting Oyster!'));
-    }
 }
 
 # Get current options
@@ -116,11 +116,11 @@ if (param('action') && (param('action') eq 'set')) {
 my %currentvalue = ();
 
 foreach my $option (@knownoptions) {
-    if ($config{$option}) {
-	$currentvalue{$option} = $config{$option};
-    } else {
-	$currentvalue{$option} = '';
-    }
+	if ($config{$option}) {
+		$currentvalue{$option} = $config{$option};
+	} else {
+		$currentvalue{$option} = '';
+	}
 }
 
 # Get available Themes
@@ -128,8 +128,8 @@ foreach my $option (@knownoptions) {
 my @themes = ();
 my @dirs = <$config{'savedir'}/themes/*>;
 foreach my $theme (@dirs) {
-    $theme =~ s/^.*\///;
-    push (@themes, $theme);
+	$theme =~ s/^.*\///;
+	push (@themes, $theme);
 }
 
 
@@ -143,95 +143,95 @@ print hidden('action','set');
 
 print h2('Basedir');
 print textfield(-name=>'basedir',
-		-default=>$currentvalue{'basedir'},
-		-size=>50,
-		-maxlength=>255);
+	-default=>$currentvalue{'basedir'},
+	-size=>50,
+	-maxlength=>255);
 
 print p({class=>'configdescription'},
 	'Basedir tells oyster where it should put its dynamic files, ' . 
 	'the FIFOs it needs and the log and infofile.'
-	);
+);
 
 print h2('Savedir');
 print textfield(-name=>'savedir',
-		-default=>$currentvalue{'savedir'},
-		-size=>50,
-		-maxlength=>255);
+	-default=>$currentvalue{'savedir'},
+	-size=>50,
+	-maxlength=>255);
 
 print p({class=>'configdescription'},
 	'Savedir tells oyster where to save files that it needs for ' .
 	'more than one session, for example the votes you did and ' .
 	'the playlists you save'
-	);
+);
 
 print h2('Mediadir');
 print textfield(-name=>'mediadir',
-		-default=>$currentvalue{'mediadir'},
-		-size=>50,
-		-maxlength=>255);
+	-default=>$currentvalue{'mediadir'},
+	-size=>50,
+	-maxlength=>255);
 
 print p({class=>'configdescription'},
 	'mediadir is where your files are. ' .
 	'If you don\'t give oyster a playlist in the commandline, ' .
 	'it will search your files under this directory and build a ' .
 	'default playlist from these.'
-	);
+);
 
-		 
+
 print h2('Max Scored');
 print textfield(-name=>'maxscored',
-		-default=>$currentvalue{'maxscored'},
-		-size=>8,
-		-maxlength=>8);
+	-default=>$currentvalue{'maxscored'},
+	-size=>8,
+	-maxlength=>8);
 
 print p({class=>'configdescription'},
 	'Max Scored sets the maximum number of saved votes ' .
 	'(oyster chooses songs at random from this list)'
-	);
+);
 
 print h2('Voteplay');
 print textfield(-name=>'voteplay',
-		-default=>$currentvalue{'voteplay'},
-		-size=>3,
-		-maxlength=>3);
+	-default=>$currentvalue{'voteplay'},
+	-size=>3,
+	-maxlength=>3);
 
 print p({class=>'configdescription'},
 	'voteplay sets the probability in percent that one '  .
 	'of the files from lastvotes is played.'
-	);
+);
 
 print h2('Theme');
 print popup_menu(-name=>'theme',
-		 -values=>\@themes,
-		 -default=>$currentvalue{'theme'});
+	-values=>\@themes,
+	-default=>$currentvalue{'theme'});
 
 print p({class=>'configdescription'},
 	'Choose here which theme oyster uses.'
-	);
+);
 
 print h2('Cover Filenames');
 print textfield(-name=>'coverfilenames',
-		-default=>$currentvalue{'coverfilenames'},
-		-size=>50,
-		-maxlength=>255);
+	-default=>$currentvalue{'coverfilenames'},
+	-size=>50,
+	-maxlength=>255);
 
 print p({class=>'configdescription'},
 	'Cover Filenames is a comma-seperated list, which lists ' .
 	'all possible names for album-covers relative to the album. ' .
 	'Use ${album} to reference in filenames and ${albumus} if ' .
 	'you like to use underscores instead of whitespaces'
-	);
+);
 
 print h2('Coverwidth');
 print textfield(-name=>'coverwidth',
-		-default=>$currentvalue{'coverwidth'},
-		-size=>3,
-		-maxlength=>4);
+	-default=>$currentvalue{'coverwidth'},
+	-size=>3,
+	-maxlength=>4);
 
 print p({class=>'configdescription'},
 	'coverwidth is the width of the cover displayed in ' .
 	'File Information'
-	);
+);
 
 
 print submit(value=>'Save settings');

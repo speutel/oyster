@@ -34,36 +34,36 @@ my $frames = 1;
 my $framestr = '';
 
 if ((param('frames') && (param('frames') eq 'no'))) {
-    $frames = 0;
-    $framestr = '&amp;frames=no';
+	$frames = 0;
+	$framestr = '&amp;frames=no';
 }
 
 if ($frames) {
-    oyster::common->navigation_header();
-  } else {
-      oyster::common->noframe_navigation();
-      print h1('File Information');
-  }
+	oyster::common->navigation_header();
+} else {
+	oyster::common->noframe_navigation();
+	print h1('File Information');
+}
 
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
 my $file = param('file') || '';
 
 if (param('action')) {
-    oyster::fifocontrol->do_action(param('action'), $file, '');
+	oyster::fifocontrol->do_action(param('action'), $file, '');
 }   
 
 if (!(-e "$mediadir$file")) {
-    print h1('Error!');
-    print "<p>File <strong>$file</strong> could not be found.</p>";
-    print end_html;
-    exit 0;
+	print h1('Error!');
+	print "<p>File <strong>$file</strong> could not be found.</p>";
+	print end_html;
+	exit 0;
 }
 
 my $oysterruns = 0;
 
 if (-e $config{'basedir'}) {
-    $oysterruns = 1;
+	$oysterruns = 1;
 }
 
 print "<p>Info for ";
@@ -75,9 +75,9 @@ $fileonly =~ s/^.*\///;
 my @dirs = split(/\//, $subdir);
 my $incdir = '';
 foreach my $partdir (@dirs) {
-    my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
-    print "<a href='browse.pl?dir=${escapeddir}${framestr}'>$partdir</a> / ";
-    $incdir = $incdir . "$partdir/";
+	my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
+	print "<a href='browse.pl?dir=${escapeddir}${framestr}'>$partdir</a> / ";
+	$incdir = $incdir . "$partdir/";
 }
 
 print oyster::common->remove_html($fileonly) . "</p><br clear='all'>\n";
@@ -86,8 +86,8 @@ my $isblacklisted = 0;
 my $playlist = oyster::conf->get_playlist();
 open (BLACKLIST, "${config{'savedir'}}blacklists/$playlist");
 while (my $rule = <BLACKLIST>) {
-    chomp($rule);
-    $isblacklisted = 1 if ($file =~ /$rule/);
+	chomp($rule);
+	$isblacklisted = 1 if ($file =~ /$rule/);
 }
 close (BLACKLIST);
 
@@ -95,20 +95,20 @@ my $escapedfile = uri_escape("$file", "^A-Za-z");
 
 print "<table width='100%'><tr>";
 if ($oysterruns) {
-    print "<td align='left'><span class='file'><a class='file' href='oyster-gui.pl?";
-    print "vote=${escapedfile}${framestr}' target='curplay'>Vote</a> / ";
-    print "<a class='file' href='oyster-gui.pl?action=enqueue&amp;file=${escapedfile}${framestr}'";
-    print "target='curplay'>Enqueue</a> this song</span></td>\n";
+	print "<td align='left'><span class='file'><a class='file' href='oyster-gui.pl?";
+	print "vote=${escapedfile}${framestr}' target='curplay'>Vote</a> / ";
+	print "<a class='file' href='oyster-gui.pl?action=enqueue&amp;file=${escapedfile}${framestr}'";
+	print "target='curplay'>Enqueue</a> this song</span></td>\n";
 } else {
-    print "<td></td>\n";
+	print "<td></td>\n";
 }
 my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
 
 if ($isblacklisted) {
-    print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>";
+	print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>";
 } else {
-    print "<td align='right'><a class='file' href='blacklist.pl?";
-    print "affects=${regexpfile}&amp;action=add${framestr}'>Add this song to Blacklist</a></td></tr></table>";
+	print "<td align='right'><a class='file' href='blacklist.pl?";
+	print "affects=${regexpfile}&amp;action=add${framestr}'>Add this song to Blacklist</a></td></tr></table>";
 }
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
@@ -116,16 +116,16 @@ my %tag = oyster::taginfo->get_tag("$mediadir$file");
 my $timesplayed = 0;
 open (LOG, "${config{'savedir'}}logs/$playlist");
 while (my $line = <LOG>) {
-    my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
-    chomp($line);
-    $_ = $line;
-    ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
+	my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
+	chomp($line);
+	$_ = $line;
+	($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
 	m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-    if ($filename =~ /\Q$file\E/) {
-	if ($playreason eq 'DONE') {
-	    $timesplayed++;
+	if ($filename =~ /\Q$file\E/) {
+		if ($playreason eq 'DONE') {
+			$timesplayed++;
+		}
 	}
-    }
 }
 close LOG;
 
@@ -135,9 +135,9 @@ my $coverdata = oyster::common->get_cover($albumdir, $config{'coverwidth'});
 
 print "<table border='0' width='100%'>";
 if ($tag{'title'}) {
-    print "<tr><td class='fileinfo'><strong>Title</strong></td><td>$tag{'title'}</td><td rowspan='6' class='fileinfoimage' width='120'>$coverdata</td></tr>";
+	print "<tr><td class='fileinfo'><strong>Title</strong></td><td>$tag{'title'}</td><td rowspan='6' class='fileinfoimage' width='120'>$coverdata</td></tr>";
 } else {
-    print "<tr><td class='fileinfo'></td><td rowspan='6'>$coverdata</td></tr>";
+	print "<tr><td class='fileinfo'></td><td rowspan='6'>$coverdata</td></tr>";
 }
 print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>" if ($tag{'artist'});
 print "<tr><td class='fileinfo'><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{'album'});

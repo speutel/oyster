@@ -47,7 +47,7 @@ foreach $subdir ( <$dir*> ) {
 
 	$lastdir = $subdir;
 	$lastdir =~ s/^.*\/([^\/]*)$/$1/;
-	
+
 	open(DIRALL, "$subdir/all");
 	while ( $line = <DIRALL> ){
 		$line =~ s/^(.*):\ (.*)$/$2/;
@@ -63,11 +63,11 @@ foreach $subdir ( <$dir*> ) {
 
 	$i = 0;
 	$scoreline = <SCORES>; #erste Zeile ist lastvotes_index, kein Lied
-	
+
 	$done = "false";
-	
+
 	$line = <INLIST>;
-	
+
 	while ( $done ne "true" ) {
 		$line =~ /^([0-9]*)\ /;
 		$count = $1;
@@ -86,19 +86,19 @@ foreach $subdir ( <$dir*> ) {
 	close(OUTLIST);
 	close(INLIST);
 	close(SCORES);
-	
 
-	
-	
-	
+
+
+
+
 	open(LIST, "$config{savedir}/lists/$lastdir");
 	open(INLIST, "$subdir/filelist.sorted");
 	open(OUTLIST, ">$subdir/filelist.replaced");
 
 	$i = 0;
-	
+
 	$done = "false";
-	
+
 	while ( $done ne "true" ) {
 		$line =~ /^([0-9]*)\ /;
 		$count = $1;

@@ -28,15 +28,15 @@ use oyster::conf;
 my %config = oyster::conf->get_config('oyster.conf');
 
 if (param()) {
-    my $volume=param('vol');
-    if ($volume eq 'down') {
-	system ('/usr/bin/aumix -w -5');
-    } elsif ($volume eq '50') {
-	system ('/usr/bin/aumix -w 50');
-    } elsif ($volume eq 'up') {
-	system ('/usr/bin/aumix -w +5');
-    }
-	
+	my $volume=param('vol');
+	if ($volume eq 'down') {
+		system ('/usr/bin/aumix -w -5');
+	} elsif ($volume eq '50') {
+		system ('/usr/bin/aumix -w 50');
+	} elsif ($volume eq 'up') {
+		system ('/usr/bin/aumix -w +5');
+	}
+
 }	
 
 my $frames = 1;
@@ -44,22 +44,22 @@ my $framestr = '';
 my $framestr2 = '';
 
 if ((param('frames') && (param('frames') eq 'no'))) {
-    $frames = 0;
-    $framestr = '?frames=no';
-    $framestr2 = '&amp;frames=no';
+	$frames = 0;
+	$framestr = '?frames=no';
+	$framestr2 = '&amp;frames=no';
 }
 
 if ($frames) {
-    print
+	print
 	header,
 	start_html(-title=>'Oyster-GUI',
-		   -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
-		   -head=>CGI::meta({-http_equiv => 'Content-Type',
-				     -content    => 'text/html; charset=iso-8859-1'}));
-  } else {
-      oyster::common->noframe_navigation();
-      print h1('Control');
-  }
+		-style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
+		-head=>CGI::meta({-http_equiv => 'Content-Type',
+				-content    => 'text/html; charset=iso-8859-1'}));
+} else {
+	oyster::common->noframe_navigation();
+	print h1('Control');
+}
 
 
 print "<a href='control.pl${framestr}' style='position:absolute; top:2px; right:2px' title='Refresh'>";

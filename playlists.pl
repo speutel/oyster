@@ -33,20 +33,20 @@ my $frames = 1;
 my $framestr = '';
 
 if ((param('frames') && (param('frames') eq 'no'))) {
-    $frames = 0;
-    $framestr = '&amp;frames=no';
+	$frames = 0;
+	$framestr = '&amp;frames=no';
 }
 
 if ($frames) {
-    oyster::common->navigation_header();
-  } else {
-      oyster::common->noframe_navigation();
-      print h1('Playlists');
-  }
+	oyster::common->navigation_header();
+} else {
+	oyster::common->noframe_navigation();
+	print h1('Playlists');
+}
 
 if (param('action') && (param('listname') || param('newlistname'))) {
-    my $file = param('listname') || param('newlistname');
-    oyster::fifocontrol->do_action(param('action'), $file, '');
+	my $file = param('listname') || param('newlistname');
+	oyster::fifocontrol->do_action(param('action'), $file, '');
 }
 
 my $globdir = "${savedir}lists/";
@@ -55,47 +55,47 @@ my @entries = <$globdir*>;
 my @files = ();
 
 foreach my $entry (@entries) {
-    if (-f "$entry") {
-	$entry =~ s/$globdir//;
-	push (@files, "$entry");
-    }
+	if (-f "$entry") {
+		$entry =~ s/$globdir//;
+		push (@files, "$entry");
+	}
 }
 
 my $playlist = "";
 
 if ((param('action') eq 'loadlist') && param('listname')) {
-    $playlist = param('listname');
+	$playlist = param('listname');
 } else {
-    $playlist = oyster::conf->get_playlist();
+	$playlist = oyster::conf->get_playlist();
 }
 
 print "<table width='100%' style='margin-bottom: 2em;'>";
 
 if ($playlist eq 'default') {
-    print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td>currently playing</td>";
-    print "<td></td><td></td></tr>";
+	print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td>currently playing</td>";
+	print "<td></td><td></td></tr>";
 } else {
-    print "<tr style='height:3em;'><td>default (All songs)</td>" .
+	print "<tr style='height:3em;'><td>default (All songs)</td>" .
 	"<td><a href='playlists.pl?action=loadlist&amp;listname=default${framestr}'>" .
 	"Load List</a></td><td></td><td></td></tr>";
 }
 
 foreach my $file (@files) {
-    my $encfile = uri_escape($file, "^A-Za-z");
-    if (($file eq $playlist) && ($file ne 'default')) {
-	print "<tr><td><i>$file</i></td><td>currently playing</td>";
-	print "<td></td><td></td></tr>";
-    }
-    elsif ($file ne 'default') {
-	print "<tr><td>$file</td>" .
-	    "<td><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
-	    "Load List</a></td>";
-	print "<td><a href='editplaylist.pl?action=edit&amp;" .
-	    "playlist=${encfile}${framestr}'>Edit List</a></td>\n";
-	print "<td><a href='playlists.pl?action=delete&amp;" .
-	    "listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
+	my $encfile = uri_escape($file, "^A-Za-z");
+	if (($file eq $playlist) && ($file ne 'default')) {
+		print "<tr><td><i>$file</i></td><td>currently playing</td>";
+		print "<td></td><td></td></tr>";
+	}
+	elsif ($file ne 'default') {
+		print "<tr><td>$file</td>" .
+		"<td><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
+		"Load List</a></td>";
+		print "<td><a href='editplaylist.pl?action=edit&amp;" .
+		"playlist=${encfile}${framestr}'>Edit List</a></td>\n";
+		print "<td><a href='playlists.pl?action=delete&amp;" .
+		"listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
 
-    }
+	}
 }
 
 print "</table>";
