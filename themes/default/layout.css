@@ -13,6 +13,14 @@ a:hover {
   color: #04b4f4;
 }
 
+a.dir {
+  color: #08c0e0;;
+}
+
+a.dir2 {
+  color: #1080A0;
+}
+
 a.file {
   color: #FFCC00;
 }
