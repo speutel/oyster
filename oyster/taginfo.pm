@@ -5,6 +5,8 @@ use warnings;
 use oyster::conf;
 
 my %tag;
+my %CACHE;
+my %config = oyster::conf->get_config('oyster.conf');
 
 $ENV{LANG} = 'de_DE@euro';
 
@@ -12,9 +14,7 @@ my $VERSION = '1.0';
 
 sub get_tag_light {
 
-    my %CACHE;
     my $filename = $_[1];
-    my %config = oyster::conf->get_config('oyster.conf');
 
     dbmopen(%CACHE, "${config{'basedir'}}tagcache", 0644);
     if ($CACHE{$filename}) {
@@ -32,8 +32,6 @@ sub get_tag_light {
 
 sub get_tag {
     %tag = ();
-
-    my %config = oyster::conf->get_config('oyster.conf');
 
     $tag{'title'} = '';
     my $filename = $_[1];
@@ -64,7 +62,11 @@ sub get_tag {
 		$tag{'genre'} = $3;
 		$tag{'album'} =~ s/[\ ]*$//;
 		$tag{'genre'} =~ s/\ \(.*//;
+	    } elsif ($line =~ /^Year\:\ ([0-9]*)/) {
+		$tag{'year'} = $1;
 	    } elsif ($line =~ /^Comment.*Track\:\ ([0-9]*)/) {
+		$tag{'track'} = $1;
+	    } elsif ($line =~ /^Track\ number\/Position\ in\ set\:\ (.*)/) {
 		$tag{'track'} = $1;
 	    }
 	}
@@ -121,6 +123,10 @@ sub get_tag {
     } else {
 	$tag{'display'} = "$tag{'artist'} - $tag{'title'}";
     }
+
+    dbmopen(%CACHE, "${config{'basedir'}}tagcache", 0644);
+    $CACHE{$filename} = $tag{'display'};
+    dbmclose(%CACHE);    
 
     return %tag;
 }
