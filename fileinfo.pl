@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
+use URI::Escape;
 
 print header, start_html(-title=>'Oyster-GUI',-style=>{'src'=>'layout.css'});
 
@@ -19,7 +20,21 @@ if (param()) {
 
 $basedir = $rootdir if (!($basedir =~ /^\Q$rootdir\E/));
 
-print "<a href='browse.pl?dir=$basedir'>$basedir</a><br><br>";
+print "<p>Tag-Info for ";
+
+my $subdir = $basedir;
+$subdir =~ s/^\Q$rootdir\E//;
+my @dirs = split(/\//, $subdir);
+my $incdir = '';
+foreach my $partdir (@dirs) {
+    my $escapeddir = uri_escape("$rootdir$incdir$partdir", "^A-Za-z");
+    print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
+    $incdir = $incdir . "$partdir/";
+}
+
+print "$file</p>\n";
+
+print "<p><a href='vote.pl?vote=$basedir/$file'>Vote for this song</a></p>\n";
 
 if ($file =~ /mp3$/) {
     open (MP3, "id3v2 -l \"$basedir/$file\"|") or die $!;
