@@ -82,6 +82,7 @@ sub print_affects {
 	}
     }
     close (LIST);
+    @results = sort @results;
     listdir("", 0);
 }
 
