@@ -37,6 +37,7 @@ if (!($search eq '')) {
 	    push (@results, $line);
 	}
     }
+    @results = sort @results;
     listdir('',0);
 
 }
