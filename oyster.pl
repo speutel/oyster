@@ -315,7 +315,12 @@ sub interpret_control {
 	
 		## removes a file from the votelist
 		$control =~ s/\\//g;
-		$control =~ /^UNVOTE\ (.*)$/;
+		$control =~ /^UNVOTE\ (.*)/;
+		my $unvote_file = $1;
+		chomp($unvote_file);
+		for (my $i = 1; $i <= $votehash{$unvote_file}; $i++) {
+			remove_lastvote($unvote_file);
+		}
 		unvote($1);
 		process_vote();
 		get_control();
@@ -330,23 +335,9 @@ sub interpret_control {
 		if ( $1 eq "+" ) {
 			add_lastvotes($scored_file);
 		} elsif ($1 eq "-" ) {
-			for ( my $i = 0; $i <= $#lastvotes; $i++ ) {
-				if ( $lastvotes[$i] eq ($scored_file . "\n") ) {
-					splice(@lastvotes, $i, 1);
-					if ( $lastvotes_pointer != 0 ) {
-						--$lastvotes_pointer;
-					}
-					last;
-				}
-			}
+			remove_lastvote($scored_file);
 		}
 		
-		open(LASTVOTES, ">$lastvotes_file");
-		print LASTVOTES $lastvotes_pointer . "\n";
-		foreach my $entry ( @lastvotes ) {
-			print LASTVOTES $entry;
-		}
-		close(LASTVOTES);
 		
 		get_control();
 		interpret_control();
@@ -365,6 +356,27 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+}
+
+sub remove_lastvote {
+	# $myfile mit newline am Ende!
+	my $myfile = $_[0];
+	
+	for ( my $i = 0; $i <= $#lastvotes; $i++ ) {
+		if ( $lastvotes[$i] eq ($myfile . "\n") ) {
+			splice(@lastvotes, $i, 1);
+			if ( $lastvotes_pointer != 0 ) {
+				--$lastvotes_pointer;
+			}
+			last;
+		}
+	}
+	open(LASTVOTES, ">$lastvotes_file");
+		print LASTVOTES $lastvotes_pointer . "\n";
+		foreach my $entry ( @lastvotes ) {
+		print LASTVOTES $entry;
+	}
+	close(LASTVOTES);
 }
 
 sub enqueue_list {
@@ -398,7 +410,6 @@ sub get_player_pid {
 
 sub unvote {
 	my $unvote_file = $_[0];
-	chomp($unvote_file);
 
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
 		print STDERR "file to unvote: $unvote_file, ";
