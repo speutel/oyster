@@ -58,7 +58,8 @@ my (
 	@filelist, 		# Current loaded playlist
 	%votehash, 		#
 	@votelist, 		#
-	%vote_reason 	# why is the file in play_next there? (currently "VOTED" or "ENQUEUED")
+	%vote_reason, 	# why is the file in play_next there? (currently "VOTED" or "ENQUEUED")
+	$favmode
 );
 
 my $file_override = "false"; 
@@ -117,6 +118,8 @@ sub init {
 	$basedir =~ s/\/$//;
 	$voteplay_percentage = $config{'voteplay'};
 	$scores_size = $config{'maxscored'};
+
+	$favmode = "off";
 
 	oyster::hooks::init();
 
@@ -441,6 +444,14 @@ sub interpret_control {
 
 		$control =~ /^LOAD\ (.*)$/;
 		load_list($1);
+		if ( $favmode eq "on") {
+			if ( $scores_exist eq "false" ) {
+	      	$voteplay_percentage = $config{'voteplay'};
+				open(FAV, ">$basedir/favmode");
+				print FAV "off\n";
+				close(FAV);
+			}
+		}
 	}
 
 	elsif ( $control =~ /^NEWLIST/ )  {
@@ -591,10 +602,13 @@ sub interpret_control {
 
 		# play only from scores
 		#
-		$voteplay_percentage = 100;
-		open(FAV, ">$basedir/favmode");
-		print FAV "on\n";
-		close(FAV);
+		if ( $scores_exist eq "true" ) {
+			$voteplay_percentage = 100;
+			$favmode = "on";
+			open(FAV, ">$basedir/favmode");
+			print FAV "on\n";
+			close(FAV);
+		}
 	}
 
 	elsif ( $control =~ /^NOFAVMODE/ ) {
@@ -602,6 +616,7 @@ sub interpret_control {
 		# play only from scores
 		
 		$voteplay_percentage = $config{'voteplay'};
+		$favmode = "off";
 		open(FAV, ">$basedir/favmode");
 		print FAV "off\n";
 		close(FAV);
