@@ -1,1 +1,20 @@
-a { color: #0000FF; }
+body {
+  background-color: #111111;
+  color: #08c0e0;
+}
+
+a { 
+  color: #08c0e0;
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+a:hover {
+  color: #04b4f4;
+}
+
+input {
+  background-color: #222222;
+  color: #08c0e0;
+  border-color:#000000;
+}
