@@ -76,19 +76,36 @@ open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
 
 if (-s "${basedir}votes") {
+    my @workvotes = @votes;
+    my $maxvotes = 0;
+
+    foreach my $vote (@workvotes) {
+	$vote =~ /\,([0-9]*)$/;
+	$maxvotes = $1 if ($1 > $maxvotes);
+    }
+
     print "<table width='100%' style='margin-top:3em;'><tr>";
     print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th><th></th></tr>";
-    foreach my $vote (@votes) {
-	chomp ($vote);
-	my ($numvotes, $title);
-	$_ = $vote;
-	($title, $numvotes) = m@(.*),([0-9]*)@;
-	my $display = oyster::taginfo->get_tag_light($title);
-	$title =~ s/^\Q$config{'mediadir'}\E//;
-	my $escapedtitle = uri_escape("$title", "^A-Za-z");
-	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td><td><a href='oyster-gui.pl?action=unvote&file=$escapedtitle'>Unvote</a></td></tr>\n";
+
+    while ($maxvotes > 0) {
+	foreach my $vote (@workvotes) {
+	    chomp ($vote);
+	    $vote =~ /(.*),([0-9]*)/;
+	    my ($numvotes, $title);
+	    $title = $1;
+	    $numvotes = $2;
+	    if ($numvotes == $maxvotes) {
+		my $display = oyster::taginfo->get_tag_light($title);
+		$title =~ s/^\Q$mediadir\E//;
+		my $escapedtitle = uri_escape("$title", "^A-Za-z");
+		print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td><td><a href='oyster-gui.pl?action=unvote&file=$escapedtitle'>Unvote</a></td></tr>\n";
+	    }
+	}
+	$maxvotes--;
     }
     print "</table>";
 }
+
+close VOTES;
 
 print end_html;
