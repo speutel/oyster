@@ -1,3 +1,6 @@
 #!/bin/sh
 
-chmod 755 *pl
+chmod 775 *pl
+chmod g+w * -R
+chown www-data:www-data * -R
+
