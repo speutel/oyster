@@ -725,6 +725,7 @@ sub init {
 	open (STDOUT, ">>/dev/null");
 	#open (DEBUG, ">/tmp/debug");
 	open (LOG, ">>$savedir/logs/$playlist");
+	open (RANDOM, ">>/tmp/oyster-random");
 
 	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
@@ -756,16 +757,22 @@ sub choose_file {
 		$votehash{$voteentry} = 0;
 		&process_vote;
 	} else {
-		if ( int(rand(100)) < $voteplay_percentage ) {
+		my $random = int(rand(100));
+		print RANDOM "Zufallszahl fuer voteplay ist: $random (<$voteplay_percentage fuer scores)\n";
+		if ( $random < $voteplay_percentage ) {
 			if ( $scores_exist eq "true" ) {
 				# choose file from scores with a chance of $voteplay_percentage/100
-				my $index = rand @scores;
+				my $index = int(rand($#scores));
+				print RANDOM "Zufallszahl fuer scores: $index (index von scores ist $#scores)\n";
+				#my $index = rand @scores;
 				$file = $scores[$index];
 				add_log($file, "SCORED");
 			}
 		} else {
 			# choose file from "normal" filelist
-			my $index = rand @filelist;
+			my $index = int(rand($#filelist));
+			print RANDOM "Zufallszahl fuer filelist: $index (index der filelist ist $#filelist)\n";
+			#my $index = rand @filelist;
 			$file = $filelist[$index];
 			add_log($file, "PLAYLIST");
 		}
