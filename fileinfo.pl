@@ -47,7 +47,7 @@ foreach my $partdir (@dirs) {
     $incdir = $incdir . "$partdir/";
 }
 
-print "$fileonly</p>\n";
+print "$fileonly</p><br clear='all'>\n";
 
 my $isblacklisted = 0;
 my $playlist = oyster::conf->get_playlist();
@@ -92,8 +92,16 @@ while (my $line = <LOG>) {
 }
 close LOG;
 
+my $albumdir = $mediadir . $file;
+$albumdir =~ s/[^\/]*$//;
+my $coverdata = oyster::common->get_cover($albumdir);
+
 print "<table cellpadding='10'>";
-print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>" if ($tag{'title'});
+if ($tag{'title'}) {
+    print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td><td rowspan='6'>$coverdata</td></tr>";
+} else {
+    print "<tr><td><strong>Title</strong></td><td>$tag{'title'}</td></tr>";
+}
 print "<tr><td><strong>Artist</strong></td><td>$tag{'artist'}</td></tr>" if ($tag{'artist'});
 print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{'album'});
 print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>" if ($tag{'track'});
