@@ -352,11 +352,11 @@ sub interpret_control {
 		interpret_control();
 	}
 	
-	elsif ( $control = /^M3U/ ) {
+	elsif ( $control = /^ENQLIST/ ) {
 		
 		## takes an m3u-list and enqueues the playlist
-		$control =~ /^M3U\ (.*)/;
-		add_m3u($1);
+		$control =~ /^ENQLIST\ (.*)/;
+		enqueue_list($1);
 		get_control();
 		interpret_control();
 	}
@@ -367,16 +367,20 @@ sub interpret_control {
 	}
 }
 
-sub add_m3u {
+sub enqueue_list {
 	# TODO add support for relative paths
-	my $m3u = $_[0];
+	my $list = $_[0];
 	
-	open(M3U, $m3u);
-	while( my $line = <M3U> ) {
+	my $list_path = $list;
+	$list_path =~ s@/[^/]*@/@;
+	
+	open(LIST, $list);
+	while( my $line = <LIST> ) {
 		chomp($line);
-		enqueue($line);
+		my $enqueue_file = oyster::conf->rel_to_abs($line, $list_path);
+		enqueue($enqueue_file);
 	}
-	close(M3U);
+	close(LIST);
 	process_vote();
 }
 
