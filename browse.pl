@@ -10,8 +10,9 @@ print header, start_html(-title=>'Oyster-GUI',
                                            -content    => 'text/html; charset=iso-8859-1'}));
 
 print "<table width='100%'><tr>";
-print "<td align='center' width='50%'><a href='browse.pl'>Browse</a></td>";
-print "<td align='center' width='50%'><a href='search.pl'>Search</a></td>";
+print "<td align='left' width='30%'><a href='browse.pl'>Browse</a></td>";
+print "<td align='center' width='40%'><a href='search.pl'>Search</a></td>";
+print "<td align='right' width='30%'><a href='blacklist.pl'>Blacklist</a></td>";
 print "</tr></table>";
 print "<hr>";
 
