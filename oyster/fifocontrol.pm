@@ -34,6 +34,10 @@ sub do_action {
 	print CONTROL 'NEXT';
 	close CONTROL;
 	sleep 4;
+    } elsif ($action eq 'prev') {
+	print CONTROL 'PREV';
+	close CONTROL;
+	sleep 4;
     } elsif ($action eq 'start') {
 	close CONTROL;
 	system("perl oyster.pl &");
