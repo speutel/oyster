@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use CGI qw/:standard -no_xhtml/;
+use URI::Escape;
 use strict;
 
 print
@@ -17,7 +18,9 @@ if (param()) {
     $votedir=~s/\/[^\/]*$//;
 }
 
-print "<meta http-equiv='refresh' content='1; URL=browse.pl?dir=$votedir'>";
+my $escapeddir = uri_escape("$votedir", "^A-Za-z");
+
+print "<meta http-equiv='refresh' content='1; URL=browse.pl?dir=$escapeddir'>";
 
 if (!($votefile eq '')) {
     print h2("$votefile");
