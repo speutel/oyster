@@ -108,7 +108,7 @@ if (-s '/tmp/oyster/votes') {
 	my $escapedvote = $vote;
 	$escapedvote =~ s/,[1-9]*$//;
 	$escapedvote = uri_escape("$escapedvote", "^A-Za-z");
-	print "<tr><td><a href='fileinfo.pl?file=$escapedvote' target='browse'>$title</a></td><td align='center'>$numvotes</td></tr>\n";
+	print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedvote' target='browse'>$title</a></td><td align='center'>$numvotes</td></tr>\n";
     }
     print "</table>";
 }
