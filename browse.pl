@@ -83,7 +83,7 @@ my @entries = <$globdir*>;
 
 print "<table width='100%'>";
 
-my @files = my @dirs = ();
+my (@files, @dirs) = ();
 
 foreach my $entry (@entries) {
     if (-d "$entry") {
