@@ -1,8 +1,12 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
 use URI::Escape;
+use strict;
 
-print header, start_html(-title=>'Oyster-GUI',-style=>{'src'=>'layout.css'});
+print header, start_html(-title=>'Oyster-GUI',
+			 -style=>{'src'=>'layout.css'},
+			 -head=>CGI::meta({-http_equiv => 'Content-Type',
+                                           -content    => 'text/html; charset=iso-8859-1'}));
 
 print "<table width='100%'><tr>";
 print "<td align='center' width='50%'><a href='browse.pl'>Browse</a></td>";
@@ -12,14 +16,15 @@ print "<hr>";
 
 my $basedir = '/Multimedia/Audio/';
 my $rootdir=$basedir;
+my $search;
 
 if (param()) {
     $search=param('search');
     print "<form action='search.pl'><input type='text' name='search' value='$search'>";
     print "<input type='submit' value='Search'></form>";
     open (LIST, "lists/default");
-    @list = <LIST>;
-    foreach $line (@list) {
+    my @list = <LIST>;
+    foreach my $line (@list) {
 	chomp($line);
 	$line =~ s/\Q$basedir\E//;
 	if ($line =~ /\Q$search\E/i) {
