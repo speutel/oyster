@@ -4,6 +4,7 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 use oyster::taginfo;
+use oyster::fifocontrol;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
@@ -27,14 +28,11 @@ my %config = oyster::conf->get_config('oyster.conf');
 
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
-my $file;
+my $file = param('file') || '';
 
-if (param('file')) {
-    $file = param('file');
-    $file =~ s@//$@/@;
-    $file =~ s/\.\.\///g;
-    $file = '' if ($file eq "..");
-}
+if (param('action')) {
+    oyster::fifocontrol->do_action(param('action'), $file, '');
+}   
 
 print "<p>Info for ";
 
@@ -53,7 +51,6 @@ foreach my $partdir (@dirs) {
 print "$fileonly</p>\n";
 
 my $escapedfile = uri_escape("$file", "^A-Za-z");
-
 print "<p><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></p>\n";
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
@@ -66,7 +63,10 @@ print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>";
 print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>";
 print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>";
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
-print "<tr><td><strong>Current Oyster-Score</strong></td><td>$tag{'score'}</td></tr>";
+print "<tr><td><strong>Current Oyster-Score</strong></td>";
+print "<td><a href='fileinfo.pl?action=scoredown&file=$escapedfile'>-</a> ";
+print "$tag{'score'}";
+print " <a href='fileinfo.pl?action=scoreup&file=$escapedfile'>+</a></td></tr>";
 print "</table>";
 
 print end_html;
