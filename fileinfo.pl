@@ -71,7 +71,7 @@ my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
 if ($isblacklisted) {
     print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>";
 } else {
-    print "<td align='right'><a class='file' href='blacklist.pl?affects=${regexpfile}&amp;action=add'>Add this song to Blacklist</td></tr></table>";
+    print "<td align='right'><a class='file' href='blacklist.pl?affects=${regexpfile}&amp;action=add'>Add this song to Blacklist</a></td></tr></table>";
 }
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
@@ -113,9 +113,9 @@ print "<tr><td><strong>Playtime</strong></td><td>$tag{'playtime'}</td></tr>" if 
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
 print "<tr><td><strong>Times played</strong></td><td>$timesplayed</td></tr>";
 print "<tr><td><strong>Current Oyster-Score</strong></td>";
-print "<td><a href='fileinfo.pl?action=scoredown&file=$escapedfile'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
+print "<td><a href='fileinfo.pl?action=scoredown&amp;file=$escapedfile'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong>";
-print " <a href='fileinfo.pl?action=scoreup&file=$escapedfile'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
+print " <a href='fileinfo.pl?action=scoreup&amp;file=$escapedfile'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>";
 
 print end_html;

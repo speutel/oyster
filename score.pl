@@ -70,8 +70,8 @@ while ($maxscore > 0) {
 	}
 	
 	print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=$escapedfile' target='curplay' title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png' border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
-	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&file=$escapedfile' title='Score down'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
-	print " <a class='$cssclass' href='score.pl?action=scoreup&file=$escapedfile' title='Score up'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
+	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&amp;file=$escapedfile' title='Score down'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
+	print " <a class='$cssclass' href='score.pl?action=scoreup&amp;file=$escapedfile' title='Score up'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
     }
 
     $maxscore--;

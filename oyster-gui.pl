@@ -110,7 +110,7 @@ if (-s "${basedir}votes") {
 		my $display = oyster::taginfo->get_tag_light($title);
 		$title =~ s/^\Q$mediadir\E//;
 		my $escapedtitle = uri_escape("$title", "^A-Za-z");
-		print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td><td><a href='oyster-gui.pl?action=unvote&file=$escapedtitle'>Unvote</a></td></tr>\n";
+		print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedtitle' target='browse'>$display</a></td><td align='center'>$numvotes</td><td><a href='oyster-gui.pl?action=unvote&amp;file=$escapedtitle'>Unvote</a></td></tr>\n";
 	    }
 	}
 	$maxvotes--;
