@@ -33,12 +33,15 @@ sub get_cover {
     my $albumdir = my $albumname = $_[1];
     $albumname =~ s/\/$//;
     $albumname =~ s/^.*\///;
+    my $albumnameus = $albumname;
+    $albumnameus =~ s/\ /_/g;
     my @coverfiles = split(/,/, $config{'coverfilenames'});
     my $filetype = 'jpeg';
     my $base64 = "";
     
     foreach my $cover (@coverfiles) {
-	$cover =~ s/\$\{album\}/$albumname/;
+	$cover =~ s/\$\{album\}/$albumname/g;
+	$cover =~ s/\$\{albumus\}/$albumnameus/g;
 	if (-e "$albumdir$cover") {
 	    open (COVER, "$albumdir$cover");
 	    while (read(COVER, my $buf, 60*57)) {
@@ -51,7 +54,11 @@ sub get_cover {
 	}
     }
     
-    return "<img src='data:image/$filetype;base64," . $base64 .
-	"' width='100' style='float:right; margin-left:20px; margin-right: 20px;'>";
+    if ($base64 eq "") {
+	return '';
+    } else {
+	return "<img src='data:image/$filetype;base64," . $base64 .
+	    "' width='100' style='float:right; margin-left:20px; margin-right: 20px;'>";
+    }
 
 }
