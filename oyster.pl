@@ -26,7 +26,6 @@ my $votefile = "$basedir/votes";
 my ($lastvotes_pointer, @lastvotes);
 my (@filelist, $file, $control, %votehash, @votelist);
 my ($file_override); 
-my ($player_pid);
 
 init();
 
@@ -90,9 +89,10 @@ sub interpret_control {
 	# find out what to do by checking $control
 
 	if ( $control =~ /^NEXT/)  { 
-		get_player_pid();
-		system("kill $player_pid"); 
-		sleep(3);
+		$command = "kill " . &get_player_pid;
+		print DEBUG "system($command)\n";
+		system($command); 
+		sleep(2);
 		get_control();
 		interpret_control();
 	}
@@ -105,12 +105,14 @@ sub interpret_control {
 		$control =~ /^FILE\ (.*)$/;
 		$file = $1;
 		$file_override = "true";
-		system("kill $player_pid");
+		system("kill " . &get_player_pid);
 		get_control();
 		interpret_control();
 	}	
 	elsif ( $control =~ /^QUIT/	) {  
-		system("kill $player_pid"); 
+		$command = "kill " . &get_player_pid;
+		print DEBUG "system($command)\n";
+		system($command); 
 		get_control();
 		cleanup();
 		exit;
@@ -171,8 +173,9 @@ sub interpret_control {
 		interpret_control();
 	}
 	elsif ( $control =~ /^PAUSE/) {
-		get_player_pid();
-		system("kill -19 $player_pid");
+		$command = "kill -19 " . &get_player_pid;
+		print DEBUG "system($command)\n";
+		system($command);
 		
 		open(STATUS, ">$basedir/status");
 		print STATUS "paused\n";
@@ -182,8 +185,9 @@ sub interpret_control {
 		interpret_control();
 	}
 	elsif ( $control =~ /^UNPAUSE/) {
-		get_player_pid();
-		system("kill -18 $player_pid");
+		$command = "kill -18 " . &get_player_pid;
+		print DEBUG "system($command)\n";
+		system($command);
 		
 		open(STATUS, ">$basedir/status");
 		print STATUS "playing\n";
@@ -208,16 +212,19 @@ sub interpret_control {
 }
 
 sub get_player_pid {
-	open(PS, "ps x |") || print STDERR "ps x | failed\n";
+	my $player_pid;
+	open(PS, "ps x -o pid=,comm= |") || print STDERR "ps x -o pid=,comm= | failed\n";
 	while( $line = <PS> ) {
 		# " 1545 pts/1    RN     0:04 mpg321 -q"
-		if ( $line =~ /\ ([0-9]*)\ [^\ ]*[\ ]*[^\ ]*[\ ]*[^\ ]*\ (mpg321|ogg123)/ ) {
-			$line =~ /^\ ([0-9]*)\ /;
+		if ( $line =~ /(mpg321|ogg123)/ ) {
+			print DEBUG $line;
+			$line =~ /^[\ ]*([0-9][0-9]*)\ /;
 			$player_pid = $1;
 			last;
 		}
 	}
 	close(PS);
+	print DEBUG "player_pid: $player_pid\n";
 	return $player_pid;
 }
 
@@ -411,6 +418,7 @@ sub init {
 	# tell STDERR and STDOUT where they can dump their messages
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
+	open (DEBUG, ">/tmp/debug");
 
 	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
