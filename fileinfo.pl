@@ -47,7 +47,7 @@ foreach my $partdir (@dirs) {
     $incdir = $incdir . "$partdir/";
 }
 
-print "$fileonly</p><br clear='all'>\n";
+print oyster::common->remove_html($fileonly) . "</p><br clear='all'>\n";
 
 my $isblacklisted = 0;
 my $playlist = oyster::conf->get_playlist();

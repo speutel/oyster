@@ -3,6 +3,7 @@ package oyster::taginfo;
 use strict;
 use warnings;
 use oyster::conf;
+use oyster::common;
 
 my %tag;
 my %CACHE;
@@ -97,34 +98,34 @@ sub get_mp3_tags {
 	if ($line =~ /^Title/) {
 	    if ($line =~ /^Title\ \ \:\ (.*)Artist\:\ (.*)/) {
 		# id3v1                                                         
-		$tag{'title'} = $1;
-		$tag{'artist'} = $2;
+		$tag{'title'} = oyster::common->remove_html($1);
+		$tag{'artist'} = oyster::common->remove_html($2);
 		$tag{'title'} =~ s/[\ ]*$//;
 		$tag{'artist'} =~ s/[\ ]*$//;
 	    } else {
 		# id3v2                                                 
-		$_ = $line;
+		$_ = oyster::common->remove_html($line);
 		($tag{'title'}) = m/:\ (.*)$/;
 	    }
 	} elsif ($line =~ /^Lead/) {
-	    $_ = $line;
+	    $_ = oyster::common->remove_html($line);
 	    ($tag{'artist'}) = m/:\ (.*)$/;
 	} elsif ($line =~ /^Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)/) {
-	    $tag{'album'} = $1;
-	    $tag{'year'} = $2;
-	    $tag{'genre'} = $3;
+	    $tag{'album'} = oyster::common->remove_html($1);
+	    $tag{'year'} = oyster::common->remove_html($2);
+	    $tag{'genre'} = oyster::common->remove_html($3);
 	    $tag{'album'} =~ s/[\ ]*$//;
 	    $tag{'genre'} =~ s/\ \(.*//;
 	} elsif ($line =~ /^Album\/Movie\/Show\ title\:\ (.*)/) {
-	    $tag{'album'} = $1;
+	    $tag{'album'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Year\:\ ([0-9]*)/) {
-	    $tag{'year'} = $1;
+	    $tag{'year'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Content\ type\:\ \([0-9]*\)(.*)/ ) {
-	    $tag{'genre'} = $1;
+	    $tag{'genre'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Comment.*Track\:\ ([0-9]*)/) {
-	    $tag{'track'} = $1;
+	    $tag{'track'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Track\ number\/Position\ in\ set\:\ (.*)/) {
-	    $tag{'track'} = $1;
+	    $tag{'track'} = oyster::common->remove_html($1);
 	}
     }
 	    
@@ -140,30 +141,22 @@ sub get_ogg_tags {
 	
     while (my $line = <OGG>) {
 	$line =~ s/^\s*//;
-	#$line =~ s/^TITLE=/title=/;
-	#$line =~ s/^ARTIST=/artist=/;
-	#$line =~ s/^ALBUM=/album=/;
-	#$line =~ s/^DATE=/date=/;
-	#$line =~ s/^TRACKNUMBER=/tracknumber=/;
-	#$line =~ s/^COMMENT=/comment=/;
-	#$line =~ s/^PLAYTIME=/playtime=/;
-	#$line =~ s/^Playback\ length:/playtime=/;
 	if ($line =~ /title=(.*)/i) {
-	    $tag{'title'} = $1;
+	    $tag{'title'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /artist=(.*)/i) {
-	    $tag{'artist'} = $1;
+	    $tag{'artist'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /album=(.*)/i) {
-	    $tag{'album'} = $1;
+	    $tag{'album'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /date=(.*)/i) {
-	    $tag{'year'} = $1;
+	    $tag{'year'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /genre=(.*)/i) {
-	    $tag{'genre'} = $1;
+	    $tag{'genre'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /tracknumber=(.*)/i) {
-	    $tag{'track'} = $1;
+	    $tag{'track'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /comment=(.*)/i) {
-	    $tag{'comment'} = $1;
+	    $tag{'comment'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /playback\ length=(.*)/i) {
-	    $tag{'playtime'} = $1;
+	    $tag{'playtime'} = oyster::common->remove_html($1);
 	    $tag{'playtime'} =~ s/([0-9]*)[hms]/$1/g;
 	}
     }

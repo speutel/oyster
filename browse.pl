@@ -35,8 +35,7 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
     my $incdir = '';
     foreach my $partdir (@dirs) {
 	my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
-	my $escapedpartdir = $partdir;
-	$escapedpartdir =~ s/&/&amp;/g;
+	my $escapedpartdir = oyster::common->remove_html($partdir);
 	print "<a href='browse.pl?dir=$escapeddir'>$escapedpartdir</a> / ";
 	$incdir = $incdir . "$partdir/";
     }
@@ -81,6 +80,8 @@ foreach my $dir (@dirs) {
     my $escapeddir = uri_escape("$dir", "^A-Za-z");
     $dir =~ s/^.*\///;
     $dir =~ s/&/&amp;/g;
+    $dir =~ s/</&lt;/g;
+    $dir =~ s/>/&gt;/g;    
     print "<tr>";
     print "<td><a href='browse.pl?dir=$escapeddir'>$dir</a></td>";
     print "<td></td>";
@@ -102,8 +103,8 @@ foreach my $file (@files) {
 	} else {
 	    $cssfileclass = 'file';
 	}
-	my $escapedfile = $file;
-	$escapedfile =~ s/&/&amp;/g;
+	my $escapedfile = oyster::common->remove_html($file);
+
 	print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>$escapedfile</a></td>";
 	if ($oysterruns) {
 	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
@@ -119,8 +120,7 @@ foreach my $file (@files) {
 	} else {
 	    $csslistclass = 'playlist';
 	}
-	my $escapedfile = $file;
-	$escapedfile =~ s/&/&amp;/g;
+	my $escapedfile = oyster::common->remove_html($file);
 	print "<td><a class='$csslistclass' href='viewlist.pl?list=$escapeddir'>$escapedfile</a></td>";
 	if ($oysterruns) {
 	    print "<td><a class='$csslistclass' href='oyster-gui.pl?votelist=$escapeddir' target='curplay'>Vote</a></td>";
