@@ -20,19 +20,19 @@ my $basedir = "/tmp/oyster";
 my $media_dir = "/";
 my $list_dir = "$savedir/lists";
 my $voteplay_percentage = 10;
-my $lastvotes_size = 30;
+my $scores_size = 30;
 my $votefile = "$basedir/votes";
 
 my $voted_file = "platzhalter";
 
-my ($lastvotes_pointer, @lastvotes);
-my $lastvotes_exist = "false";
+my ($scores_pointer, @scores);
+my $scores_exist = "false";
 my (@filelist, $file, $control, %votehash, @votelist);
 my $file_override="false"; 
 my $skipped = "false";
 
 my $playlist = "default";
-my $lastvotes_file = "$savedir/lastvotes/$playlist";
+my $scores_file = "$savedir/scores/$playlist";
 
 
 
@@ -277,7 +277,7 @@ sub interpret_control {
 
 	elsif ( $control =~ /^ENQUEUE/ ) {
 
-		## enqueue a file (vote without add-lastvotes
+		## enqueue a file (vote without add-scores
 		
 		$control =~ /^ENQUEUE\ (.*)$/;
 		enqueue($1);
@@ -331,7 +331,7 @@ sub interpret_control {
 		my $unvote_file = $1;
 		chomp($unvote_file);
 		for (my $i = 1; $i <= $votehash{$unvote_file}; $i++) {
-			remove_lastvote($unvote_file);
+			remove_score($unvote_file);
 		}
 		unvote($1);
 		process_vote();
@@ -341,13 +341,13 @@ sub interpret_control {
 	
 	elsif ( $control =~ /^SCORE/ ) {
 		
-		## adds or removes a file to lastvotes-list
+		## adds or removes a file to scores-list
 		$control =~ /^SCORE\ (.)\ (.*)/;
 		my $scored_file = $2;
 		if ( $1 eq "+" ) {
-			add_lastvotes($scored_file);
+			add_score($scored_file);
 		} elsif ($1 eq "-" ) {
-			remove_lastvote($scored_file);
+			remove_score($scored_file);
 		}
 		
 		
@@ -370,25 +370,25 @@ sub interpret_control {
 	}
 }
 
-sub remove_lastvote {
+sub remove_score {
 	# $myfile mit newline am Ende!
 	my $myfile = $_[0];
 	
-	for ( my $i = 0; $i <= $#lastvotes; $i++ ) {
-		if ( $lastvotes[$i] eq ($myfile . "\n") ) {
-			splice(@lastvotes, $i, 1);
-			if ( $lastvotes_pointer != 0 ) {
-				--$lastvotes_pointer;
+	for ( my $i = 0; $i <= $#scores; $i++ ) {
+		if ( $scores[$i] eq ($myfile . "\n") ) {
+			splice(@scores, $i, 1);
+			if ( $scores_pointer != 0 ) {
+				--$scores_pointer;
 			}
 			last;
 		}
 	}
-	open(LASTVOTES, ">$lastvotes_file");
-		print LASTVOTES $lastvotes_pointer . "\n";
-		foreach my $entry ( @lastvotes ) {
-		print LASTVOTES $entry;
+	open(SCORED, ">$scores_file");
+		print SCORED $scores_pointer . "\n";
+		foreach my $entry ( @scores ) {
+		print SCORED $entry;
 	}
-	close(LASTVOTES);
+	close(SCORED);
 }
 
 sub enqueue_list {
@@ -454,21 +454,21 @@ sub enqueue {
 
 }
 
-sub add_lastvotes {
-	# lastvotes is a RRD-style filelist, on file per line, oldest file is
+sub add_score {
+	# scores is a RRD-style filelist, on file per line, oldest file is
 	# overwritten when the limit is reached
 	my $added_file = $_[0];
 
-	$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
-	$lastvotes[$lastvotes_pointer] = $added_file . "\n";
-	$lastvotes_exist = "true";
+	$scores_pointer = ++$scores_pointer % $scores_size;
+	$scores[$scores_pointer] = $added_file . "\n";
+	$scores_exist = "true";
 	
-	open(LASTVOTES, ">$lastvotes_file") || print STDERR "add_lastvotes: could not open lastvotes_file\n";
-	print LASTVOTES $lastvotes_pointer . "\n";
-	foreach my $entry ( @lastvotes ) {
-		print LASTVOTES $entry;
+	open(SCORED, ">$scores_file") || print STDERR "add_score: could not open scores_file\n";
+	print SCORED $scores_pointer . "\n";
+	foreach my $entry ( @scores ) {
+		print SCORED $entry;
 	}
-	close(LASTVOTES);
+	close(SCORED);
 }
 
 sub process_vote {
@@ -483,9 +483,9 @@ sub process_vote {
 	unlink("$basedir/playnext");
 	
 	if ( $voted_file ne "") {
-		# if a file is given add it to votelist and lastvotes
+		# if a file is given add it to votelist and scores
 		enqueue($voted_file);
-		add_lastvotes($voted_file);
+		add_score($voted_file);
 		
 	} else {
 		# else remove the file that is playing at the moment from the votelist.
@@ -528,13 +528,13 @@ sub process_vote {
 sub cleanup {
 
 	## save permanent data
-	# save lastvotes-list
-	open(LASTVOTES, ">$lastvotes_file") || die "cleanup: could not open lastvotes_file for writing\n";
-	print LASTVOTES $lastvotes_pointer . "\n";
-	foreach my $entry ( @lastvotes ) {
-		print LASTVOTES $entry;
+	# save scores-list
+	open(SCORED, ">$scores_file") || die "cleanup: could not open scores_file for writing\n";
+	print SCORED $scores_pointer . "\n";
+	foreach my $entry ( @scores ) {
+		print SCORED $entry;
 	}
-	close(LASTVOTES);
+	close(SCORED);
 	
 	# cleaning up our files
 	unlink <$basedir/*>;
@@ -554,7 +554,7 @@ sub load_list {
 		print PLAYLIST $listname . "\n";
 		close(PLAYLIST);
 		$playlist = $listname;
-		$lastvotes_file = "$savedir/lastvotes/$playlist";
+		$scores_file = "$savedir/scores/$playlist";
 	} else {
 		print STDERR "load_list: could not open list\n";
 	}
@@ -582,7 +582,7 @@ sub save_list {
 	close(PLAYLIST);
 
 	$playlist = $listname;
-	$lastvotes_file = "$savedir/lastvotes/$playlist";
+	$scores_file = "$savedir/scores/$playlist";
 }
 
 sub get_list {
@@ -602,7 +602,7 @@ sub init {
 	$savedir = "$config{savedir}";
 	$savedir =~ s/\/$//;
 	$list_dir = "$config{savedir}/lists";
-	$lastvotes_file = "$config{savedir}/lastvotes/$playlist";
+	$scores_file = "$config{savedir}/scores/$playlist";
 	$votefile = "$config{basedir}/votes";
 	$media_dir = $config{"mediadir"};
 	if ( ! ($media_dir =~ /.*\/$/) ) {
@@ -611,7 +611,7 @@ sub init {
 	$basedir = $config{basedir};
 	
 	$voteplay_percentage = $config{"voteplay"};
-	$lastvotes_size = $config{'maxlastvotes'};
+	$scores_size = $config{'maxscored'};
 	
 
 	# setup $basedir
@@ -646,8 +646,8 @@ sub init {
 	if ( ! -e "$savedir/blacklists" ) {
 		mkdir("$savedir/blacklists"); 
 	}
-	if ( ! -e "$savedir/lastvotes" ) {
-		mkdir("$savedir/lastvotes" )
+	if ( ! -e "$savedir/scores" ) {
+		mkdir("$savedir/scores" )
 	}
 	
 	# get my pid
@@ -675,18 +675,18 @@ sub init {
 	close (PLAYLIST);
 	
 	$playlist = "default";
-	$lastvotes_file = "$savedir/lastvotes/$playlist";
+	$scores_file = "$savedir/scores/$playlist";
 
 	$media_dir =~ s/\/$//;
 	
 	# read last votes
-	if ( -e $lastvotes_file ) {
-		open (LASTVOTES, $lastvotes_file) || die $!;
-		$lastvotes_pointer = <LASTVOTES>;
-		chomp($lastvotes_pointer);
-		@lastvotes = <LASTVOTES>;
-		close(LASTVOTES);
-		$lastvotes_exist = "true";
+	if ( -e $scores_file ) {
+		open (SCORED, $scores_file) || die $!;
+		$scores_pointer = <SCORED>;
+		chomp($scores_pointer);
+		@scores = <SCORED>;
+		close(SCORED);
+		$scores_exist = "true";
 	}
 
 	# initialize random
@@ -729,11 +729,11 @@ sub choose_file {
 		&process_vote;
 	} else {
 		if ( int(rand(100)) < $voteplay_percentage ) {
-			if ( $lastvotes_exist eq "true" ) {
-				# choose file from lastvotes with a chance of $voteplay_percentage/100
-				my $index = rand @lastvotes;
-				$file = $lastvotes[$index];
-				add_log($file, "LASTVOTES");
+			if ( $scores_exist eq "true" ) {
+				# choose file from scores with a chance of $voteplay_percentage/100
+				my $index = rand @scores;
+				$file = $scores[$index];
+				add_log($file, "SCORED");
 			}
 		} else {
 			# choose file from "normal" filelist

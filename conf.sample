@@ -14,7 +14,7 @@ mediadir=/Multimedia/Audio/
 theme=default
 # maxlastvotes sets the maximum number of saved votes
 # (oyster chooses songs at random from this list)
-maxlastvotes=30
+maxscored=30
 # voteplay sets the probability that one of the files from 
 # lastvotes is played.
 voteplay=10
