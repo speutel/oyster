@@ -70,9 +70,11 @@ if ($title eq "") {
 $info = uri_escape("$info", "^A-Za-z");
 
 print
-    h1("<a href='fileinfo.pl?file=$info' target='browse'>$title</a>"),
+    h1('Oyster'),
+    strong("Now playing: <a href='fileinfo.pl?file=$info' target='browse'>$title</a>"),p,
     a({href=>'skip.sh'},'Skip'),p,
     a({href=>'oyster-gui.pl'},'Refresh'),p,
-    a({href=>'stop.sh'},'Stop'),
+    a({href=>'stop.sh'},'Stop'),p,
+    a({href=>'search.pl',-target=>'browse'},'Search'),
     end_html;
 
