@@ -89,7 +89,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') ||($action eq 'deletedir') 
 	while (my $line = <PLAYLIST>) {
 		chomp($line);
 		$line =~ s/^\Q$config{mediadir}\E/\//;
-		if ($action eq 'edit' || (($action eq 'deletefile') && ($line ne $delfile))
+		if ($action eq 'movelistsave' || $action eq 'edit' || (($action eq 'deletefile') && ($line ne $delfile))
 			|| (($action eq 'deletedir') && !($line =~ /^\Q$deldir\E\/[^\/]*/))) {
 			push (@playlist, $line);
 		}
