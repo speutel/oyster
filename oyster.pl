@@ -241,7 +241,10 @@ sub choose_file {
 				$file = $scores[$index];
 				add_log($file, "SCORED");
 			} else {
-				$file = " ";
+				# yes, this does not terminate when you set
+				# $voteplay_percentage to 100 and there are no scores...
+				choose_file();
+				#$file = " ";
 			}
 		} else {
 			# choose file from "normal" filelist
