@@ -4,8 +4,13 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 use oyster::taginfo;
+use oyster::fifocontrol;
 
 my %config = oyster::conf->get_config('oyster.conf');
+
+if (param('action')) {
+    oyster::fifocontrol->do_action(param('action'), param('file'), '');
+}
 
 print
     header,
@@ -37,17 +42,17 @@ while ($line = <LASTVOTES>) {
 }
 close (LASTVOTES);
 
-print "<table>";
-print "<tr><th>Song</th><th>Score</th><th>Control</th></tr>";
+print "<table width='100%'>";
+print "<tr><th>Song</th><th>Score</th></tr>";
 
 foreach my $key (sort keys (%score)) {
     my $escapedfile = $key;
     $escapedfile =~ s/\Q$config{'mediadir'}\E//;
     $escapedfile = uri_escape("/$escapedfile", "^A-Za-z");
     my $display = oyster::taginfo->get_tag_light($key);
-    print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedfile'>$display</a></td><td align='center'>$score{$key}</td>";
-    print "<td><a href='oyster-gui.pl?action=scoredown&file=$escapedfile' target='curplay'>Down</a>";
-    print " <a href='oyster-gui.pl?action=scoreup&file=$escapedfile' target='curplay'>Up</a></td></tr>\n";
+    print "<tr><td><a class='file' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
+    print "<td align='center'><a href='score.pl?action=scoredown&file=$escapedfile'>-</a> $score{$key}";
+    print " <a href='score.pl?action=scoreup&file=$escapedfile'>+</a></td></tr>";
 }
 
 print "</table>";
