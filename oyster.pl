@@ -597,6 +597,8 @@ sub get_list {
 sub update_scores {
 	
 	$scores_file = "$savedir/scores/$playlist";
+
+	@scores = "";
 	
 	if ( -e $scores_file ) {
 		open (SCORED, $scores_file) || die $!;
@@ -604,6 +606,12 @@ sub update_scores {
 		chomp($scores_pointer);
 		@scores = <SCORED>;
 		close(SCORED);
+
+		# cut off "dangling" entries
+		if ( $#scores > $scores_size ) {
+			splice(@scores, $scores_size);
+		}
+		
 		$scores_exist = "true";
 	} else {
 		@scores = "";
