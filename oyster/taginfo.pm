@@ -82,23 +82,33 @@ sub get_tag {
 	
 	while (my $line = <OGG>) {
 	    $line =~ s/^\s*//;
-	    $line =~ s/TITLE=/title=/;
-	    $line =~ s/ARTIST=/artist=/;
-	    $line =~ s/ALBUM=/album=/;
-	    $line =~ s/DATE=/date=/;
-	    $line =~ s/TRACKNUMBER=/tracknumber=/;
+	    $line =~ s/^TITLE=/title=/;
+	    $line =~ s/^ARTIST=/artist=/;
+	    $line =~ s/^ALBUM=/album=/;
+	    $line =~ s/^DATE=/date=/;
+	    $line =~ s/^TRACKNUMBER=/tracknumber=/;
+	    $line =~ s/^COMMENT=/comment=/;
+	    $line =~ s/^PLAYTIME=/playtime=/;
+	    $line =~ s/^Playback\ length:/playtime=/;
 	    if ($line =~ /title=(.*)/) {
-		($tag{'title'}) = $1;
+		$tag{'title'} = $1;
 	    } elsif ($line =~ /artist=(.*)/) {
-		($tag{'artist'}) = $1;
+		$tag{'artist'} = $1;
 	    } elsif ($line =~ /album=(.*)/) {
-		($tag{'album'}) = $1;
+		$tag{'album'} = $1;
 	    } elsif ($line =~ /date=(.*)/) {
-		($tag{'year'}) = $1;
+		$tag{'year'} = $1;
 	    } elsif ($line =~ /genre=(.*)/) {
-		($tag{'genre'}) = $1;
+		$tag{'genre'} = $1;
 	    } elsif ($line =~ /tracknumber=(.*)/) {
-		($tag{'track'}) = $1;
+		$tag{'track'} = $1;
+	    } elsif ($line =~ /comment=(.*)/) {
+		$tag{'comment'} = $1;
+	    } elsif ($line =~ /playtime=(.*)/) {
+		$tag{'playtime'} = $1;
+		$tag{'playtime'} =~ s/([0-9]*)h/$1/;
+		$tag{'playtime'} =~ s/([0-9]*)m/$1/;
+		$tag{'playtime'} =~ s/([0-9]*)s/$1/;
 	    }
 	}
     
