@@ -13,9 +13,14 @@ my $basedir = "/tmp/oyster";
 my $savedir = ".";
 my $media_dir = "/";
 my $lastvotes_file = "$savedir/lastvotes";
+my $list_dir = "$savedir/lists";
+my $voteplay_percentage = 10;
+my $lastvotes_size = 30;
+my $votefile = "$basedir/votes";
+
 
 my ($lastvotes_pointer, @lastvotes);
-my (@filelist, $file, $control, %votelist);
+my (@filelist, $file, $control, %votehash, @votelist);
 my ($file_override); 
 
 
@@ -169,26 +174,50 @@ sub process_vote {
 	my $max_votes = 0;
 	
 	if ( $voted_file ne "") {
-		if ( $votelist{$voted_file} ne "" ) {
-			$votelist{$voted_file} += 1;
-		} else { 
-			$votelist{$voted_file} = 1;
+		if ( $votehash{$voted_file} ne "" ) {
+			if ( $votehash{$voted_file} > 0 ) {
+				$votehash{$voted_file} += 1;
+			} else {
+				push(@votelist, $voted_file);
+				$votehash{$voted_file} = 1;
+			}		
+		} else {
+			push(@votelist, $voted_file);
+			$votehash{$voted_file} = 1;
 		}
-	$lastvotes_pointer = ++$lastvotes_pointer % 30;
-	$lastvotes[$lastvotes_pointer] = $voted_file . "\n";
+		
+		$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
+		$lastvotes[$lastvotes_pointer] = $voted_file . "\n";
+	} else {
+		
+		my $tmpfile = $file;
+		chomp($tmpfile);
+		for ( my $i = 0; $i <= $#votelist; $i++ ) {
+			if ($tmpfile eq $votelist[$i]) {
+				splice(@votelist, $i, 1);
+				last;
+			}
+		}
 	}
 	
-	foreach my $key (keys %votelist) { 
-		if ($votelist{$key} > $max_votes) {
-			$winner = $key; $max_votes = $votelist{$key};
+	open(VOTEFILE, ">$votefile") || die $!;
+	foreach my $entry (@votelist) {
+		print VOTEFILE "$entry\n";
+	}
+	close(VOTEFILE);
+	
+	for ( my $i = 0; $i <= $#votelist; $i++ ) {
+		$entry= $votelist[$i]; 
+		if ($votehash{$entry} > $max_votes) {
+			$winner = $i; $max_votes = $votehash{$entry};
 		}
 	}
 	
-	if ($votelist{$winner} > 0) {
-		print STDERR "winner is $winner\n";
-	
+	if ($votehash{$votelist[$winner]} > 0) {
+		print STDERR "winner is $votelist[$winner]\n";
+		
 		open(PLAYNEXT, ">$basedir/playnext") || die $!;
-		print PLAYNEXT $winner . "\n";
+		print PLAYNEXT $votelist[$winner] . "\n";
 		close(PLAYNEXT);
 	}
 	
@@ -279,9 +308,11 @@ sub init {
 	# set dirs
 	read_config();
 	
-	my $list_dir = "$savedir/lists";
-	my $lastvotes_file = "$savedir/lastvotes";
-	
+	$list_dir = "$savedir/lists";
+	$lastvotes_file = "$savedir/lastvotes";
+	$votefile = "$basedir/votes";
+
+
 	# setup $basedir
 	if ( ! -x $basedir) {
 		mkdir($basedir);
@@ -341,11 +372,11 @@ sub choose_file {
 		# (write next winner to playnext, 
 		# no winner -> no playnext -> normal play)
 		my $voteentry = $file; chomp($voteentry);
-		$votelist{$voteentry} = 0;
+		$votehash{$voteentry} = 0;
 		&process_vote;
 	} else {
-		if ( int(rand(100)) < 10 ) {
-			# choose file from lastvotes with a chance of 10/30 = 30%
+		if ( int(rand(100)) < $voteplay_percentage ) {
+			# choose file from lastvotes with a chance of $voteplay_percentage/100
 			my $index = rand @lastvotes;
 			$file = $lastvotes[$index];
 		} else {
