@@ -33,17 +33,18 @@ my $file_override="false";
 my $skipped = "false";
 
 
+
+
+##################
+## main program ##
+##################
+
+
 init();
 
 while ( 1 ) {
 	main();
 }
-
-
-#because of some obscure error this use-statement does not work when 
-#I put it in the beginning of the file
-#use Switch 'Perl5', 'Perl6';
-
 
 
 
@@ -67,7 +68,6 @@ sub main {
 sub get_control {
 	# get control-string from control-FIFO
 
-	#CONTROL ist eine named pipe, open blockt!
 	open(CONTROL, "$basedir/control");
 	$control = <CONTROL>;
 	close(CONTROL);
@@ -107,22 +107,33 @@ sub add_log {
 
 	print LOG strftime($logtime_format, localtime) . " $comment $logged_file\n";
 	
-	
 }
 
 sub interpret_control {
 	# find out what to do by checking $control
 
 	if ( $control =~ /^NEXT/)  { 
+
+		## skips song
+		
 		add_log($file, "SKIPPED");
+		
 		$skipped = "true";
 		my $command = "kill " . &get_player_pid;
 		system($command); 
+		
+		# wait for player to empty cache (without sleep: next player raises an
+		# error because /dev/dsp is in use)
 		sleep(2);
+		
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^done/) { 
+
+		## only used by play.pl to signal end of song
+		
 		#print STDERR "play.pl is done.\n";
 		if ( $skipped ne "true" ) {
 			add_log($file, "DONE");
@@ -130,7 +141,11 @@ sub interpret_control {
 			$skipped = "false";
 		}
 	}
+	
 	elsif ( $control =~ /^FILE/) {
+
+		## plays file directly (skips song)
+		
 		# set $file and play it *now*
 		$control =~ s/\\//g;
 		$control =~ /^FILE\ (.*)$/;
@@ -149,7 +164,9 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}	
+	
 	elsif ( $control =~ /^PREV/ ) {
+
 		my $command = "kill " . &get_player_pid;
 		
 		add_log($file, "SKIPPED");
@@ -164,36 +181,57 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^QUIT/	) {  
+
+		## quits oyster
+
+		# kill player
 		my $command = "kill " . &get_player_pid;
-		add_log($file, "QUIT");
 		system($command); 
+		
+		add_log($file, "QUIT");
+		
+		# wait for "done" from play.pl
 		get_control();
+		
 		cleanup();
 		exit;
 	}
+	
 	elsif ( $control =~ /^SAVE/ ) {
-		# save @filelist with name $1
+		
+		## save playlist with name $1
+		
 		$control =~ /^SAVE\ (.*)$/;
 		save_list($1);
 		get_control();
 		interpret_control();
 	}
-		elsif ( $control =~ /^LOAD/ ) {
-		# load @filelist with name $1
+	
+	elsif ( $control =~ /^LOAD/ ) {
+
+		## load playlist with name $1
+		
 		$control =~ /^LOAD\ (.*)$/;
 		load_list($1);
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^NEWLIST/ )  {
-		# read list from CONTROL
+		
+		## read list from basedir/control
+
 		get_list();
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^PRINT/)  {
-		# print list to CONTROL
+
+		## print playlist to basedir/control
+		
 		$control =~ /^PRINT\ (.*)$/;
 		open(CONTROL, ">$basedir/control");
 
@@ -210,7 +248,9 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^LISTS/)  {
+
 		# lists filelists into the FIFO
 		open(CONTROL, ">$basedir/control");
 		my @lists = <$list_dir/*>;
@@ -218,21 +258,32 @@ sub interpret_control {
 			print CONTROL $list . "\n";
 		}
 		close(CONTROL);
-		}
+	}
+	
 	elsif ( $control =~ /^VOTE/ ) {
-		# vote for file $1
+
+		## vote for a file
+
+		# remove backslashes (Tab-Completion adds these)
 		$control =~ s/\\//g;
+		
 		$control =~ /^VOTE\ (.*)$/;
 		process_vote($1);
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^PAUSE/) {
+
+		## pauses play
+		
+		# send SIGSTOP to player process
 		my $command = "kill -19 " . &get_player_pid;
 		system($command);
 		
 		add_log($file, "PAUSED");
 		
+		#write status
 		open(STATUS, ">$basedir/status");
 		print STATUS "paused\n";
 		close(STATUS);
@@ -240,12 +291,18 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^UNPAUSE/) {
+
+		## continues play
+		
+		#send SIGCONT to player process
 		my $command = "kill -18 " . &get_player_pid;
 		system($command);
 		
 		add_log($file, "UNPAUSED");
 		
+		# write status
 		open(STATUS, ">$basedir/status");
 		print STATUS "playing\n";
 		close(STATUS);
@@ -253,20 +310,25 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control =~ /^UNVOTE/) {
-		# TODO test this
+	
+		## removes a file from the votelist
 		$control =~ s/\\//g;
 		$control =~ /^UNVOTE\ (.*)$/;
 		unvote($1);
+		process_vote();
 		get_control();
 		interpret_control();
 	}	
+	
 	elsif ( $control =~ /^SCORE/ ) {
+		
+		## adds or removes a file to lastvotes-list
 		$control =~ /^SCORE\ (.)\ (.*)/;
 		my $scored_file = $2;
 		if ( $1 eq "+" ) {
-			$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
-			$lastvotes[$lastvotes_pointer] = $scored_file . "\n";
+			add_lastvotes($scored_file);
 		} elsif ($1 eq "-" ) {
 			for ( my $i = 0; $i <= $#lastvotes; $i++ ) {
 				if ( $lastvotes[$i] eq ($scored_file . "\n") ) {
@@ -289,20 +351,24 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+	
 	elsif ( $control = /^M3U/ ) {
+		
+		## takes an m3u-list and enqueues the playlist
 		$control =~ /^M3U\ (.*)/;
 		add_m3u($1);
 		get_control();
 		interpret_control();
 	}
-	else {
-		# fall through
+	
+	else { # fall through
 		get_control();
 		interpret_control();
 	}
 }
 
 sub add_m3u {
+	# TODO add support for relative paths
 	my $m3u = $_[0];
 	
 	open(M3U, $m3u);
@@ -311,17 +377,15 @@ sub add_m3u {
 		enqueue($line);
 	}
 	close(M3U);
+	process_vote();
 }
 
-sub enqueue {
-	$file = $_[0];
-}
 
 sub get_player_pid {
+	#TODO add support for players set in the config file
 	my $player_pid;
 	open(PS, "ps x -o pid=,comm= |") || print STDERR "ps x -o pid=,comm= | failed\n";
 	while( my $line = <PS> ) {
-		# " 1545 pts/1    RN     0:04 mpg321 -q"
 		if ( $line =~ /(mpg321|ogg123)/ ) {
 			$line =~ /^[\ ]*([0-9][0-9]*)\ /;
 			$player_pid = $1;
@@ -333,23 +397,54 @@ sub get_player_pid {
 }
 
 sub unvote {
-
 	my $unvote_file = $_[0];
+	chomp($unvote_file);
 
-	print STDERR "Unvoting $unvote_file\n";
-	
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
+		print STDERR "file to unvote: $unvote_file, ";
+		print STDERR "file in votelist: $votelist[$i], ";
 		if ($unvote_file eq $votelist[$i]) {
+			print STDERR "match: yes!\n";
+			$votehash{$votelist[$i]};
 			splice(@votelist, $i, 1);
 			last;
 		}
+		print STDERR "match: no\n";
 	}
-
-	unlink("$basedir/playnext");
-
-	process_vote();
+	
 }
 
+sub enqueue {
+	my $enqueued_file = $_[0];
+	
+	if ( $votehash{$enqueued_file} ne "" ) {
+		if ( $votehash{$enqueued_file} > 0 ) {
+			$votehash{$enqueued_file} += 1;
+		} else {
+			push(@votelist, $enqueued_file);
+			$votehash{$enqueued_file} = 1;
+		}		
+	} else {
+		push(@votelist, $enqueued_file);
+		$votehash{$enqueued_file} = 1;
+	}
+
+}
+
+sub add_lastvotes {
+	my $added_file = $_[0];
+
+	$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
+	$lastvotes[$lastvotes_pointer] = $added_file . "\n";
+	$lastvotes_exist = "true";
+	
+	open(LASTVOTES, ">$lastvotes_file");
+	print LASTVOTES $lastvotes_pointer . "\n";
+	foreach my $entry ( @lastvotes ) {
+		print LASTVOTES $entry;
+	}
+	close(LASTVOTES);
+}
 
 sub process_vote {
 	
@@ -360,55 +455,40 @@ sub process_vote {
 	my $winner = "";
 	my $max_votes = 0;
 	
+	unlink("$basedir/playnext");
+	
 	if ( $voted_file ne "") {
-		if ( $votehash{$voted_file} ne "" ) {
-			if ( $votehash{$voted_file} > 0 ) {
-				$votehash{$voted_file} += 1;
-			} else {
-				push(@votelist, $voted_file);
-				$votehash{$voted_file} = 1;
-			}		
-		} else {
-			push(@votelist, $voted_file);
-			$votehash{$voted_file} = 1;
-		}
-		
-		$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
-		$lastvotes[$lastvotes_pointer] = $voted_file . "\n";
-		$lastvotes_exist = "true";
-		
-		open(LASTVOTES, ">$lastvotes_file");
-		print LASTVOTES $lastvotes_pointer . "\n";
-		foreach my $entry ( @lastvotes ) {
-			print LASTVOTES $entry;
-		}
-		close(LASTVOTES);
+		# if a file is given add it to votelist and lastvotes
+		enqueue($voted_file);
+		add_lastvotes($voted_file);
 		
 	} else {
-		
+		# else remove the file that is playing at the moment from the votelist.
 		my $tmpfile = $file;
-		chomp($tmpfile);
-		for ( my $i = 0; $i <= $#votelist; $i++ ) {
-			if ($tmpfile eq $votelist[$i]) {
-				splice(@votelist, $i, 1);
-				last;
-			}
-		}
+		chomp $tmpfile;
+		print STDERR "process_vote: unvoting $tmpfile\n";
+		unvote($tmpfile);
+	
 	}
 	
+	# write $basedir/votes
 	open(VOTEFILE, ">$votefile") || die $!;
 	foreach my $entry (@votelist) {
 		print VOTEFILE "$entry,$votehash{$entry}\n";
 	}
 	close(VOTEFILE);
 	
+	# choose winner: go through @votelist and lookup number of votes in
+	# %votehash, set winner to the on with the maximum number of votes
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
 		my $entry = $votelist[$i]; 
 		if ($votehash{$entry} > $max_votes) {
+			print "process_vote: trying $entry for winner\n";
 			$winner = $i; $max_votes = $votehash{$entry};
 		}
 	}
 	
+	# write winner to playnext
 	if ($votehash{$votelist[$winner]} > 0) {
 		print STDERR "winner is $votelist[$winner]\n";
 		
@@ -417,13 +497,6 @@ sub process_vote {
 		close(PLAYNEXT);
 	}
 	
-	# @lastvotes is an array which holds the recent 30 votes.
-	# &choose_file will choose a file from this array with a given probability.
-	# It will then choose one entry from this array, and there may be double 
-	# file-entries (if you vote one file more than once
-	# in 30 votes, for example ;). Yes, that means if you vote for one file more
-	# than once, the probability for it to be played in random play is higher than 
-	# for a file that got voted once in the last 30 votes.
 }
 
 sub cleanup {
@@ -475,7 +548,6 @@ sub save_list {
 
 sub get_list {
 	
-	#CONTROL ist eine named pipe, open blockt!
 	open(CONTROL, "$basedir/control");
 	@filelist = <CONTROL>;
 	close(CONTROL);
@@ -485,9 +557,7 @@ sub get_list {
 sub init {
 	# well, it's called "init". guess.
 
-	## set dirs
-	#read_config();
-	
+	## set values from config
 	%config = oyster::conf->get_config($conffile);
 	
 	$list_dir = "$config{savedir}/lists";
