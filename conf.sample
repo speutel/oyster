@@ -10,5 +10,6 @@ savedir=/var/www/oyster/
 # it will search your files under this directory and build a 
 # default playlist from these.
 mediadir=/Multimedia/Audio/
-# maxvotes sets the maximum number of votes
-maxvotes=30
+# maxlastvotes sets the maximum number of saved votes,
+# from which oyster chooses songs at random
+maxlastvotes=30
