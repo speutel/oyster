@@ -68,6 +68,170 @@ sub main {
 
 }
 
+sub init {
+	# well, it's called "init". guess.
+
+	## set values from config
+	%config = oyster::conf->get_config($conffile);
+
+	$savedir = "$config{savedir}";
+	$savedir =~ s/\/$//;
+	$list_dir = "$config{savedir}/lists";
+	$scores_file = "$config{savedir}/scores/$playlist";
+	$votefile = "$config{basedir}/votes";
+	$media_dir = $config{"mediadir"};
+	if ( ! ($media_dir =~ /.*\/$/) ) {
+		$media_dir = $media_dir . "/";
+	}
+	$basedir = $config{basedir};
+
+	$voteplay_percentage = $config{"voteplay"};
+	$scores_size = $config{'maxscored'};
+
+
+	# setup $basedir
+	if ( ! -e $basedir) {
+		mkdir($basedir);
+	} else {
+		open(OTHER, "$basedir/pid");
+		my $otherpid = <OTHER>;
+		close(OTHER);
+		chomp($otherpid);
+
+		my $othercmd = "platzhalter";
+
+		if ( $otherpid ne "" ) {
+			$othercmd = `ps -o command= -p $otherpid`;
+		}
+
+		if ( $othercmd =~ /oyster\.pl/ ) {
+			open(OTHER, ">$basedir/control");
+			print OTHER "UNPAUSE\n";
+			close(OTHER);
+			exit;
+		} else {
+			unlink($basedir);
+		}
+
+		mkdir($basedir);
+	}
+	# setup $savedir
+	if ( ! -e $savedir ) {
+		mkdir($savedir);
+	}
+	if ( ! -e "$savedir/lists" ) {
+		mkdir("$savedir/lists");
+	}
+	if ( ! -e "$savedir/blacklists" ) {
+		mkdir("$savedir/blacklists"); 
+	}
+	if ( ! -e "$savedir/scores" ) {
+		mkdir("$savedir/scores" )
+	}
+	if ( ! -e "$savedir/logs" ) {
+		mkdir("$savedir/logs" )
+	}
+
+
+	open(PID, ">$basedir/pid");
+	print PID "$$\n";
+	close(PID);
+
+	open (PLAYLIST, ">$basedir/playlist");
+	print PLAYLIST "default\n";
+	close (PLAYLIST);
+
+	# read old default-playlist (choose_file needs this for the first start)
+	open(DEFAULTLIST, "$savedir/lists/default");
+	@filelist = <DEFAULTLIST>;
+	close(DEFAULTLIST);
+	
+	$playlist = "default";
+
+	$media_dir =~ s/\/$//;
+
+	update_scores();
+
+	# initialize random
+	srand;
+
+	# tell STDERR and STDOUT where they can dump their messages
+	open (STDERR, ">>$basedir/err");
+	open (STDOUT, ">>/dev/null");
+	#open (DEBUG, ">/tmp/debug");
+	open (LOG, ">>$savedir/logs/$playlist");
+	my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d-%H%M`;
+	open (RANDOM, $randomfile);
+
+	# make fifos
+	system("/usr/bin/mkfifo /tmp/oyster/control");
+	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
+	system("/bin/chmod 666 /tmp/oyster/control");
+}
+
+sub choose_file {
+
+	if ( $file_override eq "true") {
+		# don't touch $file when $file_override ist set
+		$file_override = "false";
+	} elsif ( -e "$basedir/playnext" ) {
+		# set $file to the content of $basedir/playnext		
+		open( FILEIN, "$basedir/playnext" );
+		$file = <FILEIN>;
+		close( FILEIN );
+		unlink "$basedir/playnext";
+
+		#print STDERR "playnext: $file";
+
+		add_log($file, "VOTED");
+		# playnext is set by process_vote
+		# set votes for the played file to 0 and reprocess votes
+		# (write next winner to playnext, 
+		# no winner -> no playnext -> normal play)
+		my $voteentry = $file; chomp($voteentry);
+		$votehash{$voteentry} = 0;
+		&process_vote;
+	} else {
+		my $random = int(rand(100));
+		#print RANDOM "Zufallszahl fuer voteplay ist: $random (<$voteplay_percentage fuer scores)\n";
+		if ( $random < $voteplay_percentage ) {
+			if ( $scores_exist eq "true" ) {
+				# choose file from scores with a chance of $voteplay_percentage/100
+				my $index = int(rand($#scores));
+				print RANDOM "$playlist scores: $index (index ist $#scores)\n";
+				#my $index = rand @scores;
+				$file = $scores[$index];
+				add_log($file, "SCORED");
+			} else {
+				$file = " ";
+			}
+		} else {
+			# choose file from "normal" filelist
+			my $index = int(rand($#filelist));
+			print RANDOM "$playlist filelist: $index (index ist $#filelist)\n";
+			#my $index = rand @filelist;
+			$file = $filelist[$index];
+			add_log($file, "PLAYLIST");
+		}
+
+		# read regexps from $savedir/blacklist (one line per regexp)
+		# and if $file matches, choose again
+		if ( -e "$savedir/blacklists/$playlist" ) {
+			my $tmpfile = $file;
+			$tmpfile =~ s/\Q$media_dir//;
+			print "$savedir/blacklists/$playlist\n";
+			open(BLACKLIST, "$savedir/blacklists/$playlist");
+			while( my $regexp = <BLACKLIST> ) {
+				chomp($regexp);
+				if ( $tmpfile =~ /$regexp/ ) {
+					add_log($file, "BLACKLIST");
+					choose_file();
+				}
+			}
+		}	
+	}
+}
+
 
 sub get_control {
 	# get control-string from control-FIFO
@@ -666,6 +830,8 @@ sub update_scores {
 sub build_playlist {
 	#build default filelist - list all files in $media_dir
 	#system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
+	print STDERR "old maxindex filelist: " . $#filelist . "\n";
+	@filelist = "";
 	find( { wanted => \&is_audio_file, no_chdir => 1 }, $media_dir);
 
 	sub is_audio_file {
@@ -674,183 +840,14 @@ sub build_playlist {
 		}
 	}
 	
+	print STDERR "new maxindex filelist: " . $#filelist . "\n";
+	
 	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
 	print FILELIST @filelist;
 	close(FILELIST);
 }
 
-sub init {
-	# well, it's called "init". guess.
 
-	## set values from config
-	%config = oyster::conf->get_config($conffile);
-
-	$savedir = "$config{savedir}";
-	$savedir =~ s/\/$//;
-	$list_dir = "$config{savedir}/lists";
-	$scores_file = "$config{savedir}/scores/$playlist";
-	$votefile = "$config{basedir}/votes";
-	$media_dir = $config{"mediadir"};
-	if ( ! ($media_dir =~ /.*\/$/) ) {
-		$media_dir = $media_dir . "/";
-	}
-	$basedir = $config{basedir};
-
-	$voteplay_percentage = $config{"voteplay"};
-	$scores_size = $config{'maxscored'};
-
-
-	# setup $basedir
-	if ( ! -e $basedir) {
-		mkdir($basedir);
-	} else {
-		open(OTHER, "$basedir/pid");
-		my $otherpid = <OTHER>;
-		close(OTHER);
-		chomp($otherpid);
-
-		my $othercmd = "platzhalter";
-
-		if ( $otherpid ne "" ) {
-			$othercmd = `ps -o command= -p $otherpid`;
-		}
-
-		if ( $othercmd =~ /oyster\.pl/ ) {
-			open(OTHER, ">$basedir/control");
-			print OTHER "UNPAUSE\n";
-			close(OTHER);
-			exit;
-		} else {
-			unlink($basedir);
-		}
-
-		mkdir($basedir);
-	}
-	# setup $savedir
-	if ( ! -e $savedir ) {
-		mkdir($savedir);
-	}
-	if ( ! -e "$savedir/lists" ) {
-		mkdir("$savedir/lists");
-	}
-	if ( ! -e "$savedir/blacklists" ) {
-		mkdir("$savedir/blacklists"); 
-	}
-	if ( ! -e "$savedir/scores" ) {
-		mkdir("$savedir/scores" )
-	}
-	if ( ! -e "$savedir/logs" ) {
-		mkdir("$savedir/logs" )
-	}
-
-	# get my pid
-#	my $mypid = fork();
-	#
-#	if ( $mypid ) {
-#	
-#		print "pid is: $mypid\n";
-#	
-	open(PID, ">$basedir/pid");
-	print PID "$$\n";
-	close(PID);
-#	
-#		exit;
-#	}
-
-
-
-
-
-	open (PLAYLIST, ">$basedir/playlist");
-	print PLAYLIST "default\n";
-	close (PLAYLIST);
-
-	$playlist = "default";
-
-	$media_dir =~ s/\/$//;
-
-	update_scores();
-
-	# initialize random
-	srand;
-
-	# tell STDERR and STDOUT where they can dump their messages
-	open (STDERR, ">>$basedir/err");
-	open (STDOUT, ">>/dev/null");
-	#open (DEBUG, ">/tmp/debug");
-	open (LOG, ">>$savedir/logs/$playlist");
-	my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d-%H%M`;
-	open (RANDOM, $randomfile);
-
-	# make fifos
-	system("/usr/bin/mkfifo /tmp/oyster/control");
-	system("/usr/bin/mkfifo /tmp/oyster/kidplay");
-	system("/bin/chmod 666 /tmp/oyster/control");
-}
-
-
-sub choose_file {
-
-	if ( $file_override eq "true") {
-		# don't touch $file when $file_override ist set
-		$file_override = "false";
-	} elsif ( -e "$basedir/playnext" ) {
-		# set $file to the content of $basedir/playnext		
-		open( FILEIN, "$basedir/playnext" );
-		$file = <FILEIN>;
-		close( FILEIN );
-		unlink "$basedir/playnext";
-
-		#print STDERR "playnext: $file";
-
-		add_log($file, "VOTED");
-		# playnext is set by process_vote
-		# set votes for the played file to 0 and reprocess votes
-		# (write next winner to playnext, 
-		# no winner -> no playnext -> normal play)
-		my $voteentry = $file; chomp($voteentry);
-		$votehash{$voteentry} = 0;
-		&process_vote;
-	} else {
-		my $random = int(rand(100));
-		#print RANDOM "Zufallszahl fuer voteplay ist: $random (<$voteplay_percentage fuer scores)\n";
-		if ( $random < $voteplay_percentage ) {
-			if ( $scores_exist eq "true" ) {
-				# choose file from scores with a chance of $voteplay_percentage/100
-				my $index = int(rand($#scores));
-				print RANDOM "$playlist scores: $index (index ist $#scores)\n";
-				#my $index = rand @scores;
-				$file = $scores[$index];
-				add_log($file, "SCORED");
-			} else {
-				$file = " ";
-			}
-		} else {
-			# choose file from "normal" filelist
-			my $index = int(rand($#filelist));
-			print RANDOM "$playlist filelist: $index (index ist $#filelist)\n";
-			#my $index = rand @filelist;
-			$file = $filelist[$index];
-			add_log($file, "PLAYLIST");
-		}
-
-		# read regexps from $savedir/blacklist (one line per regexp)
-		# and if $file matches, choose again
-		if ( -e "$savedir/blacklists/$playlist" ) {
-			my $tmpfile = $file;
-			$tmpfile =~ s/\Q$media_dir//;
-			print "$savedir/blacklists/$playlist\n";
-			open(BLACKLIST, "$savedir/blacklists/$playlist");
-			while( my $regexp = <BLACKLIST> ) {
-				chomp($regexp);
-				if ( $tmpfile =~ /$regexp/ ) {
-					add_log($file, "BLACKLIST");
-					choose_file();
-				}
-			}
-		}	
-	}
-}
 
 
 sub info_out {
