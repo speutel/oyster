@@ -64,6 +64,7 @@ sub do_action {
 	close CONTROL;
     } elsif (($action eq 'unvote') && ($file)) {
 	print CONTROL "UNVOTE $mediadir" . $file;
+	close CONTROL;
     }
 
     return $status;
