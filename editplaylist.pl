@@ -119,8 +119,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 	close (PLAYLIST);
 
 	@results = sort(@playlist);
-	@results = sort_results('/');
-	@playlist = @results;
+	@playlist = sort_results('/');
 
 	if (($action eq 'deletefile') || ($action eq 'deletedir')) {
 
@@ -193,10 +192,7 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		exit 0;
 	}
 
-	@results = sort(keys %filelist);
-	@results = sort_results('/');
-
-	foreach my $key (@results) {
+	foreach my $key (sort(keys %filelist)) {
 		print FILELIST $key;
 		chomp($key);
 		$key =~ s/^\Q$config{mediadir}\E/\//;
