@@ -105,13 +105,28 @@ my %tag = oyster::taginfo->get_tag($info);
 $info =~ s/^\Q$config{'mediadir'}\E//;
 $info = uri_escape("/$info", "^A-Za-z");
 
+my $playreason = `tail -n 1 logs/default`;
+chomp($playreason);
+$playreason =~ s/^[^\ ]*\ //;
+$playreason =~ s/\ .*$//;
+
+if ($playreason eq 'PLAYLIST') {
+	$playreason = '(random)';
+} elsif ($playreason eq 'SCORED') {
+	$playreason = '(scored)';
+} elsif ($playreason eq 'ENQUEUED') {
+	$playreason = '(enqueued)';
+} elsif ($playreason eq 'VOTED') {
+	$playreason = '(voted)';
+}
+
 my $statusstr = '';
 if ($status eq 'paused') {
 	$statusstr = " " . a({href=>"oyster-gui.pl?action=pause${framestr2}"},'Paused');
 }
 
 print "<table width='100%' border='0'>";
-print "<tr><td><strong>Now playing:</strong></td><td align='center' width='75'><strong>Score</strong></td></tr>";
+print "<tr><td><strong>Now playing $playreason:</strong></td><td align='center' width='75'><strong>Score</strong></td></tr>";
 print "<tr><td>";
 print strong(a({class=>'file', href=>"fileinfo.pl?file=${info}${framestr2}", target=>'browse', title=>'View details'},$display));
 print $statusstr . "</td>";
