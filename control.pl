@@ -24,10 +24,16 @@ use URI::Escape;
 use strict;
 use oyster::common;
 use oyster::conf;
+use oyster::fifocontrol;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-if (param()) {
+if (param('action') =~ /favmode/) {
+	# Only for FAV-Mode
+	oyster::fifocontrol->do_action(param('action'), '', '');
+}
+
+if (param('vol')) {
 	my $volume=param('vol');
 	if ($volume eq 'down') {
 		system ('/usr/bin/aumix -w -5');
@@ -69,6 +75,8 @@ my $volume = `aumix -w q`;
 $volume =~ s/^pcm\ //;
 $volume =~ s/,.*//;
 
+# Is oyster in FAV-Mode?
+
 open (FAVFILE, "${config{basedir}}/favmode");
 my $favmode = <FAVFILE>;
 chomp($favmode);
@@ -81,10 +89,10 @@ print "<td align='center'><a href='oyster-gui.pl?action=stop${framestr2}' target
 print "<img src='themes/${config{theme}}/stop.png' border='0' alt='Stop'></a></td>";
 
 if ($favmode eq 'on') {
-	print "<td align='center'><a href='oyster-gui.pl?action=nofavmode${framestr2}' target='curplay' title='Deactivate FAV Mode'>";
+	print "<td align='center'><a href='control.pl?action=nofavmode${framestr2}' title='Deactivate FAV Mode'>";
 	print "<img src='themes/${config{theme}}/favmodeon.png' border='0' alt='FAV on'></a></td>";
 } else {
-	print "<td align='center'><a href='oyster-gui.pl?action=favmode${framestr2}' target='curplay' title='Activate FAV Mode'>";
+	print "<td align='center'><a href='control.pl?action=favmode${framestr2}' title='Activate FAV Mode'>";
 	print "<img src='themes/${config{theme}}/favmodeoff.png' border='0' alt='FAV off'></a></td>";
 }
 
