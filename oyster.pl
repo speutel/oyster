@@ -659,9 +659,11 @@ sub init {
 		my $otherpid = <OTHER>;
 		close(OTHER);
 		chomp($otherpid);
+	
+		my $othercmd = "platzhalter";
 		
 		if ( $otherpid ne "" ) {
-			my $othercmd = `ps -o command= -p $otherpid`;
+			$othercmd = `ps -o command= -p $otherpid`;
 		}
 		
 		if ( $othercmd =~ /oyster\.pl/ ) {
