@@ -47,7 +47,7 @@ print "</form>";
 my @results = ();
 my $cssclass='file2';
 
-if (!($search eq '')) {
+if ($search ne '') {
 
     # Search for files in default list
 
@@ -104,7 +104,11 @@ if (!($search eq '')) {
 
     # List directory in browser
 
-    listdir('/',0);
+    if (@results > 0) {
+	listdir('/',0);
+    } else {
+	print p('No songs found.');
+    }
 
 }
     
