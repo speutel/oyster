@@ -115,7 +115,7 @@ my $totalfilesplayed = $votedfiles + $randomfiles + $scoredfiles;
 
 print h1('Most played songs');
 
-print_songs(@mostplayed, "Times played");
+print_songs("Times played", @mostplayed);
 
 #my $cssclass = 'file2';
 #
@@ -149,7 +149,7 @@ print_songs(@mostplayed, "Times played");
 
 print h1('Recently played songs');
 
-print_songs(@lastplayed, "Playreason");
+print_songs("Playreason", @lastplayed);
 
 #my $cssclass = 'file2';
 #
@@ -240,18 +240,19 @@ sub get_blacklisted {
 
 sub print_songs {
 
-    my $filearray = $_[0];
-    my $title = $_[1];
+    my $header = $_[0];
+    shift @_;
+    my @filearray = @_;
     
     my $cssclass = 'file2';
 
     print "<table width='100%'>";
-    print "<tr><th align='left'>Song</th><th>$title</th></tr>";
+    print "<tr><th align='left'>Song</th><th>$header</th></tr>";
 
     # for every song in mostplayed
     #  print artist/title
     foreach my $line (@filearray) {
-	$line =~ /(.*)\,\ ([0-9]*)$/;
+	$line =~ /(.*)\,\ ([A-Z0-9]*)$/;
 	my $filename = $1;
 	my $reason = $2;
 	my $displayname = oyster::taginfo->get_tag_light($filename);
