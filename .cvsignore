@@ -1,4 +1,6 @@
+blacklist
 lastvotes
 lists
-blacklist
 log
+tagcache.dir
+tagcache.pag
