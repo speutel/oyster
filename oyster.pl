@@ -288,21 +288,34 @@ sub interpret_control {
 		## enqueue a file (vote without add-scores
 		
 		$control =~ /^ENQUEUE\ (.*)$/;
-		enqueue($1);
+		my $file=$1;
+		# test for media
+		if ( ! ($file =~ /^$media_dir/) ) {
+			## TODO use perl replacement for realpath
+			$file = $media_dir . "/" . $file;
+			$file =~ s/\ /\\\ /g;
+			open ( RP, "realpath $file |" );
+			$file = <RP>;
+			close(RP);
+			chomp($file);
+		}
+		print STDERR $file;
+		enqueue($file);
+		process_vote();
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^PAUSE/) {
 
 		## pauses play
-		
+
 		# send SIGSTOP to player process
 		my $command = "kill -19 " . &get_player_pid;
 		system($command);
-		
+
 		add_log($file, "PAUSED");
-		
+
 		#write status
 		open(STATUS, ">$basedir/status");
 		print STATUS "paused\n";
@@ -311,28 +324,28 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^UNPAUSE/) {
 
 		## continues play
-		
+
 		#send SIGCONT to player process
 		my $command = "kill -18 " . &get_player_pid;
 		system($command);
-		
+
 		add_log($file, "UNPAUSED");
-		
+
 		# write status
 		open(STATUS, ">$basedir/status");
 		print STATUS "playing\n";
 		close(STATUS);
-		
+
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^UNVOTE/) {
-	
+
 		## removes a file from the votelist
 		$control =~ s/\\//g;
 		$control =~ /^UNVOTE\ (.*)/;
@@ -346,9 +359,9 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}	
-	
+
 	elsif ( $control =~ /^SCORE/ ) {
-		
+
 		## adds or removes a file to scores-list
 		$control =~ /^SCORE\ (.)\ (.*)/;
 		my $scored_file = $2;
@@ -357,21 +370,21 @@ sub interpret_control {
 		} elsif ($1 eq "-" ) {
 			remove_score($scored_file);
 		}
-		
-		
+
+
 		get_control();
 		interpret_control();
 	}
-	
+
 	elsif ( $control =~ /^ENQLIST/ ) {
-		
+
 		## takes an m3u-list and enqueues the playlist
 		$control =~ /^ENQLIST\ (.*)/;
 		enqueue_list($1);
 		get_control();
 		interpret_control();
 	}
-	
+
 	else { # fall through
 		get_control();
 		interpret_control();
@@ -381,7 +394,7 @@ sub interpret_control {
 sub remove_score {
 	# $myfile mit newline am Ende!
 	my $myfile = $_[0];
-	
+
 	for ( my $i = 0; $i <= $#scores; $i++ ) {
 		if ( $scores[$i] eq ($myfile . "\n") ) {
 			splice(@scores, $i, 1);
@@ -392,8 +405,8 @@ sub remove_score {
 		}
 	}
 	open(SCORED, ">$scores_file");
-		print SCORED $scores_pointer . "\n";
-		foreach my $entry ( @scores ) {
+	print SCORED $scores_pointer . "\n";
+	foreach my $entry ( @scores ) {
 		print SCORED $entry;
 	}
 	close(SCORED);
@@ -402,11 +415,11 @@ sub remove_score {
 sub enqueue_list {
 	# TODO add support for relative paths
 	my $list = $_[0];
-	
+
 	my $list_path = $list;
 	$list_path =~ s@/[^/]*$@/@;
 	$list_path =~ s/\ /\\\ /g;
-	
+
 	open(LIST, $list) || print STDERR "enqueue_list: could not open playlist\n";
 	while( my $line = <LIST> ) {
 		chomp($line);
@@ -426,7 +439,7 @@ sub enqueue_list {
 sub get_player_pid {
 	#TODO add support for players set in the config file
 	my $player_pid;
-	
+
 	open(PLAYERPID, "$basedir/player_pid");
 	$player_pid = <PLAYERPID>;
 	close(PLAYERPID);
@@ -444,12 +457,12 @@ sub unvote {
 			last;
 		}
 	}
-	
+
 }
 
 sub enqueue {
 	my $enqueued_file = $_[0];
-	
+
 	if ( $votehash{$enqueued_file} ne "" ) {
 		if ( $votehash{$enqueued_file} > 0 ) {
 			$votehash{$enqueued_file} += 1;
@@ -472,7 +485,7 @@ sub add_score {
 	$scores_pointer = ++$scores_pointer % $scores_size;
 	$scores[$scores_pointer] = $added_file . "\n";
 	$scores_exist = "true";
-	
+
 	open(SCORED, ">$scores_file") || print STDERR "add_score: could not open scores_file\n";
 	print SCORED $scores_pointer . "\n";
 	foreach my $entry ( @scores ) {
@@ -482,16 +495,16 @@ sub add_score {
 }
 
 sub process_vote {
-	
+
 	$voted_file = $_[0];
-	
+
 	print STDERR "voted for $voted_file\n";
-	
+
 	my $winner = "";
 	my $max_votes = 0;
-	
+
 	unlink("$basedir/playnext");
-	
+
 	if ( $voted_file ne "") {
 		# if a file is given add it to votelist and scores
 		if ( $voted_file ne "noremove" ) {
@@ -507,14 +520,14 @@ sub process_vote {
 		unvote($tmpfile);
 
 	}
-	
+
 	# write $basedir/votes
 	open(VOTEFILE, ">$votefile") || print STDERR "process_vote: could not open votefile\n";
 	foreach my $entry (@votelist) {
 		print VOTEFILE "$entry,$votehash{$entry}\n";
 	}
 	close(VOTEFILE);
-	
+
 	# choose winner: go through @votelist and lookup number of votes in
 	# %votehash, set winner to the on with the maximum number of votes
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
@@ -524,17 +537,17 @@ sub process_vote {
 			$winner = $i; $max_votes = $votehash{$entry};
 		}
 	}
-	
+
 	# write winner to playnext
 	if ($votehash{$votelist[$winner]} > 0) {
 		#print STDERR "winner is $votelist[$winner]\n";
-		
+
 		open(PLAYNEXT, ">$basedir/playnext") || print STDERR "process_vote: could not open playnext\n";
 		print PLAYNEXT $votelist[$winner] . "\n";
 		close(PLAYNEXT);
 
 	}
-	
+
 }
 
 sub cleanup {
@@ -547,7 +560,7 @@ sub cleanup {
 		print SCORED $entry;
 	}
 	close(SCORED);
-	
+
 	# cleaning up our files
 	unlink <$basedir/*>;
 	rmdir "$basedir";
@@ -556,7 +569,7 @@ sub cleanup {
 }
 
 sub load_list {
-	
+
 	my $listname = $_[0];
 
 	if ( open(LISTIN, "$list_dir/$listname") ) {
@@ -571,11 +584,11 @@ sub load_list {
 	}
 
 	update_scores();
-	
+
 }
 
 sub save_list {
-	
+
 	my $listname = $_[0];
 
 	if ( ! -d $list_dir ) {
@@ -599,7 +612,7 @@ sub save_list {
 }
 
 sub get_list {
-	
+
 	open(CONTROL, "$basedir/control") || die "could not open control!";
 	@filelist = <CONTROL>;
 	close(CONTROL);
@@ -607,11 +620,11 @@ sub get_list {
 }
 
 sub update_scores {
-	
+
 	$scores_file = "$savedir/scores/$playlist";
 
 	@scores = "";
-	
+
 	if ( -e $scores_file ) {
 		open (SCORED, $scores_file) || die $!;
 		$scores_pointer = <SCORED>;
@@ -623,22 +636,22 @@ sub update_scores {
 		if ( $#scores > $scores_size ) {
 			splice(@scores, $scores_size);
 		}
-		
+
 		$scores_exist = "true";
 	} else {
 		@scores = "";
 		$scores_pointer = 0;
 		$scores_exist = "false";
 	}
-	
+
 }
 
 sub init {
 	# well, it's called "init". guess.
-	
+
 	## set values from config
 	%config = oyster::conf->get_config($conffile);
-	
+
 	$savedir = "$config{savedir}";
 	$savedir =~ s/\/$//;
 	$list_dir = "$config{savedir}/lists";
@@ -649,10 +662,10 @@ sub init {
 		$media_dir = $media_dir . "/";
 	}
 	$basedir = $config{basedir};
-	
+
 	$voteplay_percentage = $config{"voteplay"};
 	$scores_size = $config{'maxscored'};
-	
+
 
 	# setup $basedir
 	if ( ! -e $basedir) {
@@ -662,13 +675,13 @@ sub init {
 		my $otherpid = <OTHER>;
 		close(OTHER);
 		chomp($otherpid);
-	
+
 		my $othercmd = "platzhalter";
-		
+
 		if ( $otherpid ne "" ) {
 			$othercmd = `ps -o command= -p $otherpid`;
 		}
-		
+
 		if ( $othercmd =~ /oyster\.pl/ ) {
 			open(OTHER, ">$basedir/control");
 			print OTHER "UNPAUSE\n";
@@ -677,7 +690,7 @@ sub init {
 		} else {
 			unlink($basedir);
 		}
-			
+
 		mkdir($basedir);
 	}
 	# setup $savedir
@@ -696,17 +709,17 @@ sub init {
 	if ( ! -e "$savedir/logs" ) {
 		mkdir("$savedir/logs" )
 	}
-	
+
 	# get my pid
 #	my $mypid = fork();
-#
+	#
 #	if ( $mypid ) {
 #	
 #		print "pid is: $mypid\n";
 #	
-		open(PID, ">$basedir/pid");
-		print PID "$$\n";
-		close(PID);
+	open(PID, ">$basedir/pid");
+	print PID "$$\n";
+	close(PID);
 #	
 #		exit;
 #	}
@@ -714,27 +727,27 @@ sub init {
 	#build default filelist - list all files in $media_dir
 	#system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
 	find( { wanted => \&is_audio_file, no_chdir => 1 }, $media_dir);
-	
+
 	sub is_audio_file {
 		if ( ($_ =~ /ogg$/i) or ($_ =~ /mp3$/i) ) {
 			push(@filelist, $_ . "\n");
 		}
 	}
-	
+
 	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
 	print FILELIST @filelist;
 	close(FILELIST);
 
 
-	
+
 	open (PLAYLIST, ">$basedir/playlist");
 	print PLAYLIST "default\n";
 	close (PLAYLIST);
-	
+
 	$playlist = "default";
 
 	$media_dir =~ s/\/$//;
-	
+
 	update_scores();
 
 	# initialize random
@@ -768,7 +781,7 @@ sub choose_file {
 		unlink "$basedir/playnext";
 
 		#print STDERR "playnext: $file";
-		
+
 		add_log($file, "VOTED");
 		# playnext is set by process_vote
 		# set votes for the played file to 0 and reprocess votes
