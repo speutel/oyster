@@ -29,14 +29,17 @@ sub do_action {
 
     if ($action eq 'skip') {
 	print CONTROL 'NEXT';
+	close CONTROL;
 	sleep 4;
     } elsif ($action eq 'start') {
+	close CONTROL;
 	system("perl oyster.pl &");
 	while (!(-e "${config{'basedir'}}info")) {
 	    sleep 1;
 	}
     } elsif ($action eq 'stop') {
 	print CONTROL "QUIT";
+	close CONTROL;
     } elsif ($action eq 'pause') {
 	if ($status eq 'paused') {
 	    print CONTROL "UNPAUSE";
@@ -45,12 +48,16 @@ sub do_action {
 	    print CONTROL "PAUSE";
 	    $status = 'paused';
 	}
+	close CONTROL;
     } elsif (($action eq 'scoreup') && ($file)) {
 	print CONTROL "SCORE + $mediadir" . $file;
+	close CONTROL;
     } elsif (($action eq 'scoredown') && ($file)) {
 	print CONTROL "SCORE - $mediadir" . $file;
-    } 
-    close CONTROL;
+	close CONTROL;
+    } elsif (($action eq 'unvote') && ($file)) {
+	print CONTROL "UNVOTE $mediadir" . $file;
+    }
 
     return $status;
 
