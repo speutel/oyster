@@ -31,7 +31,7 @@ $shortdir =~ s/^\Q$rootdir\E//;
 
 if (!($basedir eq $rootdir)) {
 
-    print "<p><strong>Aktuelles Verzeichnis: ";
+    print "<p><strong>Current directory: ";
 
     my @dirs = split(/\//, $shortdir);
     my $incdir = '';
@@ -47,7 +47,7 @@ if (!($basedir eq $rootdir)) {
     $topdir =~ s/\/[^\/]*\/$//;
 
     my $escapeddir = uri_escape($topdir, "^A-Za-z");
-    print "<a href='browse.pl?dir=$escapeddir'>Eine Ebene h&ouml;her</a><br><br>";
+    print "<a href='browse.pl?dir=$escapeddir'>One level up</a><br><br>";
 
 }
 
