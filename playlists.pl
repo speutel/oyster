@@ -4,29 +4,16 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 use oyster::common;
+use oyster::fifocontrol;
 
 my %config = oyster::conf->get_config('oyster.conf');
-my $playlist = oyster::conf->get_playlist();
 my $savedir = $config{'savedir'};
 
 oyster::common->navigation_header();
 
 if (param('action') && (param('listname') || param('newlistname'))) {
-    if (param('action') eq 'addnewlist') {
-	my $newlist = param('newlistname');
-	$newlist =~ s/.*\///;
-	open (NEWLIST, ">$config{savedir}lists/$newlist");
-	close (NEWLIST);
-	open (NEWBLACKLIST, ">$config{savedir}blacklists/$newlist");
-	close (NEWBLACKLIST);
-    } elsif (param('action') eq 'delete') {
-	my $dellist = param('listname');
-	$dellist =~ s/.*\///;
-	unlink("$config{savedir}blacklists/$dellist");
-	unlink("$config{savedir}lists/$dellist");
-	unlink("$config{savedir}logs/$dellist");
-	unlink("$config{savedir}scores/$dellist");
-    }
+    my $file = param('listname') || param('newlistname');
+    oyster::fifocontrol->do_action(param('action'), $file, '');
 }
 
 my $globdir = "${savedir}lists/";
@@ -41,6 +28,8 @@ foreach my $entry (@entries) {
     }
 }
 
+my $playlist = oyster::conf->get_playlist();
+
 print "<table width='100%' style='margin-bottom: 2em;'>";
 
 foreach my $file (@files) {
@@ -50,8 +39,8 @@ foreach my $file (@files) {
     }
     else {
 	print "<tr><td>$file</td>" .
-	    "<td><a href='oyster-gui.pl?action=loadlist&amp;file=$file'" .
-	    "target='curplay'>Load List</a></td>";
+	    "<td><a href='playlists.pl?action=loadlist&amp;listname=$file'>" .
+	    "Load List</a></td>";
 	print "<td><a href='editplaylist.pl?action=edit&amp;" .
 	    "playlist=$file'>Edit List</a></td>\n";
 	print "<td><a href='playlists.pl?action=delete&amp;" .
