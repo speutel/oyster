@@ -582,6 +582,27 @@ sub interpret_control {
 
 	}
 
+	elsif ( $control =~ /^FAVMODE/ ) {
+
+		# play only from scores
+		#
+		$voteplay_percentage = 100;
+		open(FAV, "$basedir/favmode");
+		print FAV "on\n";
+		close(FAV);
+	}
+
+	elsif ( $control =~ /^NOFAVMODE/ ) {
+
+		# play only from scores
+		
+		$voteplay_percentage = $config{'voteplay'};
+		open(FAV, "$basedir/favmode");
+		print FAV "off\n";
+		close(FAV);
+	}
+
+
 	else { # fall through
 		# hm - nix mehr
 	}
