@@ -78,8 +78,8 @@ while ($maxscore > 0) {
 	}
 	
 	print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
-	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&file=$escapedfile'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' border='0'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
-	print " <a class='$cssclass' href='score.pl?action=scoreup&file=$escapedfile'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0'></a></td></tr>";	
+	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&file=$escapedfile'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
+	print " <a class='$cssclass' href='score.pl?action=scoreup&file=$escapedfile'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
     }
 
     $maxscore--;
