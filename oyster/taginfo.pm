@@ -127,7 +127,7 @@ sub get_mp3_tags {
 	    }
 	} elsif ($line =~ /^TIT2\ \(.*\)\:\ (.*)$/) {
 	    $tag{'title'} = oyster::common->remove_html($1);
-	} elsif ($line =~ /^Lead/) {
+	} elsif ($line =~ /^Lead\ .*\:\ (.*)/) {
 	    $tag{'artist'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^TPE1\ \(.*\)\:\ (.*)$/) {
 	    $_ = oyster::common->remove_html($line);
