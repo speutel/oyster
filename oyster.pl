@@ -357,27 +357,29 @@ sub interpret_control {
 		}
 	}
 
-	elsif ( $control =~ /^FILE/) {
-
-		## plays file directly (skips song)
-
-		# set $file and play it *now*
-		$control =~ s/\\//g;
-		$control =~ /^FILE\ (.*)$/;
-
-		add_log($file, "SKIPPED");
-		$skipped = "true";
-
-		$file = $1;
-		$file_override = "true";
-
-		add_log($file, "VOTED");
-
-		kill 15, &get_player_pid;
-
-		get_control();
-		interpret_control();
-	}	
+	
+## wird nicht benutzt, kann raus? 20041020
+#	elsif ( $control =~ /^FILE/) {
+#
+#		## plays file directly (skips song)
+#
+#		# set $file and play it *now*
+#		$control =~ s/\\//g;
+#		$control =~ /^FILE\ (.*)$/;
+#
+#		add_log($file, "SKIPPED");
+#		$skipped = "true";
+#
+#		$file = $1;
+#		$file_override = "true";
+#
+#		add_log($file, "VOTED");
+#
+#		kill 15, &get_player_pid;
+#
+#		get_control();
+#		interpret_control();
+#	}	
 
 	elsif ( $control =~ /^PREV/ ) {
 
@@ -757,6 +759,7 @@ sub process_vote {
 			$winner = $i; $max_votes = $votehash{$entry};
 		}
 	}
+
 
 	# write winner to playnext
 	if ($votehash{$votelist[$winner]} > 0) {
