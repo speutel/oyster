@@ -147,7 +147,12 @@ sub print_affects {
 	@results = sort_results($maxdepth);
 	$maxdepth--;
     }
-    listdir('/', 0);
+
+    if (@results > 0) {
+	listdir('/', 0);
+    } else {
+	print p('No songs match these rule.');
+    }
 }
 
 sub add_to_blacklist {
