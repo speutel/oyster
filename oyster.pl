@@ -297,7 +297,7 @@ sub init {
 		close(FILELIST);
 	} else {
 		#build default filelist - list all files in $media_dir
-		system("find $media_dir -type f -and -iname '*ogg' -or -iname '*mp3' -print >$list_dir/default");
+		system("find $media_dir -type f -and \( -iname '*ogg' -or -iname '*mp3' \) -print >$list_dir/default");
 		open (FILELIST, "$list_dir/default");
     @filelist = <FILELIST>;
 		close(FILELIST);
