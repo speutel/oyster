@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
-use MIME::Base64;
 use strict;
 use oyster::conf;
 use oyster::common;
@@ -28,27 +27,7 @@ if (-e $config{'basedir'}) {
 
 if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 
-    print "<p>";
-
-    my @coverfiles = split(/,/, $config{'coverfilenames'});
-    my $filetype = 'jpeg';
-    my $base64 = "";
-    
-    foreach my $cover (@coverfiles) {
-	if (-e "$mediadir$givendir$cover") {
-	    open (COVER, "$mediadir$givendir$cover");
-	    while (read(COVER, my $buf, 60*57)) {
-		$base64 = $base64 . encode_base64($buf);
-	    }
-	    close (COVER);
-	    $filetype = 'gif' if ($cover =~ /\.gif$/);
-	    $filetype = 'png' if ($cover =~ /\.png$/);
-	    last;
-	}
-    }
-
-    print "<img src='data:image/$filetype;base64," . $base64 .
-	"' width='100' style='float:right; margin-right:20px;'>";
+    print "<p>" . oyster::common->get_cover($mediadir . $givendir);
 
     print "<strong>Current directory: ";
 
