@@ -35,6 +35,7 @@ sub get_tag {
 		$tag{'year'} = $2;
 		$tag{'genre'} = $3;
 		$tag{'album'} =~ s/[\ ]*$//;
+		$tag{'genre'} =~ s/\ \(.*//;
 	    }
 	}
 	    
