@@ -7,10 +7,11 @@
 # It will be deleted after oyster has quit.
 my $basedir = "/tmp/oyster";
 my $savedir = ".";
+my $list_dir = "$savedir/lists";
 
 my (@filelist, $file, $control, $file_override);
-my $fifo="false";
 
+use warnings;
 
 init();
 
@@ -113,6 +114,14 @@ sub interpret_control {
 		}
 		case /^LISTS/ {
 			# lists filelists into the FIFO
+			open(CONTROL, ">$basedir/control");
+			@lists = <./lists/*>;
+			foreach $list ( @lists ) {
+				print CONTROL $list . "\n";
+			}
+			close(CONTROL);
+			get_control();
+			interpret_control();
 		}
 		else {
 			get_control();
@@ -141,7 +150,6 @@ sub save_list {
 	# $_[0] ist Name der Liste
 	
 	$listname = $_[0];
-	$list_dir = "$savedir/lists";
 
 	if ( ! -d $list_dir ) {
 		print STDERR "list_dir is no directory!\n";
@@ -176,9 +184,14 @@ sub init {
 	
 	
 	# open filelist and read it into memory
-	open (FILELIST, $ARGV[0]);
+	if ($ARGV[0]) {
+		open (FILELIST, $ARGV[0]);
+	} elsif ( -e "$list_dir/default" ) {
+		open(FILELIST, "$list_dir/default");
+	}
 	@filelist = <FILELIST>;
-
+	
+	
 	# tell STDERR and STDOUT where they can dump their messages
 	open (STDERR, ">>$basedir/err");
 	open (STDOUT, ">>/dev/null");
@@ -209,11 +222,9 @@ sub choose_file {
 		$index = rand @filelist;
 		$file = $filelist[$index];
 		if ( -e "$savedir/blacklist" ) {
-			print STDERR "Blacklist existiert.\n";
 			open(BLACKLIST, "$savedir/blacklist");
 			while( $regexp = <BLACKLIST> ) {
 				chomp($regexp);
-				print STDERR "File : $file regexp: $regexp\n";
 				if ( $file =~ /\Q$regexp/ ) {
 					choose_file();
 				}
