@@ -30,10 +30,11 @@ my %config = oyster::conf->get_config('oyster.conf');
 
 oyster::common->navigation_header();
 
+my $cssdirclass = 'dir2';
+my $cssfileclass = 'file2';
 my $action = param('action') || '';
 my $playlist = param('playlist') || '';
 my @playlist = ();
-my $cssclass = 'file2';
 
 if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')) {
     my $delfile = param('file') || '';
@@ -153,19 +154,26 @@ sub listdir {
 	    $cutnewpath =~ s/\/$//;
 	    $cutnewpath = escapeHTML($cutnewpath);
 
+	    if ($cssdirclass eq 'dir') {
+		$cssdirclass = 'dir2';
+	    } else {
+		$cssdirclass = 'dir';
+	    }
+
 	    if (!($basepath eq '/')) {
 		print "<div style='padding-left: 1em;'>";
 		print "<table width='100%'><tr><td>";
 		$escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
-		print b($cutnewpath);
+		print b({-class=>$cssdirclass}, $cutnewpath);
 		$newpath = "$basepath$newpath";
 	    }  else {
 		print "<table width='100%'><tr><td>";
 		$escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		print b($cutnewpath);
+		print b({-class=>$cssdirclass}, $cutnewpath);
 		$newpath = "/$newpath";
 	    }
-	    print "</td><td align='right'><a href='editplaylist.pl?action=deletedir&" .
+
+	    print "</td><td align='right'><a class='$cssdirclass' href='editplaylist.pl?action=deletedir&" .
 		"dir=$escapeddir&playlist=$playlist'>Delete</a></td></tr></table>";
 
 	    # Call listdir recursive, then quit padding with <div>
@@ -189,20 +197,20 @@ sub listdir {
 		my $nameonly = $1;
 		my $escapedfile = uri_escape("$basepath$filename", "^A-Za-z");
 
-		# $cssclass changes to give each other file
+		# $cssfileclass changes to give each other file
 		# another color
 
-		if ($cssclass eq 'file') {
-		    $cssclass = 'file2';
+		if ($cssfileclass eq 'file') {
+		    $cssfileclass = 'file2';
 		} else {
-		    $cssclass = 'file';
+		    $cssfileclass = 'file';
 		}
 		print "<table width='100%'><tr>";
 		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile'" .
-		    "class='$cssclass'>" . escapeHTML($nameonly) . "</a></td>";
+		    "class='$cssfileclass'>" . escapeHTML($nameonly) . "</a></td>";
 		print "<td align='right'><a href='editplaylist.pl?action=deletefile" .
 		    "&file=$escapedfile&playlist=$playlist'" .
-		    "class='$cssclass'>Delete</a></td>";
+		    "class='$cssfileclass'>Delete</a></td>";
 
 		print "</tr></table>\n";
 		$counter++;
