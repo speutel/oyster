@@ -111,11 +111,7 @@ sub get_mostplayed {
 	$_ = $line;
 	($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
 	    m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-	if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
-	    $totalfilesplayed++;
-	    if ($playreason eq 'VOTED') {
-		$votedfiles++;
-	    }
+	if ($playreason eq 'DONE') {
 	    if ($timesplayed{$filename}) {
 		$timesplayed{$filename}++;
 		$maxplayed++ if ($timesplayed{$filename} > $maxplayed);
