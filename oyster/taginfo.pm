@@ -9,6 +9,7 @@ my $VERSION = '1.0';
 
 sub get_tag {
     %tag = ();
+    $tag{'title'} = '';
     my $filename = $_[1];
 
     if ($filename =~ /mp3$/i) {
@@ -17,22 +18,22 @@ sub get_tag {
 	
 	while (my $line = <MP3>) {
 	    if ($line =~ /^Title/) {
-		$_ = $line;
-		if ($line =~ /^Title\ \ \:.*Artist/) {
+		if ($line =~ /^Title\ \ \:\ (.*)Artist\:\ (.*)/) {
 		    # id3v1                                                         
-		    ($tag{'title'},$tag{'artist'}) = m/^Title\ \ \:\ (.*)Artist\:\ (.*)/;
-		    $tag{'title'} =~ s/[\ ]*$//;
-		    $tag{'artist'} =~ s/[\ ]*$//;
+		    $tag{'title'} = $1;
+		    $tag{'artist'} = $2;
 		} else {
 		    # id3v2                                                 
+		    $_ = $line;
 		    ($tag{'title'}) = m/:\ (.*)$/;
 		}
 	    } elsif ($line =~ /^Lead/) {
 		$_ = $line;
 		($tag{'artist'}) = m/:\ (.*)$/;
-	    } elsif ($line =~ /^Album/) {
-		$_ = $line;
-		($tag{'album'}, $tag{'year'}, $tag{'genre'}) = m@Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)\(@;
+	    } elsif ($line =~ /^Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)/) {
+		$tag{'album'} = $1;
+		$tag{'year'} = $2;
+		$tag{'genre'} = $3;
 		$tag{'album'} =~ s/[\ ]*$//;
 	    }
 	}
