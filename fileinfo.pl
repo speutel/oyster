@@ -87,7 +87,9 @@ print "<tr><td><strong>Album</strong></td><td>$tag{'album'}</td></tr>" if ($tag{
 print "<tr><td><strong>Track Number</strong></td><td>$tag{'track'}</td></tr>" if ($tag{'track'});
 print "<tr><td><strong>Year</strong></td><td>$tag{'year'}</td></tr>" if ($tag{'year'});
 print "<tr><td><strong>Genre</strong></td><td>$tag{'genre'}</td></tr>" if ($tag{'genre'});
+print "<tr><td><strong>Comment</strong></td><td>$tag{'comment'}</td></tr>" if ($tag{'comment'});
 print "<tr><td><strong>File Format</strong></td><td>$tag{'format'}</td></tr>";
+print "<tr><td><strong>Playtime</strong></td><td>$tag{'playtime'}</td></tr>" if ($tag{'playtime'});
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
 print "<tr><td><strong>Times played</strong></td><td>$timesplayed</td></tr>";
 print "<tr><td><strong>Current Oyster-Score</strong></td>";
