@@ -6,6 +6,7 @@ use oyster::conf;
 use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
+my $playlist = oyster::conf->get_playlist();
 
 oyster::common->navigation_header();
 
@@ -65,14 +66,14 @@ sub print_blacklist {
     # Opens current blacklist and prints each line
 
     my @blacklistlines = ();
-    open (FILE, "${savedir}blacklist");
+    open (FILE, "${savedir}blacklists/$playlist");
     while (my $line = <FILE>) {
 	chomp($line);
 	push (@blacklistlines, $line);
     }
     close (FILE);
 
-    open (LIST, "${savedir}lists/default");
+    open (LIST, "${config{savedir}}lists/$playlist");
 
     my $mediadir = $config{'mediadir'};
     $mediadir =~ s/\/$//;
@@ -120,7 +121,7 @@ sub print_affects {
     # Shows all files, which are affected by a blacklist-rule
 
     my $affects = $_[0];
-    open (LIST, "${savedir}lists/default");
+    open (LIST, "${config{savedir}}lists/$playlist");
 
     # Add all matching lines to @results
 
@@ -175,7 +176,7 @@ sub add_to_blacklist {
     # Appends a rule to the blacklist
 
     my $affects = $_[0];
-    open (BLACKLIST, ">>${savedir}blacklist");
+    open (BLACKLIST, ">>${savedir}blacklists/$playlist");
     print BLACKLIST "$affects\n";
     close (BLACKLIST);
 }
@@ -185,9 +186,9 @@ sub delete_from_blacklist {
     # removes a rule from the blacklist
 
     my $affects = $_[0];
-    system ("cp ${savedir}blacklist ${basedir}blacklist.tmp");
-    open (BLACKLIST, "${basedir}blacklist.tmp");
-    open (NEWBLACKLIST, ">${savedir}blacklist");
+    system ("cp ${savedir}blacklists/$playlist ${savedir}blacklist.tmp");
+    open (BLACKLIST, "${savedir}blacklist.tmp");
+    open (NEWBLACKLIST, ">${savedir}blacklists/$playlist");
     while (my $line = <BLACKLIST>) {
 	if (!($line =~ /^\Q$affects\E$/)) {
 	    print NEWBLACKLIST $line;
@@ -195,7 +196,7 @@ sub delete_from_blacklist {
     }
     close (BLACKLIST);
     close (NEWBLACKLIST);
-    system ("rm -f ${basedir}blacklist.tmp");
+    system ("rm -f ${savedir}blacklist.tmp");
 }
 
 sub listdir {
