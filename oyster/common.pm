@@ -3,6 +3,7 @@ package oyster::common;
 use strict;
 use warnings;
 use CGI qw/:standard -no_xhtml/;
+use MIME::Base64;
 use oyster::conf;
 
 my %config = oyster::conf->get_config('oyster.conf');
@@ -25,5 +26,29 @@ sub navigation_header {
     print "<td align='center' width='17%'><a href='statistics.pl'>Statistics</a></td>";
     print "</tr></table>";
     print "<hr>";
+
+}
+
+sub get_cover {
+    my $albumdir = $_[1];
+    my @coverfiles = split(/,/, $config{'coverfilenames'});
+    my $filetype = 'jpeg';
+    my $base64 = "";
+    
+    foreach my $cover (@coverfiles) {
+	if (-e "$albumdir$cover") {
+	    open (COVER, "$albumdir$cover");
+	    while (read(COVER, my $buf, 60*57)) {
+		$base64 = $base64 . encode_base64($buf);
+	    }
+	    close (COVER);
+	    $filetype = 'gif' if ($cover =~ /\.gif$/);
+	    $filetype = 'png' if ($cover =~ /\.png$/);
+	    last;
+	}
+    }
+    
+    return "<img src='data:image/$filetype;base64," . $base64 .
+	"' width='100' style='float:right; margin-left:20px; margin-right: 20px;'>";
 
 }
