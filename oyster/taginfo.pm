@@ -10,8 +10,31 @@ $ENV{LANG} = 'de_DE@euro';
 
 my $VERSION = '1.0';
 
+sub get_tag_light {
+
+    my %CACHE;
+    my $filename = $_[1];
+    my %config = oyster::conf->get_config('oyster.conf');
+
+    dbmopen(%CACHE, "${config{'basedir'}}tagcache", 0644);
+    if ($CACHE{$filename}) {
+	$tag{'display'} = $CACHE{$filename};
+    } else {
+	%tag = get_tag('', $_[1]);
+	$CACHE{$filename} = $tag{'display'};
+    }
+
+    $CACHE{$filename} = $tag{'display'};
+    dbmclose(%CACHE);
+    $tag{'display'};
+
+}
+
 sub get_tag {
     %tag = ();
+
+    my %config = oyster::conf->get_config('oyster.conf');
+
     $tag{'title'} = '';
     my $filename = $_[1];
 
@@ -78,7 +101,6 @@ sub get_tag {
 
     # Count current score
 
-    my %config = oyster::conf->get_config('oyster.conf');
     $tag{'score'} = 0;
 
     open (LASTVOTES, "${config{'savedir'}}lastvotes");
