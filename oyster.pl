@@ -426,7 +426,7 @@ sub enqueue_list {
 
 	my $list_path = $list;
 	$list_path =~ s@/[^/]*$@/@;
-	$list_path =~ s/\ /\\\ /g;
+	#$list_path =~ s/\ /\\\ /g;
 
 	open(LIST, $list) || print STDERR "enqueue_list: could not open playlist\n";
 	while( my $line = <LIST> ) {
@@ -673,6 +673,10 @@ sub build_playlist {
 			push(@filelist, $_ . "\n");
 		}
 	}
+	
+	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
+	print FILELIST @filelist;
+	close(FILELIST);
 }
 
 sub init {
@@ -754,9 +758,6 @@ sub init {
 #	}
 
 
-	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
-	print FILELIST @filelist;
-	close(FILELIST);
 
 
 
