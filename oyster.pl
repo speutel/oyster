@@ -52,10 +52,11 @@ my (
 
 my $scores_exist = "false"; # Are there any entries in scorefile?
 my (
-	@scores,    #
-	@filelist,  # Current loaded playlist
-	%votehash,  #
-	@votelist   #
+	@scores, 		#
+	@filelist, 		# Current loaded playlist
+	%votehash, 		#
+	@votelist, 		#
+	%vote_reason 	# why is the file in play_next there? (currently "VOTED" or "ENQUEUED")
 );
 
 my $file_override = "false"; 
@@ -194,8 +195,8 @@ sub init {
 	open (STDOUT, ">>/dev/null");
 	#open (DEBUG, ">/tmp/debug");
 	open (LOG, ">>$savedir/logs/$playlist");
-	my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d-%H%M`;
-	open (RANDOM, $randomfile);
+	#my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d-%H%M`;
+	#open (RANDOM, $randomfile);
 
 	# make fifos
 	system("/usr/bin/mkfifo $basedir/control");
@@ -215,9 +216,8 @@ sub choose_file {
 		close( FILEIN );
 		unlink "$basedir/playnext";
 
-		#print STDERR "playnext: $file";
+		add_log($file, $vote_reason{$file});
 
-		add_log($file, "VOTED");
 		# playnext is set by process_vote
 		# set votes for the played file to 0 and reprocess votes
 		# (write next winner to playnext, 
@@ -228,12 +228,11 @@ sub choose_file {
 		&process_vote;
 	} else {
 		my $random = int(rand(100));
-		#print RANDOM "Zufallszahl fuer voteplay ist: $random (<$voteplay_percentage fuer scores)\n";
 		if ( $random < $voteplay_percentage ) {
 			if ( $scores_exist eq "true" ) {
 				# choose file from scores with a chance of $voteplay_percentage/100
 				my $index = int(rand($#scores));
-				print RANDOM "$playlist scores: $index (index ist $#scores)\n";
+				#print RANDOM "$playlist scores: $index (index ist $#scores)\n";
 				#my $index = rand @scores;
 				$file = $scores[$index];
 				add_log($file, "SCORED");
@@ -246,7 +245,7 @@ sub choose_file {
 		} else {
 			# choose file from "normal" filelist
 			my $index = int(rand($#filelist));
-			print RANDOM "$playlist filelist: $index (index ist $#filelist)\n";
+			#print RANDOM "$playlist filelist: $index (index ist $#filelist)\n";
 			#my $index = rand @filelist;
 			$file = $filelist[$index];
 			add_log($file, "PLAYLIST");
@@ -288,11 +287,11 @@ sub play_file {
 	my $escaped_file = $file;
 	$escaped_file =~ s/\`/\\\`/g;
 
+	# FIXME warum zum Teufel uebergebe ich $escaped_file nicht als Parameter?
+	# FIXME hatte das mal einen Sinn?
 	system("./play.pl &");
 
 	open(KIDPLAY, ">$basedir/kidplay");
-	print STDERR "play.pl: $file";
-	print STDERR "escaped:$escaped_file";
 	print KIDPLAY "$escaped_file\n";
 	close(KIDPLAY);
 
@@ -468,7 +467,10 @@ sub interpret_control {
 		$control =~ s/\\//g;
 
 		$control =~ /^VOTE\ (.*)$/;
+		print STDERR "in VOTE: $1 ende\n";
 		process_vote($1);
+		my $votedfile = $1 . "\n";
+		$vote_reason{$votedfile} = "VOTED";
 	}
 
 	elsif ( $control =~ /^ENQUEUE/ ) {
@@ -482,8 +484,10 @@ sub interpret_control {
 			$file = $media_dir . "/" . $file;
 			$file =~ s/\/\//\//g;
 		}
-		print STDERR $file;
+		print STDERR "in ENQ: $file ende\n";
 		enqueue($file);
+		$file .= "\n";
+		$vote_reason{$file} = "ENQUEUED";
 		process_vote("noremove");
 	}
 
@@ -720,7 +724,6 @@ sub process_vote {
 	for ( my $i = 0; $i <= $#votelist; $i++ ) {
 		my $entry = $votelist[$i]; 
 		if ($votehash{$entry} > $max_votes) {
-			print "process_vote: trying $entry for winner\n";
 			$winner = $i; $max_votes = $votehash{$entry};
 		}
 	}
@@ -728,8 +731,6 @@ sub process_vote {
 
 	# write winner to playnext
 	if ($votehash{$votelist[$winner]} > 0) {
-		#print STDERR "winner is $votelist[$winner]\n";
-
 		open(PLAYNEXT, ">$basedir/playnext") || print STDERR "process_vote: could not open playnext\n";
 		print PLAYNEXT $votelist[$winner] . "\n";
 		close(PLAYNEXT);
@@ -851,8 +852,6 @@ sub build_playlist {
 			push(@filelist, $_ . "\n");
 		}
 	}
-
-	print STDERR "new maxindex filelist: " . $#filelist . "\n";
 
 	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
 	print FILELIST @filelist;
