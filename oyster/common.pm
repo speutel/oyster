@@ -58,7 +58,7 @@ sub get_cover {
 	return '';
     } else {
 	return "<img src='data:image/$filetype;base64," . $base64 .
-	    "' width='100' style='float:right; margin-left:20px; margin-right: 20px;'>";
+	    "' width='100' style='float:right; margin-left:20px; margin-right: 20px;' alt='Cover'>";
     }
 
 }
