@@ -50,6 +50,7 @@ my $cssclass='file2';
 my $maxscore = (sort {$b <=> $a} values(%score))[0];
 
 while ($maxscore > 0) {
+
     my @files = ();
 
     foreach my $key (keys(%score)) {
@@ -82,6 +83,8 @@ while ($maxscore > 0) {
     }
 
     $maxscore--;
+
+    print "<tr><td colspan=2>&nbsp;</td></tr>";
 
 }
 
