@@ -39,16 +39,12 @@ if ( ! $pid ) {
 	$file = <FILENAME>;
 	close(FILENAME);
 
-	$file =~ /.*\.([^\.]*$)/;
-	$suffix = $1;
-
-	chomp($suffix);
 	chomp($file);
 
-	if ( $suffix eq "mp3" ){
+	if ( $file =~ /mp3$/i ){
 		$command = $mp3_player . ' ' . '"' . $file . '"';
 		exec($command);
-	} elsif ( ($suffix eq "ogg") ) {
+	} elsif ( $file =~ /ogg$/i ) {
 		$command = $ogg_player . ' ' . '"' . $file . '"';
 		#$command = $ogg_player . ' ' . '"' . $file . '" 2&>>' . $basedir . '/err';
 		exec($command);
