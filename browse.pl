@@ -3,7 +3,7 @@ use CGI qw/:standard/;
 
 print header, start_html('Oyster-GUI');
 
-my $basedir='/Multimedia/Audio/';
+my $basedir = '/Multimedia/Audio/';
 my $rootdir=$basedir;
 
 if (param()) {
@@ -15,7 +15,10 @@ if (param()) {
 
 $basedir = $rootdir if (!($basedir =~ /^\Q$rootdir\E/));
 
-print h1("Aktuelles Verzeichnis: $basedir");
+my $shortdir = $basedir;
+$shortdir =~ s/^\Q$rootdir\E//;
+
+print h1("$shortdir");
 
 my $globdir = $basedir;
 $globdir =~ s/\ /\\\ /g;
@@ -25,7 +28,7 @@ my $topdir = $basedir;
 $topdir =~ s/\/[^\/]*\/$//;
 
 print "<a href='browse.pl?dir=$topdir/'>Eine Ebene h&ouml;her</a><br>";
-print "<table>";
+print "<table width='100%'>";
 
 my @files = my @dirs = ();
 
