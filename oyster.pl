@@ -68,7 +68,7 @@ sub main {
 sub get_control {
 	# get control-string from control-FIFO
 
-	open(CONTROL, "$basedir/control");
+	open(CONTROL, "$basedir/control") || die "get_control: could not open control\n";
 	$control = <CONTROL>;
 	close(CONTROL);
 
@@ -272,6 +272,16 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}
+
+	elsif ( $control =~ /^ENQUEUE/ ) {
+
+		## enqueue a file (vote without add-lastvotes
+		
+		$control =~ /^ENQUEUE\ (.*)$/;
+		enqueue($1);
+		get_control();
+		interpret_control();
+	}
 	
 	elsif ( $control =~ /^PAUSE/) {
 
@@ -386,7 +396,7 @@ sub enqueue_list {
 	my $list_path = $list;
 	$list_path =~ s@/[^/]*@/@;
 	
-	open(LIST, $list);
+	open(LIST, $list) || print STDERR "enqueue_list: could not open playlist\n";
 	while( my $line = <LIST> ) {
 		chomp($line);
 		my $enqueue_file = oyster::conf->rel_to_abs($line, $list_path);
@@ -443,13 +453,15 @@ sub enqueue {
 }
 
 sub add_lastvotes {
+	# lastvotes is a RRD-style filelist, on file per line, oldest file is
+	# overwritten when the limit is reached
 	my $added_file = $_[0];
 
 	$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
 	$lastvotes[$lastvotes_pointer] = $added_file . "\n";
 	$lastvotes_exist = "true";
 	
-	open(LASTVOTES, ">$lastvotes_file");
+	open(LASTVOTES, ">$lastvotes_file") || print STDERR "add_lastvotes: could not open lastvotes_file\n";
 	print LASTVOTES $lastvotes_pointer . "\n";
 	foreach my $entry ( @lastvotes ) {
 		print LASTVOTES $entry;
@@ -479,11 +491,11 @@ sub process_vote {
 		chomp $tmpfile;
 		print STDERR "process_vote: unvoting $tmpfile\n";
 		unvote($tmpfile);
-	
+
 	}
 	
 	# write $basedir/votes
-	open(VOTEFILE, ">$votefile") || die $!;
+	open(VOTEFILE, ">$votefile") || print STDERR "process_vote: could not open votefile\n";
 	foreach my $entry (@votelist) {
 		print VOTEFILE "$entry,$votehash{$entry}\n";
 	}
@@ -503,9 +515,10 @@ sub process_vote {
 	if ($votehash{$votelist[$winner]} > 0) {
 		print STDERR "winner is $votelist[$winner]\n";
 		
-		open(PLAYNEXT, ">$basedir/playnext") || die $!;
+		open(PLAYNEXT, ">$basedir/playnext") || print STDERR "process_vote: could not open playnext\n";
 		print PLAYNEXT $votelist[$winner] . "\n";
 		close(PLAYNEXT);
+
 	}
 	
 }
@@ -514,7 +527,7 @@ sub cleanup {
 
 	## save permanent data
 	# save lastvotes-list
-	open(LASTVOTES, ">$lastvotes_file");
+	open(LASTVOTES, ">$lastvotes_file") || die "cleanup: could not open lastvotes_file for writing\n";
 	print LASTVOTES $lastvotes_pointer . "\n";
 	foreach my $entry ( @lastvotes ) {
 		print LASTVOTES $entry;
@@ -532,7 +545,7 @@ sub load_list {
 	
 	my $listname = $_[0];
 
-	open(LISTIN, "$list_dir/$listname");
+	open(LISTIN, "$list_dir/$listname") || print STDERR "load_list: could not open list\n";
 	@filelist = <LISTIN>;
 	close(LISTIN);
 
@@ -550,7 +563,7 @@ sub save_list {
 		mkdir($list_dir);
 	}
 
-	open(LISTOUT, ">$list_dir/$listname");
+	open(LISTOUT, ">$list_dir/$listname") || print STDERR "save_list: could not open list for writing\n";
 	print LISTOUT @filelist;
 	close(LISTOUT);
 
@@ -559,7 +572,7 @@ sub save_list {
 
 sub get_list {
 	
-	open(CONTROL, "$basedir/control");
+	open(CONTROL, "$basedir/control") || die "could not open control!";
 	@filelist = <CONTROL>;
 	close(CONTROL);
 
@@ -588,7 +601,6 @@ sub init {
 	if ( ! -e $basedir) {
 		mkdir($basedir);
 	} else {
-		print "/tmp/oyster exists ";
 		open(OTHER, "$basedir/pid");
 		my $otherpid = <OTHER>;
 		close(OTHER);
@@ -596,15 +608,11 @@ sub init {
 		
 		my $othercmd = `ps -o cmd= $otherpid`;
 		if ( $othercmd =~ /oyster\.pl/ ) {
-			print "and oyster is running. Trying to UNPAUSE... ";
 			open(OTHER, ">$basedir/control");
 			print OTHER "UNPAUSE\n";
 			close(OTHER);
-			print "success!\n";
-			print "Ich muss weg.\n";
 			exit;
 		} else {
-			print "but oyster is not running.\n";
 			unlink($basedir);
 		}
 			
@@ -632,14 +640,14 @@ sub init {
 	}
 	# open filelist and read it into memory
 	if ($ARGV[0]) {
-		open (FILELIST, $ARGV[0]);
+		open (FILELIST, $ARGV[0]) || die "init: could not read filelist";
 		@filelist = <FILELIST>;
 		close(FILELIST);
 	} else {
 		#build default filelist - list all files in $media_dir
 		system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
-		open (FILELIST, "$list_dir/default");
-    @filelist = <FILELIST>;
+		open (FILELIST, "$list_dir/default") || die "init: could not open default filelist";
+		@filelist = <FILELIST>;
 		close(FILELIST);
 	}
 	
