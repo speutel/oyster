@@ -509,14 +509,25 @@ sub listsearch {
 			my $cutnewpath = $newpath;
 			$cutnewpath =~ s/\/$//;
 
-			if (!($basepath eq '/')) {
+			if ($basepath ne '/') {
 				my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
 				print "<div style='padding-left: 1em;'>";
+
+				print "<table width='100%'><tr><td align='left'>";
 				print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
+				print "</td><td align='right'>";
+				print a({href=>"editplaylist.pl?action=adddir&playlist=$playlist" .
+						"&toadd=${escapeddir}&dir=${escapeddir}${framestr}"}, 'Add');
+				print "</td></tr></table>\n";
 				$newpath = "$basepath$newpath";
 			}  else {
 				my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
+				print "<table width='100%'><tr><td align='left'>";
 				print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
+				print "</td><td align='right'>";
+				print a({href=>"editplaylist.pl?action=adddir&playlist=$playlist" .
+						"&toadd=${escapeddir}&dir=${escapeddir}${framestr}"}, 'Add');
+				print "</td></tr></table>\n";
 				$newpath = "/$newpath";
 			}
 
