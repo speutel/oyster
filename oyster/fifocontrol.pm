@@ -70,6 +70,9 @@ sub do_action {
     } elsif (($action eq 'loadlist') && ($file)) {
 	print CONTROL "LOAD $file";
 	close CONTROL;
+    } elsif (($action eq 'enqueue') && ($file)) {
+	print CONTROL "ENQUEUE $file";
+	close CONTROL;
     }
 
     return $status;
