@@ -11,17 +11,79 @@ oyster::common->navigation_header();
 my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 
+# Load logfile into permanent array
+
 open (LOG, "${config{'savedir'}}logs/$playlist");
 my @log = <LOG>;
 my @worklog = @log;
 close (LOG);
 
-my @lastplayed = ();
-my $votedfiles = 0;
-my $randomfiles = 0;
-my $scoredfiles = 0;
-my @mostplayed = get_mostplayed();
+my (
+    @lastplayed, # The last 10 played songs
+    @mostplayed, # The "Top 10"
+    %timesplayed # Stores, how often a file has been played
+    ) = ();
+
+my (
+    $votedfiles,  # Number of files played because of voting
+    $randomfiles, # Number of files played at random
+    $scoredfiles, # Number of files played because of scoring
+    ) = 0;
+
+my $check = ''; # Check, if a file was blacklisted before counting it
+
+foreach (@worklog) {
+    chomp($_);
+    (my $playreason, my $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
+    if (($playreason ne 'BLACKLIST') && ($check ne '')) {
+	push (@lastplayed, "$check");
+    }
+    if ($#lastplayed > 9) {
+	shift (@lastplayed);
+    }
+    $check = '';
+    if ($playreason eq 'DONE') {
+	if ($timesplayed{$filename}) {
+	    $timesplayed{$filename}++;
+	} else {
+	    $timesplayed{$filename} = 1;
+	}
+    } elsif ($playreason eq 'VOTED') {
+	$votedfiles++;
+	$check = "$filename, $playreason";
+    } elsif ($playreason eq 'PLAYLIST') {
+	$randomfiles++;
+	$check = "$filename, $playreason";
+    } elsif ($playreason eq 'SCORED') {
+	$scoredfiles++;
+	$check = "$filename, $playreason";
+    }
+}
+
+# Get the maximum value for $maxplayed
+
+my $maxplayed = 0;   # How often the Top-1-Song has been played
+
+foreach my $filename (keys %timesplayed) {
+    $maxplayed = $timesplayed{$filename} if $timesplayed{$filename} > $maxplayed;
+}
+
+# Put the Top-10-Songs in @mostplayed
+
+my $counter = 10;
+while (($maxplayed > 0) && ($counter > 0)) {
+    foreach my $filename (keys %timesplayed) {
+	if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
+	    push (@mostplayed, "${filename}, $timesplayed{$filename}");
+	    $counter--;
+	}
+    }
+    $maxplayed--;
+}
+
 my $totalfilesplayed = $votedfiles + $randomfiles + $scoredfiles;
+
+# Print the collected data
 
 print h1('Most played songs');
 
@@ -47,6 +109,8 @@ foreach my $line (@mostplayed) {
     print "<td class='$cssclass' align='center'>$timesplayed</td></tr>\n";
 }
 print "</table>";
+
+# Recently played songs
 
 print h1('Recently played songs');
 
@@ -77,6 +141,8 @@ foreach my $line (@lastplayed) {
 
 print "</table>";
 
+# Some numbers
+
 print h1('Some numbers');
 
 my $totalfiles = `wc -l  ${config{savedir}}lists/$playlist`;
@@ -97,63 +163,6 @@ print "</table>";
 print end_html;
 
 exit 0;
-
-sub get_mostplayed {
-
-    my @mostplayed = ();
-    my %timesplayed = ();
-    my $maxplayed = 0;
-
-    my ($playreason, $filename);
-    my $line;
-    my $check = '';
-
-    foreach $line (@worklog) {
-	chomp($line);
-	$_ = $line;
-	($playreason, $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
-	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
-	    push (@lastplayed, "$check");
-	}
-	if ($#lastplayed > 9) {
-	    shift (@lastplayed);
-	}
-	$check = '';
-	if ($playreason eq 'DONE') {
-	    if ($timesplayed{$filename}) {
-		$timesplayed{$filename}++;
-		$maxplayed++ if ($timesplayed{$filename} > $maxplayed);
-	    } else {
-		$timesplayed{$filename} = 1;
-		$maxplayed = 1 if ($maxplayed == 0);
-	    }
-	} elsif ($playreason eq 'VOTED') {
-            $votedfiles++;
-	    $check = "$filename, $playreason";
-        } elsif ($playreason eq 'PLAYLIST') {
-            $randomfiles++;
-	    $check = "$filename, $playreason";
-        } elsif ($playreason eq 'SCORED') {
-            $scoredfiles++;
-	    $check = "$filename, $playreason";
-        }
-
-    }
-
-    my $counter = 10;
-    while (($maxplayed > 0) && ($counter > 0)) {
-	foreach my $filename (keys %timesplayed) {
-	    if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
-		push (@mostplayed, "${filename}, $timesplayed{$filename}");
-		$counter--;
-	    }
-	}
-	$maxplayed--;
-    }
-
-    return @mostplayed;
-
-}
 
 sub get_blacklisted {
 
