@@ -94,7 +94,7 @@ close LOG;
 
 my $albumdir = $mediadir . $file;
 $albumdir =~ s/[^\/]*$//;
-my $coverdata = oyster::common->get_cover($albumdir, "200");
+my $coverdata = oyster::common->get_cover($albumdir, $config{'coverwidth'});
 
 print "<table border='0' width='100%'>";
 if ($tag{'title'}) {
