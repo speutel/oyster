@@ -145,16 +145,15 @@ sub listdir {
 
 	    my $cutnewpath = $newpath;
 	    $cutnewpath =~ s/\/$//;
-	    $cutnewpath = escapeHTML($cutnewpath);
 
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'>";
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
 		$newpath = "/$newpath";
 	    }
 
