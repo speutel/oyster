@@ -580,6 +580,20 @@ sub interpret_control {
 		interpret_control();
 	}
 
+	elsif ( $control =~ /^RELOADCONFIG/ ) {
+		
+		## reloads values from configfile (does not set paths,
+		## that's not possible without stopping oyster)
+		
+		%config = oyster::conf->get_config($conffile);
+		$voteplay_percentage = $config{'voteplay'};
+		$scores_size = $config{'maxscored'};
+		update_scores();
+
+		get_control();
+		interpret_control();
+	}
+
 	else { # fall through
 		get_control();
 		interpret_control();
@@ -841,6 +855,14 @@ sub update_scores {
 		# cut off "dangling" entries
 		if ( $#scores > $scores_size ) {
 			splice(@scores, $scores_size);
+
+			open(SCORED, ">$scores_file");
+			print SCORED $scores_pointer . "\n";
+			foreach my $entry ( @scores ) {
+				print SCORED $entry;
+			}
+			close(SCORED);
+
 		}
 
 		$scores_exist = "true";
