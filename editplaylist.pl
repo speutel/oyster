@@ -293,7 +293,7 @@ sub browse {
 
 	my $escapeddir = uri_escape($topdir, "^A-Za-z");
 	print a({href=>"editplaylist.pl?action=addbrowse" .
-	    "&playlist=$playlist&dir=${escapeddir}${framestr}'"}, 'One level up'), br, br;
+	    "&playlist=$playlist&dir=${escapeddir}${framestr}"}, 'One level up'), br, br;
 	
     } elsif (!(-e "$config{mediadir}$givendir")) {   
 	print h1('Error!');
