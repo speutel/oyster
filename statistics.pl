@@ -16,6 +16,7 @@ my @log = <LOG>;
 my @worklog = @log;
 close (LOG);
 
+my @played = ();
 my $votedfiles = 0;
 my $randomfiles = 0;
 my $scoredfiles = 0;
@@ -106,12 +107,18 @@ sub get_mostplayed {
     my %timesplayed = ();
     my $maxplayed = 0;
 
-    foreach my $line (@worklog) {
-	my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
+    my ($playreason, $filename);
+    my $line;
+    my $check = '';
+
+    foreach $line (@worklog) {
 	chomp($line);
 	$_ = $line;
-	($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
-	    m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
+	($playreason, $filename) = m@^[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)$@;
+	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
+	    push (@played, "$check");
+	}
+	$check = '';
 	if ($playreason eq 'DONE') {
 	    if ($timesplayed{$filename}) {
 		$timesplayed{$filename}++;
@@ -122,28 +129,23 @@ sub get_mostplayed {
 	    }
 	} elsif ($playreason eq 'VOTED') {
             $votedfiles++;
+	    $check = "$filename, $playreason";
         } elsif ($playreason eq 'PLAYLIST') {
             $randomfiles++;
+	    $check = "$filename, $playreason";
         } elsif ($playreason eq 'SCORED') {
             $scoredfiles++;
+	    $check = "$filename, $playreason";
         }
 
     }
 
     my $counter = 10;
     while (($maxplayed > 0) && ($counter > 0)) {
-	foreach my $line (@worklog) {
-	    my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
-	    chomp($line);
-	    $_ = $line;
-        ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
-            m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-	    if (($playreason eq 'PLAYLIST') || ($playreason eq 'SCORED') || ($playreason eq 'VOTED')) {
-		if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
-		    push (@mostplayed, "${filename}, $timesplayed{$filename}");
-		    $timesplayed{$filename} = 0;
-		    $counter--;
-		}
+	foreach my $filename (keys %timesplayed) {
+	    if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
+		push (@mostplayed, "${filename}, $timesplayed{$filename}");
+		$counter--;
 	    }
 	}
 	$maxplayed--;
@@ -155,24 +157,7 @@ sub get_mostplayed {
 
 sub get_lastplayed {
 
-    my @played = ();
     my @lastplayed = ();
-    my $check = '';
-
-    foreach my $line (@worklog) {
-	my ($year, $month, $day, $hour, $minute, $second, $playreason, $filename);
-	chomp($line);
-	$_ = $line;
-        ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
-            m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-	if (($playreason ne 'BLACKLIST') && ($check ne '')) {
-	    push (@played, "$check");
-	}
-	$check = '';
-	if (($playreason eq 'PLAYLIST') || ($playreason eq 'SCORED') || ($playreason eq 'VOTED')) {
-	    $check = "$filename, $playreason";
-	}
-    }
 
     my $counter = @played - 10;
     if (@played < 10) {
