@@ -97,7 +97,9 @@ foreach (@worklog) {
 	} elsif ($playreason eq 'SCORED') {
 		$scoredfiles++;
 		$check = "$filename, $playreason";
-	}
+	} elsif ($playreason eq 'ENQUEUED') {
+		$check = "$filename, $playreason";
+	}	
 }
 
 # Get the maximum value for $maxplayed

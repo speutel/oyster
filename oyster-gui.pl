@@ -105,7 +105,8 @@ my %tag = oyster::taginfo->get_tag($info);
 $info =~ s/^\Q$config{'mediadir'}\E//;
 $info = uri_escape("/$info", "^A-Za-z");
 
-my $playreason = `tail -n 1 logs/default`;
+my $playlist = oyster::conf->get_playlist();
+my $playreason = `tail -n 1 logs/$playlist`;
 chomp($playreason);
 $playreason =~ s/^[^\ ]*\ //;
 $playreason =~ s/\ .*$//;
