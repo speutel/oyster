@@ -60,6 +60,7 @@ while ((!($next eq '')) || (my $line = <LOG>)) {
 	    $endreason = " / $endreason";
 	}
 	$filename =~ s/^\Q$config{'mediadir'}\E//;
+	$filename = "/$filename";
 	my $escapedfilename = uri_escape("$filename", "^A-Za-z");
 	print "<tr><td>$playreason$endreason</td>";
 	print "<td><a class='$cssclass' href='fileinfo.pl?file=$escapedfilename'>$display</a></td></tr>\n";
