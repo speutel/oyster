@@ -1,7 +1,15 @@
 #!/usr/bin/perl
-use CGI qw/:standard/;
+use CGI qw/:standard -no_xhtml/;
+use strict;
 
-print header, start_html('Oyster-GUI');
+print
+    header,
+    start_html(-title=>'Oyster-GUI',
+	       -style=>{'src'=>'layout.css'},
+	       -head=>CGI::meta({-http_equiv => 'Content-Type',
+				 -content    => 'text/html; charset=iso-8859-1'}));
+
+my ($votefile, $votedir);
 
 if (param()) {
     $votefile=param('vote');
@@ -11,10 +19,12 @@ if (param()) {
 
 print "<meta http-equiv='refresh' content='1; URL=browse.pl?dir=$votedir'>";
 
-print h2("$votefile");
+if (!($votefile eq '')) {
+    print h2("$votefile");
 
-open (CONTROL, ">>/tmp/oyster/control");
-print CONTROL "VOTE $votefile";
-close CONTROL;
+    open (CONTROL, ">>/tmp/oyster/control");
+    print CONTROL "VOTE $votefile";
+    close CONTROL;
+}
 
 print end_html;
