@@ -75,6 +75,23 @@ if (!($search eq '')) {
 	}
     }
     @results = sort @results;
+    my $maxdepth = 0;
+    foreach my $result (@results) {
+	my $line = $result;
+	my $counter = 0;
+	while ($counter < $maxdepth) {
+	    $line =~ s/^[^\/]*\///;
+	    $counter++;
+	}
+	if ($line =~ /\//) {
+	    $maxdepth++;
+	}
+    }
+    $maxdepth--;
+    while ($maxdepth >= 0) {
+	@results = sort_results($maxdepth);
+	$maxdepth--;
+    }
     listdir('',0);
 
 }
@@ -129,5 +146,27 @@ sub listdir {
     }
 
     return ($counter);
+
+}
+
+sub sort_results {
+    my $depth = $_[0];
+    my (@dirs, @files) = ();
+
+    foreach my $result (@results) {
+	my $line = $result;
+	my $counter = $depth;
+	while ($counter > 0) {
+	    $line =~ s/^[^\/]*\///;
+	    $counter--;
+	}
+	if ($line =~ /\//) {
+	    push (@dirs, $result);
+	} else {
+	    push (@files, $result);
+	}
+    }
+
+    return (@dirs, @files);
 
 }
