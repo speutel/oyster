@@ -9,6 +9,7 @@ if (param()) {
 	open (CONTROL, '>/tmp/oyster/control');
 	print CONTROL 'NEXT';
 	close CONTROL;
+	sleep 1;
     }
 }
 
