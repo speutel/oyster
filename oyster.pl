@@ -206,6 +206,11 @@ sub init {
 	system("/usr/bin/mkfifo $basedir/control");
 	system("/usr/bin/mkfifo $basedir/kidplay");
 	chmod 0666, "$basedir/control";
+
+	# favmode is off
+	open(FAV, ">$basedir/favmode");
+	print FAV "off\n";
+	close(FAV);
 }
 
 sub choose_file {
@@ -587,7 +592,7 @@ sub interpret_control {
 		# play only from scores
 		#
 		$voteplay_percentage = 100;
-		open(FAV, "$basedir/favmode");
+		open(FAV, ">$basedir/favmode");
 		print FAV "on\n";
 		close(FAV);
 	}
@@ -597,7 +602,7 @@ sub interpret_control {
 		# play only from scores
 		
 		$voteplay_percentage = $config{'voteplay'};
-		open(FAV, "$basedir/favmode");
+		open(FAV, ">$basedir/favmode");
 		print FAV "off\n";
 		close(FAV);
 	}
