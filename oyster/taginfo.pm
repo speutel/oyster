@@ -158,6 +158,13 @@ sub get_mp3_tags {
 			$tag{'track'} = oyster::common->remove_html($1);
 		} elsif ($line =~ /^TRCK\ \(.*\)\:\ (.*)$/) {
 			$tag{'track'} = oyster::common->remove_html($1);
+		} elsif ($line =~ /^Length\:\ (.*)$/) {
+			my $playtimeminutes = int($1 / 1000 / 60);
+			my $playtimeseconds = ($1 / 1000) % 60;
+			if ($playtimeseconds < 10) {
+				$playtimeseconds = '0' . $playtimeseconds;
+			}
+			$tag{'playtime'} = oyster::common->remove_html($playtimeminutes .':' . $playtimeseconds);
 		}
 	}
 
