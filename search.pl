@@ -16,33 +16,77 @@ print "<hr>";
 
 my $basedir = '/Multimedia/Audio/';
 my $rootdir=$basedir;
-my $search;
+my $search='';
 
-if (param()) {
+if (param('search')) {
     $search=param('search');
-    print "<form action='search.pl'><input type='text' name='search' value='$search'>";
-    print "<input type='submit' value='Search'></form>";
+}
+
+print "<form action='search.pl'><input type='text' name='search' value='$search'>";
+print "<input type='submit' value='Search'></form>";
+
+my @results = ();
+
+if (!($search eq '')) {
     open (LIST, "lists/default");
     my @list = <LIST>;
     foreach my $line (@list) {
-	chomp($line);
 	$line =~ s/\Q$basedir\E//;
 	if ($line =~ /\Q$search\E/i) {
-	    my @dirs = split(/\//, $line);
-	    my $incdir = '';
-	    foreach my $partdir (@dirs) {
-		my $escapeddir = uri_escape("$rootdir$incdir$partdir", "^A-Za-z");
-		if (($partdir =~ /mp3$/) || ($partdir =~ /ogg$/)) {
-		    print "<a class='file' href='fileinfo.pl?file=$escapeddir'>$partdir</a>";
-		} else {
-		    print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
-		}
-		$incdir = $incdir . "$partdir/";
-	    }
-	    print "<br><br>\n";
+	    chomp($line);
+	    push (@results, $line);
 	}
     }
-} else {
-    print "<form action='search.pl'><input type='text' name='search'>";
-    print "<input type='submit' value='Search'></form>";
+    listdir('',0);
+
+}
+    
+print end_html;
+
+exit 0;
+
+sub listdir {
+    my $basepath = $_[0];
+    my $counter = $_[1];
+
+    while (($counter < @results) && ($results[$counter] =~ /^\Q$basepath\E/)) {
+	my $newpath = $results[$counter];
+	$newpath =~ s/^\Q$basepath\E\///;
+	if ($newpath =~ /\//) {
+	    $newpath =~ /^([^\/]*)/;
+	    $newpath = $1;
+	    if (!($basepath eq '')) {
+		my $escapeddir = uri_escape("$basedir$basepath/$newpath", "^A-Za-z");
+		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
+		$newpath = "$basepath/$newpath";
+	    }  else {
+		my $escapeddir = uri_escape("$basedir/$newpath", "^A-Za-z");
+		print "<strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
+	    }
+	    $counter = listdir("$newpath",$counter);
+	    if (!($basepath eq '')) {
+		print "</div>";
+	    }
+	} else {
+	    print "<div style='padding-left: 1em;'>";
+	    while ($results[$counter] =~ /^\Q$basepath\E\//) {
+		my $filename = $results[$counter];
+		$filename =~ s/^.*\///;
+		$filename =~ /(.*)\.(...)$/;
+		my $nameonly = $1;
+		my $escapedfile = uri_escape("$basedir$basepath/$filename", "^A-Za-z");
+		print "<table width='100%'><tr>";
+		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='file'>$nameonly</a></td>";
+		print "<td align='right'><a href='vote.pl?vote=$escapedfile' class='file'>Vote</a></td>";
+		print "</tr></table>\n";
+		$counter++;
+	    }
+	    print "</div>";
+	}
+    }
+
+    $counter++;
+    
+    return ($counter);
+
 }
