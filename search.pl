@@ -20,6 +20,12 @@ if (param('searchtype')) {
     }
 }
 
+my $oysterruns = 0;
+
+if (-e $config{'basedir'}) {
+    $oysterruns = 1;
+}
+
 if (param('search')) {
     $search=param('search');
 }
@@ -183,7 +189,11 @@ sub listdir {
 		}
 		print "<table width='100%'><tr>";
 		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>" . escapeHTML($nameonly) . "</a></td>";
-		print "<td align='right'><a href='oyster-gui.pl?vote=$escapedfile' class='$cssclass' target='curplay'>Vote</a></td>";
+		if ($oysterruns) {
+		    print "<td align='right'><a href='oyster-gui.pl?vote=$escapedfile' class='$cssclass' target='curplay'>Vote</a></td>";
+		} else {
+		    print "<td></td>";
+		}
 		print "</tr></table>\n";
 		$counter++;
 	    }

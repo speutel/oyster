@@ -26,6 +26,12 @@ if (!(-e "$mediadir$file")) {
     exit 0;
 }
 
+my $oysterruns = 0;
+
+if (-e $config{'basedir'}) {
+    $oysterruns = 1;
+}
+
 print "<p>Info for ";
 
 my $subdir = my $fileonly = $file;
@@ -53,13 +59,17 @@ close (BLACKLIST);
 
 my $escapedfile = uri_escape("$file", "^A-Za-z");
 
+print "<table width='100%'><tr>";
+if ($oysterruns) {
+    print "<td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
+} else {
+    print "<td></td>\n";
+}
+my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
+
 if ($isblacklisted) {
-    print "<table width='100%'><tr><td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
-    my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
     print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>";
 } else {
-    print "<table width='100%'><tr><td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
-    my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
     print "<td align='right'><a class='file' href='blacklist.pl?affects=${regexpfile}&amp;action=add'>Add this song to Blacklist</td></tr></table>";
 }
 

@@ -19,6 +19,12 @@ if (param('dir')) {
     $givendir = '/' if ($givendir eq "..");
 }
 
+my $oysterruns = 0;
+
+if (-e $config{'basedir'}) {
+    $oysterruns = 1;
+}
+
 if ((!($givendir eq '/')) && (-e "$mediadir$givendir")) {
 
     print "<p><strong>Current directory: ";
@@ -97,7 +103,11 @@ foreach my $file (@files) {
 	my $escapedfile = $file;
 	$escapedfile =~ s/&/&amp;/g;
 	print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>$escapedfile</a></td>";
-	print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
+	if ($oysterruns) {
+	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
+	} else {
+	    print "<td></td>";
+	}
     } elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) {
 	my $escapeddir = "$givendir$file";
 	$escapeddir =~ s/\Q$mediadir\E//;
@@ -110,7 +120,11 @@ foreach my $file (@files) {
 	my $escapedfile = $file;
 	$escapedfile =~ s/&/&amp;/g;
 	print "<td><a class='$csslistclass' href='viewlist.pl?list=$escapeddir'>$escapedfile</a></td>";
-	print "<td><a class='$csslistclass' href='oyster-gui.pl?votelist=$escapeddir' target='curplay'>Vote</a></td>";
+	if ($oysterruns) {
+	    print "<td><a class='$csslistclass' href='oyster-gui.pl?votelist=$escapeddir' target='curplay'>Vote</a></td>";
+	} else {
+	    print "<td></td>";
+	}
     } else {
 	print "<td>$file</td>";
 	print "<td></td>";
