@@ -608,6 +608,7 @@ sub update_scores {
 	} else {
 		@scores = "";
 		$scores_pointer = 0;
+		$scores_exist = "false";
 	}
 	
 }
