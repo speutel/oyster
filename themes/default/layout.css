@@ -29,6 +29,12 @@ a.playlist2 {
   color: #ff5500;
 }
 
+p.blacklisted {
+  color: #FF0000;
+  font-weight: bold;
+  text-align: center;
+}
+
 .file {
   color: #FFCC00;
 }
