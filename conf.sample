@@ -19,5 +19,6 @@ maxscored=30
 # files from lastvotes is played.
 voteplay=10
 # coverfilenames is a comma-seperated list, which lists
-# all possible names for album-covers
-coverfilenames=cover.png,cover.jpg
+# all possible names for album-covers relative to the album.
+# Use ${album} to reference in filenames
+coverfilenames=../${album}.png,../${album}.jpg
