@@ -19,14 +19,26 @@ if (param('affects') && (param('action') eq 'test')) {
     $affects = param('affects');
 }
 
-$affects =~ s/&/&amp;/g;
+$affects = escapeHTML($affects);
 
-print "<form action='blacklist.pl'>";
-print "<table><tr>";
-print "<td><input type='text' name='affects' value='$affects'></td>";
-print "<td><input type='radio' name='action' value='test' checked> Test only<br>";
-print "<input type='radio' name='action' value='add'> Add to Blacklist</td>";
-print "<td style='padding-left: 2em;'><input type='submit' value='Go'></td></tr></table>\n</form>\n";
+# Create form
+
+my %labels = ('test' => ' Test Only', 'add' => ' Add to Blacklist');
+
+print start_form;
+
+my $textfield = textfield(-name=>'affects',-default=>'');
+my $radiobuttons = radio_group(-name=>'action',-values=>['test','add'],-default=>'test',
+			-linebreak=>'true',-labels=>\%labels);
+my $submit = submit(-value=>'Go',-style=>'margin-left: 2em;');
+
+print table({-border=>'0'},
+	    Tr([
+		td([$textfield,$radiobuttons,$submit])
+		])
+	    );
+
+print end_form;
 
 print p("<a href='blacklist.pl'>Show current blacklist</a>");
 
@@ -66,14 +78,17 @@ sub print_blacklist {
     $mediadir =~ s/\/$//;
 
     my %lineaffects = ();
+    my $totalaffected = 0;
 
     # Count affected files for each rule
 
     while (my $line = <LIST>) {
+	my $isblacklisted = 0;
 	chomp($line);
 	$line =~ s/^\Q$mediadir\E//;
 	foreach my $blacklistline (@blacklistlines) {
 	    if ($line =~ /$blacklistline/i) {
+		$isblacklisted = 1;
 		if ($lineaffects{$blacklistline}) {
 		    $lineaffects{$blacklistline}++;
 		} else {
@@ -81,14 +96,14 @@ sub print_blacklist {
 		}
 	    }
 	}
+	$totalaffected++ if ($isblacklisted);
     }
     close (LIST);
 
-    my $totalaffected = 0;
+
 
     print "<table width='100%'>";
     foreach my $line (@blacklistlines) {
-	$totalaffected += $lineaffects{$line};
 	my $escapedline = uri_escape("$line", "^A-Za-z");
 	print "<tr><td width='60%'>$line</td>";
 	print "<td width='25%' align='left'><a href='blacklist.pl?action=test&amp;affects=$escapedline'>Affects</a> ($lineaffects{$line})</td>";
@@ -185,7 +200,8 @@ sub delete_from_blacklist {
 
 sub listdir {
 
-    # lists the directory $basepath and recursive all subdirs
+    # listdir shows files from @results, sorted by directories
+    # $basepath is cut away for recursive use
 
     my $basepath = $_[0];
     my $counter = $_[1];
@@ -194,51 +210,69 @@ sub listdir {
 	my $newpath = $results[$counter];
 	$newpath =~ s/^\Q$basepath\E//;
 	if ($newpath =~ /\//) {
+
+	    # $newpath is directory and becomes the top one
+
 	    $newpath =~ /^([^\/]*\/)/;
 	    $newpath = $1;
 
+	    # do not add padding for the top level directory
+
 	    my $cutnewpath = $newpath;
 	    $cutnewpath =~ s/\/$//;
-	    my $escapedcutnewpath = $cutnewpath;
-	    $escapedcutnewpath =~ s/&/&amp;/g;
+	    $cutnewpath = escapeHTML($cutnewpath);
 
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
-		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$escapedcutnewpath</a></strong>\n";
+		print "<div style='padding-left: 1em;'>";
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
 		$newpath = "$basepath$newpath";
 	    }  else {
-		my $escapeddir = uri_escape("$cutnewpath", "^A-Za-z");
-		print "<strong><a href='browse.pl?dir=$escapeddir'>$escapedcutnewpath</a></strong>";
+		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
+		print strong(a({href=>"browse.pl?dir=$escapeddir"},$cutnewpath));
 		$newpath = "/$newpath";
 	    }
+
+	    # Call listdir recursive, then quit padding with <div>
+
 	    $counter = listdir($newpath,$counter);
-	     if (!($basepath eq '/')) {
+	    if (!($basepath eq '/')) {
 		print "</div>\n";
 	    }
 	} else {
+
+	    # $newpath is a regular file without leading directory
+
 	    print "<div style='padding-left: 1em;'>";
 	    while ($results[$counter] =~ /^\Q$basepath\E/) {
+
+		# Print all filenames in $basedir
+
 		my $filename = $results[$counter];
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
-		$nameonly =~ s/&/&amp;/g;
 		my $escapedfile = uri_escape("$basepath$filename", "^A-Za-z");
+
+		# $cssclass changes to give each other file
+		# another color
+
 		if ($cssclass eq 'file') {
 		    $cssclass = 'file2';
 		} else {
 		    $cssclass = 'file';
 		}
-		print "<a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>$nameonly</a><br>\n";
+		print a({href=>"fileinfo.pl?file=$escapedfile",class=>"$cssclass"},escapeHTML($nameonly)), br;
 		$counter++;
 	    }
-	    print "</div>";
+	    print "</div>\n";
 	}
     }
 
     return ($counter);
 
 }
+
 
 sub sort_results {
 
