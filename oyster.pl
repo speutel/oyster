@@ -115,6 +115,7 @@ sub init {
 
 		mkdir($basedir);
 	}
+	
 	# setup $savedir
 	if ( ! -e $savedir ) {
 		mkdir($savedir);
@@ -141,13 +142,13 @@ sub init {
 	print PLAYLIST "default\n";
 	close (PLAYLIST);
 
+	$playlist = "default";
+
 	# read old default-playlist (choose_file needs this for the first start)
 	open(DEFAULTLIST, "$savedir/lists/default");
 	@filelist = <DEFAULTLIST>;
 	close(DEFAULTLIST);
 	
-	$playlist = "default";
-
 	$media_dir =~ s/\/$//;
 
 	update_scores();
