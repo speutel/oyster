@@ -90,7 +90,6 @@ sub interpret_control {
 
 	if ( $control =~ /^NEXT/)  { 
 		$command = "kill " . &get_player_pid;
-		print DEBUG "system($command)\n";
 		system($command); 
 		sleep(2);
 		get_control();
@@ -111,7 +110,6 @@ sub interpret_control {
 	}	
 	elsif ( $control =~ /^QUIT/	) {  
 		$command = "kill " . &get_player_pid;
-		print DEBUG "system($command)\n";
 		system($command); 
 		get_control();
 		cleanup();
@@ -174,7 +172,6 @@ sub interpret_control {
 	}
 	elsif ( $control =~ /^PAUSE/) {
 		$command = "kill -19 " . &get_player_pid;
-		print DEBUG "system($command)\n";
 		system($command);
 		
 		open(STATUS, ">$basedir/status");
@@ -186,7 +183,6 @@ sub interpret_control {
 	}
 	elsif ( $control =~ /^UNPAUSE/) {
 		$command = "kill -18 " . &get_player_pid;
-		print DEBUG "system($command)\n";
 		system($command);
 		
 		open(STATUS, ">$basedir/status");
@@ -204,6 +200,26 @@ sub interpret_control {
 		get_control();
 		interpret_control();
 	}	
+	elsif ( $control =~ /^SCORE/ ) {
+		$control =~ /^SCORE\ (.)\ (.*)/;
+		$scored_file = $2;
+		if ( $1 eq "+" ) {
+			$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
+			$lastvotes[$lastvotes_pointer] = $scored_file . "\n";
+		} elsif ($1 eq "-" ) {
+			for ( my $i = 0; $i < $#lastvotes; $i++ ) {
+				if ( $lastvotes[$i] eq ($scored_file . "\n") ) {
+					splice(@lastvotes, $i, 1);
+					if ( $lastvotes_pointer != 0 ) {
+						--$lastvotes_pointer;
+					}
+					last;
+				}
+			}
+		}
+		get_control();
+		interpret_control();
+	}
 	else {
 		# fall through
 		get_control();
@@ -217,14 +233,12 @@ sub get_player_pid {
 	while( $line = <PS> ) {
 		# " 1545 pts/1    RN     0:04 mpg321 -q"
 		if ( $line =~ /(mpg321|ogg123)/ ) {
-			print DEBUG $line;
 			$line =~ /^[\ ]*([0-9][0-9]*)\ /;
 			$player_pid = $1;
 			last;
 		}
 	}
 	close(PS);
-	print DEBUG "player_pid: $player_pid\n";
 	return $player_pid;
 }
 
