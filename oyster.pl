@@ -554,10 +554,11 @@ sub load_list {
 		print PLAYLIST $listname . "\n";
 		close(PLAYLIST);
 		$playlist = $listname;
-		$scores_file = "$savedir/scores/$playlist";
 	} else {
 		print STDERR "load_list: could not open list\n";
 	}
+
+	update_scores();
 	
 }
 
@@ -582,7 +583,7 @@ sub save_list {
 	close(PLAYLIST);
 
 	$playlist = $listname;
-	$scores_file = "$savedir/scores/$playlist";
+	update_scores();
 }
 
 sub get_list {
@@ -591,6 +592,24 @@ sub get_list {
 	@filelist = <CONTROL>;
 	close(CONTROL);
 
+}
+
+sub update_scores {
+	
+	$scores_file = "$savedir/scores/$playlist";
+	
+	if ( -e $scores_file ) {
+		open (SCORED, $scores_file) || die $!;
+		$scores_pointer = <SCORED>;
+		chomp($scores_pointer);
+		@scores = <SCORED>;
+		close(SCORED);
+		$scores_exist = "true";
+	} else {
+		@scores = "";
+		$scores_pointer = 0;
+	}
+	
 }
 
 sub init {
@@ -635,7 +654,6 @@ sub init {
 			
 		mkdir($basedir);
 	}
-
 	# setup $savedir
 	if ( ! -e $savedir ) {
 		mkdir($savedir);
@@ -675,19 +693,10 @@ sub init {
 	close (PLAYLIST);
 	
 	$playlist = "default";
-	$scores_file = "$savedir/scores/$playlist";
 
 	$media_dir =~ s/\/$//;
 	
-	# read last votes
-	if ( -e $scores_file ) {
-		open (SCORED, $scores_file) || die $!;
-		$scores_pointer = <SCORED>;
-		chomp($scores_pointer);
-		@scores = <SCORED>;
-		close(SCORED);
-		$scores_exist = "true";
-	}
+	update_scores();
 
 	# initialize random
 	srand;
