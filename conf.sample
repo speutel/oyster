@@ -1,12 +1,12 @@
 # basedir tells oyster where it should put its dynamic files,
 # its the FIFOs it needs and the log and infofile.
-basedir=/tmp/oyster
+basedir=/tmp/oyster/
 # savedir tells oyster where to save files that it needs for 
 # more than one session, for example the votes you did and
 # the playlists you save
-savedir=/var/www/oyster
+savedir=/var/www/oyster/
 # mediadir is where your files are. ;)
 # If you don't give oyster a playlist in the commandline, 
 # it will search your files under this directory and build a 
 # default playlist from these.
-mediadir=/Multimedia/Audio
+mediadir=/Multimedia/Audio/
