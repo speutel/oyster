@@ -202,7 +202,7 @@ sub process_vote {
 	
 	open(VOTEFILE, ">$votefile") || die $!;
 	foreach my $entry (@votelist) {
-		print VOTEFILE "$entry\n";
+		print VOTEFILE "$entry,$votehash{$entry}\n";
 	}
 	close(VOTEFILE);
 	
