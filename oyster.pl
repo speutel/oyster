@@ -581,12 +581,13 @@ sub init {
 		
 		my $othercmd = `ps -o comm= $otherpid`;
 		if ( $othercmd =~ /oyster\.pl/ ) {
-			print "and oyster is running. Trying to QUIT... ";
+			print "and oyster is running. Trying to UNPAUSE... ";
 			open(OTHER, ">$basedir/control");
-			print OTHER "QUIT\n";
+			print OTHER "UNPAUSE\n";
 			close(OTHER);
-			sleep 1;
-			print "success!\n"
+			print "success!\n";
+			print "Ich muss weg.\n";
+			exit;
 		} else {
 			print "but oyster is not running.\n";
 			unlink($basedir);
