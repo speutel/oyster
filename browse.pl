@@ -167,6 +167,8 @@ if (param('playlist')) {
 	# Escape whitespaces and apostrophe
 	$globdir =~ s/\ /\\\ /g;
 	$globdir =~ s/\'/\\\'/g;
+	$globdir =~ s/\[/\\\[/g;
+	$globdir =~ s/\]/\\\]/g;
 	@entries = <$globdir*>;
 }
 
