@@ -519,8 +519,8 @@ sub init {
     @filelist = <FILELIST>;
 		close(FILELIST);
 	}
-
-	$media_dir = s/\/$//;
+	
+	$media_dir =~ s/\/$//;
 	
 	# read last votes
 	if ( -e $lastvotes_file ) {
@@ -587,11 +587,13 @@ sub choose_file {
 		# and if $file matches, choose again
 		if ( -e "$savedir/blacklist" ) {
 			my $tmpfile = $file;
-			$tmpfile =~ /$media_dir(.*)/;
-			$tmpfile = $1;
+			$tmpfile =~ s/\Q$media_dir//;
+			print STDERR "mediadir is $media_dir\n";
+			print STDERR "blacklist: trying to match $tmpfile with ";
 			open(BLACKLIST, "$savedir/blacklist");
 			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
+				print STDERR $regexp . "\n";
 				if ( $tmpfile =~ /$regexp/ ) {
 					add_log($file, "BLACKLIST");
 					choose_file();
