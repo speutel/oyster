@@ -268,7 +268,7 @@ sub interpret_control {
 			$lastvotes_pointer = ++$lastvotes_pointer % $lastvotes_size;
 			$lastvotes[$lastvotes_pointer] = $scored_file . "\n";
 		} elsif ($1 eq "-" ) {
-			for ( my $i = 0; $i < $#lastvotes; $i++ ) {
+			for ( my $i = 0; $i <= $#lastvotes; $i++ ) {
 				if ( $lastvotes[$i] eq ($scored_file . "\n") ) {
 					splice(@lastvotes, $i, 1);
 					if ( $lastvotes_pointer != 0 ) {
