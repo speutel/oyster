@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
+use URI::Escape;
 
 open(INFO, "/tmp/oyster/info");
 $info = <INFO>;
@@ -65,6 +66,8 @@ if ($title eq "") {
 } else {
     $title = "$artist - $title";
 }
+
+$info = uri_escape("$info", "^A-Za-z");
 
 print
     h1("<a href='fileinfo.pl?file=$info' target='browse'>$title</a>"),
