@@ -71,7 +71,7 @@ while (my $line = <LOG>) {
     ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
 	m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
     if ($filename =~ /\Q$file\E/) {
-	if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
+	if ($playreason eq 'DONE') {
 	    $timesplayed++;
 	}
     }
