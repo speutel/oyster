@@ -344,7 +344,7 @@ sub choose_file {
 		$votelist{$voteentry} = 0;
 		&process_vote;
 	} else {
-		if ( int(rand(30)) < 10 ) {
+		if ( int(rand(100)) < 10 ) {
 			# choose file from lastvotes with a chance of 10/30 = 30%
 			my $index = rand @lastvotes;
 			$file = $lastvotes[$index];
