@@ -405,7 +405,7 @@ sub unvote {
 		print STDERR "file in votelist: $votelist[$i], ";
 		if ($unvote_file eq $votelist[$i]) {
 			print STDERR "match: yes!\n";
-			$votehash{$votelist[$i]};
+			$votehash{$votelist[$i]} = 0;
 			splice(@votelist, $i, 1);
 			last;
 		}
@@ -567,15 +567,21 @@ sub init {
 	if ( ! ($media_dir =~ /.*\/$/) ) {
 		$media_dir = $media_dir . "/";
 	}
+	$basedir = $config{basedir};
 	
 	$voteplay_percentage = $config{"voteplay"};
 	$lastvotes_size = $config{'maxlastvotes'};
 	
 
 	# setup $basedir
-	if ( ! -x $basedir) {
+	if ( ! -e $basedir) {
 		mkdir($basedir);
 	} else {
+		print "/tmp/oyster exists\n";
+		open(OTHER, ">$basedir/control");
+		print OTHER "QUIT\n";
+		close(OTHER);
+		sleep 1;
 		unlink($basedir);
 		mkdir($basedir);
 	}
