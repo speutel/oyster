@@ -14,19 +14,19 @@ chomp($status);
 close(STATUS);
 
 if (param('action')) {
+    open (CONTROL, ">${basedir}control");
     my $action=param('action');
     if ($action eq 'skip') {
-	open (CONTROL, ">${basedir}control");
 	print CONTROL 'NEXT';
-	close CONTROL;
 	sleep 4;
     } elsif ($action eq 'start') {
 	system("perl oyster.pl &");
 	while (!(-e "${config{'basedir'}}info")) {
 	    sleep 1;
 	}
+    } elsif ($action eq 'stop') {
+	print CONTROL "QUIT";
     } elsif ($action eq 'pause') {
-	open (CONTROL, ">${basedir}control");
 	if ($status eq 'paused') {
 	    print CONTROL "UNPAUSE";
 	    $status = 'playing';
@@ -34,8 +34,12 @@ if (param('action')) {
 	    print CONTROL "PAUSE";
 	    $status = 'paused';
 	}
-	close CONTROL;
-    }
+    } elsif (($action eq 'scoreup') && (param('file'))) {
+	print CONTROL "SCORE + " . param('file');
+    } elsif (($action eq 'scoredown') && (param('file'))) {
+	print CONTROL "SCORE - " . param('file');
+    } 
+    close CONTROL;
 }
 
 if (param('vote')) {
@@ -75,6 +79,7 @@ close(INFO);
 my %tag = oyster::taginfo->get_tag($info);
 
 $info =~ s/^\Q$config{'mediadir'}\E//;
+$info = "/$info";
 $info = uri_escape("$info", "^A-Za-z");
 
 my $statusstr = '';
@@ -87,6 +92,8 @@ print "<table width='100%'>";
 print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a>$statusstr</strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
 print "</table>\n";
+print "<p><a href='oyster-gui.pl?action=scoreup&amp;file=$info'>Score up</a></p>";
+print "<p><a href='oyster-gui.pl?action=scoredown&amp;file=$info'>Score down</a></p>\n";
 
 open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
