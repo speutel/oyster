@@ -1,8 +1,5 @@
 #!/usr/bin/perl
 
-# commandline parameters:
-# only parameter is a file with a list of musicfiles to choose from randomly. (optional)
-
 use warnings;
 use strict;
 use oyster::conf;
@@ -742,7 +739,8 @@ sub init {
 	open (STDOUT, ">>/dev/null");
 	#open (DEBUG, ">/tmp/debug");
 	open (LOG, ">>$savedir/logs/$playlist");
-	open (RANDOM, ">>/tmp/oyster-random");
+	my $randomfile = ">>/tmp/oyster-random." . `date +%Y%m%d`;
+	open (RANDOM, $randomfile);
 
 	# make fifos
 	system("/usr/bin/mkfifo /tmp/oyster/control");
