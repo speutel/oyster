@@ -294,6 +294,9 @@ sub interpret_control {
 			## TODO use perl replacement for realpath
 			$file = $media_dir . "/" . $file;
 			$file =~ s/\ /\\\ /g;
+			$file =~ s/\(/\\\(/g;
+			$file =~ s/\)/\\\)/g;
+			$file =~ s/\`/\\\`/g;
 			open ( RP, "realpath $file |" );
 			$file = <RP>;
 			close(RP);
