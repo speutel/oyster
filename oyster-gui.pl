@@ -66,10 +66,10 @@ if ($status eq 'paused') {
 }
 
 print "<table width='100%'>";
-print "<tr><td colspan='2'><strong>Now playing:</strong></td><td align='center'><strong>Score:</strong></td></tr>";
+print "<tr><td colspan='2'><strong>Now playing:</strong></td><td align='center'><strong>Score</strong></td></tr>";
 print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$display</a>$statusstr</strong></td>";
 print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=skip'>Skip</a></td>";
-print "<td align='right' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
+print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong> ";
 print "<a href='oyster-gui.pl?action=scoreup&amp;file=$info'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>\n";
