@@ -13,6 +13,10 @@ a:hover {
   color: #04b4f4;
 }
 
+a.file {
+  color: #FFCC00;
+}
+
 input {
   background-color: #222222;
   color: #08c0e0;

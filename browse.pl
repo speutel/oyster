@@ -81,8 +81,8 @@ foreach my $file (@files) {
     print "<tr>";
     if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
 	my $escapeddir = uri_escape("$basedir$file", "^A-Za-z");
-	print "<td><a href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
-	print "<td><a href='vote.pl?vote=$escapeddir'>Vote</a></td>";
+	print "<td><a class='file' href='fileinfo.pl?file=$escapeddir'>$file</a></td>";
+	print "<td><a class='file' href='vote.pl?vote=$escapeddir'>Vote</a></td>";
     } else {
 	print "<td>$file</td>";
 	print "<td></td>";

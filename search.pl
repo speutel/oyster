@@ -33,7 +33,7 @@ if (param()) {
 	    foreach my $partdir (@dirs) {
 		my $escapeddir = uri_escape("$rootdir$incdir$partdir", "^A-Za-z");
 		if (($partdir =~ /mp3$/) || ($partdir =~ /ogg$/)) {
-		    print "<a href='fileinfo.pl?file=$escapeddir'>$partdir</a>";
+		    print "<a class='file' href='fileinfo.pl?file=$escapeddir'>$partdir</a>";
 		} else {
 		    print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
 		}
