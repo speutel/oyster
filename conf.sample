@@ -23,3 +23,6 @@ voteplay=10
 # Use ${album} to reference in filenames and ${albumus} if
 # you like to use underscores instead of whitespaces
 coverfilenames=../${album}.png,../${album}.jpg
+# coverwidth is the width of the cover displayed in
+# File Information
+coverwidth=150
