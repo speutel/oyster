@@ -26,14 +26,14 @@ if (param('search')) {
 
 # Create form
 
-my %labels = ('normal' => 'Normal', 'regex' => 'Regular Expression');
+my %labels = ('normal' => ' Normal', 'regex' => ' Regular Expression');
 
 print start_form;
 
 my $textfield = textfield(-name=>'search',-default=>'');
 my $radiobuttons = radio_group(-name=>'searchtype',-values=>['normal','regex'],-default=>'normal',
 			-linebreak=>'true',-labels=>\%labels);
-my $submit = submit(-name=>'button_name',-value=>'Search',-style=>'margin-left: 2em;');
+my $submit = submit(-value=>'Search',-style=>'margin-left: 2em;');
 
 print table({-border=>'0'},
 	    Tr([
