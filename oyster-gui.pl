@@ -33,7 +33,8 @@ if ($title eq "") {
 }
 
 print
-    h1("Oyster-GUI spielt $artist - $title"),
-    a({href=>'skip.sh'},'Skip'),
+    h1("$artist - $title"),
+    a({href=>'skip.sh'},'Skip'),p,
+    a({href=>'oyster-gui.pl'},'Refresh'),
     end_html;
 
