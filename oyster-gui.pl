@@ -2,6 +2,7 @@
 use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
+use oyster::conf;
 
 if (param()) {
     my $action=param('action');
@@ -22,7 +23,10 @@ print
 
 print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
 
-open(INFO, "/tmp/oyster/info");
+my %config = oyster::conf->get_config('oyster.conf');
+my $basedir = $config{'basedir'};
+
+open(INFO, "$basedir" . "info");
 my $info = <INFO>;
 chomp($info);
 $info =~ s/^np:\ //;
