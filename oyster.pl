@@ -6,6 +6,7 @@
 use warnings;
 use strict;
 use oyster::conf;
+use File::Find;
 use POSIX qw(strftime);
 
 my $savedir = `pwd`;
@@ -659,7 +660,7 @@ sub init {
 		close(OTHER);
 		chomp($otherpid);
 		
-		my $othercmd = `ps -o cmd= $otherpid`;
+		my $othercmd = `ps -o command= -p $otherpid`;
 		if ( $othercmd =~ /oyster\.pl/ ) {
 			open(OTHER, ">$basedir/control");
 			print OTHER "UNPAUSE\n";
@@ -703,11 +704,21 @@ sub init {
 #	}
 
 	#build default filelist - list all files in $media_dir
-	system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
-	open (FILELIST, "$list_dir/default") || die "init: could not open default filelist";
-	@filelist = <FILELIST>;
+	#system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
+	find( { wanted => \&is_audio_file, no_chdir => 1 }, $media_dir);
+	
+	sub is_audio_file {
+		if ( ($_ =~ /ogg$/i) or ($_ =~ /mp3$/i) ) {
+			push(@filelist, $_ . "\n");
+		}
+	}
+	
+	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
+	print FILELIST @filelist;
 	close(FILELIST);
 
+
+	
 	open (PLAYLIST, ">$basedir/playlist");
 	print PLAYLIST "default\n";
 	close (PLAYLIST);
