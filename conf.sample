@@ -6,8 +6,7 @@ basedir=/tmp/oyster/
 # the playlists you save
 savedir=/var/www/oyster/
 # mediadir is where your files are. ;)
-# If you don't give oyster a playlist in the commandline, 
-# it will search your files under this directory and build a 
+# oyster will search your files under this directory and build a 
 # default playlist from these.
 mediadir=/Multimedia/Audio/
 # theme specifies the chosen theme
