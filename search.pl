@@ -137,10 +137,12 @@ sub listdir {
 
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
+		$cutnewpath =~ s/&/&amp;/;
 		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
+		$cutnewpath =~ s/&/&amp;/;
 		print "<strong><a href='browse.pl?dir=$escapeddir'>$cutnewpath</a></strong>";
 		$newpath = "/$newpath";
 	    }
@@ -148,7 +150,7 @@ sub listdir {
 	    # Call listdir recursive, then quit padding with <div>
 
 	    $counter = listdir($newpath,$counter);
-	    if (!($basepath eq '')) {
+	    if (!($basepath eq '/')) {
 		print "</div>\n";
 	    }
 	} else {
@@ -180,7 +182,7 @@ sub listdir {
 		print "</tr></table>\n";
 		$counter++;
 	    }
-	    print "</div>";
+	    print "</div>\n";
 	}
     }
 
