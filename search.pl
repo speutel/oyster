@@ -33,6 +33,8 @@ if (param('search')) {
     $search=param('search');
 }
 
+# These variables control, which radio button is selected
+
 my ($normalchecked, $regexchecked) = '';
 
 if ($searchtype eq 'regex') {
@@ -55,8 +57,15 @@ my @results = ();
 my $cssclass='file2';
 
 if (!($search eq '')) {
+
+    # Search for files in default list
+
     open (LIST, "lists/default");
     my @list = <LIST>;
+
+    # Compare filenames with $search and add
+    # them to @results
+
     if ($searchtype eq 'normal') {
 	foreach my $line (@list) {
 	    $line =~ s/\Q$mediadir\E//;
@@ -74,8 +83,15 @@ if (!($search eq '')) {
 	    }
 	}
     }
+
+    # Sort @results alphabetically
+
     @results = sort @results;
-    my $maxdepth = 0;
+
+    # Determine maximum depth of directories for
+    # further sorting
+
+    my $maxdepth = -1;
     foreach my $result (@results) {
 	my $line = $result;
 	my $counter = 0;
@@ -87,11 +103,16 @@ if (!($search eq '')) {
 	    $maxdepth++;
 	}
     }
-    $maxdepth--;
+
+    # Sort directories before files in every depth
+
     while ($maxdepth >= 0) {
 	@results = sort_results($maxdepth);
 	$maxdepth--;
     }
+
+    # List directory in browser
+
     listdir('',0);
 
 }
@@ -101,6 +122,10 @@ print end_html;
 exit 0;
 
 sub listdir {
+
+    # listdir shows files from @results, sorted by directories
+    # $basepath is cut away for recursive use
+
     my $basepath = $_[0];
     my $counter = $_[1];
 
@@ -108,8 +133,14 @@ sub listdir {
 	my $newpath = $results[$counter];
 	$newpath =~ s/^\Q$basepath\E\///;
 	if ($newpath =~ /\//) {
+
+	    # $newpath is directory and becomes the top one
+
 	    $newpath =~ /^([^\/]*)/;
 	    $newpath = $1;
+
+	    # do not add padding for the top level directory
+
 	    if (!($basepath eq '')) {
 		my $escapeddir = uri_escape("$basepath/$newpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'><strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
@@ -118,18 +149,31 @@ sub listdir {
 		my $escapeddir = uri_escape("$newpath", "^A-Za-z");
 		print "<strong><a href='browse.pl?dir=$escapeddir'>$newpath</a></strong>";
 	    }
+
+	    # Call listdir recursive, then quit padding with <div>
+
 	    $counter = listdir("$newpath",$counter);
 	    if (!($basepath eq '')) {
 		print "</div>\n";
 	    }
 	} else {
+
+	    # $newpath is a regular file without leading directory
+
 	    print "<div style='padding-left: 1em;'>";
 	    while ($results[$counter] =~ /^\Q$basepath\E\//) {
+
+		# Print all filenames in $basedir
+
 		my $filename = $results[$counter];
 		$filename =~ s/^.*\///;
 		$filename =~ /(.*)\.(...)$/;
 		my $nameonly = $1;
 		my $escapedfile = uri_escape("$basepath/$filename", "^A-Za-z");
+
+		# $cssclass changes to give each other file
+		# another color
+
 		if ($cssclass eq 'file') {
 		    $cssclass = 'file2';
 		} else {
@@ -150,6 +194,10 @@ sub listdir {
 }
 
 sub sort_results {
+
+    # sort_results sorts a directory by
+    # "first dirs, then files in a given depth
+
     my $depth = $_[0];
     my (@dirs, @files) = ();
 
@@ -160,6 +208,9 @@ sub sort_results {
 	    $line =~ s/^[^\/]*\///;
 	    $counter--;
 	}
+
+	# If $line contains a '/', it is added to @dirs
+
 	if ($line =~ /\//) {
 	    push (@dirs, $result);
 	} else {
