@@ -196,7 +196,7 @@ sub delete_from_blacklist {
     }
     close (BLACKLIST);
     close (NEWBLACKLIST);
-    system ("rm -f ${savedir}blacklist.tmp");
+    unlink ("${savedir}blacklist.tmp");
 }
 
 sub listdir {
