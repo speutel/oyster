@@ -53,7 +53,7 @@ if ((!(-e "$basedir")) || ($action eq 'stop')) {
     exit 0;
 }
 
-if (!(-e "${basedir}info") || !(-e "${basedir}votes")) {
+if (!(-e "${basedir}info")) {
     print "<p>Oyster has not created needed files in ${basedir}";
     exit 0;
 }
