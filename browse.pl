@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
+use MIME::Base64;
 use strict;
 use oyster::conf;
 use oyster::common;
@@ -25,9 +26,31 @@ if (-e $config{'basedir'}) {
     $oysterruns = 1;
 }
 
-if ((!($givendir eq '/')) && (-e "$mediadir$givendir")) {
+if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 
-    print "<p><strong>Current directory: ";
+    print "<p>";
+
+    my @coverfiles = split(/,/, $config{'coverfilenames'});
+    my $filetype = 'jpeg';
+    my $base64 = "";
+    
+    foreach my $cover (@coverfiles) {
+	if (-e "$mediadir$givendir$cover") {
+	    open (COVER, "$mediadir$givendir$cover");
+	    while (read(COVER, my $buf, 60*57)) {
+		$base64 = $base64 . encode_base64($buf);
+	    }
+	    close (COVER);
+	    $filetype = 'gif' if ($cover =~ /\.gif$/);
+	    $filetype = 'png' if ($cover =~ /\.png$/);
+	    last;
+	}
+    }
+
+    print "<img src='data:image/$filetype;base64," . $base64 .
+	"' width='100' style='float:right; margin-right:20px;'>";
+
+    print "<strong>Current directory: ";
 
     my @dirs = split(/\//, $givendir);
     my $incdir = '';
@@ -39,7 +62,7 @@ if ((!($givendir eq '/')) && (-e "$mediadir$givendir")) {
 	$incdir = $incdir . "$partdir/";
     }
 
-    print "</strong></p>";
+    print "</strong></p><br clear='all'>";
 
     my $topdir = $givendir;
     $topdir =~ s/\Q$mediadir\E//;
@@ -126,8 +149,17 @@ foreach my $file (@files) {
 	    print "<td></td>";
 	}
     } else {
-	print "<td>$file</td>";
-	print "<td></td>";
+	my $iscover = 0;
+	my @coverfiles = split(/,/, $config{'coverfilenames'});
+	foreach my $cover (@coverfiles) {
+	    if ($file eq $cover) {
+		$iscover = 1;
+	    }
+	}
+	if ($iscover == 0) {
+	    print "<td>$file</td>";
+	    print "<td></td>";
+	}
     }
     print "</tr>\n";
 }
