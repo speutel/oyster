@@ -45,8 +45,13 @@ if ($frames) {
 }
 
 if (param('action') && (param('listname') || param('newlistname'))) {
-	my $file = param('listname') || param('newlistname');
-	oyster::fifocontrol->do_action(param('action'), $file, '');
+	if (param('action') eq 'confirmdelete') {
+		confirmdelete();
+		exit 0;
+	} else {
+		my $file = param('listname') || param('newlistname');
+		oyster::fifocontrol->do_action(param('action'), $file, '');
+	}
 }
 
 my $globdir = "${savedir}lists/";
@@ -93,7 +98,7 @@ foreach my $file (@files) {
 		"Load List</a></td>";
 		print "<td><a href='editplaylist.pl?action=edit&amp;" .
 		"playlist=${encfile}${framestr}'>Edit List</a></td>\n";
-		print "<td><a href='playlists.pl?action=delete&amp;" .
+		print "<td><a href='playlists.pl?action=confirmdelete&amp;" .
 		"listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
 
 	}
@@ -111,5 +116,18 @@ print hidden('frames','no') if (! $frames);
 
 print end_form;
 
-
 print end_html;
+
+sub confirmdelete {
+	my $playlist = param('listname');
+	my $enclist = uri_escape($playlist, "^A-Za-z");
+	print h1("Should $playlist be deleted?");
+	print a({-href=>"playlists.pl?action=delete&amp;listname=${enclist}${framestr}"},'Yes, delete it');
+	print br;
+	if ($frames) {
+		print a({-href=>"playlists.pl"},'No, return to overview');
+	} else {
+		print a({-href=>"playlists.pl?frames=no"},'No, return to overview');
+	}
+	print end_html;
+}
