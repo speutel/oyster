@@ -130,7 +130,6 @@ sub get_mp3_tags {
 	} elsif ($line =~ /^Lead\ .*\:\ (.*)/) {
 	    $tag{'artist'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^TPE1\ \(.*\)\:\ (.*)$/) {
-	    $_ = oyster::common->remove_html($line);
 	    $tag{'artist'} = oyster::common->remove_html($1);
 	} elsif ($line =~ /^Album\ \ \:\ (.*)Year\:\ ([0-9]*),\ Genre\:\ (.*)/) {
 	    $tag{'album'} = oyster::common->remove_html($1);
