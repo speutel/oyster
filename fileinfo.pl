@@ -43,7 +43,8 @@ foreach my $partdir (@dirs) {
 print "$fileonly</p>\n";
 
 my $isblacklisted = 0;
-open (BLACKLIST, "${config{'savedir'}}blacklist");
+my $playlist = oyster::conf->get_playlist();
+open (BLACKLIST, "${config{'savedir'}}blacklists/$playlist");
 while (my $rule = <BLACKLIST>) {
     chomp($rule);
     $isblacklisted = 1 if ($file =~ /$rule/);

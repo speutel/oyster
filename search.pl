@@ -50,7 +50,9 @@ if ($search ne '') {
 
     # Search for files in default list
 
-    open (LIST, "lists/default");
+    my $playlist = oyster::conf->get_playlist();
+
+    open (LIST, "${config{savedir}}lists/$playlist");
     my @list = <LIST>;
 
     # Compare filenames with $search and add

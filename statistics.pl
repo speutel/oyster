@@ -9,11 +9,12 @@ use oyster::common;
 oyster::common->navigation_header();
 
 my %config = oyster::conf->get_config('oyster.conf');
+my $playlist = oyster::conf->get_playlist();
 
 my @mostplayed = get_mostplayed();
 my $votedfiles = get_numfiles('VOTED');
 my $randomfiles = get_numfiles('PLAYLIST');
-my $scoredfiles = get_numfiles('LASTVOTES');
+my $scoredfiles = get_numfiles('SCORED');
 my $totalfilesplayed = $votedfiles + $randomfiles + $scoredfiles;
 
 print h1('Most played songs');
@@ -75,7 +76,7 @@ print "</table>";
 
 print h1('Some numbers');
 
-my $totalfiles = `wc -l lists/default`;
+my $totalfiles = `wc -l  ${config{savedir}}lists/$playlist`;
 $totalfiles =~ /^[\ ]*([0-9]*)/;
 $totalfiles = $1;
 
@@ -129,7 +130,7 @@ sub get_mostplayed {
 	    $_ = $line;
         ($year, $month, $day, $hour, $minute, $second, $playreason, $filename) =
             m@^([0-9]{4})([0-9]{2})([0-9]{2})\-([0-9]{2})([0-9]{2})([0-9]{2})\ ([^\ ]*)\ (.*)$@;
-	    if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
+	    if (($playreason eq 'PLAYLIST') || ($playreason eq 'SCORED') || ($playreason eq 'VOTED')) {
 		if (($timesplayed{$filename} == $maxplayed) && ($counter > 0)) {
 		    push (@mostplayed, "${filename}, $timesplayed{$filename}");
 		    $timesplayed{$filename} = 0;
@@ -161,7 +162,7 @@ sub get_lastplayed {
 	    push (@played, "$check");
 	}
 	$check = '';
-	if (($playreason eq 'PLAYLIST') || ($playreason eq 'LASTVOTES') || ($playreason eq 'VOTED')) {
+	if (($playreason eq 'PLAYLIST') || ($playreason eq 'SCORED') || ($playreason eq 'VOTED')) {
 	    $check = "$filename, $playreason";
 	}
     }
@@ -211,14 +212,14 @@ sub get_blacklisted {
     my $mediadir = $config{'mediadir'};
     $mediadir =~ s/\/$//;
 
-    open (BLACKLIST, "${config{savedir}}blacklist");
+    open (BLACKLIST, "${config{savedir}}blacklists/$playlist");
     while (my $line = <BLACKLIST>) {
 	chomp($line);
 	push (@affectlines, $line);
     }
     close (BLACKLIST);
 
-    open (LIST, "${config{savedir}}lists/default");
+    open (LIST, "${config{savedir}}lists/$playlist");
 
     while (my $line = <LIST>) {
 	my $isaffected = 0;

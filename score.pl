@@ -8,6 +8,7 @@ use oyster::fifocontrol;
 use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
+my $playlist = oyster::conf->get_playlist();
 
 if (param('action')) {
     oyster::fifocontrol->do_action(param('action'), param('file'), '');
@@ -17,7 +18,7 @@ oyster::common->navigation_header();
 
 my %score = ();
 
-open (LASTVOTES, "${config{'savedir'}}lastvotes") or die $!;
+open (LASTVOTES, "${config{'savedir'}}scores/$playlist") or die $!;
 my $line = <LASTVOTES>;
 while ($line = <LASTVOTES>) {
     chomp($line);
