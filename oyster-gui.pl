@@ -78,8 +78,9 @@ if ($status eq 'paused') {
     $statusstr = ' (Paused)';
 }
 
+print "<strong>Now playing:</strong>";
 print "<table width='100%'>";
-print "<tr><td><strong>Now playing: <a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a>$statusstr</strong></td>";
+print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$tag{'display'}</a>$statusstr</strong></td>";
 print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
 print "</table>\n";
 
