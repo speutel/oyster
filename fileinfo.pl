@@ -30,7 +30,20 @@ use oyster::common;
 my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('File Information');
+  }
 
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
@@ -63,7 +76,7 @@ my @dirs = split(/\//, $subdir);
 my $incdir = '';
 foreach my $partdir (@dirs) {
     my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
-    print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
+    print "<a href='browse.pl?dir=${escapeddir}${framestr}'>$partdir</a> / ";
     $incdir = $incdir . "$partdir/";
 }
 
@@ -82,7 +95,8 @@ my $escapedfile = uri_escape("$file", "^A-Za-z");
 
 print "<table width='100%'><tr>";
 if ($oysterruns) {
-    print "<td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
+    print "<td align='left'><a class='file' href='oyster-gui.pl?";
+    print "vote=${escapedfile}${framestr}' target='curplay'>Vote for this song</a></td>\n";
 } else {
     print "<td></td>\n";
 }
@@ -91,7 +105,8 @@ my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
 if ($isblacklisted) {
     print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>";
 } else {
-    print "<td align='right'><a class='file' href='blacklist.pl?affects=${regexpfile}&amp;action=add'>Add this song to Blacklist</a></td></tr></table>";
+    print "<td align='right'><a class='file' href='blacklist.pl?";
+    print "affects=${regexpfile}&amp;action=add${framestr}'>Add this song to Blacklist</a></td></tr></table>";
 }
 
 my %tag = oyster::taginfo->get_tag("$mediadir$file");
@@ -133,9 +148,11 @@ print "<tr><td class='fileinfo'><strong>Playtime</strong></td><td>$tag{'playtime
 print "<tr><td colspan='2'>&nbsp;</td></tr>";
 print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>$timesplayed</td></tr>";
 print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>";
-print "<td><a href='fileinfo.pl?action=scoredown&amp;file=$escapedfile'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
+print "<td><a href='fileinfo.pl?action=scoredown&amp;file=${escapedfile}${framestr}' title='Score down'>";
+print "<img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong>";
-print " <a href='fileinfo.pl?action=scoreup&amp;file=$escapedfile'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
+print " <a href='fileinfo.pl?action=scoreup&amp;file=${escapedfile}${framestr}' title='Score up'>";
+print "<img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>";
 
 print end_html;

@@ -26,7 +26,20 @@ use oyster::conf;
 use oyster::taginfo;
 use oyster::common;
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Statistics');
+  }
 
 my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
@@ -117,68 +130,11 @@ print h1('Most played songs');
 
 print_songs("Times played", @mostplayed);
 
-#my $cssclass = 'file2';
-#
-#print "<table width='100%'>";
-#print "<tr><th align='left'>Song</th><th>Times played</th></tr>";
-#
-## for every song in mostplayed
-##  print artist/title
-#foreach my $line (@mostplayed) {
-#    $line =~ /(.*)\,\ ([0-9]*)$/;
-#    my $filename = $1;
-#    my $timesplayed = $2;
-#    my $displayname = oyster::taginfo->get_tag_light($filename);
-#    $filename =~ s/^\Q$config{'mediadir'}\E//;  # remove mediadir from filename
-#    						# (does not turn up in oyster-gui)
-#    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
-#
-#    # switch colors
-#    if ($cssclass eq 'file') {
-#	$cssclass = 'file2';
-#    } else {
-#	$cssclass = 'file';
-#    }
-#
-#    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
-#    print "<td class='$cssclass' align='center'>$timesplayed</td></tr>\n";
-#}
-#print "</table>";
-
 # Recently played songs
 
 print h1('Recently played songs');
 
 print_songs("Playreason", @lastplayed);
-
-#my $cssclass = 'file2';
-#
-#print "<table width='100%'>";
-#print "<tr><th align='left'>Song</th><th>Playreason</th></tr>";
-#
-## for every song in lastplayed
-##  print artist/title
-#foreach my $line (@lastplayed) {
-#    $line =~ /(.*)\,\ ([A-Z]*)$/;
-#    my $filename = $1;
-#    my $playreason = $2;
-#    my $displayname = oyster::taginfo->get_tag_light($filename);
-#    $filename =~ s/^\Q$config{'mediadir'}\E//;
-#    my $escapedfilename = uri_escape("$filename", "^A-Za-z");
-#
-#    # switch colors
-#    if ($cssclass eq 'file') {
-#	$cssclass = 'file2';
-#    } else {
-#	$cssclass = 'file';
-#    }
-#
-#    print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
-#    print "<td class='$cssclass' align='center'>$playreason</td></tr>\n";
-#
-#}
-#
-#print "</table>";
 
 # Some numbers
 
@@ -267,7 +223,7 @@ sub print_songs {
 	    $cssclass = 'file';
 	}
 
-	print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/$escapedfilename'>$displayname</a></td>";
+	print "<tr><td><a class='$cssclass' href='fileinfo.pl?file=/${escapedfilename}${framestr}'>$displayname</a></td>";
 	print "<td class='$cssclass' align='center'>$reason</td></tr>\n";
     }
     print "</table>";

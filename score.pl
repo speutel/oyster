@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -32,7 +34,20 @@ if (param('action')) {
     oyster::fifocontrol->do_action(param('action'), param('file'), '');
 }
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Scoring');
+  }
 
 my %score = ();
 
@@ -87,9 +102,15 @@ while ($maxscore > 0) {
 	    $cssclass = 'file';
 	}
 	
-	print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=$escapedfile' target='curplay' title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png' border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?file=$escapedfile'>$display</a></td>";
-	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&amp;file=$escapedfile' title='Score down'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
-	print " <a class='$cssclass' href='score.pl?action=scoreup&amp;file=$escapedfile' title='Score up'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
+	print "<tr><td><a href='oyster-gui.pl?action=enqueue&amp;file=${escapedfile}${framestr}' target='curplay' ";
+	print "title='Enqueue'><img src='themes/${config{'theme'}}/enqueue${cssclass}.png'";
+	print "border='0' alt='Enqueue'/></a> <a class='$cssclass' href='fileinfo.pl?file=${escapedfile}${framestr}'>$display</a></td>";
+
+	print "<td align='center'><a class= '$cssclass' href='score.pl?action=scoredown&amp;file=${escapedfile}${framestr}' ";
+	print "title='Score down'><img src='themes/${config{'theme'}}/scoredown${cssclass}.png' ";
+	print "border='0' alt='-'></a> <span class='$cssclass'><strong>$score{$file}</strong></span>";
+	print " <a class='$cssclass' href='score.pl?action=scoreup&amp;file=${escapedfile}${framestr}' ";
+	print "title='Score up'><img src='themes/${config{'theme'}}/scoreup${cssclass}.png' border='0' alt='+'></a></td></tr>";	
     }
 
     $maxscore--;

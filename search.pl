@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +27,20 @@ use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Search');
+  }
 
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
@@ -64,6 +79,8 @@ print table({-border=>'0'},
 		td([$textfield,$radiobuttons,$submit])
 		])
 	    );
+
+print hidden('frames','no') if (! $frames);
 
 print end_form;
 
@@ -167,11 +184,11 @@ sub listdir {
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'>";
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
+		print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
+		print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr}"},escapeHTML($cutnewpath)));
 		$newpath = "/$newpath";
 	    }
 
@@ -205,9 +222,11 @@ sub listdir {
 		    $cssclass = 'file';
 		}
 		print "<table width='100%'><tr>";
-		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile' class='$cssclass'>" . escapeHTML($nameonly) . "</a></td>";
+		print "<td align='left'><a href='fileinfo.pl?file=${escapedfile}${framestr}' ";
+		print "class='$cssclass'>" . escapeHTML($nameonly) . "</a></td>";
 		if ($oysterruns) {
-		    print "<td align='right'><a href='oyster-gui.pl?vote=$escapedfile' class='$cssclass' target='curplay'>Vote</a></td>";
+		    print "<td align='right'><a href='oyster-gui.pl?vote=${escapedfile}${framestr}' ";
+		    print "class='$cssclass' target='curplay'>Vote</a></td>";
 		} else {
 		    print "<td></td>";
 		}

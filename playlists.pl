@@ -29,7 +29,20 @@ use oyster::fifocontrol;
 my %config = oyster::conf->get_config('oyster.conf');
 my $savedir = $config{'savedir'};
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Playlists');
+  }
 
 if (param('action') && (param('listname') || param('newlistname'))) {
     my $file = param('listname') || param('newlistname');
@@ -65,12 +78,12 @@ foreach my $file (@files) {
     }
     else {
 	print "<tr><td>$file</td>" .
-	    "<td><a href='playlists.pl?action=loadlist&amp;listname=$file'>" .
+	    "<td><a href='playlists.pl?action=loadlist&amp;listname=${file}${framestr}'>" .
 	    "Load List</a></td>";
 	print "<td><a href='editplaylist.pl?action=edit&amp;" .
-	    "playlist=$file'>Edit List</a></td>\n";
+	    "playlist=${file}${framestr}'>Edit List</a></td>\n";
 	print "<td><a href='playlists.pl?action=delete&amp;" .
-	    "listname=$file'>Delete List</a></td>\n";
+	    "listname=${file}${framestr}'>Delete List</a></td>\n";
 
     }
 
@@ -84,6 +97,7 @@ print hidden(-name=>'action', -default=>'addnewlist');
 
 print textfield(-name=>'newlistname',-default=>'');
 print submit(-value=>'Create new list',-style=>'margin-left: 2em;');
+print hidden('frames','no') if (! $frames);
 
 print end_form;
 

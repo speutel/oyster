@@ -26,7 +26,23 @@ use oyster::conf;
 use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
-oyster::common->navigation_header();
+
+my $frames = 1;
+my $framestr = '';
+my $framestr2 = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '?frames=no';
+    $framestr2 = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+    oyster::common->noframe_navigation();
+    print h1('Browse');
+  }
 
 my $mediadir = $config{'mediadir'};
 $mediadir =~ s/\/$//;
@@ -54,10 +70,10 @@ my $playlist = oyster::conf->get_playlist();
 
 if (param('playlist')) {
     print "<p align='right'><a class='file' href='browse.pl" .
-	"?dir=" . param('dir') . "'>Browse all files</a></p>";
+	"?dir=" . param('dir') . "${framestr2}'>Browse all files</a></p>";
 } elsif ($playlist ne 'default' ) {
     print "<p align='right'><a class='file' href='browse.pl?playlist=" .
-	$playlist . "'>Browse in current playlist</a></p>";
+	$playlist . "${framestr2}'>Browse in current playlist</a></p>";
 }
 
 if (($givendir ne '/') && (-e "$mediadir$givendir")) {
@@ -75,9 +91,9 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
 	my $escapedpartdir = oyster::common->remove_html($partdir);
 	if (param('playlist')) {
 	    print "<a href='browse.pl?dir=$escapeddir&playlist=" .
-		param('playlist') . "'>$escapedpartdir</a> / ";
+		param('playlist') . "${framestr2}'>$escapedpartdir</a> / ";
 	} else {
-	    print "<a href='browse.pl?dir=$escapeddir'>$escapedpartdir</a> / ";
+	    print "<a href='browse.pl?dir=${escapeddir}${framestr2}'>$escapedpartdir</a> / ";
 	}
 	$incdir = $incdir . "$partdir/";
     }
@@ -99,9 +115,9 @@ if (($givendir ne '/') && (-e "$mediadir$givendir")) {
     $parentdir = uri_escape($parentdir, "^A-Za-z");
     if (param('playlist')) {
 	print "<a href='browse.pl?dir=$parentdir&playlist=" .
-	    param('playlist') . "'>One level up</a><br><br>";
+	    param('playlist') . "${framestr2}'>One level up</a><br><br>";
     } else {
-	print "<a href='browse.pl?dir=$parentdir'>One level up</a><br><br>";
+	print "<a href='browse.pl?dir=${parentdir}${framestr2}'>One level up</a><br><br>";
     }
 
 } elsif (!(-e "$mediadir$givendir")) { # if $mediadir == "/": just build filelist, no dir-splitting needed  
@@ -183,9 +199,9 @@ foreach my $dir (@dirs) {
     print "<tr>";
     if (param('playlist')) {
 	print "<td><a href='browse.pl?dir=$escapeddir&playlist=" .
-	    param('playlist') . "'>$dir</a></td>";
+	    param('playlist') . "${framestr2}'>$dir</a></td>";
     } else {
-	print "<td><a href='browse.pl?dir=$escapeddir'>$dir</a></td>";
+	print "<td><a href='browse.pl?dir=${escapeddir}${framestr2}'>$dir</a></td>";
     }
     print "<td></td>";
     print "</tr>\n";
@@ -212,11 +228,11 @@ foreach my $file (@files) {
 	}
 	my $escapedfile = oyster::common->remove_html($file);
 
-	print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>$escapedfile</a></td>";
+	print "<td><a class='$cssfileclass' href='fileinfo.pl?file=${escapeddir}${framestr2}'>$escapedfile</a></td>";
 
 	# only generate "Vote"-link if oyster is running
 	if ($oysterruns) {
-	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapeddir' target='curplay'>Vote</a></td>";
+	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=${escapeddir}${framestr2}' target='curplay'>Vote</a></td>";
 	} else {
 	    print "<td></td>";
 	}
@@ -232,7 +248,7 @@ foreach my $file (@files) {
 	    $csslistclass = 'playlist';
 	}
 	my $escapedfile = oyster::common->remove_html($file);
-	print "<td><a class='$csslistclass' href='viewlist.pl?list=$escapeddir'>$escapedfile</a></td>";
+	print "<td><a class='$csslistclass' href='viewlist.pl?list=${escapeddir}${framestr2}'>$escapedfile</a></td>";
 
 	#only generate "Vote"-Link if oyster is running
 	if ($oysterruns) {

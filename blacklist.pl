@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,7 +28,22 @@ use oyster::common;
 my %config = oyster::conf->get_config('oyster.conf');
 my $playlist = oyster::conf->get_playlist();
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+my $framestr2 = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '?frames=no';
+    $framestr2 = '&frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Blacklist');
+  }
 
 my $savedir = $config{'savedir'};
 my $basedir = $config{'basedir'};
@@ -57,9 +74,10 @@ print table({-border=>'0'},
 		])
 	    );
 
+print hidden('frames','no') if (! $frames);
 print end_form;
 
-print p("<a href='blacklist.pl'>Show current blacklist</a>");
+print p("<a href='blacklist.pl${framestr2}'>Show current blacklist</a>");
 
 if (param('action') && param('affects')) {
     if (param('action') eq 'test') {
@@ -125,8 +143,10 @@ sub print_blacklist {
     foreach my $line (@blacklistlines) {
 	my $escapedline = uri_escape("$line", "^A-Za-z");
 	print "<tr><td width='60%'>$line</td>";
-	print "<td width='25%' align='left'><a href='blacklist.pl?action=test&amp;affects=$escapedline'>Affects</a> ($lineaffects{$line})</td>";
-	print "<td width='15%' align='center'><a href='blacklist.pl?action=delete&amp;affects=$escapedline'>Delete</a></td></tr>";
+	print "<td width='25%' align='left'><a href='blacklist.pl?action=test&amp;";
+	print "affects=${escapedline}${framestr2}'>Affects</a> ($lineaffects{$line})</td>";
+	print "<td width='15%' align='center'><a href='blacklist.pl?";
+	print "action=delete&amp;affects=${escapedline}${framestr2}'>Delete</a></td></tr>";
     }
 
     print "</table>\n";
@@ -243,11 +263,11 @@ sub listdir {
 	    if (!($basepath eq '/')) {
 		my $escapeddir = uri_escape("$basepath$cutnewpath", "^A-Za-z");
 		print "<div style='padding-left: 1em;'>";
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
+		print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr2}"},escapeHTML($cutnewpath)));
 		$newpath = "$basepath$newpath";
 	    }  else {
 		my $escapeddir = uri_escape("/$cutnewpath", "^A-Za-z");
-		print strong(a({href=>"browse.pl?dir=$escapeddir"},escapeHTML($cutnewpath)));
+		print strong(a({href=>"browse.pl?dir=${escapeddir}${framestr2}"},escapeHTML($cutnewpath)));
 		$newpath = "/$newpath";
 	    }
 
@@ -280,7 +300,8 @@ sub listdir {
 		} else {
 		    $cssclass = 'file';
 		}
-		print a({href=>"fileinfo.pl?file=$escapedfile",class=>"$cssclass"},escapeHTML($nameonly)), br;
+		print a({href=>"fileinfo.pl?file=${escapedfile}${framestr2}",
+			 class=>"$cssclass"},escapeHTML($nameonly)), br;
 		$counter++;
 	    }
 	    print "</div>\n";

@@ -47,6 +47,33 @@ sub navigation_header {
 
 }
 
+sub noframe_navigation {
+
+    print header, start_html(-title=>'Oyster-GUI',
+			     -style=>{'src'=>"themes/${config{'theme'}}/layout.css"},
+			     -head=>CGI::meta({-http_equiv => 'Content-Type',
+					       -content    => 'text/html; charset=iso-8859-1'}));
+
+    noframe_navigation_noheader();
+
+}
+
+sub noframe_navigation_noheader {
+
+    print "<table width='100%'><tr>";
+    print "<td align='center' width='12%'><a href='oyster-gui.pl?frames=no'>Current Status</a></td>";
+    print "<td align='center' width='13%'><a href='control.pl?frames=no'>Control</a></td>";
+    print "<td align='center' width='12%'><a href='browse.pl?frames=no'>Browse</a></td>";
+    print "<td align='center' width='13%'><a href='search.pl?frames=no'>Search</a></td>";
+    print "<td align='center' width='12%'><a href='playlists.pl?frames=no'>Playlists</a></td>";
+    print "<td align='center' width='13%'><a href='blacklist.pl?frames=no'>Blacklist</a></td>";
+    print "<td align='center' width='12%'><a href='score.pl?frames=no'>Scoring</a></td>";
+    print "<td align='center' width='13%'><a href='statistics.pl?frames=no'>Statistics</a></td>";
+    print "</tr></table>";
+    print "<hr>";
+
+}
+
 sub get_cover {
     my $albumdir = my $albumname = $_[1];
     my $imagewidth = $_[2];

@@ -28,7 +28,20 @@ use File::Find;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Edit Playlist');
+  }
 
 my $cssdirclass = 'dir2';
 my $cssfileclass = 'file2';
@@ -40,8 +53,8 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
     my $delfile = param('file') || '';
     my $deldir = param('dir') || '';
 
-    print h1(a({href=>"editplaylist.pl?action=edit&playlist=$playlist"},$playlist));
-    print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/"},
+    print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
+    print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist&dir=/${framestr}"},
 	    'Add files to this list...'),br,br;
 
     # Get all entries from playlist and filter
@@ -173,10 +186,16 @@ sub listdir {
 		$newpath = "/$newpath";
 	    }
 
-	    print "</td><td align='right'><a class='$cssdirclass' href='editplaylist.pl?action=deletedir&" .
-		"dir=$escapeddir&playlist=$playlist'>Delete</a></td></tr></table>";
+	    print "</td><td align='right'>";
+	    print a({
+		class=>$cssdirclass,
+		href=>"editplaylist.pl?action=deletedir&dir=$escapeddir&" .
+		    "playlist=${playlist}${framestr}"
+		}, 'Delete');
 
-	    # Call listdir recursive, then quit padding with <div>
+	    print "</td></tr></table>";
+
+            # Call listdir recursive, then quit padding with <div>
 
 	    $counter = listdir($newpath,$counter);
 	    if (!($basepath eq '/')) {
@@ -206,11 +225,20 @@ sub listdir {
 		    $cssfileclass = 'file';
 		}
 		print "<table width='100%'><tr>";
-		print "<td align='left'><a href='fileinfo.pl?file=$escapedfile'" .
-		    "class='$cssfileclass'>" . escapeHTML($nameonly) . "</a></td>";
-		print "<td align='right'><a href='editplaylist.pl?action=deletefile" .
-		    "&file=$escapedfile&playlist=$playlist'" .
-		    "class='$cssfileclass'>Delete</a></td>";
+		print "<td align='left'>";
+
+		print a({href=>"fileinfo.pl?file=${escapedfile}${framestr}",
+			 class=>$cssfileclass}, $nameonly);
+
+		print "</td>";
+
+		print "<td align='right'>";
+
+		print a({href=>"editplaylist.pl?action=deletefile" .
+		    "&file=$escapedfile&playlist=${playlist}${framestr}",
+		    class=>$cssfileclass}, 'Delete');
+
+		print "</td>";
 
 		print "</tr></table>\n";
 		$counter++;
@@ -225,7 +253,7 @@ sub listdir {
 
 sub browse {
 
-    print h1(a({href=>"editplaylist.pl?action=edit&playlist=$playlist"},$playlist));
+    print h1(a({href=>"editplaylist.pl?action=edit&playlist=${playlist}${framestr}"},$playlist));
 
     my $givendir = '/';
 
@@ -246,8 +274,10 @@ sub browse {
 	    my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
 	    my $escapedpartdir = $partdir;
 	    $escapedpartdir =~ s/&/&amp;/g;
-	    print "<a href='editplaylist.pl?action=addbrowse&amp;playlist=$playlist" .
-		"&amp;dir=$escapeddir'>$escapedpartdir</a> / ";
+	    print a({href=>"editplaylist.pl?action=addbrowse&playlist=$playlist" .
+		"&dir=${escapeddir}${framestr}"}, $escapedpartdir);
+
+	    print "/ ";
 	    $incdir = $incdir . "$partdir/";
 	}
 
@@ -262,8 +292,8 @@ sub browse {
 	}
 
 	my $escapeddir = uri_escape($topdir, "^A-Za-z");
-	print "<a href='editplaylist.pl?action=addbrowse" .
-	    "&amp;playlist=$playlist&amp;dir=$escapeddir'>One level up</a><br><br>";
+	print a({href=>"editplaylist.pl?action=addbrowse" .
+	    "&playlist=$playlist&dir=${escapeddir}${framestr}'"}, 'One level up'), br, br;
 	
     } elsif (!(-e "$config{mediadir}$givendir")) {   
 	print h1('Error!');
@@ -305,14 +335,18 @@ sub browse {
 	$dir =~ s/&/&amp;/g;
 
 	print "<tr>";
-	print "<td><a name='a" . $anchorcounter . "'></a>" .
-	    "<a class='$cssdirclass' href='editplaylist.pl?" .
-	    "action=addbrowse&amp;playlist=$playlist" .
-	    "&amp;dir=$escapeddir'>$dir</a></td>";
-	print "<td align='right'><a class='$cssdirclass'" .
-	    "href='editplaylist.pl?action=adddir&amp;playlist=$playlist" .
-	    "&amp;toadd=$escapeddir&amp;dir=$givendir#a" . $anchorcounter++ . "'>Add</a></td>";
-	print "</tr>\n";
+	print "<td><a name='a" . $anchorcounter . "'></a>";
+	print a({class=>$cssdirclass,
+		 href=>"editplaylist.pl?action=addbrowse&playlist=$playlist" .
+		     "&dir=${escapeddir}${framestr}"}, $dir);
+	print "</td>";
+
+	print "<td align='right'>";
+	print a({class=>$cssdirclass,
+		href=>"editplaylist.pl?action=adddir&playlist=$playlist" .
+		"&toadd=$escapeddir&dir=${givendir}${framestr}#a" . $anchorcounter++}, 'Add');
+
+	print "</td></tr>\n";
     }
     
     foreach my $file (@files) {
@@ -329,27 +363,20 @@ sub browse {
 	    }
 	    my $escapedfile = $file;
 	    $escapedfile =~ s/&/&amp;/g;
-	    print "<td><a name='a" . $anchorcounter . "'></a>" .
-		"<a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>" .
-		"$escapedfile</a></td>";
-	    print "<td align='right'><a class='$cssfileclass' href='editplaylist.pl" .
-		"?action=addfile&amp;playlist=$playlist&amp;toadd=$escapeddir&dir=$givendir#a" .
-		$anchorcounter++ . "'>Add</a></td>";
-	}# elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) {
-#	    my $escapeddir = "$givendir$file";
-#	    $escapeddir =~ s/\Q$config{mediadir}\E//;
-#	    $escapeddir = uri_escape("$escapeddir", "^A-Za-z");
-#	    if ($csslistclass eq 'playlist') {
-#		$csslistclass = 'playlist2';
-#	    } else {
-#		$csslistclass = 'playlist';
-#	    }
-#	    my $escapedfile = $file;
-#	    $escapedfile =~ s/&/&amp;/g;
-#	    print "<td><a class='$csslistclass' href='viewlist.pl?list=$escapeddir'>$escapedfile</a></td>";
-#	    print "<td><a class='$csslistclass' href='oyster-gui.pl?votelist=$escapeddir' target='curplay'>Vote</a></td>";
-#	} 
-	print "</tr>\n";
+	    print "<td><a name='a" . $anchorcounter . "'></a>";
+
+	    print a({class=>$cssfileclass,
+		     href="fileinfo.pl?file=${escapeddir}${framestr}"}, $escapedfile);
+	    print "</td>";
+
+	    print "<td align='right'>";
+
+	    print a({class=>$cssfileclass,
+		     href="editplaylist.pl?action=addfile&playlist=$playlist" .
+			 "&toadd=$escapeddir&dir=${givendir}${framestr}#a" . $anchorcounter++}, 'Add');
+
+	}
+	print "</td></tr>\n";
     }
 
     print "</table>";

@@ -27,7 +27,20 @@ use oyster::common;
 
 my %config = oyster::conf->get_config('oyster.conf');
 
-oyster::common->navigation_header();
+my $frames = 1;
+my $framestr = '';
+
+if ((param('frames') && (param('frames') eq 'no'))) {
+    $frames = 0;
+    $framestr = '&amp;frames=no';
+}
+
+if ($frames) {
+    oyster::common->navigation_header();
+  } else {
+      oyster::common->noframe_navigation();
+      print h1('Browse');
+  }
 
 my $mediadir = $config{'mediadir'};
 my $givenlist = '';
@@ -48,9 +61,9 @@ if (($givenlist ne '') && (-e "$mediadir$givenlist")) {
     foreach my $partdir (@dirs) {
 	my $escapeddir = uri_escape("$incdir$partdir", "^A-Za-z");
 	if (($partdir =~ /\.m3u$/) || ($partdir =~ /\.pls$/)) {
-	    print "<a class='playlist' href='viewlist.pl?list=$escapeddir'>$partdir</a>";
+	    print "<a class='playlist' href='viewlist.pl?list=${escapeddir}${framestr}'>$partdir</a>";
 	} else {
-	    print "<a href='browse.pl?dir=$escapeddir'>$partdir</a> / ";
+	    print "<a href='browse.pl?dir=${escapeddir}${framestr}'>$partdir</a> / ";
 	}
 	$incdir = $incdir . "$partdir/";
     }
@@ -62,7 +75,7 @@ if (($givenlist ne '') && (-e "$mediadir$givenlist")) {
     $topdir =~ s/\/[^\/]*$//;
 
     my $escapeddir = uri_escape($topdir, "^A-Za-z");
-    print "<a href='browse.pl?dir=$escapeddir'>One level up</a><br><br>";
+    print "<a href='browse.pl?dir=${escapeddir}${framestr}'>One level up</a><br><br>";
 
     print "<table width='100%'>";
 
@@ -85,8 +98,10 @@ if (($givenlist ne '') && (-e "$mediadir$givenlist")) {
 		$cssfileclass = 'file';
 	    }
 
-	    print "<tr><td><a class='$cssfileclass' href='fileinfo.pl?file=$escapedfile'>$line</a></td>";
-	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote</a></td></tr>";
+	    print "<tr><td><a class='$cssfileclass' href='fileinfo.pl?";
+	    print "file=${escapedfile}${framestr}'>$line</a></td>";
+	    print "<td><a class='$cssfileclass' href='oyster-gui.pl?";
+	    print "vote=${escapedfile}${framestr}' target='curplay'>Vote</a></td></tr>";
 	}
     }
 
