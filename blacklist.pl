@@ -57,6 +57,9 @@ print end_html;
 exit 0;
 
 sub print_blacklist {
+
+    # Opens current blacklist and prints each line
+
     open (FILE, "${savedir}blacklist");
     print "<table width='100%'>";
     while (my $line = <FILE>) {
@@ -71,8 +74,14 @@ sub print_blacklist {
 }
 
 sub print_affects {
+
+    # Shows all files, which are affected by a blacklist-rule
+
     my $affects = $_[0];
     open (LIST, "${savedir}lists/default");
+
+    # Add all matching lines to @results
+
     while (my $line = <LIST>) {
 	chomp($line);
 	my $mediadir = $config{'mediadir'};
@@ -84,7 +93,13 @@ sub print_affects {
 	}
     }
     close (LIST);
+
+    # Sort @results alphabetically
+
     @results = sort @results;
+
+    # Determine maximum depth of directories for further sorting
+
     my $maxdepth = 0;
     foreach my $result (@results) {
 	my $line = $result;
@@ -98,6 +113,9 @@ sub print_affects {
 	}
     }
     $maxdepth--;
+
+    # Sort @results by a given depth
+
     while ($maxdepth >= 0) {
 	@results = sort_results($maxdepth);
 	$maxdepth--;
@@ -106,6 +124,9 @@ sub print_affects {
 }
 
 sub add_to_blacklist {
+
+    # Appends a rule to the blacklist
+
     my $affects = $_[0];
     open (BLACKLIST, ">>${savedir}blacklist");
     print BLACKLIST "$affects\n";
@@ -113,6 +134,9 @@ sub add_to_blacklist {
 }
 
 sub delete_from_blacklist {
+
+    # removes a rule from the blacklist
+
     my $affects = $_[0];
     system ("cp ${savedir}blacklist ${basedir}blacklist.tmp");
     open (BLACKLIST, "${basedir}blacklist.tmp");
@@ -128,6 +152,9 @@ sub delete_from_blacklist {
 }
 
 sub listdir {
+
+    # lists the directory $basepath and recursive all subdirs
+
     my $basepath = $_[0];
     my $counter = $_[1];
 
@@ -174,6 +201,10 @@ sub listdir {
 }
 
 sub sort_results {
+
+    # sorts @results by a given directory depth
+    # directories first, then regular files
+
     my $depth = $_[0];
     my (@dirs, @files) = ();
 
