@@ -4,14 +4,25 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 
-if (param()) {
+my %config = oyster::conf->get_config('oyster.conf');
+
+if (param('action')) {
     my $action=param('action');
     if ($action eq 'skip') {
-	open (CONTROL, '>/tmp/oyster/control');
+	open (CONTROL, ">$config{'basedir'}" . "control");
 	print CONTROL 'NEXT';
 	close CONTROL;
 	sleep 1;
     }
+}
+
+if (param('vote')) {
+    my $votefile=param('vote');
+
+    open (CONTROL, ">$config{'basedir'}" . "control");
+    print CONTROL "VOTE $votefile";
+    close CONTROL;
+    sleep 1;
 }
 
 print
@@ -23,7 +34,6 @@ print
 
 print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
 
-my %config = oyster::conf->get_config('oyster.conf');
 my $basedir = $config{'basedir'};
 
 open(INFO, "$basedir" . "info");
