@@ -76,7 +76,7 @@ sub print_affects {
 	my $mediadir = $config{'mediadir'};
 	$mediadir =~ s/\/$//;
 	$line =~ s/^\Q$mediadir\E//;
-	if ($line =~ /\Q$affects\E/i) {
+	if ($line =~ /$affects/i) {
 	    $line =~ s/^\///;
 	    push (@results, $line);
 	}
