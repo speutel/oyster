@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-use CGI qw/:standard/;
+use CGI qw/:standard -no_xhtml/;
 use URI::Escape;
 use strict;
 
