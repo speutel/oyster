@@ -7,10 +7,10 @@
 #use strict;
 use oyster::conf;
 
-my %config = oyster::conf->get_config('oyster.conf');
-
+my $savedir = `pwd`;
+chomp($savedir);
+$conffile = "$savedir/oyster.conf";
 my $basedir = "/tmp/oyster";
-my $savedir = ".";
 my $media_dir = "/";
 my $lastvotes_file = "$savedir/lastvotes";
 my $list_dir = "$savedir/lists";
@@ -22,7 +22,7 @@ my $votefile = "$basedir/votes";
 my ($lastvotes_pointer, @lastvotes);
 my (@filelist, $file, $control, %votehash, @votelist);
 my ($file_override); 
-
+my ($play_pid);
 
 init();
 
@@ -70,6 +70,8 @@ sub play_file {
 	# start play.pl and tell it which file to play
 	
 	system("./play.pl &");
+
+	print STDERR "Supposed pid of mp3/ogg-player: $play_pid\n";
 	
 	open(KIDPLAY, ">/tmp/oyster/kidplay");
 	print KIDPLAY "$file\n";
@@ -156,10 +158,30 @@ sub interpret_control {
 			get_control();
 			interpret_control();
 		}
+		case /^PAUSE/ {
+			get_player_pid();
+			system("kill -19 $play_pid");
+			get_control();
+			interpret_control();
+		}
+		case /^UNPAUSE/ {
+			system("kill -18 $play_pid");
+			get_control();
+			interpret_control();
+		}
 		else {
 			# fall through
 			get_control();
 			interpret_control();
+		}
+	}
+}
+
+sub get_player_pid {
+	open(PS, "ps ax |");
+	while( $line = <PS> ) {
+		if ( $line =~ /\ ([0-9]*)\ [^\ ]*\ [^\ ]\ (mpg321|ogg123)/ ) {
+			print STDERR "$1\n";
 		}
 	}
 }
@@ -285,24 +307,21 @@ sub get_list {
 
 }
 
-sub read_config {
-	
-	$basedir = $config{"basedir"};
-	$savedir = $config{"savedir"};
-	$media_dir = $config{"mediadir"};
-
-}
-
 sub init {
 	# well, it's called "init". guess.
 
-	# set dirs
-	read_config();
+	## set dirs
+	#read_config();
 	
-	$list_dir = "$savedir/lists";
-	$lastvotes_file = "$savedir/lastvotes";
-	$votefile = "$basedir/votes";
-
+	%config = oyster::conf->get_config($conffile);
+	
+	$list_dir = "$config{savedir}/lists";
+	$lastvotes_file = "$config{savedir}/lastvotes";
+	$votefile = "$config{basedir}/votes";
+	$media_dir = $config{"mediadir"};
+	$voteplay_percentage = 10;
+	$lastvotes_size = 30;
+	
 
 	# setup $basedir
 	if ( ! -x $basedir) {
@@ -396,6 +415,5 @@ sub info_out {
 	open(INFO, ">$basedir/info");
 	print INFO $file; 
 	close(INFO);
-	print STDERR "info_out zuende\n";
 
 }

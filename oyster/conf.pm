@@ -17,8 +17,8 @@ sub get_config {
 		    chomp($line);
 		    my ($key, $value) = split("=", $line);
 		    if (($key eq 'mediadir') || ($key eq 'basedir') || ($key eq 'savedir')) {
-			$value =~ s/\/$//;
-			$value .= '/';
+					$value =~ s/\/$//;
+					$value .= '/';
 		    }
 		    $config{$key} = $value;
 		}
