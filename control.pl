@@ -6,7 +6,7 @@ use strict;
 if (param()) {
     my $action=param('action');
     if ($action eq 'start') {
-	system("perl oyster.pl");
+	system("perl oyster.pl &");
     } elsif ($action eq 'stop') {
 	open (CONTROL, '>/tmp/oyster/control');
 	print CONTROL 'QUIT';
