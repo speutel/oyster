@@ -20,7 +20,7 @@ print
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
-# print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
+print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
 
 open(INFO, "/tmp/oyster/info");
 my $info = <INFO>;
