@@ -55,7 +55,7 @@ sub listdir {
     my $basepath = $_[0];
     my $counter = $_[1];
 
-    while (($counter < @results) && ($results[$counter] =~ /^\Q$basepath\E/)) {
+    while (($counter < @results) && (($results[$counter] =~ /^\Q$basepath\E\//) || ($basepath eq ''))) {
 	my $newpath = $results[$counter];
 	$newpath =~ s/^\Q$basepath\E\///;
 	if ($newpath =~ /\//) {

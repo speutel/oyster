@@ -73,6 +73,7 @@ sub print_affects {
     my $affects = $_[0];
     open (LIST, "${savedir}lists/default");
     while (my $line = <LIST>) {
+	chomp($line);
 	my $mediadir = $config{'mediadir'};
 	$mediadir =~ s/\/$//;
 	$line =~ s/^\Q$mediadir\E//;
@@ -112,7 +113,7 @@ sub listdir {
     my $basepath = $_[0];
     my $counter = $_[1];
 
-    while (($counter < @results) && ($results[$counter] =~ /^\Q$basepath\E/)) {
+    while (($counter < @results) && (($results[$counter] =~ /^\Q$basepath\E\//) || ($basepath eq ''))) {
 	my $newpath = $results[$counter];
 	$newpath =~ s/^\Q$basepath\E\///;
 	if ($newpath =~ /\//) {
