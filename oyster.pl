@@ -491,9 +491,8 @@ sub init {
 	$lastvotes_file = "$config{savedir}/lastvotes";
 	$votefile = "$config{basedir}/votes";
 	$media_dir = $config{"mediadir"};
-	if ( $media_dir =~ /.*\/$/ ) {
-		$media_dir =~ /(.*)\/$/;
-		$media_dir = $1;
+	if ( ! ($media_dir =~ /.*\/$/) ) {
+		$media_dir = $media_dir . "/";
 	}
 	
 	$voteplay_percentage = $config{"voteplay"};
@@ -521,6 +520,8 @@ sub init {
 		close(FILELIST);
 	}
 
+	$media_dir = s/\/$//;
+	
 	# read last votes
 	if ( -e $lastvotes_file ) {
 		open (LASTVOTES, $lastvotes_file) || die $!;
