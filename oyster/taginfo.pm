@@ -119,7 +119,7 @@ sub get_tag {
 
     $tag{'score'} = 0;
 
-    open (LASTVOTES, "${config{'savedir'}}lastvotes/$playlist");
+    open (LASTVOTES, "${config{'savedir'}}scores/$playlist");
     while (my $line = <LASTVOTES>) {
 	chomp($line);
 	$tag{'score'}++ if ($line eq $filename);
