@@ -53,7 +53,9 @@ close (BLACKLIST);
 my $escapedfile = uri_escape("$file", "^A-Za-z");
 
 if ($isblacklisted) {
-    print "<p class='blacklisted'>File is blacklisted</p>";
+    print "<table width='100%'><tr><td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
+    my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
+    print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>";
 } else {
     print "<table width='100%'><tr><td align='left'><a class='file' href='oyster-gui.pl?vote=$escapedfile' target='curplay'>Vote for this song</a></td>\n";
     my $regexpfile = uri_escape("^$file\$", "^A-Za-z");
