@@ -84,7 +84,8 @@ foreach my $file (@files) {
 	my $encfile = uri_escape($file, "^A-Za-z");
 	if (($file eq $playlist) && ($file ne 'default')) {
 		print "<tr><td><i>$file</i></td><td>currently playing</td>";
-		print "<td></td><td></td></tr>";
+		print "<td><a href='editplaylist.pl?action=edit&amp;" .
+		"playlist=${encfile}${framestr}'>Edit List</a></td><td></td></tr>";
 	}
 	elsif ($file ne 'default') {
 		print "<tr><td>$file</td>" .

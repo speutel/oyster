@@ -24,6 +24,7 @@ use URI::Escape;
 use strict;
 use oyster::conf;
 use oyster::common;
+use oyster::fifocontrol;
 use File::Find;
 
 my %config = oyster::conf->get_config('oyster.conf');
@@ -94,6 +95,12 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		}
 		close PLAYLIST;
 
+		# Reload playlist, if currenty running
+
+		if ($playlist eq $config{'playlist'}) {
+			oyster::fifocontrol->do_action('loadlist', $playlist, '');
+		}
+
 	}
 
 	listdir('/',0);
@@ -139,6 +146,12 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		print FILELIST $key;
 	}
 	close(FILELIST);
+
+	# Reload playlist, if currenty running
+
+	if ($playlist eq $config{'playlist'}) {
+		oyster::fifocontrol->do_action('loadlist', $playlist, '');
+	}
 
 	browse();
 
