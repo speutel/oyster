@@ -81,19 +81,17 @@ if ((param('action') eq 'loadlist') && param('listname')) {
 
 print "<table width='100%' style='margin-bottom: 2em;'>";
 
-print "<tr colspan='4'><td>";
-print h2('Default');
-print "</td></tr>";
+print "<tr><td colspan='5'>" . h2('Default') . "</td></tr>";
 
 # Print playlists without a section
 
 if ($playlist eq 'default') {
-	print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td class='playlists' colspan='3'><strong>currently playing</strong></td>";
+	print "<tr style='height:3em;'><td><i>default (All songs)</i></td><td class='playlists' colspan='4'><strong>currently playing</strong></td>";
 	print "</tr>";
 } else {
 	print "<tr style='height:3em;'><td>default (All songs)</td>" .
 	"<td class='playlists'><a href='playlists.pl?action=loadlist&amp;listname=default${framestr}'>" .
-	"Load List</a></td><td></td><td></td></tr>";
+	"Load</a></td><td></td><td></td><td></td></tr>";
 }
 
 foreach my $file (@files) {
@@ -105,7 +103,7 @@ foreach my $file (@files) {
 # Print all sections
 
 foreach my $section (sort keys(%section)) {
-	print "<tr colspan='4'><td>". h2($section) . "</td></tr>";
+	print "<tr><td colspan='5'>". h2($section) . "</td></tr>";
 	foreach my $file(@files) {
 		if ($file =~ /^\Q${section}_\E/) {
 			print_playlist($file);
@@ -148,18 +146,20 @@ sub print_playlist {
 	my $encfile = uri_escape($file, "^A-Za-z");
 
 	if (($file eq $playlist) && ($file ne 'default')) {
-		print "<tr><td><i>$title</i></td><td class='playlists'>currently playing</td>";
+		print "<tr><td><i>$title</i></td><td class='playlists'><strong>currently playing</strong></td>";
 		print "<td class='playlists'><a href='editplaylist.pl?action=edit&amp;" .
-		"playlist=${encfile}${framestr}'>Edit List</a></td><td></td></tr>";
+		"playlist=${encfile}${framestr}'>Edit</a></td><td></td></tr>";
 	}
 	elsif ($file ne 'default') {
 		print "<tr><td>$title</td>" .
 		"<td class='playlists'><a href='playlists.pl?action=loadlist&amp;listname=${encfile}${framestr}'>" .
-		"Load List</a></td>";
+		"Load</a></td>";
 		print "<td class='playlists'><a href='editplaylist.pl?action=edit&amp;" .
-		"playlist=${encfile}${framestr}'>Edit List</a></td>\n";
+		"playlist=${encfile}${framestr}'>Edit</a></td>\n";
+		print "<td class='playlists'><a href='editplaylist.pl?action=move&amp;" .
+		"playlist=${encfile}${framestr}'>Move/Rename</a></td>\n";
 		print "<td class='playlists'><a href='playlists.pl?action=confirmdelete&amp;" .
-		"listname=${encfile}${framestr}'>Delete List</a></td></tr>\n";
+		"listname=${encfile}${framestr}'>Delete</a></td></tr>\n";
 
 	}
 }

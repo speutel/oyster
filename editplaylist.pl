@@ -103,8 +103,6 @@ if (($action eq 'edit') || ($action eq 'deletefile') || ($action eq 'deletedir')
 		'Add another playlist to this list...'),br;
 	print a({href=>"editplaylist.pl?action=search&playlist=$encplaylist${framestr}"},
       'Search for files to add...'),br;
-	print a({href=>"editplaylist.pl?action=move&playlist=$encplaylist${framestr}"},
-      'Move/Rename playlist...'),br,br;
 
 	# Get all entries from playlist and filter
 
