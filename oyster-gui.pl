@@ -18,6 +18,8 @@ print
 	       -head=>CGI::meta({-http_equiv => 'Content-Type',
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
+print "<meta http-equiv='refresh' content='30; URL=oyster-gui.pl'>";
+
 if ($info =~ /mp3$/) {
     open (MP3, "id3v2 -l \"$info\"|") or die $!;
     my @output = <MP3>;
@@ -80,45 +82,6 @@ print "<table width='100%'>";
 print "<tr><td><strong>Now playing: <a href='fileinfo.pl?file=$info' target='browse'>$title</a></strong></td>";
 print "<td><a href='oyster-gui.pl'>Refresh</a></td></tr>";
 print "</table>";
-
-print "<br><br>";
-
-print "<table width='100%'>";
-print "<tr><td align='center' width='30%'><a href='start.sh'>Start</a></td>";
-print "<td align='center' width='40%'><a href='skip.sh'>Skip</a></td>";
-print "<td align='center' width='30%'><a href='stop.sh'>Stop</a></td>";
-print "</tr></table>\n";
-
-my $volume = `aumix -w q`;
-$volume =~ s/^pcm\ //;
-$volume =~ s/,.*//;
-
-print "<table width='100%'>";
-print "<tr><td align='center' width='40%'><a href='volume.pl?vol=down'>Volume Down</a></td>";
-print "<td align='center' width='20%'><a href='volume.pl?vol=50'>$volume</a></td>";
-print "<td align='center' width='40%'><a href='volume.pl?vol=up'>Volume Up</a></td>";
-print "</tr></table>\n";
-
-open (VOTES, '/tmp/oyster/votes');
-my @votes = <VOTES>;
-
-if (-s '/tmp/oyster/votes') {
-    print "<table width='100%' style='margin-top:3em;'><tr>";
-    print "<th width='70%' align='left'>Voted File</th><th align='center'>Num of votes</th>";
-    foreach my $vote (@votes) {
-	chomp ($vote);
-	my ($numvotes, $title);
-	$_ = $vote;
-	($title, $numvotes) = m@.*\/(.*),(.*)@;
-	$title =~ s/\.mp3$//;
-	$title =~ s/\.ogg$//;
-	my $escapedvote = $vote;
-	$escapedvote =~ s/,[1-9]*$//;
-	$escapedvote = uri_escape("$escapedvote", "^A-Za-z");
-	print "<tr><td><a href='fileinfo.pl?file=$escapedvote' target='browse'>$title</a></td><td align='center'>$numvotes</td></tr>\n";
-    }
-    print "</table>";
-}
 
 print end_html;
 
