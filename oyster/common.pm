@@ -30,12 +30,15 @@ sub navigation_header {
 }
 
 sub get_cover {
-    my $albumdir = $_[1];
+    my $albumdir = my $albumname = $_[1];
+    $albumname =~ s/\/$//;
+    $albumname =~ s/^.*\///;
     my @coverfiles = split(/,/, $config{'coverfilenames'});
     my $filetype = 'jpeg';
     my $base64 = "";
     
     foreach my $cover (@coverfiles) {
+	$cover =~ s/\$\{album\}/$albumname/;
 	if (-e "$albumdir$cover") {
 	    open (COVER, "$albumdir$cover");
 	    while (read(COVER, my $buf, 60*57)) {
