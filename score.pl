@@ -30,7 +30,7 @@ while ($line = <LASTVOTES>) {
 close (LASTVOTES);
 
 print "<table width='100%'>";
-print "<tr><th>Song</th><th>Score</th></tr>";
+print "<tr><th>Song</th><th width='65'>Score</th></tr>";
 
 my $cssclass='file2';
 
