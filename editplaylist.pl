@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -276,22 +278,34 @@ sub browse {
 	    push (@files, "$entry");
 	}
     }
-    
+
+    my $cssdirclass = 'dir2';
+    my $cssfileclass = 'file2';
+    my $csslistclass = 'playlist2';
+    my $anchorcounter = 0;
+
     foreach my $dir (@dirs) {
+	if ($cssdirclass eq 'dir') {
+	    $cssdirclass = 'dir2';
+	} else {
+	    $cssdirclass = 'dir';
+	}
+
 	$dir =~ s/\Q$config{mediadir}\E//;
 	my $escapeddir = uri_escape("$dir", "^A-Za-z");
 	$dir =~ s/^.*\///;
 	$dir =~ s/&/&amp;/g;
+
 	print "<tr>";
-	print "<td><a href='editplaylist.pl?action=addbrowse&amp;playlist=$playlist" .
+	print "<td><a name='a" . $anchorcounter . "'></a>" .
+	    "<a class='$cssdirclass' href='editplaylist.pl?" .
+	    "action=addbrowse&amp;playlist=$playlist" .
 	    "&amp;dir=$escapeddir'>$dir</a></td>";
-	print "<td align='right'><a href='editplaylist.pl?action=adddir&amp;" .
-	    "playlist=$playlist&amp;toadd=$escapeddir&amp;dir=$givendir'>Add</a></td>";
+	print "<td align='right'><a class='$cssdirclass'" .
+	    "href='editplaylist.pl?action=adddir&amp;playlist=$playlist" .
+	    "&amp;toadd=$escapeddir&amp;dir=$givendir#a" . $anchorcounter++ . "'>Add</a></td>";
 	print "</tr>\n";
     }
-    
-    my $cssfileclass = 'file2';
-    my $csslistclass = 'playlist2';
     
     foreach my $file (@files) {
 	$file =~ s/\Q$config{mediadir}$givendir\E//;
@@ -307,10 +321,12 @@ sub browse {
 	    }
 	    my $escapedfile = $file;
 	    $escapedfile =~ s/&/&amp;/g;
-	    print "<td><a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>" .
+	    print "<td><a name='a" . $anchorcounter . "'></a>" .
+		"<a class='$cssfileclass' href='fileinfo.pl?file=$escapeddir'>" .
 		"$escapedfile</a></td>";
 	    print "<td align='right'><a class='$cssfileclass' href='editplaylist.pl" .
-		"?action=addfile&amp;playlist=$playlist&amp;toadd=$escapeddir&dir=$givendir'>Add</a></td>";
+		"?action=addfile&amp;playlist=$playlist&amp;toadd=$escapeddir&dir=$givendir#a" .
+		$anchorcounter++ . "'>Add</a></td>";
 	}# elsif(($file =~ /m3u$/) || ($file =~ /pls$/)) {
 #	    my $escapeddir = "$givendir$file";
 #	    $escapeddir =~ s/\Q$config{mediadir}\E//;
