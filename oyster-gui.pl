@@ -44,7 +44,7 @@ print
 	       );
 
 print h1('Oyster');
-print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
+print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px' title='Refresh'><img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
 
 if ((!(-e "$basedir")) || ($action eq 'stop')) {
     print "<p>Oyster has not been started yet!</p>";
@@ -78,10 +78,10 @@ if ($status eq 'paused') {
 
 print "<table width='100%' border='0'>";
 print "<tr><td><strong>Now playing:</strong></td><td align='center' width='75'><strong>Score</strong></td></tr>";
-print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$display</a>$statusstr</strong></td>";
-print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
+print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse' title='View details'>$display</a>$statusstr</strong></td>";
+print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info' title='Score down'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
 print "<strong>$tag{'score'}</strong> ";
-print "<a href='oyster-gui.pl?action=scoreup&amp;file=$info'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
+print "<a href='oyster-gui.pl?action=scoreup&amp;file=$info' title='Score up'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>\n";
 
 open (VOTES, "${basedir}votes");
