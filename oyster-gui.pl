@@ -54,6 +54,7 @@ $info =~ s/^np:\ //;
 close(INFO);
 
 my $display = oyster::taginfo->get_tag_light($info);
+my %tag = oyster::taginfo->get_tag($info);
 
 $info =~ s/^\Q$config{'mediadir'}\E//;
 $info = "/$info";
@@ -64,13 +65,17 @@ if ($status eq 'paused') {
     $statusstr = ' (Paused)';
 }
 
-print "<strong>Now playing:</strong>";
 print "<table width='100%'>";
+print "<tr><td colspan='2'><strong>Now playing:</strong></td><td align='center'><strong>Score:</strong></td></tr>";
 print "<tr><td><strong><a class='file' href='fileinfo.pl?file=$info' target='browse'>$display</a>$statusstr</strong></td>";
-print "<td><a href='oyster-gui.pl?action=skip'>Skip</a></td></tr>";
+print "<td align='center' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=skip'>Skip</a></td>";
+print "<td align='right' style='padding-left:10px; padding-right:10px'><a href='oyster-gui.pl?action=scoredown&amp;file=$info'><img src='themes/${config{'theme'}}/scoredownfile.png' border='0' alt='-'></a> ";
+print "<strong>$tag{'score'}</strong> ";
+print "<a href='oyster-gui.pl?action=scoreup&amp;file=$info'><img src='themes/${config{'theme'}}/scoreupfile.png' border='0' alt='+'></a></td></tr>";
 print "</table>\n";
-print "<p><a href='oyster-gui.pl?action=scoreup&amp;file=$info'>Score up</a></p>";
-print "<p><a href='oyster-gui.pl?action=scoredown&amp;file=$info'>Score down</a></p>\n";
+
+#print "<p><a href='oyster-gui.pl?action=scoreup&amp;file=$info'>Score up</a></p>";
+#print "<p><a href='oyster-gui.pl?action=scoredown&amp;file=$info'>Score down</a></p>\n";
 
 open (VOTES, "${basedir}votes");
 my @votes = <VOTES>;
