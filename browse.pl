@@ -91,7 +91,7 @@ my $csslistclass = 'playlist2';
 foreach my $file (@files) {
     $file =~ s/\Q$mediadir$givendir\E//;
     print "<tr>";
-    if (($file =~ /mp3$/) || ($file =~ /ogg$/)) {
+    if (($file =~ /mp3$/i) || ($file =~ /ogg$/i)) {
 	my $escapeddir = "$givendir$file";
 	$escapeddir =~ s/\Q$mediadir\E//;
 	$escapeddir = uri_escape("$escapeddir", "^A-Za-z");
