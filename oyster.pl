@@ -40,11 +40,11 @@ my $scores_file = "$savedir/scores/$playlist";
 ## main program ##
 ##################
 
-get_config();
+init();
 choose_file();
 info_out();
 play_file();
-init();
+build_playlist();
 
 while ( 1 ) {
 	main();
@@ -654,7 +654,21 @@ sub update_scores {
 
 }
 
-get_config {
+sub build_playlist {
+	#build default filelist - list all files in $media_dir
+	#system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
+	find( { wanted => \&is_audio_file, no_chdir => 1 }, $media_dir);
+
+	sub is_audio_file {
+		if ( ($_ =~ /ogg$/i) or ($_ =~ /mp3$/i) ) {
+			push(@filelist, $_ . "\n");
+		}
+	}
+}
+
+sub init {
+	# well, it's called "init". guess.
+
 	## set values from config
 	%config = oyster::conf->get_config($conffile);
 
@@ -671,10 +685,6 @@ get_config {
 
 	$voteplay_percentage = $config{"voteplay"};
 	$scores_size = $config{'maxscored'};
-}
-
-sub init {
-	# well, it's called "init". guess.
 
 
 	# setup $basedir
@@ -734,15 +744,6 @@ sub init {
 #		exit;
 #	}
 
-	#build default filelist - list all files in $media_dir
-	#system("find $media_dir -type f -and \\\( -iname '*ogg' -or -iname '*mp3' \\\) -print >$list_dir/default");
-	find( { wanted => \&is_audio_file, no_chdir => 1 }, $media_dir);
-
-	sub is_audio_file {
-		if ( ($_ =~ /ogg$/i) or ($_ =~ /mp3$/i) ) {
-			push(@filelist, $_ . "\n");
-		}
-	}
 
 	open (FILELIST, ">$list_dir/default") || die "init: could not open default filelist";
 	print FILELIST @filelist;
