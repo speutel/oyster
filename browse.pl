@@ -46,7 +46,6 @@ if ((!($givendir eq '/')) && (-e "$mediadir$givendir")) {
 
     my $topdir = $givendir;
     $topdir =~ s/\Q$mediadir\E//;
-    $topdir = "/$topdir";
     if ($topdir =~ /^[^\/]*\/$/) {
 	$topdir = '';
     } else {
