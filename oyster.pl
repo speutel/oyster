@@ -448,6 +448,8 @@ sub init {
 	$lastvotes_file = "$config{savedir}/lastvotes";
 	$votefile = "$config{basedir}/votes";
 	$media_dir = $config{"mediadir"};
+	$media_dir =~ s/\/$//;
+	
 	$voteplay_percentage = $config{"voteplay"};
 	$lastvotes_size = $config{'maxlastvotes'};
 	
@@ -534,10 +536,13 @@ sub choose_file {
 		# read regexps from $savedir/blacklist (one line per regexp)
 		# and if $file matches, choose again
 		if ( -e "$savedir/blacklist" ) {
+			my $tmpfile = $file;
+			$tmpfile =~ /$media_dir(.*)/;
+			$tmpfile = $1;
 			open(BLACKLIST, "$savedir/blacklist");
 			while( my $regexp = <BLACKLIST> ) {
 				chomp($regexp);
-				if ( $file =~ /$regexp/ ) {
+				if ( $tmpfile =~ /$regexp/ ) {
 					add_log($file, "BLACKLIST");
 					choose_file();
 				}
