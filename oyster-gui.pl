@@ -55,7 +55,7 @@ print
 				 -content    => 'text/html; charset=iso-8859-1'}));
 
 print h1('Oyster');
-print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='refresh.gif' border='0' alt='Refresh'></a>";
+print "<a href='oyster-gui.pl' style='position:absolute; top:2px; right:2px'><img src='themes/${config{'theme'}}/refresh.png' border='0' alt='Refresh'></a>";
 
 if (!(-e "$basedir")) {
     print "<p>Oyster has not been started yet!</p>";
