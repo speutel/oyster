@@ -1,27 +1,39 @@
 #!/usr/bin/perl
 use CGI qw/:standard/;
-<<<<<<< oyster-gui.pl
 
 open(INFO, "/tmp/oyster/info");
 $info = <INFO>;
-$info = $info . "<br>";
+chomp($info);
+$info =~ s/^np:\ //;
 close(INFO);
 
-my $title = "";
+my ($title, $artist) = "";
+
+print header, start_html('Oyster-GUI');
 
 if ($info =~ /mp3$/) {
-    @output = `id3v2 -l $info`;
+    open (MP3, "id3v2 -l \"$info\"|") or die $!;
+    my @output = <MP3>;
+
     foreach my $line (@output) {
-	print $line . "<br>";
 	if ($line =~ /^Title/) {
+	    $_ = $line;
 	    ($title) = m/:\ (.*)$/;
+	} elsif ($line =~ /^Lead/) {
+	    $_ = $line;
+	    ($artist) = m/:\ (.*)$/;
 	}
+	
     }
 }
 
-print header,
-    start_html('Oyster-GUI'),
-    h1("Oyster-GUI spielt $title"),
-    a({href=>'skip.pl'},'Skip'),
+if ($title eq "") {
+    $title = $info;
+    $title =~ s@.*/@@;
+}
+
+print
+    h1("Oyster-GUI spielt $artist - $title"),
+    a({href=>'skip.sh'},'Skip'),
     end_html;
 
