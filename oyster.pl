@@ -344,7 +344,7 @@ sub interpret_control {
 			remove_score($unvote_file);
 		}
 		unvote($1);
-		process_vote();
+		process_vote("noremove");
 		get_control();
 		interpret_control();
 	}	
@@ -490,9 +490,11 @@ sub process_vote {
 	
 	if ( $voted_file ne "") {
 		# if a file is given add it to votelist and scores
-		enqueue($voted_file);
-		add_score($voted_file);
-		
+		if ( $voted_file ne "noremove" ) {
+			# if only the winner is should be recomputed the given song is "noremove"
+			enqueue($voted_file);
+			add_score($voted_file);
+		}
 	} else {
 		# else remove the file that is playing at the moment from the votelist.
 		my $tmpfile = $file;
