@@ -7,6 +7,7 @@ use oyster::conf;
 my %tag;
 my %CACHE;
 my %config = oyster::conf->get_config('oyster.conf');
+my $playlist = oyster::conf->get_playlist();
 
 $ENV{LANG} = 'de_DE@euro';
 
@@ -118,7 +119,7 @@ sub get_tag {
 
     $tag{'score'} = 0;
 
-    open (LASTVOTES, "${config{'savedir'}}lastvotes");
+    open (LASTVOTES, "${config{'savedir'}}lastvotes/$playlist");
     while (my $line = <LASTVOTES>) {
 	chomp($line);
 	$tag{'score'}++ if ($line eq $filename);
