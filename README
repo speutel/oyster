@@ -1,20 +1,31 @@
 ==oyster 0.4==
 
---Installation:--
-Just untar oyster into a directory.
-
-
 --Requirements--
 For oyster.pl (the backend), you need mpg321 and/or ogg123 in $PATH.
 For the GUI, you need an apache with the capability to execute perl-CGI, and
 the following perl-modules:
 
+- liburi-perl
+- libcgi-perl
 - ...
-- ...
 
+Below you will find an example for the apache-config. It will allow
+perl-scripts to be executed.
 
+| AddHandler cgi-script .cgi .sh .pl
+|
+| [...]
+|
+| <Location /oyster>
+|        Options +ExecCGI
+| </Location>
 
---Configuration:--
+--Installation--
+Just untar oyster into a directory which is reachable to your
+webserver. Now make sure that the webserver is able to read this
+directory and its contents.
+
+--Configuration--
 Backend:
 oyster searches for its config file in the directory where it is started - and
 it has to be started from the dir where oyster.pl resides, because it won't
@@ -23,7 +34,7 @@ find its modules otherwise. ;)
 oyster wants to have write access to the directory it is untar'ed. There may be
 some strange effects if it doesn't.
 
-There is a conf.sample in the tarfile, you cna rename it to oyster.conf and
+There is a conf.sample in the tarfile, you can rename it to oyster.conf and
 edit it (don't use the default values, except you untar'ed oyster to /var/www/oyster).
 
 At the moment, there are the following keywords in this file:
@@ -32,7 +43,8 @@ At the moment, there are the following keywords in this file:
 	 pipes. It will be deleted when oyster quits.
 
 2. savedir: oyster will save logs, playlists, blacklists, ... in this
-	 directory. It won't be deleted automatically.
+	 directory. It won't be deleted automatically. oyster must
+	 have the rights to create files here.
 
 3. mediadir: oyster will only "work" on files below this directory. This is
 	 where your music is.
