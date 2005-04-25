@@ -21,12 +21,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os, logging, logging.config
+import os, logging, logging.config, random, thread, time
 import oysterconfig
 
 class Oyster:
     configfile = os.getcwd() + "/oyster.conf"
     config = {}
+    filelist = []
 
     scorelist = []
     scorepointer = 0
@@ -46,6 +47,13 @@ class Oyster:
 
     playlist = "default"
     favmode = False
+    controlfile = ""
+    control = None
+
+    filetypes = {}
+    filetoplay = ""
+    nextfiletoplay = ""
+    threadid = None
 
     def __init__(self):
         log.debug("start init")
@@ -67,6 +75,10 @@ class Oyster:
         self.votefile = self.basedir + "/votes"
         self.votepercentage = self.config["voteplay"].rstrip("/")
         self.scoressize = int(self.config["maxscored"])
+        self.controlfile = self.basedir + "/control"
+
+        for t in self.config["filetypes"].split(","):
+            self.filetypes[t] = self.config[t]
 
         # setup basedir
         if not os.access(self.basedir, os.F_OK):
@@ -80,7 +92,7 @@ class Oyster:
                 pidfile = open(self.basedir + "/pid", 'r')
                 pid = pidfile.readline()
                 # check pid - is this pid an instance of oyster?
-                pspipe = popen("ps -o command= -p " + pid, 'r')
+                pspipe = os.popen("ps -o command= -p " + pid, 'r')
                 log.debug("check pid for oyster")
                 if (pspipe.readline().find("oyster") != -1):
                     log.debug("unpausing running oyster")
@@ -135,7 +147,7 @@ class Oyster:
         self.update_scores()
 
         # initialize random
-        # FIXME  
+        random.seed()
 
         # make fifos
         log.debug("make fifos")
@@ -147,6 +159,17 @@ class Oyster:
         favfile = open(self.basedir + "/favmode", 'w')
         favfile.write("off\n")
         favfile.close()
+        
+        if len(self.filelist) != 0:
+            # fill files to play 
+            self.choose_nextfile()
+            self.choose_nextfile()
+
+        # FIXME play file 
+        
+        self.build_playlist(self.mediadir)
+
+        self.control = open(self.controlfile, 'r+')
 
         log.debug("end init")
 
@@ -156,12 +179,93 @@ class Oyster:
             sfile = open(self.scoresfile, 'r')
             self.scorespointer = sfile.readline().rstrip()
             for line in sfile.readlines():
-                scores.append(line.rstrip())
+                self.scorelist.append(line.rstrip())
             sfile.close()
         # FIXME cut off entries after scoressize has changed!
+    
+    def choose_file(self):
+        log.debug("choose file from list")
+        if len(self.scorelist) != 0:
+            # test if we play from scores or normal playlist 
+            if random.randint(0, 100) < self.votepercentage:
+                return random.choice(self.scorelist)
+        return random.choice(self.filelist)
+        
+    def choose_nextfile(self):
+        if self.filetoplay == "":
+            log.debug("choose normal file to play (only happens directly after oyster start)")
+            self.filetoplay = self.choose_file()
+        else:
+            log.debug("choose next file to play")
+            self.nextfiletoplay = self.choose_file()
 
+    def play_file(self):
+        log.debug("playing file")
+
+    def build_playlist(self, dir):
+        log.debug("building playlist")
+        for root, dirs, files in os.walk(self.mediadir, topdown=False):
+            for name in files:
+                if name[name.rfind(".")+1:] in self.filetypes.keys():
+                    self.filelist.append(os.path.join(root, name))
+        lfile = open(self.listdir + "/" + self.playlist, 'w')
+        for line in self.filelist:
+            lfile.write(line + "\n")
+        lfile.close()
+        log.debug("done writing list")
+
+    def exit(self):
+        log.debug("exiting oyster")
+        for root, dirs, files in os.walk(self.basedir, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        os.rmdir(self.basedir)
+
+        # save scores
+        sfile = open(self.scoresfile, 'w')
+        sfile.write(str(self.scorepointer) + "\n")
+        sfile.writelines(self.scorelist)
+        sfile.close()
+
+        # FIXME stop playthread 
+        sys.exit()
+
+    def play(self, f):
+        suffixpos = f.rfind(".")
+        player = oyster.filetypes[f[suffixpos+1:]]
+        os.spawnl(os.P_WAIT, player, player, f)
+        oyster.done()
+        # playthread = PlayThread()
+        # playthread.playfile = f
+        # playthread.oyster = self
+        # playthread.start()
+
+    def done(self):
+        self.filetoplay = self.nextfiletoplay
+        self.choose_nextfile()
+
+    def read_control(self):
+        command = self.control.readline().rstrip()
+        if command == "QUIT":
+            self.exit()
+
+# class PlayThread(threading.Thread):
+    # playfile = ""
+    # oyster = None
+    # def run(self):
+        # suffixpos = self.playfile.rfind(".")
+        # player = oyster.filetypes[self.playfile[suffixpos+1:]]
+        # os.spawnl(os.P_WAIT, player, player, self.playfile)
+        # oyster.done()
 
 if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
     log = logging.getLogger("oyster")
     oyster = Oyster()
+    print oyster.filetoplay
+    print oyster.nextfiletoplay
+    oyster.threadid = thread.start_new_thread(oyster.play, (oyster.filetoplay,))
+    while 1:
+        oyster.read_control()

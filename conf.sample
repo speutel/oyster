@@ -28,3 +28,9 @@ coverwidth=150
 # shall oyster use hooks or shall it ignore them?
 # use_hooks=true for using them
 use_hooks=false
+
+# suffixes of files oyster should play
+filetypes=ogg,mp3
+# player for filetypes
+ogg=ogg123
+mp3=mp321
