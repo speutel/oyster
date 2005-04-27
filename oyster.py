@@ -21,7 +21,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os, logging, logging.config, random, thread, time
+import os, sys, logging, logging.config, random, thread, threading, time
+import signal
 import oysterconfig
 
 class Oyster:
@@ -54,6 +55,10 @@ class Oyster:
     filetoplay = ""
     nextfiletoplay = ""
     threadid = None
+
+    playerid = 0
+    playthread = None
+    doExit = False
 
     def __init__(self):
         log.debug("start init")
@@ -216,6 +221,9 @@ class Oyster:
 
     def exit(self):
         log.debug("exiting oyster")
+
+        self.doExit = True
+        
         for root, dirs, files in os.walk(self.basedir, topdown=False):
             for name in files:
                 os.remove(os.path.join(root, name))
@@ -229,36 +237,69 @@ class Oyster:
         sfile.writelines(self.scorelist)
         sfile.close()
 
-        # FIXME stop playthread 
+        # stop playthread 
+        # FIXME signal 9??? 
+        if oyster.playerid != 0:
+            print oyster.playerid
+            os.kill(oyster.playerid, 9)
         sys.exit()
 
-    def play(self, f):
+    def play(self, f, realoyster):
+        # suffixpos = f.rfind(".")
+        # player = oyster.filetypes[f[suffixpos+1:]]
+        # oyster.playerid = os.spawnl(os.P_NOWAIT, player, player, f)
+        # os.waitpid(oyster.playerid, 0)
+        # oyster.done()
+
+        # self.playthread = PlayThread()
+        # self.playthread.playfile = f
+        # self.playthread.oyster = self
+        # self.playthread.setDaemon(True)
+        # self.playthread.start()
         suffixpos = f.rfind(".")
-        player = oyster.filetypes[f[suffixpos+1:]]
-        os.spawnl(os.P_WAIT, player, player, f)
-        oyster.done()
-        # playthread = PlayThread()
-        # playthread.playfile = f
-        # playthread.oyster = self
-        # playthread.start()
+        player = self.filetypes[f[suffixpos+1:]]
+        self.playerid = os.spawnl(os.P_NOWAIT, player, player, f)
+        os.waitpid(self.playerid, 0)
+        self.done()
 
     def done(self):
-        self.filetoplay = self.nextfiletoplay
-        self.choose_nextfile()
+        if not self.doExit:
+            self.filetoplay = self.nextfiletoplay
+            self.choose_nextfile()
+            self.play(self.filetoplay, self)
 
     def read_control(self):
         command = self.control.readline().rstrip()
         if command == "QUIT":
             self.exit()
+        if command == "NEXT":
+            self.next()
+    
+    def next(self):
+        # FIXME was anderes als signal 9? 
+        print self.playerid
+        if self.playerid != 0:
+            os.kill(self.playerid, signal.SIGQUIT)
 
-# class PlayThread(threading.Thread):
-    # playfile = ""
-    # oyster = None
-    # def run(self):
-        # suffixpos = self.playfile.rfind(".")
-        # player = oyster.filetypes[self.playfile[suffixpos+1:]]
-        # os.spawnl(os.P_WAIT, player, player, self.playfile)
-        # oyster.done()
+class ControlThread(threading.Thread):
+    oyster = None
+    controlfile = None
+    def startController(self, o, cfile):
+        self.oyster = o
+        self.controlfile = cfile
+        self.start()
+    def run(self):
+        while 1:
+            self.readControl()
+    def readControl(self):
+        command = self.controlfile.readline().rstrip()
+        if command == "QUIT":
+            oyster.exit()
+        if command == "NEXT":
+            oyster.next()                
+        if command == "bla":
+            print "Es lebt!"
+        
 
 if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
@@ -266,6 +307,6 @@ if __name__ == '__main__':
     oyster = Oyster()
     print oyster.filetoplay
     print oyster.nextfiletoplay
-    oyster.threadid = thread.start_new_thread(oyster.play, (oyster.filetoplay,))
-    while 1:
-        oyster.read_control()
+    ct = ControlThread()
+    ct.startController(oyster, oyster.control)
+    oyster.play(oyster.filetoplay, oyster)
