@@ -375,7 +375,7 @@ class Oyster:
             if (posHash != -1) and (line[:(posHash)] == " "*(posHash+1)) :
                 continue
             posSlash = line.find("/")
-            elif posSlash == 0:
+            if posSlash == 0:
                 self.enqueue(line.rstrip())
             elif posSlash == -1:
                 self.enqueue(listpath + "/" + line.rstrip())
