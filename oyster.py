@@ -64,7 +64,7 @@ class Oyster:
     paused = False
     history = []
     mode = "vote"
-
+    doNotSwitch = False
 
     def __init__(self):
         log.debug("start init")
@@ -279,7 +279,6 @@ class Oyster:
         suffixpos = f.rfind(".")
         player = self.filetypes[f[suffixpos+1:]]
         self.history.append(f)
-        self.hist_pointer = len(self.history)
         self.playerid = os.spawnl(os.P_NOWAIT, player, player, f)
         os.waitpid(self.playerid, 0)
         self.done()
@@ -287,12 +286,16 @@ class Oyster:
     def playPrevious(self):
         self.hist_pointer -= 1
         self.filetoplay = self.history[self.hist_pointer]
-        self.play(self.filetoplay)
+        self.doNotSwitch = True
+        self.next()
 
     def done(self):
         if not self.doExit:
-            self.filetoplay = self.nextfiletoplay
-            self.chooseFile()
+            if not self.doNotSwitch:
+                self.filetoplay = self.nextfiletoplay
+                self.chooseFile()
+                self.hist_pointer = len(history)
+            self.doNotSwitch = False
             self.play(self.filetoplay)
 
     def next(self):
