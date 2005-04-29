@@ -284,10 +284,11 @@ class Oyster:
         self.done()
 
     def playPrevious(self):
-        self.hist_pointer -= 1
-        self.filetoplay = self.history[self.hist_pointer]
-        self.doNotSwitch = True
-        self.next()
+        if self.hist_pointer > 0:
+            self.hist_pointer -= 1
+            self.filetoplay = self.history[self.hist_pointer]
+            self.doNotSwitch = True
+            self.next()
 
     def done(self):
         if not self.doExit:
