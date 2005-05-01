@@ -68,6 +68,8 @@ class Oyster:
 
     def __init__(self):
         log.debug("start init")
+
+
         
         self.initConfig()
 
@@ -103,6 +105,11 @@ class Oyster:
                     os.rmdir(os.path.join(root, name))
             os.rmdir(self.basedir)
             os.makedirs(self.basedir)
+        
+        outfile = os.open("/dev/null", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        errfile = os.open("/dev/null", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        os.dup2(outfile, 1)
+        os.dup2(errfile, 2)
 
         # setup savedir
         log.debug("setup savedir")
@@ -473,6 +480,6 @@ if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
     log = logging.getLogger("oyster")
     oyster = Oyster()
-    print oyster.filetoplay
-    print oyster.nextfiletoplay
+    # print oyster.filetoplay
+    # print oyster.nextfiletoplay
     oyster.play(oyster.filetoplay)
