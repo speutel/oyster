@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/bin/python
 # -*- coding: iso8859-1 -*-
 
 # oyster - a python-based jukebox and web-frontend
@@ -21,7 +21,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os, sys, logging, logging.config, random, threading, time
+import os
+import sys
+import logging
+import logging.config
+import random
+import threading
+import time
 import signal, re
 import oysterconfig
 
@@ -228,7 +234,7 @@ class Oyster:
             if not self.doNotSwitch:
                 self.filetoplay = self.nextfiletoplay
                 self.chooseFile()
-                self.hist_pointer = len(history)
+                self.hist_pointer = len(self.history)
             self.doNotSwitch = False
             self.play(self.filetoplay)
 
@@ -480,6 +486,4 @@ if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
     log = logging.getLogger("oyster")
     oyster = Oyster()
-    # print oyster.filetoplay
-    # print oyster.nextfiletoplay
     oyster.play(oyster.filetoplay)
