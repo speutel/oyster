@@ -223,11 +223,11 @@ class Oyster:
             return 0
 
     def __write_votelist(self):
-        vfile = open(self.basedir + "/votelist", 'w')
-        for entry in self.votelist:
-            vfile.writelines(entry)
-            vfile.write("\n")
-        vfile.close()
+        if self.mode == "vote":
+            vfile = open(self.basedir + "/votes", 'w')
+            for entry in self.votelist:
+                vfile.write(entry[0] + "," + str(entry[1]) + "\n")
+            vfile.close()
 
     def __done(self):
         if not self.doExit:
