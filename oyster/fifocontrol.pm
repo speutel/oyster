@@ -49,11 +49,11 @@ sub do_action {
 	open (CONTROL, ">${config{'basedir'}}control");
 
 	if ($action eq 'skip') {
-		print CONTROL 'NEXT';
+		print CONTROL "NEXT\n";
 		close CONTROL;
 		sleep 4;
 	} elsif ($action eq 'prev') {
-		print CONTROL 'PREV';
+		print CONTROL "PREV\n";
 		close CONTROL;
 		sleep 4;
 	} elsif ($action eq 'start') {
@@ -65,31 +65,32 @@ sub do_action {
 			$waitmax--;
 		}
 	} elsif ($action eq 'stop') {
-		print CONTROL "QUIT";
+		print CONTROL "QUIT\n";
 		close CONTROL;
 	} elsif ($action eq 'pause') {
 		if ($status eq 'paused') {
-			print CONTROL "UNPAUSE";
+			print CONTROL "UNPAUSE\n";
 			$status = 'playing';
 		} elsif ($status eq 'playing') {
-			print CONTROL "PAUSE";
+			print CONTROL "PAUSE\n";
 			$status = 'paused';
 		}
 		close CONTROL;
 	} elsif (($action eq 'scoreup') && ($file)) {
-		print CONTROL "SCORE + $mediadir" . $file;
+		print CONTROL "SCORE + $mediadir" . $file . "\n";
 		close CONTROL;
 	} elsif (($action eq 'scoredown') && ($file)) {
-		print CONTROL "SCORE - $mediadir" . $file;
+		print CONTROL "SCORE - $mediadir" . $file . "\n";
 		close CONTROL;
 	} elsif (($action eq 'unvote') && ($file)) {
-		print CONTROL "UNVOTE $mediadir" . $file;
+		print CONTROL "UNVOTE $mediadir\n" . $file;
 		close CONTROL;
 	} elsif (($action eq 'loadlist') && ($file)) {
-		print CONTROL "LOAD $file";
+		print CONTROL "LOAD $file\n";
 		close CONTROL;
 	} elsif (($action eq 'enqueue') && ($file)) {
-		print CONTROL "ENQUEUE $file";
+		$file =~ s/^\///;
+		print CONTROL "ENQUEUE " . $config{'mediadir'} . $file ."\n";
 		close CONTROL;
 	} elsif (($action eq 'addnewlist') && ($file)) {
 		$file =~ s/.*\///;
@@ -102,10 +103,10 @@ sub do_action {
 		unlink("$config{savedir}logs/$file");
 		unlink("$config{savedir}scores/$file");
 	} elsif ($action eq 'favmode') {
-		print CONTROL "FAVMODE";
+		print CONTROL "FAVMODE\n";
 		close CONTROL;
 	} elsif ($action eq 'nofavmode') {
-		print CONTROL "NOFAVMODE";
+		print CONTROL "NOFAVMODE\n";
 		close CONTROL;
 	}
 
@@ -120,7 +121,7 @@ sub do_vote {
 	$votefile =~ s/^\///;
 	$votefile = $config{'mediadir'} . $votefile;
 	open (CONTROL, ">${config{basedir}}control");
-	print CONTROL "VOTE $votefile";
+	print CONTROL "VOTE $votefile\n";
 	close CONTROL;
 	sleep 1;
 }
