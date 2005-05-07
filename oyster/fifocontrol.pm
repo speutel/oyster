@@ -83,7 +83,7 @@ sub do_action {
 		print CONTROL "SCORE - $mediadir" . $file . "\n";
 		close CONTROL;
 	} elsif (($action eq 'unvote') && ($file)) {
-		print CONTROL "UNVOTE $mediadir\n" . $file;
+		print CONTROL "UNVOTE $mediadir" . $file . "\n";
 		close CONTROL;
 	} elsif (($action eq 'loadlist') && ($file)) {
 		print CONTROL "LOAD $file\n";
