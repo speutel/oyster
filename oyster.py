@@ -141,10 +141,6 @@ class Oyster:
         
         # write name of current playlist (in init -> default) 
         self.__write_playlist_status()
-        log.debug("writing playlist")
-        plfile = open(self.basedir + "/playlist", 'w')
-        plfile.write("default\n")
-        plfile.close()
 
         # read old default-playlist (list of all files in mediadir)
         # (one song is played from there while we build the new list) 
@@ -263,12 +259,10 @@ class Oyster:
                 vfile = open(self.basedir + "/votes", 'w')
                 for entry in self.votelist:
                     vfile.write(entry[0] + "," + str(entry[1]) + "\n")
-                    log.debug("in votelist: " + entry[0])
                 vfile.close()
             else:
                 if os.access(self.basedir + "/votes", os.F_OK):
                     os.remove(self.basedir + "/votes")
-        log.debug("done writing votelist")
     
     def __gettime(self):
         d = datetime.datetime(1,2,3)
@@ -348,7 +342,6 @@ class Oyster:
         lfile.close()
         if self.playlist == "default":
             self.filelist = fl
-        log.debug("done writing list")
 
     def exit(self):
         log.debug("exiting oyster")
@@ -365,14 +358,13 @@ class Oyster:
         self.__write_scores()
 
         # stop playthread 
-        if oyster.playerid != 0:
-            os.kill(oyster.playerid, signal.SIGQUIT)
+        if self.playerid != 0:
+            os.kill(self.playerid, signal.SIGTERM)
         self.__playlog(self.__gettime() + " QUIT " + self.filetoplay )  
         sys.exit()
 
     def play(self, f):
         if self.filetoplay != "":
-            log.debug("playing " + f)
             suffixpos = f.rfind(".")
             player = self.filetypes[f[suffixpos+1:]]
             self.history.append(f)
@@ -394,7 +386,7 @@ class Oyster:
     def next(self):
         self.nextreason = "SKIPPED"
         if self.playerid != 0:
-            os.kill(self.playerid, signal.SIGQUIT)
+            os.kill(self.playerid, signal.SIGTERM)
 
     def pause(self):
         self.paused = True
@@ -447,7 +439,6 @@ class Oyster:
             self.scorepointer = 0
         self.scorelist.append(f)
         self.__write_scores()
-        log.debug("scoreup done")
 
     def scoredown(self, f):
         try:
@@ -523,41 +514,41 @@ class ControlThread(threading.Thread):
         log.debug("command: " + command)
 
         if command == "NEXT":
-            oyster.next()
+            self.oyster.next()
         elif command == "QUIT":
-            oyster.exit()
+            self.oyster.exit()
         elif command == "PAUSE":
-            if not self.paused:
-                oyster.pause()
+            if not self.oyster.paused:
+                self.oyster.pause()
             else:
-                oyster.unpause()
+                self.oyster.unpause()
         elif command == "UNPAUSE":
-            oyster.unpause()
+            self.oyster.unpause()
         elif command == "PREV":
-            oyster.playPrevious()
+            self.oyster.playPrevious()
         elif command == "VOTE":
-            oyster.vote(commandline[cpos+1:], "VOTED")
+            self.oyster.vote(commandline[cpos+1:], "VOTED")
         elif command == "ENQUEUE":
-            oyster.enqueue(commandline[cpos+1:], "ENQUEUED")
+            self.oyster.enqueue(commandline[cpos+1:], "ENQUEUED")
         elif command == "DEQUEUE":
-            oyster.dequeue(commandline[cpos+1:])
+            self.oyster.dequeue(commandline[cpos+1:])
         elif command == "UNVOTE":
-            oyster.unvote(commandline[cpos+1:])
+            self.oyster.unvote(commandline[cpos+1:])
         elif command == "SCORE":
             if commandline[cpos+1:cpos+2] == "+":
-                oyster.scoreup(commandline[cpos+3:])
+                self.oyster.scoreup(commandline[cpos+3:])
             elif commandline[cpos+1:cpos+2] == "-":
-                oyster.scoredown(commandline[cpos+3:])
+                self.oyster.scoredown(commandline[cpos+3:])
         elif command == "ENQLIST":
-            oyster.enqueueList(commandline[cpos+1:])
+            self.oyster.enqueueList(commandline[cpos+1:])
         elif command == "RELOADCONFIG":
-            oyster.initConfig()
+            self.oyster.initConfig()
         elif command == "FAVMODE":
-            oyster.enableFavmode()
+            self.oyster.enableFavmode()
         elif command == "NOFAVMODE":
-            oyster.disableFavmode()
+            self.oyster.disableFavmode()
         elif command == "LOAD":
-            oyster.loadPlaylist(commandline[cpos+1:])
+            self.oyster.loadPlaylist(commandline[cpos+1:])
         
 class PlaylistBuilder(threading.Thread):
     oyster = None
@@ -570,5 +561,5 @@ class PlaylistBuilder(threading.Thread):
 if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
     log = logging.getLogger("oyster")
-    oyster = Oyster()
-    oyster.play(oyster.filetoplay)
+    oy = Oyster()
+    oy.play(oy.filetoplay)
