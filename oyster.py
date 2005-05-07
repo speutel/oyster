@@ -258,6 +258,7 @@ class Oyster:
     def __write_votelist(self):
         log.debug("writing votelist")
         if self.mode == "vote":
+            self.votelist.sort(self.__votelist_sort)
             if len(self.votelist) != 0:
                 vfile = open(self.basedir + "/votes", 'w')
                 for entry in self.votelist:
@@ -426,10 +427,11 @@ class Oyster:
 
     def enqueue(self, f, reason):
         if self.mode == "vote":
-            for tup in self.votelist:
-                if tup[0] == f:
-                    tup[1] += 1
-                    return
+            for i in range(len(self.votelist)):
+                if self.votelist[i][0] == f:
+                    self.votelist[i][1] += 1
+                    self.__write_votelist()
+                    return None
             self.votelist.append( [f, 1, reason] ) 
             self.__write_votelist()
 
