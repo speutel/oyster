@@ -117,8 +117,8 @@ class Oyster:
         
         outfile = os.open("/dev/null", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
         errfile = os.open("/dev/null", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
-        #os.dup2(outfile, 1)
-        #os.dup2(errfile, 2)
+        os.dup2(outfile, 1)
+        os.dup2(errfile, 2)
 
         # setup savedir
         log.debug("setup savedir")
@@ -140,6 +140,7 @@ class Oyster:
         pidfile.close()
         
         # write name of current playlist (in init -> default) 
+        self.__write_playlist_status()
         log.debug("writing playlist")
         plfile = open(self.basedir + "/playlist", 'w')
         plfile.write("default\n")
@@ -179,12 +180,16 @@ class Oyster:
 
         # fill files to play 
         self.chooseFile()
-        # log.debug("init: " + self.filetoplay)
-        # log.debug(self.nextfiletoplay)
 
         self.unpause()
 
         log.debug("end init")
+
+    def __write_playlist_status(self):
+        log.debug("writing playlist")
+        plfile = open(self.basedir + "/playlist", 'w')
+        plfile.write(self.playlist + "\n")
+        plfile.close()
 
     def __update_scores(self):
         log.debug("updating scores")
@@ -265,7 +270,7 @@ class Oyster:
         return d.today().strftime("%Y%m%d-%H%M")
 
     def __done(self):
-        log.debug("done")
+        log.debug("done playing")
         if not self.doExit:
             if self.filetoplay != "":
                 self.__playlog(self.__gettime() + " " + self.nextreason +" " + self.filetoplay )
@@ -284,9 +289,14 @@ class Oyster:
             time.sleep(2)
             log.debug("attempting to play file " + self.filetoplay)
             self.play(self.filetoplay)
-            
+ 
     def __playlog(self, s):
-        plfile = open(self.savedir + "/logs/" + self.playlist, 'a')
+        if self.playlist_changed != "":
+            pl = self.playlist_changed
+            self.playlist_changed = ""
+        else:
+            pl = self.playlist
+        plfile = open(self.savedir + "/logs/" + pl, 'a')
         plfile.write(s + "\n")
         plfile.close()
 
@@ -314,12 +324,11 @@ class Oyster:
             self.filetypes[t] = self.config[t]
 
     def chooseFile(self):
-        # if self.filetoplay == "":
-            # log.debug("choose normal file to play (only happens directly after oyster start)")
-            # self.filetoplay = self.__choose_file()
-        # else:
         log.debug("choose next file to play")
         self.nextfiletoplay = self.__choose_file()
+        nfile = open(self.basedir + "/nextfile", 'w')
+        nfile.write(self.nextfiletoplay + "\n")
+        nfile.close()
 
     def buildPlaylist(self, dir):
         log.debug("building playlist")
@@ -328,11 +337,12 @@ class Oyster:
             for name in files:
                 if name[name.rfind(".")+1:] in self.filetypes.keys():
                     fl.append(os.path.join(root, name).rstrip())
-        self.filelist = fl
         lfile = open(self.listdir + "/" + self.playlist, 'w')
-        for line in self.filelist:
+        for line in fl:
             lfile.write(line + "\n")
         lfile.close()
+        if self.playlist == "default":
+            self.filelist = fl
         log.debug("done writing list")
 
     def exit(self):
@@ -478,10 +488,15 @@ class Oyster:
         if os.access(self.listdir + "/" + listname, os.R_OK):
             deflist = open(self.listdir + "/" + listname, 'r')
             self.filelist = []
+            self.playlist_changed = self.playlist
             self.playlist = listname
+            self.scoresfile = self.savedir + "/scores/" + self.playlist
+            self.__update_scores()
+            self.__write_playlist_status()
             for line in deflist.readlines():
                 # self.filelist.append(line.rstrip())
                 self.filelist.append(line.rstrip())
+        self.chooseFile()
 
 class ControlThread(threading.Thread):
     def startController(self, o, cfile):
@@ -516,7 +531,6 @@ class ControlThread(threading.Thread):
             oyster.playPrevious()
         elif command == "VOTE":
             oyster.vote(commandline[cpos+1:], "VOTED")
-            log.debug("vote fertig")
         elif command == "ENQUEUE":
             oyster.enqueue(commandline[cpos+1:], "ENQUEUED")
         elif command == "DEQUEUE":
