@@ -196,9 +196,13 @@ class Oyster:
         if os.access(self.scoresfile, os.R_OK):
             sfile = open(self.scoresfile, 'r')
             self.scorepointer = int(sfile.readline().rstrip())
+            self.scorelist = []
             for line in sfile.readlines():
                 self.scorelist.append(line.rstrip())
             sfile.close()
+        else:
+            self.scorespointer = 0
+            self.scorelist = []
         # FIXME cut off entries after scoressize has changed!
 
     def __write_scores(self):
