@@ -223,7 +223,7 @@ class Oyster:
             sfile.close()
         else:
             # no scorefile -> empty list 
-            self.scorespointer = 0
+            self.scorepointer = 0
             self.scorelist = []
         # FIXME cut off entries after scoressize has changed!
 
@@ -388,6 +388,8 @@ class Oyster:
         sys.setrecursionlimit(200)
 
     def chooseFile(self):
+        """ chooses next file to play from either filelist or scores and writes
+            it to basedir/nextfile """
         log.debug("choose next file to play")
         self.nextfiletoplay = self.__choose_file()
         nfile = open(self.basedir + "/nextfile", 'w')
@@ -395,20 +397,28 @@ class Oyster:
         nfile.close()
 
     def buildPlaylist(self, mdir):
+        """ builds the default playlist with argument mdir as root """
         log.debug("building playlist")
         flist = []
+
+        # append every file with extension in filetypes to filelist 
         for root, dirs, files in os.walk(mdir, topdown=False):
             for name in files:
                 if name[name.rfind(".")+1:] in self.filetypes.keys():
                     flist.append(os.path.join(root, name).rstrip())
+
         lfile = open(self.listdir + "/" + self.playlist, 'w')
         for line in flist:
             lfile.write(line + "\n")
         lfile.close()
+
+        # if the playlist is not changed to another playlist than "default",
+        # replace filelist in memory 
         if self.playlist == "default":
             self.filelist = flist
 
     def exit(self):
+        """ cleanup basedir, write scores and kill player """
         log.debug("exiting oyster")
 
         self.doExit = True
@@ -428,6 +438,7 @@ class Oyster:
         sys.exit()
 
     def play(self, filestring):
+        """ play file """
         if self.filetoplay != "":
             suffixpos = filestring.rfind(".")
             player = self.filetypes[filestring[suffixpos+1:]]
@@ -441,6 +452,7 @@ class Oyster:
         self.__done()
 
     def playPrevious(self):
+        """ play previous file from history """
         if self.hist_pointer > 0:
             self.hist_pointer -= 1
             self.filetoplay = self.history[self.hist_pointer]
@@ -448,11 +460,13 @@ class Oyster:
             self.next()
 
     def next(self):
+        """ skip the playing file """
         self.nextreason = "SKIPPED"
         if self.playerid != 0:
             os.kill(self.playerid, signal.SIGTERM)
 
     def pause(self):
+        """ pause playing """
         self.paused = True
         pfile = open(self.basedir + "/status", 'w')
         pfile.write("paused")
@@ -461,6 +475,7 @@ class Oyster:
             os.kill(self.playerid, signal.SIGSTOP)
     
     def unpause(self):
+        """ resume playing """
         self.paused = False
         pfile = open(self.basedir + "/status", 'w')
         pfile.write("playing")
@@ -469,15 +484,18 @@ class Oyster:
             os.kill(self.playerid, signal.SIGCONT)
 
     def enableFavmode(self):
+        """ enable favmode (play only from scores) """
         if len(self.scorelist) != 0:
             self.votepercentage = 100
         self.__write_favmode("on")
 
     def disableFavmode(self):
+        """ disable favmode (normal playing) """
         self.votepercentage = self.config["voteplay"]
         self.__write_favmode("off")
 
     def enqueue(self, filestring, reason):
+        """ queue file for playing with $reason as logentry """
         if self.mode == "vote":
             for i in range(len(self.votelist)):
                 if self.votelist[i][0] == filestring:
@@ -488,11 +506,13 @@ class Oyster:
             self.__write_votelist()
 
     def vote(self, filestring, reason):
+        """ queue file for playing and raise score """
         if self.mode == "vote":
             self.enqueue(filestring, reason)
             self.scoreup(filestring)
 
     def scoreup(self, filestring):
+        """ raise score for file """
         log.debug("scoreup")
         self.scorepointer += 1
         if self.scorepointer == self.scoressize:
@@ -501,6 +521,7 @@ class Oyster:
         self.__write_scores()
 
     def scoredown(self, filestring):
+        """ lower score for file """
         try:
             self.scorelist.remove(filestring)
             self.scorepointer -= 1
@@ -508,9 +529,12 @@ class Oyster:
                 self.scorepointer = 0
             self.__write_scores()
         except ValueError:
+            # when file is not in the scorelist this Error will be raised 
             pass
 
     def dequeue(self, filestring):
+        """ remove file from the queue of files to play.  Returns the entry
+            from the votelist (a triple: filename, number of votes, reason) """
         for tup in self.votelist:
             if filestring == tup[0]:
                 self.votelist.remove(tup)
@@ -518,6 +542,8 @@ class Oyster:
         return None
 
     def unvote(self, filestring):
+        """ remove file from the queue of files to play. If the score was
+            raised before, lower it. """
         tup = self.dequeue(filestring)
         if tup != None:
             if tup[2] == "VOTED":
@@ -526,6 +552,7 @@ class Oyster:
         self.__write_votelist()
 
     def enqueueList(self, filestring):
+        """ Open xmms-style playlist and enqueue the files in it. """
         try:
             lfile = open(filestring, 'r')
         except IOError:
@@ -533,15 +560,19 @@ class Oyster:
         listpath = filestring[:filestring.rfind("/")]
         for line in lfile.readlines():
             pos_hash = line.find('#')
+            # forget comments (hash with only spaces before) 
             if (pos_hash != -1) and (line[:(pos_hash)] == " "*(pos_hash+1)) :
                 continue
             pos_slash = line.find("/")
             if pos_slash == 0:
+                # path is absolute 
                 self.enqueue(line.rstrip())
             elif pos_slash == -1:
+                # path is relative 
                 self.enqueue(listpath + "/" + line.rstrip())
 
     def loadPlaylist(self, listname):
+        """ load oyster-playlist (discard list in memory) """
         if os.access(self.listdir + "/" + listname, os.R_OK):
             deflist = open(self.listdir + "/" + listname, 'r')
             self.filelist = []
@@ -556,7 +587,11 @@ class Oyster:
         self.chooseFile()
 
 class ControlThread(threading.Thread):
+    """ This Thread opens controlfifo for reading and translates commands into
+        method-invocations. """
     def startController(self, oyster_inst, cfile):
+        """ sets oyster-instance and starts the Thread. Use this method for
+            starting the Thread. """
         self.oyster = oyster_inst
         self.controlfile = cfile
         self.start()
@@ -611,6 +646,7 @@ class ControlThread(threading.Thread):
             self.oyster.loadPlaylist(commandline[cpos+1:])
         
 class PlaylistBuilder(threading.Thread):
+    """ asynchronus default playlist building. Wonderful. """
     oyster = None
     def buildPlaylist(self, oyster_inst):
         self.oyster = oyster_inst 
