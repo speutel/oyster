@@ -117,7 +117,9 @@ if ($search ne '') {
 	} elsif ($searchtype eq 'regex') {
 		foreach my $line (@list) {
 			$line =~ s/\Q$mediadir\E//;
-			if ($line =~ /$search/i) {
+			my $name = $line;
+			$name =~ s/\....$//;
+			if ($name =~ /$search/i) {
 				chomp($line);
 				push (@results, $line);
 			}
