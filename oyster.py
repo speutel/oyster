@@ -102,6 +102,7 @@ class Oyster:
             log.debug("setup basedir")
             os.makedirs(self.basedir)
         else: 
+	    # TODO scheint nicht zu funktionieren...
             # already exists. check for another running oyster and unpause.
             # no oyster -> remove dir
             log.debug("basedir exists")
@@ -128,10 +129,10 @@ class Oyster:
             os.makedirs(self.basedir)
         
         # redirect stdout/stderr - silence! 
-        outfile = os.open("/dev/null", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
-        errfile = os.open("/dev/null", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
-        os.dup2(outfile, 1)
-        os.dup2(errfile, 2)
+        outfile = os.open("/tmp/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        errfile = os.open("/tmp/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        # os.dup2(outfile, 1)
+        # os.dup2(errfile, 2)
 
         self.__setup_savedir()
         
@@ -407,7 +408,7 @@ class Oyster:
                 if name[name.rfind(".")+1:] in self.filetypes.keys():
                     flist.append(os.path.join(root, name).rstrip())
 
-        lfile = open(self.listdir + "/" + self.playlist, 'w')
+        lfile = open(self.listdir + "/default", 'w')
         for line in flist:
             lfile.write(line + "\n")
         lfile.close()
