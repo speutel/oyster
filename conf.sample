@@ -32,5 +32,5 @@ use_hooks=false
 # suffixes of files oyster should play
 filetypes=ogg,mp3
 # player for filetypes
-ogg=ogg123
-mp3=mp321
+ogg=/usr/bin/ogg123
+mp3=/usr/bin/mpg321
