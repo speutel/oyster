@@ -92,3 +92,7 @@ p.configdescription {
   width: 30em;
   margin-bottom: 2em;
 }
+
+img {
+	border: 0
+}
