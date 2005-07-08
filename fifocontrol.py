@@ -93,6 +93,12 @@ def do_action (action, filename):
         filename = os.path.basename(filename)
         newlist = open(myconfig['savedir'] + "lists/" + filename, 'w')
         newlist.close()
+        newlist = open(myconfig['savedir'] + "blacklists/" + filename, 'w')
+        newlist.close()
+        newlist = open(myconfig['savedir'] + "logs/" + filename, 'w')
+        newlist.close()
+        newlist = open(myconfig['savedir'] + "scores/" + filename, 'w')
+        newlist.close()
     elif action == 'delete' and filename:
         filename = os.path.basename(filename)
         os.unlink(myconfig['savedir'] + "blacklists/" + filename)
