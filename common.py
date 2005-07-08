@@ -51,7 +51,7 @@ def navigation_header():
     print "<table width='100%'><tr>"
     print "<td align='center' width='17%'><a href='browse.py'>Browse</a></td>"
     print "<td align='center' width='16%'><a href='search.py'>Search</a></td>"
-    print "<td align='center' width='17%'><a href='playlists.pl'>Playlists</a></td>"
+    print "<td align='center' width='17%'><a href='playlists.py'>Playlists</a></td>"
     print "<td align='center' width='17%'><a href='blacklist.pl'>Blacklist</a></td>"
     print "<td align='center' width='16%'><a href='score.pl'>Scoring</a></td>"
     print "<td align='center' width='17%'><a href='statistics.pl'>Statistics</a></td>"
