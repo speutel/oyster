@@ -210,7 +210,7 @@ for file in files:
                 + escapeddir + "' target='curplay'>Vote</a></td>"
         else:
             print "<td></td>"
-    elif file[-3:] == 'm3u$' or file[-3:] == 'pls': # if we have a list...
+    elif file[-3:] == 'm3u' or file[-3:] == 'pls': # if we have a list...
         escapeddir = givendir + file
         escapeddir = escapeddir.replace(mediadir,'')
         escapeddir = urllib.quote(escapeddir)
