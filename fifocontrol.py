@@ -1,8 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
+
 # oyster - a perl-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+# Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -18,6 +20,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+"""
+fifocontrol provides functions to use the oyster-FIFO
+"""
+
+__revision__ = 1
+
 import config
 import os
 import os.path
@@ -26,6 +34,10 @@ import time
 myconfig = config.get_config('oyster.conf')
 
 def do_action (action, filename):
+    """
+    Parses the action parameter and writes the
+    needed commands into the FIFO
+    """
 
     filename = os.path.normpath(str(filename))
     filename = filename.replace('//','/')
@@ -34,9 +46,9 @@ def do_action (action, filename):
         filename = ''
 
     if os.path.isfile(myconfig['basedir'] + 'status'):
-       statusfile = open(myconfig['basedir'] + 'status')
-       status = statusfile.readline()[:-1]
-       statusfile.close()
+        statusfile = open(myconfig['basedir'] + 'status')
+        status = statusfile.readline()[:-1]
+        statusfile.close()
     else:
         status = ''
 
@@ -115,13 +127,19 @@ def do_action (action, filename):
     return status
 
 def do_vote (votefile):
+    """
+    Votes a single file
+    """
     votefile = myconfig['mediadir'] + votefile[1:]
-    control = open(myconfig['basedir'] + "control")
+    control = open(myconfig['basedir'] + "control",'w')
     control.write("VOTE " + votefile + "\n")
     control.close()
     time.sleep (1)
 
 def do_votelist (votelist):
+    """
+    Enqueues a complete playlist in m3u-format
+    """
     votelist = myconfig['mediadir'] + votelist[1:]
     control = open(myconfig['basedir'] + "control")
     control.write("ENQLIST " + votelist + "\n")
