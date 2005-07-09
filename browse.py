@@ -61,11 +61,16 @@ if os.path.exists(myconfig['basedir']):
 playlist = config.get_playlist()
 
 if form.has_key('playlist'):
-    print "<p align='right'><a class='file' href='browse.py",
-    print "?dir=" + form['dir'].value + "'>Browse all files</a></p>"
+    if form.has_key('dir'):
+        curdir = form['dir'].value
+    else:
+        curdir = ''
+
+    print "<p align='right'><a class='file' href='browse.py" + \
+        "?dir=" + curdir + "'>Browse all files</a></p>"
 elif playlist != 'default':
-    print "<p align='right'><a class='file' href='browse.py?playlist=",
-    print playlist + "'>Browse in current playlist</a></p>"
+    print "<p align='right'><a class='file' href='browse.py?playlist=" + \
+        playlist + "'>Browse in current playlist</a></p>"
 
 if givendir != '/' and os.path.exists(mediadir + givendir):
     print "<p>" + common.get_cover(mediadir + givendir, "100")
@@ -80,8 +85,8 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
         escapeddir = urllib.quote(incdir + partdir)
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
-            print "<a href='browse.py?dir=" + escapeddir + "&playlist=",
-            print form['playlist'].value + "'>"  + escapedpartdir + "</a> / "
+            print "<a href='browse.py?dir=" + escapeddir + "&playlist=" + \
+                form['playlist'].value + "'>"  + escapedpartdir + "</a> / "
         else:
             print "<a href='browse.py?dir=" + escapeddir + "'>" + \
                 escapedpartdir + "</a> / "
@@ -102,8 +107,8 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
 
     parentdir = urllib.quote(parentdir)
     if form.has_key('playlist'):
-        print "<a href='browse.py?dir=" + parentdir + "&playlist="
-        print urllib.quote(form['playlist'].value) + "'>One level up</a><br><br>"
+        print "<a href='browse.py?dir=" + parentdir + "&playlist=" + \
+            urllib.quote(form['playlist'].value) + "'>One level up</a><br><br>"
     else:
         print "<a href='browse.py?dir=" + parentdir + \
             "'>One level up</a><br><br>"
@@ -133,9 +138,10 @@ if form.has_key('playlist'):
     listfile = open(myconfig['savedir'] + 'lists/' + playlist)
     for line in listfile.readlines():
         line = line[:-1]
-        if re.match('\A' + re.escape(mediadir + givendir) + '[^/]*\Z'):
+        if re.match('\A' + re.escape(mediadir + givendir) + '[^/]*\Z', line):
             files.append(line)
-        matcher = re.match('\A(' + re.escape(mediadir + givendir) + ')[^/]*)/')
+        matcher = \
+            re.match('\A(' + re.escape(mediadir + givendir) + '[^/]*)/', line)
         
         if matcher != None:
             dirhash[matcher.group(1)] = 1
@@ -143,8 +149,10 @@ if form.has_key('playlist'):
     
     # Add all directories to @entries
 
-    for key in dirhash.keys().sort():
+    for key in dirhash.keys():
         dirs.append(key)
+
+    dirs.sort()
 
 else:
 
@@ -175,8 +183,8 @@ for curdir in dirs:
     curdir = cgi.escape(re.sub('\A.*/', '', curdir))
     print "<tr>"
     if form.has_key('playlist'):
-        print "<td><a href='browse.py?dir=" + escapeddir + "&playlist="
-        print form['playlist'].value + "'>$dir</a></td>"
+        print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
+            form['playlist'].value + "'>" + curdir + "</a></td>"
     else:
         print "<td><a href='browse.py?dir=" + escapeddir + \
             "'>" + curdir + "</a></td>"
@@ -204,12 +212,12 @@ for curfile in files:
 
         escapedfile = cgi.escape(curfile)
 
-        print "<td><a class='" + cssfileclass + "' href='fileinfo.pl?file=" \
+        print "<td><a class='" + cssfileclass + "' href='fileinfo.py?file=" \
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         # only generate "Vote"-link if oyster is running
         if oysterruns:
-            print "<td><a class='" + cssfileclass + "' href='oyster-gui.pl" + \
+            print "<td><a class='" + cssfileclass + "' href='oyster-gui.py" + \
             "?vote=" + escapeddir + "' target='curplay'>Vote</a></td>"
         else:
             print "<td></td>"
@@ -225,12 +233,12 @@ for curfile in files:
             csslistclass = 'playlist'
 
         escapedfile = cgi.escape(curfile)
-        print "<td><a class='" + csslistclass + "' href='viewlist.pl?list=" \
+        print "<td><a class='" + csslistclass + "' href='viewlist.py?list=" \
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         #only generate "Vote"-Link if oyster is running
         if oysterruns:
-            print "<td><a class='" + csslistclass + "' href='oyster-gui.pl?" + \
+            print "<td><a class='" + csslistclass + "' href='oyster-gui.py?" + \
             "votelist=" + escapeddir + "' target='curplay'>Vote</a></td>"
         else:
             print "<td></td>"
