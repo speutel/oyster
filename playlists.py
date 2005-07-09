@@ -95,7 +95,7 @@ for entry in entries:
     if os.path.isfile(savedir + "lists/" + entry):
         files.append(entry)
         if entry.find('_') > -1:
-            entry = re.sub('_.*','')
+            entry = re.sub('_.*','',entry)
             section[entry] = 1
 
 playlist = ''
