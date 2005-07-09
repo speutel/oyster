@@ -42,7 +42,8 @@ def do_action (action, filename):
 
     mediadir = myconfig['mediadir'][:-1]
 
-    control = open(myconfig['basedir'] + 'control', 'w')
+    if action != 'start':
+        control = open(myconfig['basedir'] + 'control', 'w')
     
     if action == 'skip':
         control.write("NEXT\n")
@@ -53,8 +54,7 @@ def do_action (action, filename):
         control.close()
         time.sleep(4)
     elif action == 'start':
-        control.close()
-        system('perl oyster.pl &')
+        os.system('python oyster.py &')
         waitmax = 100
         while waitmax > 0:
             if os.path.isfile(myconfig['basedir'] + 'info'):
