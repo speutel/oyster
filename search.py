@@ -22,12 +22,9 @@
 
 import cgi
 import config
-import taginfo
 import fifocontrol
 import cgitb
 import sys
-import os.path
-import urllib
 import common
 import re
 cgitb.enable()
@@ -39,15 +36,28 @@ form = cgi.FieldStorage()
 
 common.navigation_header()
 
-if form.has_key('searchtype') and form['searchtype'] == 'regex':
+if form.has_key('searchtype') and form['searchtype'].value == 'regex':
     searchtype = 'regex'
+    regexcheck = "checked='checked'"
+    normalcheck = ''
 else:
     searchtype = 'normal'
+    normalcheck = "checked='checked'"
+    regexcheck = ''
     
-if os.path.exists(myconfig['basedir']):
-    oysterruns = 1
+# Check in which playlist to search
+
+if form.has_key('playlist') and form['playlist'].value == 'current':
+    playlist = config.get_playlist()
+    curcheck = "checked='checked'"
+    allcheck = ''
+elif form.has_key('playlist') and form['playlist'].value == 'all':
+    playlist = 'default'
+    allcheck = "checked='checked'"
+    curcheck = ''
 else:
-    oysterruns = 0
+    curcheck = "checked='checked'"
+    allcheck = ''
 
 if form.has_key('search'):
     search = form['search'].value
@@ -61,23 +71,16 @@ print "<form method='post' action='search.py' enctype='application/x-www-form-ur
 
 print "<table border='0'><tr><td><input type='text' name='search' value='" + search + "'></td>"
 print "<td><input type='submit' name='.submit' value='Search' style='margin-left: 2em;'></td></tr>"
-print "<tr><td><input type='radio' name='searchtype' value='normal' checked='checked'> Normal<br>"
-print "<input type='radio' name='searchtype' value='regex'> Regular Expression<br></td>"
-print "<td><input type='radio' name='playlist' value='current' checked='checked'> Only current playlist<br>"
-print "<input type='radio' name='playlist' value='all'> All Songs<br></td></tr></table><div>"
-print "<input type='hidden' name='.cgifields' value='searchtype'><input type='hidden' name='.cgifields' value='playlist'></div>"
-print "</form>"
+print "<tr><td><input type='radio' name='searchtype' value='normal' " + normalcheck + "> Normal<br>"
+print "<input type='radio' name='searchtype' value='regex' " + regexcheck + "> Regular Expression<br></td>"
+print "<td><input type='radio' name='playlist' value='current' " + curcheck + "> Only current playlist<br>"
+print "<input type='radio' name='playlist' value='all' " + allcheck + "> All Songs<br></td></tr></table><div>"
+print "</div></form>"
 
 results = []
 cssclass = 'file2'
 
 if search != '':
-
-    # Check in which playlist to search
-    playlist = 'default'
-
-    if form.has_key('playlist') and form['playlist'].value == 'current':
-        playlist = config.get_playlist()
 
     listfile = open(myconfig['savedir'] + 'lists/' + playlist)
     list = listfile.readlines()
