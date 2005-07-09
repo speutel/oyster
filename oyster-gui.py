@@ -95,7 +95,6 @@ infofile = open(basedir + 'info')
 info = infofile.readline()[:-1]
 infofile.close()
 
-display = taginfo.get_tag_light(info)
 tag = taginfo.get_tag(info)
 
 info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
@@ -133,7 +132,7 @@ print "<table width='100%' border='0'>"
 print "<tr><td><strong>Now playing " + playreason + ":</strong></td>"
 print "<td align='center' width='75'><strong>Score</strong></td></tr>"
 print "<tr><td>"
-print "<strong><a class='file' href='fileinfo.py?file=" + info + "' target='browse' title='View details'>" + display + "</a>"
+print "<strong><a class='file' href='fileinfo.py?file=" + info + "' target='browse' title='View details'>" + tag['display'] + "</a>"
 print statusstr + "</td>"
 print "<td align='center' style='padding-left:10px; padding-right:10px'>"
 print "<a href='oyster-gui.py?action=scoredown&file=" + info + "' title='Score down'>"
@@ -167,7 +166,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
         for filename in votelist:
             if votes[filename] == maxvotes:
                 display = taginfo.get_tag_light(filename)
-                title = re.sub('\A' + mediadir, '', title)
+                title = re.sub('\A' + mediadir, '', filename)
                 escapedtitle = cgi.escape(title)
                 print "<tr><td>"
                 print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' target='browse'>" + display + "</a>"
