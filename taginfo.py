@@ -34,9 +34,11 @@ def get_tag_light (filename):
     tag = {}
      
     if cache.has_key(filename):
-         tag['display'] = cache[filename]
+        tag['display'] = cache[filename]
+        cache.close()
     else:
-         tag = get_tag(filename)
+        cache.close()
+        tag = get_tag(filename)
     
 
     return tag['display']
@@ -67,7 +69,7 @@ def get_tag (filename):
 
 def get_display (filename,tag):
 
-    if not tag.has_key('title'):
+    if tag['title'] == '':
         filename = os.path.basename(filename)[:-4]
         display = filename
     elif not tag.has_key('artist'):
@@ -100,34 +102,34 @@ def get_mp3_tags (filename):
     os.environ['LANG'] = 'de_DE@euro'
     mp3 = os.popen('id3v2 -R "' + filename + '"').readlines()
 
-    mp3_regex = {
-        '\ATitle[\s]*:[\s]*(.*)\Z':                     'title',    # id3v2, old version. Order does matter!
-        '\ATitle\ \ \:\ (.*)Artist\:':                  'title',    # id3v1, overrides above if found
-        '\ATitle\ \ \:\ .*Artist\:\ (.*)':              'artist',   # id3v1, overrides above if found
-        '\ALead\ .*\:\ (.*)\Z':                         'artist',
-        '\AAlbum\ \ \ \:\ (.*)Year\:\ ':                'album',
-        '\AAlbum\ \ \ \:\ .*Year\:\ ([0-9]*),\ Genre\:\ ': 'year',
-        '\AAlbum\ \ \ \:\ .*Year\:\ [0-9]*,\ Genre\:\ (.*)\Z': 'genre',
-        '\AAlbum\/Movie\/Show\ title\:\ (.*)\Z':        'album',
-        '\ATALB\ \(.*\)\:\ (.*)\Z':                     'album',
-        '\AYear\:\ ([0-9]*)':                           'year',
-        '\AContent\ type\:\ \([0-9]*\)(.*)':            'genre',
-        '\AComment.*Track\:\ ([0-9]*)':                 'track',
-        '\ATrack\ number\/Position\ in\ set\:\ (.*)\Z': 'track',
-        '\ALength\:\ (.*)\Z':                           'playtime',
-        '\ATIT2\ \(.*\)\:\ (.*)\Z':                     'title',
-        '\ATPE1\ \(.*\)\:\ (.*)\Z':                     'artist',
-        '\ATYER\ \(Year\)\:\ (.*)\Z':                   'year',
-        '\ATCON\ \(.*\)\:\ (.*)\ \([0-9]*\)':           'genre',
-        '\ATRCK\ \(.*\)\:\ (.*)\Z':                     'track',
-        '\ATLEN\ \(.*\)\:\ (.*)\Z':                     'playtime'
-        }
+    mp3_regex = (
+        ('\ATitle[\s]*:[\s]*(.*)\Z',                     'title'),    # id3v2, old version. Order does matter!
+        ('\ATitle\ \ \:\ (.*)Artist\:',                  'title'),    # id3v1, overrides above if found
+        ('\ATitle\ \ \:\ .*Artist\:\ (.*)',              'artist'),   # id3v1, overrides above if found
+        ('\ALead\ .*\:\ (.*)\Z',                         'artist'),
+        ('\AAlbum\ \ \ \:\ (.*)Year\:\ ',                'album'),
+        ('\AAlbum\ \ \ \:\ .*Year\:\ ([0-9]*),\ Genre\:\ ', 'year'),
+        ('\AAlbum\ \ \ \:\ .*Year\:\ [0-9]*,\ Genre\:\ (.*)\Z', 'genre'),
+        ('\AAlbum\/Movie\/Show\ title\:\ (.*)\Z',        'album'),
+        ('\ATALB\ \(.*\)\:\ (.*)\Z',                     'album'),
+        ('\AYear\:\ ([0-9]*)',                           'year'),
+        ('\AContent\ type\:\ \([0-9]*\)(.*)',            'genre'),
+        ('\AComment.*Track\:\ ([0-9]*)',                 'track'),
+        ('\ATrack\ number\/Position\ in\ set\:\ (.*)\Z', 'track'),
+        ('\ALength\:\ (.*)\Z',                           'playtime'),
+        ('\ATIT2\ \(.*\)\:\ (.*)\Z',                     'title'),
+        ('\ATPE1\ \(.*\)\:\ (.*)\Z',                     'artist'),
+        ('\ATYER\ \(Year\)\:\ (.*)\Z',                   'year'),
+        ('\ATCON\ \(.*\)\:\ (.*)\ \([0-9]*\)',           'genre'),
+        ('\ATRCK\ \(.*\)\:\ (.*)\Z',                     'track'),
+        ('\ATLEN\ \(.*\)\:\ (.*)\Z',                     'playtime')
+    )
         
     for line in mp3:
         for regex in mp3_regex:
-            matcher = re.match(regex, line)
+            matcher = re.match(regex[0], line)
             if matcher != None:
-                tag[mp3_regex[regex]] = cgi.escape(matcher.group(1).rstrip())
+                tag[regex[1]] = cgi.escape(matcher.group(1).rstrip())
 
     try:
         playtimeminutes = int(int(tag['playtime']) / 1000 / 60)
