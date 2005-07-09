@@ -53,7 +53,7 @@ def navigation_header():
     print "<td align='center' width='17%'><a href='playlists.py'>Playlists</a></td>"
     print "<td align='center' width='17%'><a href='blacklist.py'>Blacklist</a></td>"
     print "<td align='center' width='16%'><a href='score.py'>Scoring</a></td>"
-    print "<td align='center' width='17%'><a href='statistics.pl'>Statistics</a></td>"
+    print "<td align='center' width='17%'><a href='statistics.py'>Statistics</a></td>"
     print "</tr></table>"
     print "<hr>"
 
