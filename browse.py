@@ -1,5 +1,6 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
+
 # oyster - a perl-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
@@ -20,13 +21,12 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+__revision__ = 1
+
 import cgi
 import common
 import config
-import taginfo
-import fifocontrol
 import cgitb
-import sys
 import os.path
 import urllib
 import re
@@ -34,7 +34,7 @@ cgitb.enable()
 
 myconfig = config.get_config('oyster.conf')
 basedir = myconfig['basedir']
-mediadir = re.sub('/\Z','',myconfig['mediadir'][:-1])
+mediadir = re.sub('/\Z', '', myconfig['mediadir'][:-1])
 form = cgi.FieldStorage()
 
 common.navigation_header()
@@ -44,8 +44,8 @@ givendir = '/'
 if form.has_key('dir'):
     # Check given parameter for possible security risks
     givendir = form['dir'].value + '/'
-    givendir = re.sub('//','/',givendir)
-    givendir = re.sub('\.\./','',givendir)
+    givendir = re.sub('//', '/', givendir)
+    givendir = re.sub('\.\./', '', givendir)
     if givendir == '..':
         givendir = '/'
 
@@ -83,7 +83,8 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
             print "<a href='browse.py?dir=" + escapeddir + "&playlist=",
             print form['playlist'].value + "'>"  + escapedpartdir + "</a> / "
         else:
-            print "<a href='browse.py?dir=" + escapeddir + "'>" + escapedpartdir + "</a> / "
+            print "<a href='browse.py?dir=" + escapeddir + "'>" + \
+                escapedpartdir + "</a> / "
         incdir = incdir + partdir + '/'
 
     print "</strong></p><br clear='all'>"
@@ -94,7 +95,7 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
     if re.search('[^/]*/\Z', parentdir) == None:
         parentdir = ''
     else:
-       parentdir = re.sub('/[^/]*/\Z', '', parentdir)
+        parentdir = re.sub('/[^/]*/\Z', '', parentdir)
 
 
     # Create a link to the parent directory
@@ -104,12 +105,13 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
         print "<a href='browse.py?dir=" + parentdir + "&playlist="
         print urllib.quote(form['playlist'].value) + "'>One level up</a><br><br>"
     else:
-        print "<a href='browse.py?dir=" + parentdir + "'>One level up</a><br><br>"
+        print "<a href='browse.py?dir=" + parentdir + \
+            "'>One level up</a><br><br>"
 
-
-elif not os.path.exists(mediadir + givendir): # if $mediadir == "/": just build filelist, no dir-splitting needed  
-    print h1('Error!')
-    print "The directory $givendir could not be found."
+elif not os.path.exists(mediadir + givendir):
+    # if $mediadir == "/": just build filelist, no dir-splitting needed
+    print "<h1>Error!</h1>"
+    print "The directory " + givendir + " could not be found."
     print "</body></html>"
 
 files = []
@@ -119,8 +121,8 @@ if form.has_key('playlist'):
     # Browse playlist
 
     playlist = form['playlist'].value
-    playlist = re.sub('//','/',playlist)
-    playlist = re.sub('../','',playlist)
+    playlist = re.sub('//', '/', playlist)
+    playlist = re.sub('../', '', playlist)
     if playlist == '..':
         playlist = ''
 
@@ -152,13 +154,13 @@ else:
 
     # Escape whitespaces and apostrophe
 
-    for dir in os.listdir(globdir):
-        if dir[0] != '.':
+    for curdir in os.listdir(globdir):
+        if curdir[0] != '.':
             # If files and directories exist, add them to @files and @dirs
-            if os.path.isdir(globdir + dir):
-                dirs.append(globdir + dir)
-            elif os.path.isfile(globdir + dir):
-                files.append(globdir + dir)
+            if os.path.isdir(globdir + curdir):
+                dirs.append(globdir + curdir)
+            elif os.path.isfile(globdir + curdir):
+                files.append(globdir + curdir)
 
 dirs.sort()
 files.sort()
@@ -167,16 +169,17 @@ print "<table width='100%'>"
 
 # First, display all directories
 
-for dir in dirs:
-    dir = dir.replace(mediadir,'')
-    escapeddir = urllib.quote(dir)
-    dir = cgi.escape(re.sub('\A.*/','',dir))
+for curdir in dirs:
+    curdir = curdir.replace(mediadir,'')
+    escapeddir = urllib.quote(curdir)
+    curdir = cgi.escape(re.sub('\A.*/', '', curdir))
     print "<tr>"
     if form.has_key('playlist'):
         print "<td><a href='browse.py?dir=" + escapeddir + "&playlist="
         print form['playlist'].value + "'>$dir</a></td>"
     else:
-        print "<td><a href='browse.py?dir=" + escapeddir + "'>" + dir + "</a></td>"
+        print "<td><a href='browse.py?dir=" + escapeddir + \
+            "'>" + curdir + "</a></td>"
     print "<td></td>"
     print "</tr>\n"
 
@@ -185,12 +188,12 @@ for dir in dirs:
 cssfileclass = 'file2'
 csslistclass = 'playlist2'
 
-for file in files:
-    file = file.replace(mediadir + givendir, '')
+for curfile in files:
+    curfile = curfile.replace(mediadir + givendir, '')
     print "<tr>"
-    if file[-3:] == 'mp3' or file[-3:] == 'ogg':
+    if curfile[-3:] == 'mp3' or curfile[-3:] == 'ogg':
         # TODO auf andere Dateitypen und case achten
-        escapeddir = givendir + file
+        escapeddir = givendir + curfile
         escapeddir = urllib.quote(escapeddir.replace(mediadir,''))
 
         # alternate colors
@@ -199,19 +202,19 @@ for file in files:
         else:
             cssfileclass = 'file'
 
-        escapedfile = cgi.escape(file)
+        escapedfile = cgi.escape(curfile)
 
         print "<td><a class='" + cssfileclass + "' href='fileinfo.pl?file=" \
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         # only generate "Vote"-link if oyster is running
         if oysterruns:
-            print "<td><a class='" + cssfileclass + "' href='oyster-gui.pl?vote=" \
-                + escapeddir + "' target='curplay'>Vote</a></td>"
+            print "<td><a class='" + cssfileclass + "' href='oyster-gui.pl" + \
+            "?vote=" + escapeddir + "' target='curplay'>Vote</a></td>"
         else:
             print "<td></td>"
-    elif file[-3:] == 'm3u' or file[-3:] == 'pls': # if we have a list...
-        escapeddir = givendir + file
+    elif curfile[-3:] == 'm3u' or curfile[-3:] == 'pls': # if we have a list...
+        escapeddir = givendir + curfile
         escapeddir = escapeddir.replace(mediadir,'')
         escapeddir = urllib.quote(escapeddir)
 
@@ -221,14 +224,14 @@ for file in files:
         else:
             csslistclass = 'playlist'
 
-        escapedfile = cgi.escape(file)
+        escapedfile = cgi.escape(curfile)
         print "<td><a class='" + csslistclass + "' href='viewlist.pl?list=" \
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         #only generate "Vote"-Link if oyster is running
         if oysterruns:
-            print "<td><a class='" + csslistclass + "' href='oyster-gui.pl?votelist=",
-            print escapeddir + "' target='curplay'>Vote</a></td>"
+            print "<td><a class='" + csslistclass + "' href='oyster-gui.pl?" + \
+            "votelist=" + escapeddir + "' target='curplay'>Vote</a></td>"
         else:
             print "<td></td>"
 
@@ -236,13 +239,13 @@ for file in files:
         iscover = 0
         coverfiles = myconfig['coverfilenames'].split(',')
         for cover in coverfiles:
-            cover = re.sub('\A.*\.','',cover)
-            if file.find('cover') > -1:
+            cover = re.sub('\A.*\.', '', cover)
+            if curfile.find(cover) > -1:
                 iscover = 1
                 
         # if we can do nothing - just print it.
         if iscover == 0:
-            print "<td>" + file + "</td>"
+            print "<td>" + curfile + "</td>"
             print "<td></td>"
 
     print "</tr>\n"
