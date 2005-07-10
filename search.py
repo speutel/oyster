@@ -1,5 +1,6 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
+
 # oyster - a perl-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
@@ -20,11 +21,15 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+"""
+Oyster-CGI for searching in all files or the current playlist
+"""
+
+__revision__ = 1
+
 import cgi
 import config
-import fifocontrol
 import cgitb
-import sys
 import common
 import re
 cgitb.enable()
@@ -66,15 +71,21 @@ else:
 
 # Create form
 
-print "<form method='post' action='search.py' enctype='application/x-www-form-urlencoded'>"
+print "<form method='post' action='search.py' " + \
+    "enctype='application/x-www-form-urlencoded'>"
 
-
-print "<table border='0'><tr><td><input type='text' name='search' value='" + search + "'></td>"
-print "<td><input type='submit' name='.submit' value='Search' style='margin-left: 2em;'></td></tr>"
-print "<tr><td><input type='radio' name='searchtype' value='normal' " + normalcheck + "> Normal<br>"
-print "<input type='radio' name='searchtype' value='regex' " + regexcheck + "> Regular Expression<br></td>"
-print "<td><input type='radio' name='playlist' value='current' " + curcheck + "> Only current playlist<br>"
-print "<input type='radio' name='playlist' value='all' " + allcheck + "> All Songs<br></td></tr></table><div>"
+print "<table border='0'><tr><td><input type='text' name='search' value='" + \
+    search + "'></td>"
+print "<td><input type='submit' name='.submit' value='Search' " + \
+    "style='margin-left: 2em;'></td></tr>"
+print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
+    normalcheck + "> Normal<br>"
+print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
+    "> Regular Expression<br></td>"
+print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
+    "> Only current playlist<br>"
+print "<input type='radio' name='playlist' value='all' " + allcheck + "> " + \
+    "All Songs<br></td></tr></table><div>"
 print "</div></form>"
 
 results = []
@@ -83,22 +94,22 @@ cssclass = 'file2'
 if search != '':
 
     listfile = open(myconfig['savedir'] + 'lists/' + playlist)
-    list = listfile.readlines()
+    listlines = listfile.readlines()
     listfile.close()
 
     # Compare filenames with searchstring and add
     # them to results
 
     if searchtype == 'normal':
-        for line in list:
+        for line in listlines:
             line = line.replace(mediadir,'')
             if line.lower().find(search.lower()) > -1:
                 results.append(line[:-1])
     elif searchtype == 'regex':
-        for line in list:
-            line = line.replace(mediadir,'',1)
+        for line in listlines:
+            line = line.replace(mediadir, '', 1)
             name = line[:-4]
-            matcher = re.match(search,name.lower())
+            matcher = re.match(search, name.lower())
             if matcher != None:
                 results.append(line[:-1])
 
@@ -111,7 +122,7 @@ if search != '':
     # List directory in browser
 
     if results != []:
-        common.listdir('/',0,cssclass)
+        common.listdir('/', 0, cssclass)
     else:
         print "<p>No songs found.</p>"
 
