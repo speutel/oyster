@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
 # oyster - a perl-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
@@ -38,9 +38,9 @@ mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
 if os.path.isfile(myconfig['basedir'] + 'status'):
-   statusfile = open(myconfig['basedir'] + 'status')
-   status = statusfile.readline()[:-1]
-   statusfile.close()
+    statusfile = open(myconfig['basedir'] + 'status')
+    status = statusfile.readline()[:-1]
+    statusfile.close()
 else:
     status = ''
     
@@ -56,10 +56,10 @@ else:
     action = ''
 
 if form.has_key('vote'):
-	fifocontrol.do_vote(form['vote'].value)
+    fifocontrol.do_vote(form['vote'].value)
 
 if form.has_key('votelist'):
-	fifocontrol.do_votelist(form['votelist'].value)
+    fifocontrol.do_votelist(form['votelist'].value)
 
 print "Content-Type: text/html"
 print """
@@ -94,11 +94,17 @@ if not os.path.isfile(basedir + 'info'):
 infofile = open(basedir + 'info')
 info = infofile.readline()[:-1]
 infofile.close()
+nextfile = open(basedir + 'nextfile')
+next = nextfile.readline()[:-1]
+nextfile.close()
 
 tag = taginfo.get_tag(info)
+nexttag = taginfo.get_tag(next)
 
 info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
 info = urllib.quote("/" + info)
+nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', next)
+nextinfo = urllib.quote("/" + nextinfo)
 
 playlist = config.get_playlist()
 playreason = commands.getoutput('tail -n 1 "logs/' + playlist + '"')[:-1]
@@ -111,22 +117,22 @@ favmode = favfile.readline()[:-1]
 favfile.close()
 
 if playreason == 'PLAYLIST':
-	playreason = '(random)'
+    playreason = '(random)'
 elif playreason == 'SCORED':
-	playreason = '(scored)'
+    playreason = '(scored)'
 elif playreason == 'ENQUEUED':
-	playreason = '(enqueued)'
+    playreason = '(enqueued)'
 elif playreason == 'VOTED':
-	playreason = '(voted)'
+    playreason = '(voted)'
 
 # If FAVMODE is on, every "scored" is substituded to "favorites only", but
 # enqueued and voted remain. (random should not be possible ;))
 if favmode == 'on' and not (playreason == '(voted)' or playreason == '(enqueued)'):
-	playreason = '(favorites only)'
+    playreason = '(favorites only)'
 
 statusstr = ''
 if status == 'paused':
-	statusstr = " <a href='oyster-gui.py?action=pause'>Paused</a>"
+    statusstr = " <a href='oyster-gui.py?action=pause'>Paused</a>"
 
 print "<table width='100%' border='0'>"
 print "<tr><td><strong>Now playing " + playreason + ":</strong></td>"
@@ -139,6 +145,18 @@ print "<a href='oyster-gui.py?action=scoredown&file=" + info + "' title='Score d
 print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
 print "<strong>" + str(tag['score']) + "</strong> "
 print "<a href='oyster-gui.py?action=scoreup&file=" + info + "' title='Score up'>"
+print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/>"
+print "</td></tr>"
+print "<tr><td><strong>Next playing:</strong></td>"
+print "<td></td></tr>"
+print "<tr><td>"
+print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' target='browse' title='View details'>"
+print nexttag['display'] + "</a></td>"
+print "<td align='center' style='padding-left:10px; padding-right:10px'>"
+print "<a href='oyster-gui.py?action=scoredown&file=" + nextinfo + "' title='Score down'>"
+print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
+print "<strong>" + str(nexttag['score']) + "</strong> "
+print "<a href='oyster-gui.py?action=scoreup&file=" + nextinfo + "' title='Score up'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/>"
 print "</td></tr></table>\n"
 
@@ -173,6 +191,6 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 print "</td><td align='center'>" + str(votes[filename]) + "</td><td>"
                 print "<a href='oyster-gui.py?action=unvotefile&file=" + escapedtitle + "'>Unvote</a>"
                 print "</td></tr>"
-        maxvotes = maxvotes - 1
+        maxvotes -= 1
 
 print "</table></body></html>"
