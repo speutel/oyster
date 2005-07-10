@@ -69,10 +69,10 @@ def get_tag (filename):
 
 def get_display (filename,tag):
 
-    if tag['title'] == '':
+    if not tag.has_key('title') or tag['title'] == '':
         filename = os.path.basename(filename)[:-4]
         display = filename
-    elif not tag.has_key('artist'):
+    elif not tag.has_key('artist') or tag['artist'] == '':
         display = tag['title']
     else:
         display = tag['artist'] + ' - ' + tag['title']
