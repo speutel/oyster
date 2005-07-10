@@ -108,8 +108,8 @@ if search != '':
     elif searchtype == 'regex':
         for line in listlines:
             line = line.replace(mediadir, '', 1)
-            name = line[:-4]
-            matcher = re.match(search, name.lower())
+            name = line[:-5]
+            matcher = re.match(search, name)
             if matcher != None:
                 results.append(line[:-1])
 
