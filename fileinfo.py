@@ -120,7 +120,7 @@ if tag.has_key('title'):
     print "<tr><td class='fileinfo'><strong>Title</strong></td><td>" + tag['title'] + \
         "</td><td rowspan='6' class='fileinfoimage' width='120'>" + coverdata + "</td></tr>"
 else:
-    print "<tr><td class='fileinfo'></td><td rowspan='6'>$coverdata</td></tr>"
+    print "<tr><td class='fileinfo'></td><td rowspan='6'>" + coverdata + "</td></tr>"
 
 if tag.has_key('artist'):
     print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
