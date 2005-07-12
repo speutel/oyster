@@ -26,16 +26,16 @@ def print_playlist(file):
 
     if file == playlist and file != 'default':
         print "<tr><td><i>" + title + "</i></td><td class='playlists'><strong>currently playing</strong></td>"
-        print "<td class='playlists'><a href='editplaylist.py?action=edit&amp;" + \
-            "playlist=" + encfile + "'>Edit</a></td><td></td></tr>"
+        print "<td class='playlists'><a href='editplaylist.py?" + \
+            "playlist=" + encfile + "' target='_top'>Edit</a></td><td></td></tr>"
     elif file != 'default':
         print "<tr><td>" + title + "</td><td class='playlists'>"
         if oysterruns:
             print "<a href='playlists.py?action=loadlist&amp;" + \
                 "listname=" + encfile + "'>Load</a>"
         print "</td>"
-        print "<td class='playlists'><a href='editplaylist.py?action=edit&amp;" + \
-            "playlist=" + encfile + "'>Edit</a></td>"
+        print "<td class='playlists'><a href='editplaylist.py?" + \
+            "playlist=" + encfile + "' target='_top'>Edit</a></td>"
         print "<td class='playlists'><a href='editplaylist.py?action=move&amp;" + \
             "playlist=" + encfile + "'>Move/Rename</a></td>"
         print "<td class='playlists'><a href='playlists.py?action=confirmdelete&amp;" + \

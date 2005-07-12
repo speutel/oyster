@@ -105,7 +105,7 @@ def sort_results (topdir):
 
     return(dirs + files)
 
-def listdir (basepath, counter, cssclass):
+def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
     # listdir shows files from @results, sorted by directories
     # $basepath is cut away for recursive use
@@ -126,18 +126,38 @@ def listdir (basepath, counter, cssclass):
             if not basepath == '/':
                 escapeddir = urllib.quote(basepath + cutnewpath)
                 print "<div style='padding-left: 1em;'>"
-                print "<strong><a href='browse.py?dir=" + escapeddir + "'>" + cgi.escape(cutnewpath) + "</a></strong>"
+                if playlistmode:
+                    print "<table width='100%'><tr><td align='left'>"
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + escapeddir \
+                        + "&playlist=" + playlist + "' target='browse'>" + cgi.escape(cutnewpath) \
+                        + "</a></strong>"
+                    print "<td align='right'><a href='editplaylist.py?" + \
+                        "playlist=" + playlist + "&deldir=" + escapeddir + \
+                        "'>Delete</a></td>"
+                    print "</tr></table>"
+                else:
+                    print "<strong><a href='browse.py?dir=" + escapeddir + "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = basepath + newpath
             else:
                 escapeddir = urllib.quote("/" + cutnewpath)
-                print "<strong><a href='browse.py?dir=" + escapeddir + "'>" + cgi.escape(cutnewpath) + "</a></strong>"
+                if playlistmode:
+                    print "<table width='100%'><tr><td align='left'>"
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + escapeddir \
+                        + "&playlist=" + playlist + "' target='browse'>" + cgi.escape(cutnewpath) \
+                        + "</a></strong>"
+                    print "<td align='right'><a href='editplaylist.py?" + \
+                        "playlist=" + playlist + "&deldir=" + escapeddir + \
+                        "'>Delete</a></td>"
+                    print "</tr></table>"
+                else:
+                    print "<strong><a href='browse.py?dir=" + escapeddir + "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = "/" + newpath
 
             # Call listdir recursive, then quit padding with <div>
 
-            counter = listdir(newpath,counter,cssclass)
+            counter = listdir(newpath, counter, cssclass, playlistmode, playlist)
             if not basepath == '/':
-                print "</div>\n"
+                print "</div></div>\n"
 
         else:
 
@@ -165,14 +185,17 @@ def listdir (basepath, counter, cssclass):
                 print "<table width='100%'><tr>"
                 print "<td align='left'><a href='fileinfo.py?file=" + escapedfile + \
                     "' class='" + cssclass + "'>" + cgi.escape(nameonly) + "</a></td>"
-                if os.path.exists(myconfig['basedir']):
-                    print "<td align='right'><a href='oyster-gui.py?vote=" + escapedfile + \
-                        "' class='" + cssclass + "' target='curplay'>Vote</a></td>"
+                if playlistmode:
+                    print "<td align='right'><a href='editplaylist.py?" + \
+                    "playlist=" + playlist + "&delfile=" + escapedfile + \
+                        "' class='" + cssclass + "'>Delete</a></td>"
                 else:
-                    print "<td></td>"
+                    if os.path.exists(myconfig['basedir']):
+                        print "<td align='right'><a href='oyster-gui.py?vote=" + escapedfile + \
+                            "' class='" + cssclass + "' target='curplay'>Vote</a></td>"
+                    else:
+                        print "<td></td>"
                 print "</tr></table>\n"
                 counter = counter + 1
-
-            print "</div>\n"
 
     return counter
