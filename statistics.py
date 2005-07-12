@@ -24,10 +24,7 @@
 import cgi
 import config
 import taginfo
-import fifocontrol
 import cgitb
-import sys
-import os.path
 import urllib
 import common
 import re
@@ -49,9 +46,9 @@ def get_blacklisted():
 
     for line in listfile.readlines():
         isaffected = 0
-        line = line.replace(mediadir,'',1)[:-1]
+        line = line.replace(mediadir, '', 1)[:-1]
         for affects in affectlines:
-            if re.match(affects, line):
+            if re.match('.*' + affects + '.*', line):
                 isaffected = 1
         if isaffected:
             count = count + 1
@@ -74,7 +71,7 @@ def print_songs (header, filearray):
         filename = matcher.group(1)
         reason = matcher.group(2)
         displayname = taginfo.get_tag_light(filename)
-        filename = filename.replace(mediadir,'',1)
+        filename = filename.replace(mediadir, '', 1)
         # (does not turn up in oyster-gui)
         escapedfilename = urllib.quote(filename)
 
@@ -184,7 +181,8 @@ print_songs("Playreason", lastplayed)
 print "<h1>Some numbers</h1>"
 
 totalfiles = 0
-for line in open(myconfig['savedir'] + "lists/" + playlist): totalfiles += 1
+for line in open(myconfig['savedir'] + "lists/" + playlist):
+    totalfiles += 1
 
 print "<table width='100%'>"
 print "<tr><td><strong>Total files in playlist</strong></td><td>" + str(totalfiles) + "</td></tr>"
