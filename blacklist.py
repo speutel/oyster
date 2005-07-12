@@ -21,12 +21,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+"""
+Allows the user to specify regex-lines for files
+which should not be played at random
+"""
+
+__revision__ = 1
+
 import cgi
 import config
-import taginfo
-import fifocontrol
 import cgitb
-import sys
 import os.path
 import urllib
 import common
@@ -35,7 +39,7 @@ cgitb.enable()
 
 def print_blacklist ():
 
-    # Opens current blacklist and prints each line
+    "Opens current blacklist and prints each line"
 
     lineaffects = {}
 
@@ -43,19 +47,19 @@ def print_blacklist ():
     blacklist = open(myconfig['savedir'] + "blacklists/" + playlist)
     for line in blacklist.readlines():
         blacklistlines.append(line[:-1])
-        line = line.replace(mediadir,'',1)[:-1]
+        line = line.replace(mediadir, '', 1)[:-1]
         lineaffects[line] = 0
     blacklist.close()
 
-    list = open(myconfig['savedir'] + "lists/" + playlist)
+    listfile = open(myconfig['savedir'] + "lists/" + playlist)
 
     totalaffected = 0
 
     # Count affected files for each rule
 
-    for line in list.readlines():
+    for line in listfile.readlines():
         isblacklisted = 0
-        line = line.replace(mediadir,'',1)[:-1]
+        line = line.replace(mediadir, '', 1)[:-1]
         for blacklistline in blacklistlines:
             if re.match('.*' + blacklistline + '.*', line):
                 isblacklisted = 1
@@ -63,50 +67,52 @@ def print_blacklist ():
         if isblacklisted:
             totalaffected = totalaffected + 1
 
-    list.close()
+    listfile.close()
 
     print "<table width='100%'>"
     for line in blacklistlines:
         escapedline = urllib.quote(line)
         print "<tr><td width='60%'>" + line + "</td>"
-        print "<td width='25%' align='left'><a href='blacklist.py?action=test&amp;" + \
-            "affects=" + escapedline + "'>Affects</a> (" + str(lineaffects[line]) + ")</td>"
+        print "<td width='25%' align='left'><a href='blacklist.py?" + \
+            "action=test&amp;affects=" + escapedline + "'>Affects</a> (" + \
+            str(lineaffects[line]) + ")</td>"
         print "<td width='15%' align='center'><a href='blacklist.py?" + \
-            "action=delete&amp;affects=" + escapedline + "'>Delete</a></td></tr>"
+            "action=delete&amp;affects=" + escapedline + \
+            "'>Delete</a></td></tr>"
 
     print "</table>"
 
-    print "<p><strong>Total files affected:</strong> " + str(totalaffected) + "</p>"
+    print "<p><strong>Total files affected:</strong> " + \
+        str(totalaffected) + "</p>"
 
 def print_affects (affects):
 
-    # Shows all files, which are affected by a blacklist-rule
+    "Shows all files, which are affected by a blacklist-rule"
 
-    results = []
-    list = open (myconfig['savedir'] + "lists/" + playlist)
+    affectresults = []
+    listfile = open (myconfig['savedir'] + "lists/" + playlist)
 
     # Add all matching lines to results
 
-    for line in list.readlines():
-        line = line.replace(mediadir,'',1)[:-1]
+    for line in listfile.readlines():
+        line = line.replace(mediadir, '', 1)[:-1]
         if re.match('.*' + affects + '.*', line):
-            results.append(line)
+            affectresults.append(line)
     
-    list.close()
+    listfile.close()
 
     # Sort results alphabetically
 
-    if results != []:
-        results.sort()
-        common.results = results
-        results = common.sort_results('/')
+    if affectresults != []:
+        affectresults.sort()
+        common.results = affectresults
         common.listdir('/', 0,'file2')
     else:
         print "<p>No songs match these rule.</p>"
 
 def add_to_blacklist (affects):
 
-    # Appends a rule to the blacklist
+    "Appends a rule to the blacklist"
 
     blacklist = open(savedir + "blacklists/" + playlist, 'a')
     blacklist.write(affects + "\n")
@@ -114,9 +120,10 @@ def add_to_blacklist (affects):
 
 def delete_from_blacklist (affects):
 
-    # removes a rule from the blacklist
+    "removes a rule from the blacklist"
 
-    os.system ("cp " + savedir + "blacklists/" + playlist + " " + savedir + "blacklist.tmp")
+    os.system ("cp " + savedir + "blacklists/" + playlist + " " + \
+        savedir + "blacklist.tmp")
     blacklist = open(savedir + "blacklist.tmp")
     newblacklist = open(savedir + "blacklists/" + playlist, 'w')
     for line in blacklist.readlines():
@@ -137,18 +144,24 @@ common.navigation_header()
 
 results = []
 
-if form.has_key('affects') and form.has_key('action') and form['action'].value == 'test':
-    affects = cgi.escape(form['affects'].value)
+if form.has_key('affects') and form.has_key('action') \
+    and form['action'].value == 'test':
+    escaffects = cgi.escape(form['affects'].value)
 else:
-    affects = ''
+    escaffects = ''
 
 # Create form
 
-print "<form method='post' action='blacklist.py' enctype='application/x-www-form-urlencoded'>"
-print "<table border='0'><tr><td><input type='text' name='affects' value='" + affects + "'></td>"
-print "<td><input type='radio' name='action' value='test' checked='checked'> Test Only<br>"
-print "<input type='radio' name='action' value='add'> Add to Blacklist<br></td>"
-print "<td><input type='submit' name='.submit' value='Go' style='margin-left: 2em;'></td></tr></table>"
+print "<form method='post' action='blacklist.py' " + \
+    "enctype='application/x-www-form-urlencoded'>"
+print "<table border='0'><tr><td><input type='text' name='affects'" + \
+    "value='" + escaffects + "'></td>"
+print "<td><input type='radio' name='action' value='test' " + \
+    "checked='checked'> Test Only<br>"
+print "<input type='radio' name='action' value='add'> " + \
+    "Add to Blacklist<br></td>"
+print "<td><input type='submit' name='.submit' value='Go' " + \
+    "style='margin-left: 2em;'></td></tr></table>"
 print "<div><input type='hidden' name='.cgifields' value='action'></div></form>"
 
 print "<p><a href='blacklist.py'>Show current blacklist</a></p>"
