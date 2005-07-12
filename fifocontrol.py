@@ -47,7 +47,7 @@ def do_action (action, filename):
 
     if os.path.isfile(myconfig['basedir'] + 'status'):
         statusfile = open(myconfig['basedir'] + 'status')
-        status = statusfile.readline()[:-1]
+        status = statusfile.readline()
         statusfile.close()
     else:
         status = ''
