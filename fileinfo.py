@@ -1,5 +1,6 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
+
 # oyster - a perl-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
@@ -77,7 +78,7 @@ print cgi.escape(soundfileonly) + "</p><br clear='all'>"
 isblacklisted = 0
 blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
 for rule in blacklist.readlines():
-    if soundfile == rule[:-1]:
+    if re.match('.*' + rule[:-1] + '.*', soundfile):
         isblacklisted = 1
 blacklist.close()
 

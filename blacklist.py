@@ -1,5 +1,6 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
+
 # oyster - a perl-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
@@ -56,7 +57,7 @@ def print_blacklist ():
         isblacklisted = 0
         line = line.replace(mediadir,'',1)[:-1]
         for blacklistline in blacklistlines:
-            if re.match(blacklistline,line):
+            if re.match('.*' + blacklistline + '.*', line):
                 isblacklisted = 1
                 lineaffects[blacklistline] = lineaffects[blacklistline] + 1
         if isblacklisted:
@@ -86,10 +87,9 @@ def print_affects (affects):
 
     # Add all matching lines to results
 
-    print "Teste auf " + affects + "<br>"
     for line in list.readlines():
         line = line.replace(mediadir,'',1)[:-1]
-        if re.match(affects, line):
+        if re.match('.*' + affects + '.*', line):
             results.append(line)
     
     list.close()
@@ -145,7 +145,7 @@ else:
 # Create form
 
 print "<form method='post' action='blacklist.py' enctype='application/x-www-form-urlencoded'>"
-print "<table border='0'><tr><td><input type='text' name='affects' ></td>"
+print "<table border='0'><tr><td><input type='text' name='affects' value='" + affects + "'></td>"
 print "<td><input type='radio' name='action' value='test' checked='checked'> Test Only<br>"
 print "<input type='radio' name='action' value='add'> Add to Blacklist<br></td>"
 print "<td><input type='submit' name='.submit' value='Go' style='margin-left: 2em;'></td></tr></table>"
