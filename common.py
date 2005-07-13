@@ -55,7 +55,7 @@ def navigation_header():
     print "<td align='center' width='16%'><a href='score.py'>Scoring</a></td>"
     print "<td align='center' width='17%'><a href='statistics.py'>Statistics</a></td>"
     print "</tr></table>"
-    print "<hr>"
+    print "<hr/>"
 
 def get_cover(a,b):
     return('')
@@ -81,7 +81,7 @@ def get_cover (albumdir, imagewidth):
         return ''
     else:
         return "<img src='data:image/" + filetype + ";base64," + encoded + \
-            "' width='" + imagewidth + "' style='float:right' alt='Cover'>"
+            "' width='" + imagewidth + "' style='float:right' alt='Cover'/>"
 
 def sort_results (topdir):
 

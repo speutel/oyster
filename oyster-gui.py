@@ -64,21 +64,22 @@ if form.has_key('votelist'):
 print "Content-Type: text/html"
 print """
 <?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!DOCTYPE html 
+         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <title>Oyster-GUI</title>
- <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
- <meta http-equiv="refresh" content="30; URL=oyster-gui.py">
- <link rel="stylesheet" type="text/css" href="themes/default/layout.css">
+ <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
+ <meta http-equiv="refresh" content="30; URL=oyster-gui.py"/>
+ <link rel="stylesheet" type="text/css" href="themes/default/layout.css"/>
 </head>
 <body>
 """
 
-print "<img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/>"
-print "<a href='oyster-gui.py' style='position:absolute; top:2px; right:2px' title='Refresh'>"
-print "<img src='themes/" + myconfig['theme'] + "/refresh.png' border='0' alt='Refresh'></a>"
+print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
+print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
+print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
 if not os.path.isdir(basedir) or action == 'stop':
     print '<p>Oyster has not been started yet!</p>'
@@ -136,31 +137,33 @@ if status == 'paused':
 
 print "<table width='100%' border='0'>"
 print "<tr><td><strong>Now playing " + playreason + ":</strong></td>"
-print "<td align='center' width='75'><strong>Score</strong></td></tr>"
+print "<td align='center' style='width:75px'><strong>Score</strong></td></tr>"
 print "<tr><td>"
 print "<strong><a class='file' href='fileinfo.py?file=" + info + "' target='browse' title='View details'>" + tag['display'] + "</a>"
-print statusstr + "</td>"
+print statusstr + "</strong></td>"
 print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-print "<a href='oyster-gui.py?action=scoredown&file=" + info + "' title='Score down'>"
+print "<a href='oyster-gui.py?action=scoredown&amp;file=" + info + "' title='Score down'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
 print "<strong>" + str(tag['score']) + "</strong> "
-print "<a href='oyster-gui.py?action=scoreup&file=" + info + "' title='Score up'>"
+print "<a href='oyster-gui.py?action=scoreup&amp;file=" + info + "' title='Score up'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/>"
-print "</td></tr>"
+print "</a></td></tr>"
 
 if not os.path.exists(basedir + 'votes') or os.path.getsize(basedir + 'votes') == 0:
     print "<tr><td><strong>Next playing:</strong></td>"
     print "<td></td></tr>"
     print "<tr><td>"
     print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' target='browse' title='View details'>"
-    print nexttag['display'] + "</a></td>"
+    print nexttag['display'] + "</a></strong></td>"
     print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=scoredown&file=" + nextinfo + "' title='Score down'>"
+    print "<a href='oyster-gui.py?action=scoredown&amp;file=" + nextinfo + "' title='Score down'>"
     print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
     print "<strong>" + str(nexttag['score']) + "</strong> "
-    print "<a href='oyster-gui.py?action=scoreup&file=" + nextinfo + "' title='Score up'>"
-    print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/>"
-print "</td></tr></table>\n"
+    print "<a href='oyster-gui.py?action=scoreup&amp;file=" + nextinfo + "' title='Score up'>"
+    print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a>"
+    print "</td></tr>"
+
+print "</table>\n"
 
 if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
     maxvotes = 0
@@ -191,8 +194,10 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 print "<tr><td>"
                 print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' target='browse'>" + display + "</a>"
                 print "</td><td align='center'>" + str(votes[filename]) + "</td><td>"
-                print "<a href='oyster-gui.py?action=unvotefile&file=" + escapedtitle + "'>Unvote</a>"
+                print "<a href='oyster-gui.py?action=unvotefile&amp;file=" + escapedtitle + "'>Unvote</a>"
                 print "</td></tr>"
         maxvotes -= 1
 
-print "</table></body></html>"
+    print "</table>"
+
+print "</body></html>"

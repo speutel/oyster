@@ -115,7 +115,7 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
                 escapedpartdir + "</a> / "
         incdir = incdir + partdir + '/'
 
-    print "</strong></p><br clear='all'>"
+    print "</strong></p><br clear='all'/>"
 
     # Get the parent directory
 
@@ -131,10 +131,10 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
     parentdir = urllib.quote(parentdir)
     if form.has_key('playlist'):
         print "<a href='browse.py?dir=" + parentdir + mode + "&playlist=" + \
-            urllib.quote(form['playlist'].value) + "'>One level up</a><br><br>"
+            urllib.quote(form['playlist'].value) + "'>One level up</a><br/><br/>"
     else:
         print "<a href='browse.py?dir=" + parentdir + mode + \
-            "'>One level up</a><br><br>"
+            "'>One level up</a><br/><br/>"
 
 elif not os.path.exists(mediadir + givendir):
     # if $mediadir == "/": just build filelist, no dir-splitting needed
