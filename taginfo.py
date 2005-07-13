@@ -127,7 +127,7 @@ def get_mp3_tags (filename):
         
     for line in mp3:
         for regex in mp3_regex:
-            matcher = re.match(regex[0], line)
+            matcher = re.match(regex[0], line[:-1])
             if matcher != None:
                 tag[regex[1]] = cgi.escape(matcher.group(1).rstrip())
 
