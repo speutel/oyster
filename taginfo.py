@@ -135,7 +135,7 @@ def get_mp3_tags (filename):
         playtimeminutes = int(int(tag['playtime']) / 1000 / 60)
         playtimeseconds = int(int(tag['playtime']) / 1000 % 60)
         if playtimeseconds < 10:
-            playtimeseconds = '0' + playtimeseconds
+            playtimeseconds = '0' + str(playtimeseconds)
             
         tag['playtime'] = str(playtimeminutes) + ':' + str(playtimeseconds)
     except KeyError:
