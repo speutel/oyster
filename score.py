@@ -1,5 +1,6 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: ISO-8859-1 -*-
+
 # oyster - a perl-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
@@ -25,11 +26,8 @@ import config
 import taginfo
 import fifocontrol
 import cgitb
-import sys
-import os.path
 import urllib
 import common
-import re
 cgitb.enable()
 
 myconfig = config.get_config('oyster.conf')
@@ -62,7 +60,7 @@ scorefile.close()
 print "<table width='100%'>"
 print "<tr><th>Song</th><th width='75'>Score</th></tr>"
 
-cssclass='file2'
+cssclass = 'file2'
 
 while maxscore > 0:
 
@@ -80,7 +78,7 @@ while maxscore > 0:
 
         printed = 1
 
-        escapedfile = curfile.replace(mediadir,'',1)
+        escapedfile = curfile.replace(mediadir, '', 1)
         escapedfile = urllib.quote(escapedfile)
         display = taginfo.get_tag_light(curfile)
 
@@ -94,18 +92,18 @@ while maxscore > 0:
 
         print "<tr><td><a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
             "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
-            "border='0' alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
+            "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
             escapedfile + "'>" + display + "</a></td>"
         print "<td align='center'><a class= '" + cssclass + "' href='score.py?action=scoredown&amp;file=" + escapedfile + "' " + \
             "title='Score down'><img src='themes/" + myconfig['theme'] + "/scoredown" + cssclass + ".png' " + \
-            "border='0' alt='-'></a> <span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span>"
+            "alt='-'/></a> <span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span>"
         print " <a class='" + cssclass + "' href='score.py?action=scoreup&amp;file=" + escapedfile + "' " + \
-            "title='Score up'><img src='themes/" + myconfig['theme'] + "/scoreup" + cssclass + ".png' border='0' alt='+'></a></td></tr>"
+            "title='Score up'><img src='themes/" + myconfig['theme'] + "/scoreup" + cssclass + ".png' alt='+'/></a></td></tr>"
 
     maxscore = maxscore - 1
 
     if printed:
-        print "<tr><td colspan=2>&nbsp;</td></tr>"
+        print "<tr><td colspan='2'>&nbsp;</td></tr>"
 
 print "</table>"
 print "</body></html>"
