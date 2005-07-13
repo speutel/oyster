@@ -147,7 +147,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
                         "' target='browse'>" + cgi.escape(cutnewpath) + \
-                        + "</a></strong>"
+                        "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
                         "'>Delete</a></td>"
