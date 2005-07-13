@@ -44,12 +44,13 @@ def print_blacklist ():
     lineaffects = {}
 
     blacklistlines = []
-    blacklist = open(myconfig['savedir'] + "blacklists/" + playlist)
-    for line in blacklist.readlines():
-        blacklistlines.append(line[:-1])
-        line = line.replace(mediadir, '', 1)[:-1]
-        lineaffects[line] = 0
-    blacklist.close()
+    if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
+        blacklist = open(myconfig['savedir'] + "blacklists/" + playlist)
+        for line in blacklist.readlines():
+            blacklistlines.append(line[:-1])
+            line = line.replace(mediadir, '', 1)[:-1]
+            lineaffects[line] = 0
+        blacklist.close()
 
     listfile = open(myconfig['savedir'] + "lists/" + playlist)
 

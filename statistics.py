@@ -28,6 +28,7 @@ import cgitb
 import urllib
 import common
 import re
+import os.path
 cgitb.enable()
 
 def get_blacklisted():
@@ -37,10 +38,11 @@ def get_blacklisted():
     count = 0
     affectlines = []
 
-    blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
-    for line in blacklist.readlines():
-        affectlines.append(line[:-1])
-    blacklist.close()
+    if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
+        blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
+        for line in blacklist.readlines():
+            affectlines.append(line[:-1])
+        blacklist.close()
 
     listfile = open (myconfig['savedir'] + "lists/" + playlist)
 
