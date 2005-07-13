@@ -73,7 +73,7 @@ def print_title ():
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
-    print "<p align='center'><b>Editing playlist " + form['playlist'].value + "</b> <a href='index-python.html' target='top'>Done</a></p>"
+    print "<p align='center'><b>Editing playlist " + form['playlist'].value + "</b> <a href='index-python.html' target='_top'>Done</a></p>"
     print "</body></html>"
     
 myconfig = config.get_config('oyster.conf')
