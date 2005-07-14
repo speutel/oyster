@@ -137,7 +137,7 @@ def do_votelist (votelist):
     Enqueues a complete playlist in m3u-format
     """
     votelist = myconfig['mediadir'] + votelist[1:]
-    control = open(myconfig['basedir'] + "control")
+    control = open(myconfig['basedir'] + "control", 'w')
     control.write("ENQLIST " + votelist + "\n")
     control.close()
     time.sleep (1)
