@@ -194,7 +194,10 @@ print "<tr><td><strong>Files played because of vote</strong></td><td>" + str(vot
 print "<tr><td><strong>Files played because of scoring</strong></td><td>" + str(scoredfiles) + "</td></tr>"
 print "<tr><td><strong>Files played from playlist at random</strong></td><td>" + str(randomfiles) + "</td></tr>"
 print "<tr><td><strong>Ratio Scoring/Random (should be ~ " + str(myconfig['voteplay']) + ")</strong></td>"
-print "<td>" + str((scoredfiles*100)/(scoredfiles+randomfiles)) + "</td></tr>"
+if scoredfiles + randomfiles == 0:
+    print "<td>0</td></tr>"
+else:
+    print "<td>" + str((scoredfiles*100)/(scoredfiles+randomfiles)) + "</td></tr>"
 print "</table>"
 
 print "</body></html>"
