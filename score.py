@@ -28,6 +28,7 @@ import fifocontrol
 import cgitb
 import urllib
 import common
+import os.path
 cgitb.enable()
 
 myconfig = config.get_config('oyster.conf')
@@ -45,17 +46,18 @@ common.navigation_header()
 score = {}
 maxscore = 0
 
-scorefile = open (myconfig['savedir'] + "scores/" + playlist)
-scorefile.readline() # skip initial number
-for line in scorefile.readlines():
-    line = line[:-1]
-    if score.has_key(line):
-        score[line] = score[line] + 1
-        if maxscore < score[line]:
-            maxscore = score[line]
-    else:
-        score[line] = 1
-scorefile.close()
+if os.path.exists(myconfig['savedir'] + "scores/" + playlist):
+    scorefile = open (myconfig['savedir'] + "scores/" + playlist)
+    scorefile.readline() # skip initial number
+    for line in scorefile.readlines():
+        line = line[:-1]
+        if score.has_key(line):
+            score[line] = score[line] + 1
+            if maxscore < score[line]:
+                maxscore = score[line]
+        else:
+            score[line] = 1
+    scorefile.close()
 
 print "<table width='100%'>"
 print "<tr><th>Song</th><th width='75'>Score</th></tr>"
