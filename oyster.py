@@ -131,8 +131,8 @@ class Oyster:
         # redirect stdout/stderr - silence! 
         outfile = os.open("/tmp/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
         errfile = os.open("/tmp/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
-        # os.dup2(outfile, 1)
-        # os.dup2(errfile, 2)
+        os.dup2(outfile, 1)
+        os.dup2(errfile, 2)
 
         self.__setup_savedir()
         
@@ -611,6 +611,8 @@ class ControlThread(threading.Thread):
 
         if command == "NEXT":
             self.oyster.next()
+	elif command == "SKIP":
+	    self.oyster.chooseFile();
         elif command == "QUIT":
             self.oyster.exit()
         elif command == "PAUSE":
