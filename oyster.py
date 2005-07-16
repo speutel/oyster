@@ -70,6 +70,7 @@ class Oyster:
     playlist_changed = ""
 
     controlfile = ""
+    controlfilemode = "0600"
 
     filetypes = {}
     filetoplay = ""
@@ -102,7 +103,7 @@ class Oyster:
             log.debug("setup basedir")
             os.makedirs(self.basedir)
         else: 
-	    # TODO scheint nicht zu funktionieren...
+            # TODO scheint nicht zu funktionieren...
             # already exists. check for another running oyster and unpause.
             # no oyster -> remove dir
             log.debug("basedir exists")
@@ -158,7 +159,8 @@ class Oyster:
 
         # make fifos
         log.debug("make fifos")
-        os.mkfifo(self.basedir + "/control")
+        os.mkfifo(self.controlfile)
+        os.chmod(self.controlfile, self.controlfilemode)
 
         # favmod is off at start
         self.__write_favmode("off")
