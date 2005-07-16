@@ -39,7 +39,7 @@ form = cgi.FieldStorage()
 
 if os.path.isfile(myconfig['basedir'] + 'status'):
     statusfile = open(myconfig['basedir'] + 'status')
-    status = statusfile.readline()[:-1]
+    status = statusfile.readline()
     statusfile.close()
 else:
     status = ''
@@ -131,9 +131,10 @@ elif playreason == 'VOTED':
 if favmode == 'on' and not (playreason == '(voted)' or playreason == '(enqueued)'):
     playreason = '(favorites only)'
 
-statusstr = ''
 if status == 'paused':
     statusstr = " <a href='oyster-gui.py?action=pause'>Paused</a>"
+else:
+    statusstr = ''
 
 print "<table width='100%' border='0'>"
 print "<tr><td colspan='2'><strong>Now playing " + playreason + ":</strong></td>"
@@ -176,7 +177,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
             if votes[filename] == maxvotes:
                 display = taginfo.get_tag_light(filename)
                 title = re.sub('\A' + mediadir, '', filename)
-                escapedtitle = cgi.escape(title)
+                escapedtitle = urllib.quote(title)
                 print "<tr><td>"
                 print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' target='browse'>" + display + "</a>"
                 print "</td><td align='center'>" + str(votes[filename]) + "</td>"
