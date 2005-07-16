@@ -110,10 +110,18 @@ timesplayed = {} # Stores, how often a file has been played
 votedfiles = randomfiles = scoredfiles = 0
 
 check = '' # Check, if a file was blacklisted before counting it
-logmatcher = re.compile('\A[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)\Z')
+oldlogmatcher = re.compile('\A[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)\Z')
+newlogmatcher = re.compile('\A[0-9]{8}\-[0-9]{4}\ ([^\ ]*)\ (.*)\Z')
 
 for line in log:
-    matcher = logmatcher.match(line[:-1])
+    oldmatcher = oldlogmatcher.match(line[:-1])
+    newmatcher = newlogmatcher.match(line[:-1])
+    if oldmatcher != None:
+        matcher = oldmatcher
+    elif newmatcher != None:
+        matcher = newmatcher
+    else:
+        matcher = None
     if matcher != None:
         playreason = matcher.group(1)
         filename = matcher.group(2)
