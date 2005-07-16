@@ -95,9 +95,13 @@ if not os.path.isfile(basedir + 'info'):
 infofile = open(basedir + 'info')
 info = infofile.readline()[:-1]
 infofile.close()
-nextfile = open(basedir + 'nextfile')
-next = nextfile.readline()[:-1]
-nextfile.close()
+
+if os.path.exists(basedir + 'nextfile'):
+    nextfile = open(basedir + 'nextfile')
+    next = nextfile.readline()[:-1]
+    nextfile.close()
+else:
+    next = ''
 
 tag = taginfo.get_tag(info)
 nexttag = taginfo.get_tag(next)
@@ -201,6 +205,7 @@ print "<strong>" + str(nexttag['score']) + "</strong> "
 print "<a href='oyster-gui.py?action=scoreup&amp;file=" + nextinfo + "' title='Score up'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a>"
 print "</td></tr>"
+print "</table>"
 
 
 print "</body></html>"
