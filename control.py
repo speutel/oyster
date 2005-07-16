@@ -117,7 +117,7 @@ print "<td align='center'><a href='oyster-gui.py?action=pause' target='curplay' 
 print "<img src='themes/" + myconfig['theme'] + "/pause.png' alt='Pause'/></a></td>"
 print "<td align='center'><a href='oyster-gui.py?action=prev' target='curplay' title='Previous song'>"
 print "<img src='themes/" + myconfig['theme'] + "/prev.png' alt='Prev'/></a></td>"
-print "<td align='center'><a href='oyster-gui.py?action=skip' target='curplay' title='Next song'>"
+print "<td align='center'><a href='oyster-gui.py?action=next' target='curplay' title='Next song'>"
 print "<img src='themes/" + myconfig['theme'] + "/skip.png' alt='Skip'/></a></td>"
 print "</tr></table>"
 print "</body></html>"

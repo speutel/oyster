@@ -150,7 +150,7 @@ print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' al
 print "</a></td></tr>"
 
 if not os.path.exists(basedir + 'votes') or os.path.getsize(basedir + 'votes') == 0:
-    print "<tr><td><strong>Next playing:</strong></td>"
+    print "<tr><td><strong>Next playing (<a href='oyster-gui.py?action=skip'>change</a>):</strong></td>"
     print "<td></td></tr>"
     print "<tr><td>"
     print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' target='browse' title='View details'>"
