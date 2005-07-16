@@ -70,7 +70,7 @@ class Oyster:
     playlist_changed = ""
 
     controlfile = ""
-    controlfilemode = "0600"
+    controlfilemode = 0600
 
     filetypes = {}
     filetoplay = ""
@@ -382,6 +382,7 @@ class Oyster:
         self.votepercentage = int(self.config["voteplay"].rstrip("/"))
         self.scoressize = int(self.config["maxscored"])
         self.controlfile = self.basedir + "/control"
+        self.controlfilemode = int(self.config["control_mode"], 8)
 
         for ftype in self.config["filetypes"].split(","):
             self.filetypes[ftype] = self.config[ftype]
@@ -587,7 +588,7 @@ class Oyster:
             for line in deflist.readlines():
                 # self.filelist.append(line.rstrip())
                 self.filelist.append(line.rstrip())
-        self.chooseFile()
+            self.chooseFile()
 
 class ControlThread(threading.Thread):
     """ This Thread opens controlfifo for reading and translates commands into
@@ -613,8 +614,8 @@ class ControlThread(threading.Thread):
 
         if command == "NEXT":
             self.oyster.next()
-	elif command == "SKIP":
-	    self.oyster.chooseFile();
+        elif command == "SKIP":
+            self.oyster.chooseFile()
         elif command == "QUIT":
             self.oyster.exit()
         elif command == "PAUSE":
