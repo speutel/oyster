@@ -132,12 +132,13 @@ def get_mp3_tags (filename):
                 tag[regex[1]] = cgi.escape(matcher.group(1).rstrip())
 
     try:
-        playtimeminutes = int(int(tag['playtime']) / 1000 / 60)
-        playtimeseconds = int(int(tag['playtime']) / 1000 % 60)
-        if playtimeseconds < 10:
-            playtimeseconds = '0' + str(playtimeseconds)
+        if tag['playtime'] != '':
+            playtimeminutes = int(int(tag['playtime']) / 1000 / 60)
+            playtimeseconds = int(int(tag['playtime']) / 1000 % 60)
+            if playtimeseconds < 10:
+                playtimeseconds = '0' + str(playtimeseconds)
             
-        tag['playtime'] = str(playtimeminutes) + ':' + str(playtimeseconds)
+            tag['playtime'] = str(playtimeminutes) + ':' + str(playtimeseconds)
     except KeyError:
         pass
     
