@@ -307,7 +307,7 @@ class Oyster:
     def __gettime(self):
         """ returns time in "%Y%m%d-%H%M"-format """
         dateinst = datetime.datetime(1, 2, 3)
-        return dateinst.today().strftime("%Y%m%d-%H%M")
+        return dateinst.today().strftime("%Y%m%d-%H%M%S")
 
     def __done(self):
         """ this method is invoced when the musicplayer quits.
