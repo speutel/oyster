@@ -42,12 +42,14 @@ def print_blacklist ():
     "Opens current blacklist and prints each line"
 
     lineaffects = {}
-
+    blacklistmatchers = {}
     blacklistlines = []
+
     if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
         blacklist = open(myconfig['savedir'] + "blacklists/" + playlist)
         for line in blacklist.readlines():
             blacklistlines.append(line[:-1])
+            blacklistmatchers[line[:-1]] = re.compile('.*' + line[:-1] + '.*')
             line = line.replace(mediadir, '', 1)[:-1]
             lineaffects[line] = 0
         blacklist.close()
@@ -61,10 +63,10 @@ def print_blacklist ():
     for line in listfile.readlines():
         isblacklisted = 0
         line = line.replace(mediadir, '', 1)[:-1]
-        for blacklistline in blacklistlines:
-            if re.match('.*' + blacklistline + '.*', line):
+        for key in blacklistmatchers.keys():
+            if blacklistmatchers[key].match(line):
                 isblacklisted = 1
-                lineaffects[blacklistline] = lineaffects[blacklistline] + 1
+                lineaffects[key] = lineaffects[key] + 1
         if isblacklisted:
             totalaffected = totalaffected + 1
 
