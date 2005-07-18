@@ -570,10 +570,10 @@ class Oyster:
             pos_slash = line.find("/")
             if pos_slash == 0:
                 # path is absolute 
-                self.enqueue(line.rstrip())
-            elif pos_slash == -1:
+                self.enqueue(line.rstrip(), "ENQUEUED")
+            else:
                 # path is relative 
-                self.enqueue(listpath + "/" + line.rstrip())
+                self.enqueue(listpath + "/" + line.rstrip(), "ENQUEUED")
 
     def loadPlaylist(self, listname):
         """ load oyster-playlist (discard list in memory) """
