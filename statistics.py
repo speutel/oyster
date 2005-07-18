@@ -36,12 +36,12 @@ def get_blacklisted():
     # Counts all files, which are affected by a blacklist-rule
 
     count = 0
-    affectlines = []
+    affectmatchers = []
 
     if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
         blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
         for line in blacklist.readlines():
-            affectlines.append(line[:-1])
+            affectmatchers.append(re.compile('.*' + line[:-1] + '.*'))
         blacklist.close()
 
     listfile = open (myconfig['savedir'] + "lists/" + playlist)
@@ -49,8 +49,8 @@ def get_blacklisted():
     for line in listfile.readlines():
         isaffected = 0
         line = line.replace(mediadir, '', 1)[:-1]
-        for affects in affectlines:
-            if re.match('.*' + affects + '.*', line):
+        for affectmatcher in affectmatchers:
+            if affectmatcher.match(line):
                 isaffected = 1
         if isaffected:
             count = count + 1
@@ -110,18 +110,10 @@ timesplayed = {} # Stores, how often a file has been played
 votedfiles = randomfiles = scoredfiles = 0
 
 check = '' # Check, if a file was blacklisted before counting it
-oldlogmatcher = re.compile('\A[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)\Z')
-newlogmatcher = re.compile('\A[0-9]{8}\-[0-9]{4}\ ([^\ ]*)\ (.*)\Z')
+logmatcher = re.compile('\A[0-9]{8}\-[0-9]{6}\ ([^\ ]*)\ (.*)\Z')
 
 for line in log:
-    oldmatcher = oldlogmatcher.match(line[:-1])
-    newmatcher = newlogmatcher.match(line[:-1])
-    if oldmatcher != None:
-        matcher = oldmatcher
-    elif newmatcher != None:
-        matcher = newmatcher
-    else:
-        matcher = None
+    matcher = logmatcher.match(line[:-1])
     if matcher != None:
         playreason = matcher.group(1)
         filename = matcher.group(2)
