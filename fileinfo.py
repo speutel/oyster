@@ -76,11 +76,12 @@ for partdir in dirs:
 print cgi.escape(soundfileonly) + "</p><br clear='all'>"
 
 isblacklisted = 0
-blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
-for rule in blacklist.readlines():
-    if re.match('.*' + rule[:-1] + '.*', soundfile):
-        isblacklisted = 1
-blacklist.close()
+if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
+    blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
+    for rule in blacklist.readlines():
+        if re.match('.*' + rule[:-1] + '.*', soundfile):
+            isblacklisted = 1
+    blacklist.close()
 
 escapedfile = urllib.quote(soundfile)
 
