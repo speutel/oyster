@@ -62,14 +62,28 @@ else:
     common.navigation_header()
     mode = ''
 
-givendir = '/'
-
 if form.has_key('dir'):
     # Check given parameter for possible security risks
     givendir = form['dir'].value + '/'
     givendir = re.sub('//', '/', givendir)
     givendir = re.sub('\.\./', '', givendir)
     if givendir == '..':
+        givendir = '/'
+else:
+    givendir = '/'
+
+if form.has_key('playlist') and form.has_key('dir') and \
+    form.has_key('checkdir'):
+    
+    direxists = 0
+    listfile = open(myconfig['savedir'] + 'lists/' + form['playlist'].value)
+    for line in listfile:
+        if line.find(mediadir + form['dir'].value) == 0:
+            direxists = 1
+            break
+    listfile.close()
+    
+    if direxists == 0:
         givendir = '/'
 
 # Is oyster currently running?
@@ -82,17 +96,17 @@ else:
 # Give an option to browse all files or only the playlist
 
 if not editplaylist:
+    if form.has_key('dir'):
+        curdir = urllib.quote(givendir)
+    else:
+        curdir = '/'
     if form.has_key('playlist'):
-        if form.has_key('dir'):
-            curdir = form['dir'].value
-        else:
-            curdir = ''
-
         print "<p align='right'><a class='file' href='browse.py" + \
             "?dir=" + curdir + "'>Browse all files</a></p>"
     elif playlist != 'default':
         print "<p align='right'><a class='file' href='browse.py?playlist=" + \
-            playlist + "'>Browse in current playlist</a></p>"
+            playlist + "&dir=" + curdir + "&checkdir=true'>" + \
+            "Browse in current playlist</a></p>"
 
 if givendir != '/' and os.path.exists(mediadir + givendir):
     print "<p>" + common.get_cover(mediadir + givendir, "100")
