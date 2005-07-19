@@ -44,7 +44,7 @@ if form.has_key('action'):
 common.navigation_header()
 
 score = {}
-maxscore = 0
+maxscore = 1
 
 if os.path.exists(myconfig['savedir'] + "scores/" + playlist):
     scorefile = open (myconfig['savedir'] + "scores/" + playlist)
