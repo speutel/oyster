@@ -340,6 +340,8 @@ class Oyster:
                 self.nextfilestoplay.append("filler")
                 self.__playlog(self.__gettime() + " " + self.playreasons[0] + " " +
                                self.filetoplay )
+                self.playreasons = self.playreasons[1:]
+                self.playreasons.append("filler")
                 self.chooseFile(self.len_nextfiles-1)
                 self.hist_pointer = len(self.history)
 
