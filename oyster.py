@@ -74,7 +74,8 @@ class Oyster:
 
     filetypes = {}
     filetoplay = ""
-    nextfiletoplay = ""
+    nextfilestoplay = []
+    len_nextfiles = 5
 
     # pid of musicplayer     
     playerid = 0
@@ -86,7 +87,7 @@ class Oyster:
     mode = "vote"
     doNotSwitch = False
 
-    playreason = ""
+    playreasons = []
     nextreason = ""
 
     # open fd for reading commands 
@@ -149,6 +150,8 @@ class Oyster:
         # read old default-playlist (list of all files in mediadir)
         # (one song is played from there while we build the new list) 
         log.debug("reading old default list")
+        for i in range(0, self.len_nextfiles):
+            self.playreasons.append("filler")
         self.loadPlaylist("default")
 
         # read scores for playlist 
@@ -175,11 +178,10 @@ class Oyster:
         plhelper.buildPlaylist(self)
         
         # if we have nothing to play, wait until plhelper is done 
-        while len(self.filelist) == 0:
-            pass
-
-        # fill files to play 
-        self.chooseFile()
+        if len(self.filelist) == 0:
+            while len(self.filelist) == 0:
+                pass
+            self.loadPlaylist("default")
 
         # for basedir/status -> playing 
         self.unpause()
@@ -266,8 +268,8 @@ class Oyster:
             # test if we play from scores or normal playlist 
             #randi = random.randint(0, 100)
             if random.randint(0, 100) < self.votepercentage:
-                self.playreason = "SCORED"
-                return random.choice(self.scorelist)
+                playreason = "SCORED"
+                return (random.choice(self.scorelist), playreason)
         chosen = random.choice(self.filelist)
         if self.__test_blacklist(chosen):
             self.__playlog(self.__gettime() + " BLACKLIST " + chosen )
@@ -275,10 +277,10 @@ class Oyster:
                 return self.__choose_file()
             except RuntimeError:
                 log.debug("recursion error! too many matches from blacklist!")
-                self.playreason = "BLACKLISTFORCED"
+                playreason = "BLACKLISTFORCED"
                 return chosen
-        self.playreason = "PLAYLIST"
-        return chosen
+        playreason = "PLAYLIST"
+        return (chosen, playreason)
 
     def __votelist_sort(self, a, b):
         """ sort-helper for sorting the votelist by the number of votes every
@@ -333,10 +335,12 @@ class Oyster:
             # in this case, the file is already set -> do nothing 
             elif not self.doNotSwitch:
                 # normal operation: play next file and choose another one 
-                self.filetoplay = self.nextfiletoplay
-                self.__playlog(self.__gettime() + " " + self.playreason + " " +
+                self.filetoplay = self.nextfilestoplay[0]
+                self.nextfilestoplay = self.nextfilestoplay[1:]
+                self.nextfilestoplay.append("filler")
+                self.__playlog(self.__gettime() + " " + self.playreasons[0] + " " +
                                self.filetoplay )
-                self.chooseFile()
+                self.chooseFile(self.len_nextfiles-1)
                 self.hist_pointer = len(self.history)
 
             # reset state
@@ -387,17 +391,25 @@ class Oyster:
         for ftype in self.config["filetypes"].split(","):
             self.filetypes[ftype] = self.config[ftype]
 
+        self.len_nextfiles = int(self.config["len_nextfiles"])
+
         # "needed" for __test_blacklist - stop recursing after 200 hits from
         # the blacklist
         sys.setrecursionlimit(200)
 
-    def chooseFile(self):
-        """ chooses next file to play from either filelist or scores and writes
-            it to basedir/nextfile """
-        log.debug("choose next file to play")
-        self.nextfiletoplay = self.__choose_file()
+    def chooseFile(self, filepos):
+        """ chooses one of the next files to play from either filelist or
+        scores and writes it to basedir/nextfile """
+
+        log.debug("choose next file " + str(filepos)  + "to play")
+        try:
+            (self.nextfilestoplay[filepos], self.playreasons[filepos]) = self.__choose_file()
+        except IndexError:
+            # TODO log!
+            pass
         nfile = open(self.basedir + "/nextfile", 'w')
-        nfile.write(self.nextfiletoplay + "\n")
+        for file in self.nextfilestoplay:
+            nfile.write(file + "\n")
         nfile.close()
 
     def buildPlaylist(self, mdir):
@@ -588,7 +600,10 @@ class Oyster:
             for line in deflist.readlines():
                 # self.filelist.append(line.rstrip())
                 self.filelist.append(line.rstrip())
-            self.chooseFile()
+            self.nextfilestoplay = []
+            for i in range(0, self.len_nextfiles):
+                self.nextfilestoplay.append("filler")
+                self.chooseFile(i)
 
 class ControlThread(threading.Thread):
     """ This Thread opens controlfifo for reading and translates commands into
@@ -615,7 +630,14 @@ class ControlThread(threading.Thread):
         if command == "NEXT":
             self.oyster.next()
         elif command == "SKIP":
-            self.oyster.chooseFile()
+            # arg starts with 0!
+            try:
+                arg = int(commandline[cpos+1:])
+                self.oyster.chooseFile(arg)
+            except ValueError:
+                print "ValueError! Oh mein Gott!"
+                print "x" + commandline[cpos+1:] + "x"
+                pass
         elif command == "QUIT":
             self.oyster.exit()
         elif command == "PAUSE":

@@ -37,3 +37,6 @@ mp3=/usr/bin/mpg321
 
 # mode of the $basedir/control file (4 digits!)
 control_mode=0600
+
+# how many files oyster shows in advance
+len_nextfiles=5
