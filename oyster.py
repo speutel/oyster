@@ -346,7 +346,7 @@ class Oyster:
 
             # wait for sound buffer to get empty (ogg123 exits early) 
             time.sleep(2)
-            self.play(self.filetoplay)
+            # self.play(self.filetoplay)
  
     def __playlog(self, string):
         """ writes the argument string to the right logfile
@@ -664,4 +664,6 @@ if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
     log = logging.getLogger("oyster")
     oy = Oyster()
-    oy.play(oy.filetoplay)
+    while not oy.doExit:
+        oy.play(oy.filetoplay)
+    
