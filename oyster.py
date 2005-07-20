@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 # -*- coding: iso8859-1 -*-
 
 # oyster - a python-based jukebox and web-frontend
@@ -254,7 +254,7 @@ class Oyster:
         if os.access(self.blacklistdir + "/" + self.playlist, os.R_OK):
             bfile = open(self.blacklistdir + "/" + self.playlist, 'r')
             for line in bfile.readlines():
-                if re.compile(re.escape(".*" + line.rstrip())).search(name + ".*") != None:
+                if re.compile(".*" + line.rstrip() + ".*").search(name) != None:
                     return True
         return False
 
