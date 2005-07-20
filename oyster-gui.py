@@ -182,7 +182,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 print "<tr><td>"
                 print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' target='browse'>" + display + "</a>"
                 print "</td><td align='center'>" + str(votes[filename]) + "</td>"
-                print "<td align='center'><a href='oyster-gui.py?action=unvotefile&amp;file=" + escapedtitle + "'>Unvote</a>"
+                print "<td align='center'><a href='oyster-gui.py?action=unvote&amp;file=" + escapedtitle + "'>Unvote</a>"
                 print "</td></tr>"
         maxvotes -= 1
 
