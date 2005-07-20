@@ -83,10 +83,15 @@ def print_songs (header, filearray):
         else:
             cssclass = 'file'
 
-        print "<tr><td><a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
+        print "<tr><td>"
+        
+        if oysterruns:
+            print "<a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
             "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" +\
-            "border='0' alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?" + \
-            "file=/" + escapedfilename + "'>" + displayname + "</a></td>"
+            "border='0' alt='Enqueue'/></a>"
+        
+        print "<a class='" + cssclass + "' href='fileinfo.py?" + \
+        "file=/" + escapedfilename + "'>" + displayname + "</a></td>"
         print "<td class='"  + cssclass + "' align='center'>" + reason + "</td></tr>\n"
     print "</table>"
 
@@ -96,6 +101,13 @@ myconfig = config.get_config('oyster.conf')
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
+
+# Check if oyster is started
+
+if os.path.exists(myconfig['basedir']):
+    oysterruns = 1
+else:
+    oysterruns = 0
 
 # Load logfile into permanent array
 
