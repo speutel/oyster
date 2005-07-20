@@ -96,20 +96,17 @@ infofile = open(basedir + 'info')
 info = infofile.readline()[:-1]
 infofile.close()
 
+nextarray = []
 if os.path.exists(basedir + 'nextfile'):
     nextfile = open(basedir + 'nextfile')
-    next = nextfile.readline()[:-1]
+    for line in nextfile.readlines():
+        nextarray.append(line[:-1])
     nextfile.close()
-else:
-    next = ''
 
 tag = taginfo.get_tag(info)
-nexttag = taginfo.get_tag(next)
 
 info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
 info = urllib.quote("/" + info)
-nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', next)
-nextinfo = urllib.quote("/" + nextinfo)
 
 playlist = config.get_playlist()
 playreason = commands.getoutput('tail -n 1 "logs/' + playlist + '"')[:-1]
@@ -192,19 +189,21 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
     print "<tr><td colspan='3'>&nbsp;</td></tr>"
 
 
-print "<tr><td colspan='2'><strong>Next random (<a href='oyster-gui.py?action=skip'>change</a>):</strong></td>"
+print "<tr><td colspan='2'><strong>Next random:</strong></td>"
 print "<td></td></tr>"
-print "<tr><td>"
-print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' target='browse' title='View details'>"
-print nexttag['display'] + "</a></strong></td>"
-print "<td></td>"
-print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-print "<a href='oyster-gui.py?action=scoredown&amp;file=" + nextinfo + "' title='Score down'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
-print "<strong>" + str(nexttag['score']) + "</strong> "
-print "<a href='oyster-gui.py?action=scoreup&amp;file=" + nextinfo + "' title='Score up'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a>"
-print "</td></tr>"
+i = 0
+for nextinfo in nextarray:
+    nexttag = taginfo.get_tag(nextinfo)
+    nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', nextinfo)
+    nextinfo = urllib.quote("/" + nextinfo)
+    print "<tr><td>"
+    print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' target='browse' title='View details'>"
+    print nexttag['display'] + "</a></strong></td>"
+    print "<td></td>"
+    print "<td align='center' style='padding-left:10px; padding-right:10px'>"
+    print "<a href='oyster-gui.py?action=skip" + str(i) + "'>Change</a>"
+    print "</td></tr>"
+    i = i +1
 print "</table>"
 
 

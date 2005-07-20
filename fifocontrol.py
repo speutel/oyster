@@ -57,8 +57,8 @@ def do_action (action, filename):
     if action != 'start':
         control = open(myconfig['basedir'] + 'control', 'w')
     
-    if action == 'skip':
-        control.write("SKIP\n")
+    if action[:4] == 'skip':
+        control.write("SKIP " + action[4:] + "\n")
         control.close()
     elif action == 'next':
         control.write("NEXT\n")
