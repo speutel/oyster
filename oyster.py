@@ -165,6 +165,11 @@ class Oyster:
         os.mkfifo(self.controlfile)
         os.chmod(self.controlfile, self.controlfilemode)
 
+        # init votefile
+        vfile = open(self.basedir + "/votes", 'w')
+        vfile.write("")
+        vfile.close()
+
         # favmod is off at start
         self.__write_favmode("off")
         
@@ -256,7 +261,7 @@ class Oyster:
         if os.access(self.blacklistdir + "/" + self.playlist, os.R_OK):
             bfile = open(self.blacklistdir + "/" + self.playlist, 'r')
             for line in bfile.readlines():
-                if re.compile(".*" + line.rstrip() + ".*").search(name) != None:
+                if re.compile( line.rstrip() ).search(name) != None:
                     return True
         return False
 
@@ -282,29 +287,15 @@ class Oyster:
         playreason = "PLAYLIST"
         return (chosen, playreason)
 
-    def __votelist_sort(self, a, b):
-        """ sort-helper for sorting the votelist by the number of votes every
-            file has """
-        if a[1] < b[1]:
-            return 1
-        elif a[1] > b[1]:
-            return -1
-        else:
-            return 0
-
     def __write_votelist(self):
-        """ sorts the votelist and writes it to basedir/votes """
         log.debug("writing votelist")
         if self.mode == "vote":
-            self.votelist.sort(self.__votelist_sort)
+            #self.votelist.sort(self.__votelist_sort)
             if len(self.votelist) != 0:
                 vfile = open(self.basedir + "/votes", 'w')
                 for entry in self.votelist:
                     vfile.write(entry[0] + "," + str(entry[1]) + "\n")
                 vfile.close()
-            else:
-                if os.access(self.basedir + "/votes", os.F_OK):
-                    os.remove(self.basedir + "/votes")
     
     def __gettime(self):
         """ returns time in "%Y%m%d-%H%M"-format """
@@ -515,11 +506,28 @@ class Oyster:
     def enqueue(self, filestring, reason):
         """ queue file for playing with $reason as logentry """
         if self.mode == "vote":
+            found = None
+            foundpos = -1
+            self.votelist.reverse()
             for i in range(len(self.votelist)):
                 if self.votelist[i][0] == filestring:
                     self.votelist[i][1] += 1
-                    self.__write_votelist()
-                    return None
+                    found = self.votelist[i]
+                    foundpos = i
+                if found != None:
+                    if ( self.votelist[i][1] >= found[1] and self.votelist[i][0] != found[0]):
+                        self.votelist = self.votelist[:i] + [found] + self.votelist[i:]
+                        del self.votelist[foundpos]
+                        self.votelist.reverse()
+                        self.__write_votelist()
+                        return None
+                    elif i == len(self.votelist)-1:
+                        self.votelist.append(found)
+                        del self.votelist[foundpos]
+                        self.votelist.reverse()
+                        self.__write_votelist()
+                        return None
+            self.votelist.reverse()
             self.votelist.append( [filestring, 1, reason] ) 
             self.__write_votelist()
 
@@ -600,12 +608,30 @@ class Oyster:
             self.__update_scores()
             self.__write_playlist_status()
             for line in deflist.readlines():
-                # self.filelist.append(line.rstrip())
                 self.filelist.append(line.rstrip())
             self.nextfilestoplay = []
             for i in range(0, self.len_nextfiles):
                 self.nextfilestoplay.append("filler")
                 self.chooseFile(i)
+
+    def shift(self, amount, pos):
+        """ shift the votelist entry on position /pos/ by /amount/ (positive values shift up) """
+        if amount > 0:
+            if pos-amount <= 0:
+                self.votelist = [self.votelist[pos]] + self.votelist
+                del self.votelist[pos+1]
+            else:
+                self.votelist = self.votelist[:pos-amount] + [ self.votelist[pos] ] + self.votelist[pos-amount:]
+                del self.votelist[pos+1]
+        elif amount < 0:
+            if pos-amount >= len(self.votelist)-1:
+                self.votelist = self.votelist + [self.votelist[pos]]
+                del self.votelist[pos]
+            else:
+                self.votelist = self.votelist[:pos-amount+1] + [ self.votelist[pos] ] + self.votelist[pos-amount+1:]
+                del self.votelist[pos]
+        self.__write_votelist()
+            
 
 class ControlThread(threading.Thread):
     """ This Thread opens controlfifo for reading and translates commands into
@@ -674,6 +700,19 @@ class ControlThread(threading.Thread):
             self.oyster.disableFavmode()
         elif command == "LOAD":
             self.oyster.loadPlaylist(commandline[cpos+1:])
+        elif command == "SHIFTUP":
+            try:
+                arg = int(commandline[cpos+1:])
+                self.oyster.shift(1, arg)
+            except ValueError:
+                print "ValueError! " + commandline[cpos+1:]
+        elif command == "SHIFTDOWN":
+            try:
+                arg = int(commandline[cpos+1:])
+                self.oyster.shift(-1, arg)
+            except ValueError:
+                 print "ValueError! " + commandline[cpos+1:]
+
         
 class PlaylistBuilder(threading.Thread):
     """ asynchronus default playlist building. Wonderful. """
