@@ -153,7 +153,7 @@ if form.has_key('addfile') or form.has_key('adddir') or \
     form.has_key('delfile') or form.has_key('deldir'):
     playlistfile = open (savedir + "lists/" + playlist, "w")
     for curfile in allfiles:
-        playlistfile.write(curfile + "\n")
+        playlistfile.write(mediadir + curfile + "\n")
     playlistfile.close()
 
 common.results = allfiles
