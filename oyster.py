@@ -296,6 +296,11 @@ class Oyster:
                 for entry in self.votelist:
                     vfile.write(entry[0] + "," + str(entry[1]) + "\n")
                 vfile.close()
+            else:
+                vfile = open(self.basedir + "/votes", 'w')
+                vfile.write("")
+                vfile.close()
+                
     
     def __gettime(self):
         """ returns time in "%Y%m%d-%H%M"-format """
@@ -303,7 +308,7 @@ class Oyster:
         return dateinst.today().strftime("%Y%m%d-%H%M%S")
 
     def __done(self):
-        """ this method is invoced when the musicplayer quits.
+        """ this method is invoked when the musicplayer quits.
             It writes the appropriate log entry and plays the next file. """
         log.debug("done playing")
         # if doExit is set don't play again 
