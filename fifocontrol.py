@@ -112,10 +112,9 @@ def do_action (action, filename):
         newlist.close()
     elif action == 'delete' and filename:
         filename = os.path.basename(filename)
-        os.unlink(myconfig['savedir'] + "blacklists/" + filename)
-        os.unlink(myconfig['savedir'] + "lists/" + filename)
-        os.unlink(myconfig['savedir'] + "logs/" + filename)
-        os.unlink(myconfig['savedir'] + "scores/" + filename)
+        for dirname in ['blacklists/', 'lists/', 'logs/', 'scores/']:
+            if os.path.exists(myconfig['savedir'] + dirname + filename):
+                os.unlink(myconfig['savedir'] + dirname + filename)
     elif action == 'favmode':
         control.write("FAVMODE\n")
         control.close()
