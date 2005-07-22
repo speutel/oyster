@@ -109,10 +109,14 @@ info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
 info = urllib.quote("/" + info)
 
 playlist = config.get_playlist()
-playreason = commands.getoutput('tail -n 1 "logs/' + playlist + '"')[:-1]
-playreason = re.sub('\A[^\ ]*\ ', '', playreason)
-playreason = re.sub('\ .*\Z', '', playreason)
-playreason = playreason.rstrip()
+lastlines = commands.getoutput('tail -n 10 "logs/' + playlist + '"').split("\n")
+lastlines.reverse()
+for line in lastlines:
+    playreason = re.sub('\A[^\ ]*\ ', '', line)
+    playreason = re.sub('\ .*\Z', '', playreason)
+    playreason = playreason.rstrip()
+    if playreason != 'BLACKLIST':
+        break
 
 favfile = open(basedir + 'favmode')
 favmode = favfile.readline()[:-1]
@@ -201,7 +205,7 @@ for nextinfo in nextarray:
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
     print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=skip" + str(i) + "'>Change</a>"
+    print "<a href='oyster-gui.py?action=skip&file=" + nextinfo + "'>Change</a>"
     print "</td></tr>"
     i = i +1
 print "</table>"

@@ -50,8 +50,20 @@ def do_action (action, filename):
     if action != 'start':
         control = open(myconfig['basedir'] + 'control', 'w')
     
-    if action[:4] == 'skip':
-        control.write("SKIP " + action[4:] + "\n")
+    if action == 'skip':
+        filenum = -1
+        counter = 0
+        nextfiles = open(myconfig['basedir'] + 'nextfile', 'r')
+        for nextfile in nextfiles.readlines():
+            if nextfile[:-1] == mediadir + filename:
+                filenum = counter
+                break
+            else:
+                counter += 1
+        nextfiles.close()
+
+        if filenum > -1:
+            control.write("SKIP " + str(filenum) + "\n")
         control.close()
     elif action == 'next':
         control.write("NEXT\n")
