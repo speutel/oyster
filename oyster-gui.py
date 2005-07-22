@@ -37,13 +37,6 @@ basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
-if os.path.isfile(myconfig['basedir'] + 'status'):
-    statusfile = open(myconfig['basedir'] + 'status')
-    status = statusfile.readline()
-    statusfile.close()
-else:
-    status = ''
-    
 if form.has_key('file'):
     filename = form['file'].value
 else:
@@ -51,10 +44,17 @@ else:
 
 if form.has_key('action'):
     action = form['action'].value
-    status = fifocontrol.do_action(action, filename)
+    fifocontrol.do_action(action, filename)
 else:
     action = ''
 
+if os.path.isfile(myconfig['basedir'] + 'status'):
+    statusfile = open(myconfig['basedir'] + 'status')
+    status = statusfile.readline()
+    statusfile.close()
+else:
+    status = ''
+    
 if form.has_key('vote'):
     fifocontrol.do_vote(form['vote'].value)
 

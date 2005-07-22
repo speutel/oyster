@@ -45,13 +45,6 @@ def do_action (action, filename):
     if filename == '..':
         filename = ''
 
-    if os.path.isfile(myconfig['basedir'] + 'status'):
-        statusfile = open(myconfig['basedir'] + 'status')
-        status = statusfile.readline()
-        statusfile.close()
-    else:
-        status = ''
-
     mediadir = myconfig['mediadir'][:-1]
 
     if action != 'start':
@@ -81,12 +74,7 @@ def do_action (action, filename):
         control.write("QUIT\n")
         control.close()
     elif action == 'pause':
-        if (status == 'paused'):
-            control.write("UNPAUSE\n'")
-            status = 'playing'
-        elif (status == 'playing'):
-            control.write("PAUSE\n")
-            status = 'paused'
+        control.write("PAUSE\n")
         control.close()
     elif action == 'scoreup' and filename:
         control.write("SCORE + " + mediadir + filename + "\n")
@@ -121,8 +109,6 @@ def do_action (action, filename):
     elif action == 'nofavmode':
         control.write("NOFAVMODE\n")
         control.close()
-
-    return status
 
 def do_vote (votefile):
     """
