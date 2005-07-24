@@ -65,7 +65,7 @@ def navigation_header():
         "<a href='blacklist.py'>Blacklist</a></td>"
     print "<td align='center' width='16%'><a href='score.py'>Scoring</a></td>"
     print "<td align='center' width='17%'>" + \
-        "<a href='statistics.py'>Statistics</a></td>"
+        "<a href='extras.py'>Extras</a></td>"
     print "</tr></table>"
     print "<hr/>"
 
