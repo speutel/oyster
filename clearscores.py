@@ -30,6 +30,8 @@ import config
 import cgitb
 import common
 import os.path
+import fifocontrol
+import sys
 cgitb.enable()
 
 common.navigation_header()
@@ -38,6 +40,11 @@ myconfig = config.get_config('oyster.conf')
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
+
+if not os.path.exists(myconfig['basedir']):
+    print "<h1>Please <a href='oyster-gui.py?action=start' target='curplay'>" \
+        + "start oyster</a> before clearing the scorefile!</h1>"
+    sys.exit()
 
 # Load scorefile into permanent array
 
@@ -67,13 +74,10 @@ if not form.has_key('action'):
 elif form['action'].value == 'delete':
 
     counter = 0
-    scorefile = open (myconfig['savedir'] + "scores/" + playlist, 'w')
     for line in scores:
-        if os.path.exists(line[:-1]):
-            scorefile.write(line)
-        else:
+        if not os.path.exists(line[:-1]):
+            fifocontrol.do_action('scoredown',line.replace(mediadir,'',1)[:-1])
             counter += 1
-    scorefile.close()
 
     print "<h1>" + str(counter) + " entries deleted.</h1>"
     
