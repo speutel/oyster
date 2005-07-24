@@ -105,36 +105,48 @@ if os.path.exists(basedir + 'nextfile'):
 
 tag = taginfo.get_tag(info)
 
-info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
-info = urllib.quote("/" + info)
+# Get playreason from last 10 lines of logfile
 
 playlist = config.get_playlist()
 lastlines = commands.getoutput('tail -n 10 "logs/' + playlist + '"').split("\n")
 lastlines.reverse()
 for line in lastlines:
-    playreason = re.sub('\A[^\ ]*\ ', '', line)
-    playreason = re.sub('\ .*\Z', '', playreason)
-    playreason = playreason.rstrip()
-    if playreason != 'BLACKLIST':
-        break
+    matcher = re.match('\A[^\ ]*\ ([^\ ]*)\ (.*)\Z', line)
+    if matcher != None:
+        playreason = matcher.group(1)
+        playedfile = matcher.group(2)
+        if playreason in ['PLAYLIST', 'SCORED', 'ENQUEUED', 'VOTED']:
+            break
+
+# Possible wrong playlist - check filename
+
+if playedfile != info:
+    playreason = ''
+
+if playreason == 'PLAYLIST':
+    playreason = ' (random)'
+elif playreason == 'SCORED':
+    playreason = ' (scored)'
+elif playreason == 'ENQUEUED':
+    playreason = ' (enqueued)'
+elif playreason == 'VOTED':
+    playreason = ' (voted)'
+else:
+    playreason = ''
+
+info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
+info = urllib.quote("/" + info)
+
+# Get current status of favmode
 
 favfile = open(basedir + 'favmode')
 favmode = favfile.readline()[:-1]
 favfile.close()
 
-if playreason == 'PLAYLIST':
-    playreason = '(random)'
-elif playreason == 'SCORED':
-    playreason = '(scored)'
-elif playreason == 'ENQUEUED':
-    playreason = '(enqueued)'
-elif playreason == 'VOTED':
-    playreason = '(voted)'
-
 # If FAVMODE is on, every "scored" is substituded to "favorites only", but
 # enqueued and voted remain. (random should not be possible ;))
-if favmode == 'on' and not (playreason == '(voted)' or playreason == '(enqueued)'):
-    playreason = '(favorites only)'
+if favmode == 'on' and not (playreason == ' (voted)' or playreason == ' (enqueued)'):
+    playreason = ' (favorites only)'
 
 if status == 'paused':
     statusstr = " <a href='oyster-gui.py?action=pause'>Paused</a>"
@@ -142,7 +154,7 @@ else:
     statusstr = ''
 
 print "<table width='100%' border='0'>"
-print "<tr><td colspan='2'><strong>Now playing " + playreason + ":</strong></td>"
+print "<tr><td colspan='2'><strong>Now playing" + playreason + ":</strong></td>"
 print "<td align='center' style='width:75px'><strong>Score</strong></td></tr>"
 print "<tr><td>"
 print "<strong><a class='file' href='fileinfo.py?file=" + info + "' target='browse' title='View details'>" + tag['display'] + "</a>"
