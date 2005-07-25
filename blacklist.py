@@ -43,13 +43,11 @@ def print_blacklist ():
 
     lineaffects = {}
     blacklistmatchers = {}
-    blacklistlines = []
 
     if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
         blacklist = open(myconfig['savedir'] + "blacklists/" + playlist)
         for line in blacklist.readlines():
-            blacklistlines.append(line[:-1])
-            blacklistmatchers[line[:-1]] = re.compile('.*' + line[:-1] + '.*')
+            blacklistmatchers[line[:-1]] = re.compile(line.rstrip())
             line = line.replace(mediadir, '', 1)[:-1]
             lineaffects[line] = 0
         blacklist.close()
@@ -64,14 +62,16 @@ def print_blacklist ():
         isblacklisted = 0
         line = line.replace(mediadir, '', 1)[:-1]
         for key in blacklistmatchers.keys():
-            if blacklistmatchers[key].match(line):
+            if blacklistmatchers[key].search(line):
                 isblacklisted = 1
-                lineaffects[key] = lineaffects[key] + 1
+                lineaffects[key] += 1
         if isblacklisted:
-            totalaffected = totalaffected + 1
+            totalaffected += 1
 
     listfile.close()
 
+    blacklistlines = blacklistmatchers.keys()
+    blacklistlines.sort()
     print "<table width='100%'>"
     for line in blacklistlines:
         escapedline = urllib.quote(line)
@@ -93,16 +93,16 @@ def print_affects (affects):
     "Shows all files, which are affected by a blacklist-rule"
 
     affectresults = []
-    listfile = open (myconfig['savedir'] + "lists/" + playlist)
 
     # Add all matching lines to results
 
-    for line in listfile.readlines():
-        line = line.replace(mediadir, '', 1)[:-1]
-        if re.match('.*' + affects + '.*', line):
-            affectresults.append(line)
-    
-    listfile.close()
+    if os.path.exists(myconfig['savedir'] + "lists/" + playlist):
+        listfile = open (myconfig['savedir'] + "lists/" + playlist, 'r')
+        for line in listfile.readlines():
+            line = line.replace(mediadir, '', 1)[:-1]
+            if re.compile(affects).search(line) != None:
+                affectresults.append(line)
+        listfile.close()
 
     # Sort results alphabetically
 
