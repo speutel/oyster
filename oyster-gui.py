@@ -108,6 +108,7 @@ tag = taginfo.get_tag(info)
 # Get playreason from last 10 lines of logfile
 
 playlist = config.get_playlist()
+playedfile = ''
 lastlines = commands.getoutput('tail -n 10 "logs/' + playlist + '"').split("\n")
 lastlines.reverse()
 for line in lastlines:
@@ -204,11 +205,21 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
 
     print "<tr><td colspan='3'>&nbsp;</td></tr>"
 
+knownnext = []
+knowncounter = {}
 
 print "<tr><td colspan='2'><strong>Next random:</strong></td>"
 print "<td></td></tr>"
-i = 0
 for nextinfo in nextarray:
+
+    if nextinfo in knownnext:
+        knowncounter[nextinfo] += 1
+        skipflag = str(knowncounter[nextinfo])
+    else:
+        knowncounter[nextinfo] = 0
+        knownnext.append(nextinfo)
+        skipflag = ''
+        
     nexttag = taginfo.get_tag(nextinfo)
     nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', nextinfo)
     nextinfo = urllib.quote("/" + nextinfo)
@@ -217,9 +228,8 @@ for nextinfo in nextarray:
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
     print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=skip&file=" + nextinfo + "'>Change</a>"
+    print "<a href='oyster-gui.py?action=skip" + skipflag + "&file=" + nextinfo + "'>Change</a>"
     print "</td></tr>"
-    i = i +1
 print "</table>"
 
 
