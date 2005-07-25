@@ -31,17 +31,17 @@ cgitb.enable()
 
 common.navigation_header()
 
-print "<a href='statistics.py'><h1>Statistics</h1></a>"
+print "<h1><a href='statistics.py'>Statistics</a></h1>"
 print "<div style='padding-left: 2em;'>"
 print "Print general statistics like Top-10-Songs, number of played songs, " + \
     "number of all played songs etc.</div>"
 
-print "<a href='clearscores.py'><h1>Clear Scorefile</h1></a>"
+print "<h1><a href='clearscores.py'>Clear Scorefile</a></h1>"
 print "<div style='padding-left: 2em;'>"
 print "Check your scorefile for files which have been deleted or renamend."
 print "</div>"
 
-print "<a href='rebuildtags.py'><h1>Rebuild taginfos</h1></a>"
+print "<h1><a href='rebuildtags.py'>Rebuild taginfos</a></h1>"
 print "<div style='padding-left: 2em;'>"
 print "Rebuilds the tagcache in case you changed the tags of many files."
 print "</div>"
