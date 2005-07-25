@@ -186,7 +186,7 @@ class Oyster:
         if len(self.filelist) == 0:
             while len(self.filelist) == 0:
                 pass
-            self.loadPlaylist("default")
+            self.loadPlaylist("default", checkskip=True)
 
         # for basedir/status -> playing 
         self.unpause()
@@ -602,8 +602,15 @@ class Oyster:
                 # path is relative 
                 self.enqueue(listpath + "/" + line.rstrip(), "ENQUEUED")
 
-    def loadPlaylist(self, listname):
+    def loadPlaylist(self, listname, skip=True, checkskip=False):
         """ load oyster-playlist (discard list in memory) """
+        # do we need to skip the next random songs?
+        if checkskip:
+            if self.filelist == []:
+                skip = True
+            else:
+                skip = False
+
         if os.access(self.listdir + "/" + listname, os.R_OK):
             deflist = open(self.listdir + "/" + listname, 'r')
             self.filelist = []
@@ -615,9 +622,10 @@ class Oyster:
             for line in deflist.readlines():
                 self.filelist.append(line.rstrip())
             self.nextfilestoplay = []
-            for i in range(0, self.len_nextfiles):
-                self.nextfilestoplay.append("filler")
-                self.chooseFile(i)
+            if skip:
+                for i in range(0, self.len_nextfiles):
+                    self.nextfilestoplay.append("filler")
+                    self.chooseFile(i)
 
     def shift(self, amount, pos):
         """ shift the votelist entry on position /pos/ by /amount/ (positive values shift up) """
