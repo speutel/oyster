@@ -74,8 +74,11 @@ class Oyster:
 
     filetypes = {}
     filetoplay = ""
+
     nextfilestoplay = []
     len_nextfiles = 5
+
+    skipDeletes = False
 
     # pid of musicplayer     
     playerid = 0
@@ -131,8 +134,8 @@ class Oyster:
             os.makedirs(self.basedir)
         
         # redirect stdout/stderr - silence! 
-        outfile = os.open("/tmp/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
-        errfile = os.open("/tmp/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        outfile = os.open(self.basedir + "/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        errfile = os.open(self.basedir + "/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
         os.dup2(outfile, 1)
         os.dup2(errfile, 2)
 
@@ -386,6 +389,11 @@ class Oyster:
         self.controlfile = self.basedir + "/control"
         self.controlfilemode = int(self.config["control_mode"], 8)
 
+        if self.config["skip_deletes"] == "True":
+            self.skipDeletes = True
+        else:
+            self.skipDeletes = False
+
         for ftype in self.config["filetypes"].split(","):
             self.filetypes[ftype] = self.config[ftype]
 
@@ -401,7 +409,13 @@ class Oyster:
 
         log.debug("choose next file " + str(filepos)  + "to play")
         try:
-            (self.nextfilestoplay[filepos], self.playreasons[filepos]) = self.__choose_file()
+            if self.skipDeletes:
+                del self.nextfilestoplay[filepos]
+                (entry, reason) = self.__choose_file()
+                self.nextfilestoplay.append(entry)
+                self.playreasons.append(reason)
+            else:
+                (self.nextfilestoplay[filepos], self.playreasons[filepos]) = self.__choose_file()
         except IndexError:
             # TODO log!
             pass
