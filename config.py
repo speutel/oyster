@@ -42,7 +42,21 @@ def get_config():
 
     # First, read default values
 
-    config = get_values('config/default')
+    if os.path.exists('config/default'):
+        config = get_values('config/default')
+    else:
+        config = { "savedir": "/var/www/oyster",
+                   "basedir": "/tmp/oyster",
+                   "mediadir": "/",
+                   "voteplay": "10",
+                   "filetypes": "mp3,ogg",
+                   "mp3": "/usr/bin/mpg123",
+                   "ogg": "/usr/bin/ogg123",
+                   "len_nextfiles": "5",
+                   "skip_deletes": "False",
+                   "control_mode": "0600",
+                   "scoressize": "200"
+                  }
     
     # Then, read playlist-config if existing
     
