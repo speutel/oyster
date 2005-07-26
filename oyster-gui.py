@@ -205,21 +205,11 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
 
     print "<tr><td colspan='3'>&nbsp;</td></tr>"
 
-knownnext = []
-knowncounter = {}
+i = 0
 
 print "<tr><td colspan='2'><strong>Next random:</strong></td>"
 print "<td></td></tr>"
 for nextinfo in nextarray:
-
-    if nextinfo in knownnext:
-        knowncounter[nextinfo] += 1
-        skipflag = str(knowncounter[nextinfo])
-    else:
-        knowncounter[nextinfo] = 0
-        knownnext.append(nextinfo)
-        skipflag = ''
-        
     nexttag = taginfo.get_tag(nextinfo)
     nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', nextinfo)
     nextinfo = urllib.quote("/" + nextinfo)
@@ -228,8 +218,9 @@ for nextinfo in nextarray:
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
     print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=skip" + skipflag + "&file=" + nextinfo + "'>Change</a>"
+    print "<a href='oyster-gui.py?action=skip" + str(i) + "&file=" + nextinfo + "'>Change</a>"
     print "</td></tr>"
+    i += 1
 print "</table>"
 
 
