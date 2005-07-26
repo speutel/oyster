@@ -40,8 +40,9 @@ class Oyster:
         initialized.  Use play(oyster_instance.filetoplay) to start playing."""
 
     """ the config file needs to be in pwd """
-    configfile = os.getcwd() + "/oyster.conf"
+    configfile = os.getcwd() + "/config/default"
     config = {}
+    confdir = ""
 
     # lists of filenames with full path
     filelist = []
@@ -55,10 +56,10 @@ class Oyster:
     scoresfile = ""
     scoressize = "100"
 
-    savedir = ""
-    basedir = ""
+    savedir = "/var/www/oyster"
+    basedir = "/tmp/oyster"
     listdir = ""
-    mediadir = ""
+    mediadir = "/"
     blacklistdir = ""
     logdir = ""
     scoresdir = ""
@@ -72,7 +73,7 @@ class Oyster:
     controlfile = ""
     controlfilemode = 0600
 
-    filetypes = {}
+    filetypes = { "mp3": "/usr/bin/mpg123", "ogg": "/usr/bin/ogg123"}
     filetoplay = ""
 
     nextfilestoplay = []
@@ -95,6 +96,7 @@ class Oyster:
 
     # open fd for reading commands 
     control = None
+
 
     def __init__(self):
         """ initialise configuration and build filelist """
@@ -210,6 +212,8 @@ class Oyster:
             os.makedirs(self.scoresdir)    
         if not os.access(self.logdir, os.F_OK):
             os.makedirs(self.logdir)
+        if not os.access(self.confdir, os.F_OK):
+            os.makedirs(self.confdir)
 
     def __write_favmode(self, status):
         """ writes string argument status to basedir/favmode """
@@ -367,7 +371,69 @@ class Oyster:
         plfile.write(string + "\n")
         plfile.close()
 
-    def initConfig(self):
+    def setDefaults(self):
+        defaults = { "savedir": "/var/www/oyster",
+                     "basedir": "/tmp/oyster",
+                     "mediadir": "/",
+                     "votepercentage": "10",
+                     "filetypes": "mp3,ogg",
+                     "mp3": "/usr/bin/mpg123",
+                     "ogg": "/usr/bin/ogg123",
+                     "len_nextfiles": "5",
+                     "skipDeletes": "False",
+                     "control_mode": "0600",
+                     "scoressize": "200"
+                    }
+
+        self.initConfig(configdict=defaults)
+
+    def initConfig(self, configfile=os.getcwd()+"/config/default", configdict=None):
+        """ read config and set attributes """
+
+        if configdict == None:
+            # get config and get values into "real" variables
+            self.config = oysterconfig.getConfig(configfile)
+        else:
+            self.config = configdict
+
+        # for __test_blacklist - stop recursing after 200 hits from the
+        # blacklist
+        sys.setrecursionlimit(200)
+
+        # Workaround:
+        # exec does not work well with multiline strings, and "statement1; if
+        # bla: statement2" does not work either, so init skipDeletes to default (False)
+        self.skipDeletes = False
+
+        evalConfig = { "savedir": 'self.savedir = self.config["savedir"].rstrip("/")',
+                       "mediadir": 'self.mediadir = self.config["mediadir"].rstrip("/")',
+                       "basedir": 'self.basedir = self.config["basedir"].rstrip("/")',
+                       "voteplay": 'self.votepercentage = int(self.config["voteplay"].rstrip("/"))',
+                       "scoressize": 'self.scoressize = int(self.config["maxscored"])',
+                       "control_mode": 'self.controlfilemode = int(self.config["control_mode"], 8)',
+                       "skip_deletes": 'if self.config["skip_deletes"] == "True": self.skipDeletes = True',
+                       "filetypes": 'for ftype in self.config["filetypes"].split(","): self.filetypes[ftype] = self.config[ftype]',
+                       "len_nextfiles": 'self.len_nextfiles = int(self.config["len_nextfiles"])' 
+                      }
+        
+        for key in self.config.keys():
+            try:
+                exec evalConfig[key]
+            except KeyError:
+                pass
+
+        self.listdir = self.savedir + "/lists"
+        self.scoresfile = self.savedir + "/scores/" + self.playlist
+        self.scoresdir = self.savedir + "/scores"
+        self.blacklistdir = self.savedir + "/blacklists"
+        self.logdir = self.savedir + "/logs"
+
+        self.votefile = self.basedir + "/votes"
+        self.controlfile = self.basedir + "/control"
+
+        self.confdir = self.savedir + "/config"
+
+    def initConfigOld(self):
         """ read config and set attributes """
         # get config and get values into "real" variables
         self.config = oysterconfig.getConfig(self.configfile)
@@ -626,6 +692,14 @@ class Oyster:
                 skip = False
 
         if os.access(self.listdir + "/" + listname, os.R_OK):
+            # load config for this list or reload default
+            if os.access(self.confdir + "/" + listname, os.R_OK):
+                self.initConfig(configfile=self.confdir + "/" + listname)
+            elif os.access(self.confdir + "/default", os.R_OK):
+                self.initConfig(configfile=self.confdir + "/default")
+            else:
+                self.setDefaults()
+
             deflist = open(self.listdir + "/" + listname, 'r')
             self.filelist = []
             self.playlist_changed = self.playlist
@@ -640,6 +714,7 @@ class Oyster:
                 for i in range(0, self.len_nextfiles):
                     self.nextfilestoplay.append("filler")
                     self.chooseFile(i)
+
 
     def shift(self, amount, pos):
         """ shift the votelist entry on position /pos/ by /amount/ (positive values shift up) """
