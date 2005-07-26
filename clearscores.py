@@ -36,7 +36,7 @@ cgitb.enable()
 
 common.navigation_header()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()

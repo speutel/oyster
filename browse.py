@@ -32,7 +32,7 @@ import urllib
 import re
 cgitb.enable()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = re.sub('/\Z', '', myconfig['mediadir'][:-1])
 form = cgi.FieldStorage()

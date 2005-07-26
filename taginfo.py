@@ -25,7 +25,7 @@ import cgi
 import os
 import re
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 playlist = config.get_playlist()
 
 def get_tag_light (filename):

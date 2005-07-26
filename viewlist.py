@@ -35,7 +35,7 @@ import urllib
 import common
 cgitb.enable()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 mediadir = myconfig['mediadir']
 form = cgi.FieldStorage()
 

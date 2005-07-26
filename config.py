@@ -21,9 +21,9 @@
 import string
 import os
 
-def get_config(filename):
+def get_values(filename):
 
-    config = {}
+    readconfig = {}
     conffile = file(filename)
 
     for line in conffile:
@@ -31,16 +31,40 @@ def get_config(filename):
             key, value = string.split(line[:-1], '=')
             if (key[-3:] == 'dir') & (value[-1:] != '/'):
                 value = value + '/'
-            config[key] = value
+            readconfig[key] = value
 
     conffile.close()
+    
+    return readconfig
+
+
+def get_config():
+
+    # First, read default values
+
+    config = get_values('config/default')
+    
+    # Then, read playlist-config if existing
+    
+    if os.path.isfile(config['basedir'] + 'playlist'):
+        fifo = file(config['basedir'] + 'playlist')
+        playlist = fifo.readline()[:-1]
+        fifo.close()
+
+        if playlist != 'default' and \
+            os.path.exists(config['savedir'] + 'config/' + playlist):
+
+            plconfig = get_values(config['savedir'] + 'config/' + playlist)
+
+            for plkey in plconfig.keys():
+                config[plkey] = plconfig[plkey]
 
     return config
   
 
 def get_playlist():
 
-    config = get_config('oyster.conf')
+    config = get_config()
     playlist = 'default'
 
     if os.path.isfile(config['basedir'] + 'playlist'):

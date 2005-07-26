@@ -31,7 +31,7 @@ import common
 import os.path
 cgitb.enable()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 mediadir = myconfig['mediadir'][:-1]

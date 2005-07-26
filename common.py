@@ -33,7 +33,7 @@ import re
 import base64
 cgitb.enable()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 
 def navigation_header():
 

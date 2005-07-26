@@ -34,7 +34,7 @@ import common
 import re
 cgitb.enable()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()

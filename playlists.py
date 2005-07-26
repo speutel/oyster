@@ -124,7 +124,7 @@ import common
 import re
 cgitb.enable()
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 form = cgi.FieldStorage()

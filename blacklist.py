@@ -136,7 +136,7 @@ def delete_from_blacklist (affects):
     newblacklist.close()
     os.unlink (savedir + "blacklist.tmp")
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 mediadir = myconfig['mediadir'][:-1]

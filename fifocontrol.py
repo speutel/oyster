@@ -31,7 +31,7 @@ import os
 import os.path
 import time
 
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 
 def do_action (action, filename):
     """

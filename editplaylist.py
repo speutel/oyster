@@ -76,7 +76,7 @@ def print_title ():
     print "<p align='center'><b>Editing playlist " + form['playlist'].value + "</b> <a href='index-python.html' target='_top'>Done</a></p>"
     print "</body></html>"
     
-myconfig = config.get_config('oyster.conf')
+myconfig = config.get_config()
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 mediadir = myconfig['mediadir'][:-1]
