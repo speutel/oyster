@@ -375,12 +375,12 @@ class Oyster:
         defaults = { "savedir": "/var/www/oyster",
                      "basedir": "/tmp/oyster",
                      "mediadir": "/",
-                     "votepercentage": "10",
+                     "voteplay": "10",
                      "filetypes": "mp3,ogg",
                      "mp3": "/usr/bin/mpg123",
                      "ogg": "/usr/bin/ogg123",
                      "len_nextfiles": "5",
-                     "skipDeletes": "False",
+                     "skip_deletes": "False",
                      "control_mode": "0600",
                      "scoressize": "200"
                     }
