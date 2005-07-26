@@ -383,7 +383,7 @@ class Oyster:
                      "len_nextfiles": "5",
                      "skip_deletes": "False",
                      "control_mode": "0600",
-                     "scoressize": "200"
+                     "maxscored": "30"
                     }
         return defaults
 
@@ -412,7 +412,7 @@ class Oyster:
                        "mediadir": 'self.mediadir = self.config["mediadir"].rstrip("/")',
                        "basedir": 'self.basedir = self.config["basedir"].rstrip("/")',
                        "voteplay": 'self.votepercentage = int(self.config["voteplay"].rstrip("/"))',
-                       "scoressize": 'self.scoressize = int(self.config["maxscored"])',
+                       "maxscored": 'self.scoressize = int(self.config["maxscored"])',
                        "control_mode": 'self.controlfilemode = int(self.config["control_mode"], 8)',
                        "skip_deletes": 'if self.config["skip_deletes"] == "True": self.skipDeletes = True',
                        "filetypes": 'for ftype in self.config["filetypes"].split(","): self.filetypes[ftype] = self.config[ftype]',
