@@ -55,9 +55,14 @@ def get_config():
                    "len_nextfiles": "5",
                    "skip_deletes": "False",
                    "control_mode": "0600",
-                   "scoressize": "200"
+                   "scoressize": "200",
+                   "theme": "default",
+                   "maxscored": "30",
+                   "coverfilenames": "../${album}.png,../${album}.jpg",
+                   "coverwidth": "150",
+                   "use_hooks": "false"
                   }
-    
+
     # Then, read playlist-config if existing
     
     if os.path.isfile(config['basedir'] + 'playlist'):
