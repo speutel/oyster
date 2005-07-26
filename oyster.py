@@ -694,6 +694,7 @@ class Oyster:
         if os.access(self.listdir + "/" + listname, os.R_OK):
             # load config for this list or reload default
             if os.access(self.confdir + "/" + listname, os.R_OK):
+                self.initConfig(configfile=self.confdir + "/default")
                 self.initConfig(configfile=self.confdir + "/" + listname)
             elif os.access(self.confdir + "/default", os.R_OK):
                 self.initConfig(configfile=self.confdir + "/default")
