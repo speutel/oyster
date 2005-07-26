@@ -148,6 +148,7 @@ class Oyster:
         pidfile = open(self.basedir + "/pid", 'w')
         pidfile.write(str(os.getpid()) + "\n")
         pidfile.close()
+
         
         # write name of current playlist (in init -> default) 
         self.__write_playlist_status()
@@ -371,7 +372,7 @@ class Oyster:
         plfile.write(string + "\n")
         plfile.close()
 
-    def setDefaults(self):
+    def getDefaults(self):
         defaults = { "savedir": "/var/www/oyster",
                      "basedir": "/tmp/oyster",
                      "mediadir": "/",
@@ -384,15 +385,17 @@ class Oyster:
                      "control_mode": "0600",
                      "scoressize": "200"
                     }
-
-        self.initConfig(configdict=defaults)
+        return defaults
 
     def initConfig(self, configfile=os.getcwd()+"/config/default", configdict=None):
         """ read config and set attributes """
 
         if configdict == None:
             # get config and get values into "real" variables
-            self.config = oysterconfig.getConfig(configfile)
+            if os.access(configfile, os.R_OK):
+                self.config = oysterconfig.getConfig(configfile)
+            else:
+                self.config = self.getDefaults()
         else:
             self.config = configdict
 
@@ -529,6 +532,7 @@ class Oyster:
         if self.playerid != 0:
             os.kill(self.playerid, signal.SIGTERM)
         self.__playlog(self.__gettime() + " QUIT " + self.filetoplay )  
+	print "exit!"
         sys.exit()
 
     def play(self, filestring):
@@ -699,7 +703,7 @@ class Oyster:
             elif os.access(self.confdir + "/default", os.R_OK):
                 self.initConfig(configfile=self.confdir + "/default")
             else:
-                self.setDefaults()
+                self.initConfig(configdict=self.getDefaults())
 
             deflist = open(self.listdir + "/" + listname, 'r')
             self.filelist = []
@@ -832,4 +836,3 @@ if __name__ == '__main__':
     oy = Oyster()
     while not oy.doExit:
         oy.play(oy.filetoplay)
-    
