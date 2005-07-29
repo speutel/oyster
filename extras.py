@@ -46,6 +46,10 @@ print "<div style='padding-left: 2em;'>"
 print "Rebuilds the tagcache in case you changed the tags of many files."
 print "</div>"
 
+print "<h1><a href='configedit.py'>Configuration Editor</a></h1>"
+print "<div style='padding-left: 2em;'>"
+print "Edit the global configuration file or change settings for a single playlist."
+print "</div>"
 
 
 print "</body></html>"

@@ -196,7 +196,7 @@ else:
 
 print "<table width='100%' style='margin-bottom: 2em;'>"
 
-print "<tr><td colspan='5'><h2>Default</td></tr>"
+print "<tr><td colspan='5'><h2>Playlists</h2></td></tr>"
 
 # Print playlists without a section
 
@@ -230,6 +230,10 @@ for section in sectionkeys:
 print "</table>"
 
 print "<form method='post' action='playlists.py' enctype='application/x-www-form-urlencoded'>"
-print "<input type='hidden' name='action' value='addnewlist'><input type='text' name='newlistname' >"
-print "<input type='submit' name='.submit' value='Create new list' style='margin-left: 2em;'>"
-print "<div></div></form>"
+print "<input type='hidden' name='action' value='addnewlist'/><input type='text' name='newlistname'/>"
+print "<input type='submit' name='.submit' value='Create new list' style='margin-left: 2em;'/>"
+print "<div></div></form><br/>"
+
+print "<a href='configedit.py'>Configuration Editor</a>"
+
+print "</body></html>"
