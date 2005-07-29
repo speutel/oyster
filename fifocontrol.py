@@ -68,6 +68,7 @@ def do_action (action, filename):
         if filenum > -1:
             control.write("SKIP " + str(filenum) + "\n")
         control.close()
+        time.sleep(1)
     elif action == 'next':
         control.write("NEXT\n")
         control.close()
