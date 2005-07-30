@@ -564,7 +564,10 @@ class Oyster:
         """ skip the playing file """
         self.nextreason = "SKIPPED"
         if self.playerid != 0:
-            os.kill(self.playerid, signal.SIGTERM)
+            try:
+                os.kill(self.playerid, signal.SIGTERM)
+            except OSError:
+                pass
 
     def pause(self):
         """ pause playing """
@@ -573,7 +576,10 @@ class Oyster:
         pfile.write("paused")
         pfile.close()
         if self.playerid != 0:
-            os.kill(self.playerid, signal.SIGSTOP)
+            try:
+                os.kill(self.playerid, signal.SIGSTOP)
+            except OSError:
+                pass
     
     def unpause(self):
         """ resume playing """
@@ -582,7 +588,10 @@ class Oyster:
         pfile.write("playing")
         pfile.close()
         if self.playerid != 0:
-            os.kill(self.playerid, signal.SIGCONT)
+            try:
+                os.kill(self.playerid, signal.SIGCONT)
+            except OSError:
+                pass
 
     def enableFavmode(self):
         """ enable favmode (play only from scores) """
