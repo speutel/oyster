@@ -675,7 +675,7 @@ class Oyster:
         if tup != None:
             if tup[2] == "VOTED":
                 for i in range(1, tup[1]):
-                    self.scoredown()
+                    self.scoredown(filestring)
         self.__write_votelist()
 
     def enqueueList(self, filestring):
