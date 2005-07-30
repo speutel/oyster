@@ -530,7 +530,10 @@ class Oyster:
         self.__write_scores()
 
         if self.playerid != 0:
-            os.kill(self.playerid, signal.SIGTERM)
+            try:
+                os.kill(self.playerid, signal.SIGTERM)
+            except OSError:
+                pass
         self.__playlog(self.__gettime() + " QUIT " + self.filetoplay )  
 	print "exit!"
         sys.exit()
