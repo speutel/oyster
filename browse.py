@@ -40,7 +40,7 @@ playlist = config.get_playlist()
 
 if form.has_key('mode') and form['mode'].value == 'playlist':
     editplaylist = 1
-    mode = '&mode=playlist'
+    mode = '&amp;mode=playlist'
     
     print "Content-Type: text/html"
     print """
@@ -56,6 +56,11 @@ if form.has_key('mode') and form['mode'].value == 'playlist':
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
+
+    print "<table width='100%'><tr>"
+    print "<td align='center'><a href='browse.py?mode=playlist&amp;playlist=" + form['playlist'].value + "'>Browse</a></td>"
+    print "<td align='center'><a href='search.py?mode=playlist&amp;playlist=" + form['playlist'].value + "'>Search</a></td></tr></table>"
+    print "<hr/>"
 
 else:
     editplaylist = 0
@@ -122,7 +127,7 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
             print "<a href='browse.py?dir=" + escapeddir + mode + \
-            "&playlist=" + form['playlist'].value + "'>"  + escapedpartdir + \
+            "&amp;playlist=" + form['playlist'].value + "'>"  + escapedpartdir + \
             "</a> / "
         else:
             print "<a href='browse.py?dir=" + escapeddir + mode + "'>" + \
@@ -144,7 +149,7 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
 
     parentdir = urllib.quote(parentdir)
     if form.has_key('playlist'):
-        print "<a href='browse.py?dir=" + parentdir + mode + "&playlist=" + \
+        print "<a href='browse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
             urllib.quote(form['playlist'].value) + "'>One level up</a><br/><br/>"
     else:
         print "<a href='browse.py?dir=" + parentdir + mode + \
@@ -262,7 +267,7 @@ for curfile in files:
         if editplaylist:
             print "<td><a class='" + cssfileclass + "' href=" + \
             "'editplaylist.py?playlist=" + form['playlist'].value + \
-            "&addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
+            "&amp;addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
         else:
             # only generate "Vote"-link if oyster is running
             if oysterruns:
@@ -287,7 +292,7 @@ for curfile in files:
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         if editplaylist:
-            print "<td><a class='" + cssfileclass + "' href=" + \
+            print "<td align='right'><a class='" + cssfileclass + "' href=" + \
                 "'editplaylist.py?add=" + escapeddir + "' target=" + \
                 "'playlist'>Add</a></td>"
         else:

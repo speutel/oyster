@@ -135,7 +135,8 @@ if form.has_key('deldir'):
 # Add a single file
 
 if form.has_key('addfile'):
-    allfiles.append(form['addfile'].value)
+    if form['addfile'].value not in allfiles:
+        allfiles.append(form['addfile'].value)
 
 # Add a complete directory
 
@@ -144,7 +145,8 @@ if form.has_key('adddir'):
         for name in files:
             if name[name.rfind(".")+1:] in ['mp3','ogg']:
                 root = root.replace(mediadir, '', 1)
-                allfiles.append(os.path.join(root, name).rstrip())
+                if os.path.join(root, name).rstrip() not in allfiles:
+                    allfiles.append(os.path.join(root, name).rstrip())
         
 
 allfiles.sort()

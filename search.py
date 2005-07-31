@@ -39,7 +39,34 @@ basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
-common.navigation_header()
+if form.has_key('playlist') and form.has_key('mode') and form['mode'].value == 'playlist':
+    editplaylist = 1
+    mode = '&mode=playlist'
+    
+    print "Content-Type: text/html"
+    print """
+    <?xml version="1.0" encoding="iso-8859-1"?>
+    <!DOCTYPE html 
+         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+     <title>Oyster-GUI</title>
+     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    """
+    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
+    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
+    print "</head><body>"
+
+    print "<table width='100%'><tr>"
+    print "<td align='center'><a href='browse.py?mode=playlist&amp;playlist=" + form['playlist'].value + "'>Browse</a></td>"
+    print "<td align='center'><a href='search.py?mode=playlist&amp;playlist=" + form['playlist'].value + "'>Search</a></td></tr></table>"
+    print "<hr/>"
+
+else:
+    editplaylist = 0
+    common.navigation_header()
+    mode = ''
 
 if form.has_key('searchtype') and form['searchtype'].value == 'regex':
     searchtype = 'regex'
@@ -52,15 +79,16 @@ else:
     
 # Check in which playlist to search
 
-if form.has_key('playlist') and form['playlist'].value == 'current':
+if not editplaylist and form.has_key('playlist') and form['playlist'].value == 'current':
     playlist = config.get_playlist()
     curcheck = "checked='checked'"
     allcheck = ''
-elif form.has_key('playlist') and form['playlist'].value == 'all':
+elif not editplaylist and form.has_key('playlist') and form['playlist'].value == 'all':
     playlist = 'default'
     allcheck = "checked='checked'"
     curcheck = ''
 else:
+    playlist = 'default'
     curcheck = "checked='checked'"
     allcheck = ''
 
@@ -75,18 +103,28 @@ print "<form method='post' action='search.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
 print "<table border='0'><tr><td><input type='text' name='search' value='" + \
-    search + "'></td>"
+    search + "'/></td>"
 print "<td><input type='submit' name='.submit' value='Search' " + \
-    "style='margin-left: 2em;'></td></tr>"
-print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
-    normalcheck + "> Normal<br>"
-print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-    "> Regular Expression<br></td>"
-print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-    "> Only current playlist<br>"
-print "<input type='radio' name='playlist' value='all' " + allcheck + "> " + \
-    "All Songs<br></td></tr></table><div>"
-print "</div></form>"
+    "style='margin-left: 2em;'/></td></tr>"
+if editplaylist:
+    print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
+        normalcheck + "/> Normal<br/>"
+    print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
+        "/> Regular Expression<br/></td>"
+    print "</tr></table><div>"
+    print "</div>"
+    print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'>"
+    print "<input type='hidden' name='mode' value='playlist'></form>"
+else:
+    print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
+        normalcheck + "> Normal<br/>"
+    print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
+        "> Regular Expression<br/></td>"
+    print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
+        "> Only current playlist<br/>"
+    print "<input type='radio' name='playlist' value='all' " + allcheck + "> " + \
+        "All Songs<br/></td></tr></table><div>"
+    print "</div></form>"
 
 results = []
 cssclass = 'file2'
@@ -122,7 +160,10 @@ if search != '':
     # List directory in browser
 
     if results != []:
-        common.listdir('/', 0, cssclass)
+        if editplaylist:
+            common.listdir('/', 0, cssclass, 2, playlist)
+        else:
+            common.listdir('/', 0, cssclass)
     else:
         print "<p>No songs found.</p>"
 

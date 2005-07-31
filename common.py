@@ -142,7 +142,10 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
             if not basepath == '/':
                 escapeddir = urllib.quote(basepath + cutnewpath)
                 print "<div style='padding-left: 1em;'>"
-                if playlistmode:
+                if playlistmode == 1:
+                
+                    # Browse-window of playlist editor
+                    
                     print "<table width='100%'><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
@@ -152,13 +155,28 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
                         "'>Delete</a></td>"
                     print "</tr></table>"
+
+                elif playlistmode == 2:
+
+                    # Search-window of playlist-editor
+                
+                    print "<table width='100%'><tr><td align='left'>"
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                        escapeddir + "&amp;playlist=" + playlist + \
+                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "</a></strong>"
+                    print "<td align='right'><a href='editplaylist.py?" + \
+                        "playlist=" + playlist + "&adddir=" + escapeddir + \
+                        "' target='playlist'>Add</a></td>"
+                    print "</tr></table>"
+                    
                 else:
                     print "<strong><a href='browse.py?dir=" + escapeddir + \
                         "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = basepath + newpath
             else:
                 escapeddir = urllib.quote("/" + cutnewpath)
-                if playlistmode:
+                if playlistmode == 1:
                     print "<table width='100%'><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
@@ -167,6 +185,16 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
                         "'>Delete</a></td>"
+                    print "</tr></table>"
+                elif playlistmode == 2:
+                    print "<table width='100%'><tr><td align='left'>"
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                        escapeddir + "&amp;playlist=" + playlist + \
+                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "</a></strong>"
+                    print "<td align='right'><a href='editplaylist.py?" + \
+                        "playlist=" + playlist + "&adddir=" + escapeddir + \
+                        "' target='playlist'>Add</a></td>"
                     print "</tr></table>"
                 else:
                     print "<strong><a href='browse.py?dir=" + escapeddir + \
@@ -207,10 +235,14 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 print "<td align='left'><a href='fileinfo.py?file=" + \
                     escapedfile + "' class='" + cssclass + "'>" + \
                     cgi.escape(nameonly) + "</a></td>"
-                if playlistmode:
+                if playlistmode == 1:
                     print "<td align='right'><a href='editplaylist.py?" + \
                     "playlist=" + playlist + "&delfile=" + escapedfile + \
                         "' class='" + cssclass + "'>Delete</a></td>"
+                elif playlistmode == 2:
+                    print "<td align='right'><a href='editplaylist.py?" + \
+                    "playlist=" + playlist + "&amp;addfile=" + escapedfile + \
+                        "' target='playlist' class='" + cssclass + "'>Add</a></td>"
                 else:
                     if os.path.exists(myconfig['basedir']):
                         print "<td align='right'><a href='oyster-gui.py" + \
