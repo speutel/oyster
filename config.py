@@ -38,6 +38,27 @@ def get_values(filename):
     return readconfig
 
 
+def get_defaults():
+
+    config = { "savedir": os.getcwd() + "/",
+               "basedir": "/tmp/oyster/",
+               "mediadir": "/",
+               "voteplay": "10",
+               "filetypes": "mp3,ogg",
+               "mp3": "/usr/bin/mpg123",
+               "ogg": "/usr/bin/ogg123",
+               "len_nextfiles": "5",
+               "skip_deletes": "False",
+               "control_mode": "0600",
+               "theme": "default",
+               "maxscored": "30",
+               "coverfilenames": "../${album}.png,../${album}.jpg",
+               "coverwidth": "150",
+              }
+
+    return config
+
+
 def get_config():
 
     # First, read default values
@@ -45,21 +66,8 @@ def get_config():
     if os.path.exists('config/default'):
         config = get_values('config/default')
     else:
-        config = { "savedir": "/var/www/oyster",
-                   "basedir": "/tmp/oyster",
-                   "mediadir": "/",
-                   "voteplay": "10",
-                   "filetypes": "mp3,ogg",
-                   "mp3": "/usr/bin/mpg123",
-                   "ogg": "/usr/bin/ogg123",
-                   "len_nextfiles": "5",
-                   "skip_deletes": "False",
-                   "control_mode": "0600",
-                   "theme": "default",
-                   "maxscored": "30",
-                   "coverfilenames": "../${album}.png,../${album}.jpg",
-                   "coverwidth": "150",
-                  }
+        # There is no config-file, use builtin defaults
+        config = get_defaults()
 
     # Then, read playlist-config if existing
     
