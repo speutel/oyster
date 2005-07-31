@@ -41,7 +41,10 @@ def configeditor(playlist):
     if not playlist in configs:
         print "There was no configuration file found this playlist<br>"
         print "Default values taken from default configuration"
-        workconfig = config.get_values(savedir + "/config/default")
+        if os.path.exists(savedir + "/config/default"):
+            workconfig = config.get_values(savedir + "/config/default")
+        else:
+            workconfig = config.get_defaults()
     else:
         workconfig = config.get_values(savedir + "/config/default")
         plconfig = config.get_values(savedir + "/config/" + playlist)
@@ -213,6 +216,12 @@ def saveconfig(playlist):
                 configfile.write(key + "=" + form[key].value + "\n")
         configfile.close()
 
+    # If playlist is currently running, reload it
+
+    if playlist == config.get_playlist():
+        fifocontrol.do_action('loadlist', playlist) 
+    
+
 __revision__ = 1
 
 import cgi
@@ -223,6 +232,7 @@ import os.path
 import urllib
 import common
 import re
+import fifocontrol
 cgitb.enable()
 
 myconfig = config.get_config()
