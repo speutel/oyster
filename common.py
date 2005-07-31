@@ -57,8 +57,7 @@ def navigation_header():
     print "</head><body>"
     
     print "<table width='100%'><tr>"
-    print "<td align='center' width='17%'><a href='browse.py'" + \
-		"style='color:#FF0000;'>Browse</a></td>"
+    print "<td align='center' width='17%'><a href='browse.py'>Browse</a></td>"
     print "<td align='center' width='16%'><a href='search.py'>Search</a></td>"
     print "<td align='center' width='17%'>" + \
         "<a href='playlists.py'>Playlists</a></td>"
