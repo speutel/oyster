@@ -38,15 +38,20 @@ def configeditor(playlist):
     print "<h1>Editing configuration for playlist " + \
         cgi.escape(playlist) + "</h1>"
 
+    # Start with builtin defaults
+    workconfig = config.get_defaults()
+
+    # Read global config
+    if os.path.exists(savedir + "/config/default"):
+        defaultconfig = config.get_values(savedir + "/config/default")
+        for key in defaultconfig.keys():
+            workconfig[key] = defaultconfig[key]
+            
     if not playlist in configs:
         print "There was no configuration file found this playlist<br>"
         print "Default values taken from default configuration"
-        if os.path.exists(savedir + "/config/default"):
-            workconfig = config.get_values(savedir + "/config/default")
-        else:
-            workconfig = config.get_defaults()
     else:
-        workconfig = config.get_values(savedir + "/config/default")
+        # Read playlist-config
         plconfig = config.get_values(savedir + "/config/" + playlist)
         for key in plconfig.keys():
             workconfig[key] = plconfig[key]
