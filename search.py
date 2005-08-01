@@ -161,7 +161,7 @@ if search != '':
 
     if results != []:
         if editplaylist:
-            common.listdir('/', 0, cssclass, 2, cgi.escape(form['playlist'].value))
+            common.listdir('/', 0, cssclass, 2, form['playlist'].value)
         else:
             common.listdir('/', 0, cssclass)
     else:
