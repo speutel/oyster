@@ -183,6 +183,7 @@ def saveconfig(playlist):
 
         print "Sorry, Oyster does not have the permission to write the " + \
             "configuration to " + cgi.escape(savedir + "config/" + playlist)
+        print "</body></html>"
         sys.exit()
 
     if os.path.exists(savedir + "config/" + playlist):
