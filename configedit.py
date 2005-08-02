@@ -177,6 +177,14 @@ def saveconfig(playlist):
 
     playlist = os.path.basename(playlist)
 
+    if not ((os.path.exists(savedir + "config/" + playlist) and \
+        os.access(savedir + "config/" + playlist, os.W_OK)) or \
+        os.access(savedir + "config/", os.W_OK)):
+
+        print "Sorry, Oyster does not have the permission to write the " + \
+            "configuration to " + cgi.escape(savedir + "config/" + playlist)
+        sys.exit()
+
     if os.path.exists(savedir + "config/" + playlist):
 
         # File already exists, rename it first
