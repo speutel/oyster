@@ -30,6 +30,7 @@ import cgitb
 import os.path
 import urllib
 import re
+import sys
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -113,12 +114,18 @@ if not editplaylist:
             playlist + "&dir=" + curdir + "&checkdir=true'>" + \
             "Browse in current playlist</a></p>"
 
-if givendir != '/' and os.path.exists(mediadir + givendir):
+if os.path.exists(mediadir + givendir):
     print "<p>" + common.get_cover(mediadir + givendir, "100")
 
     # split path along "/", create link for every part
 
     print "<strong>Current directory: "
+
+    if form.has_key('playlist'):
+        print "<a href='browse.py?dir=/" + mode + "&amp;playlist=" + \
+            urllib.quote(form['playlist'].value) + "'>Mediadir</a>"
+    else:
+        print "<a href='browse.py?dir=/" + mode + "'>Mediadir</a>"
 
     dirs = givendir[:-1].split('/')
     incdir = ''
@@ -127,7 +134,7 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
             print "<a href='browse.py?dir=" + escapeddir + mode + \
-            "&amp;playlist=" + form['playlist'].value + "'>"  + escapedpartdir + \
+            "&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>"  + escapedpartdir + \
             "</a> / "
         else:
             print "<a href='browse.py?dir=" + escapeddir + mode + "'>" + \
@@ -144,16 +151,16 @@ if givendir != '/' and os.path.exists(mediadir + givendir):
     else:
         parentdir = re.sub('/[^/]*/\Z', '', parentdir)
 
+    if givendir != '/':
+        # Create a link to the parent directory
 
-    # Create a link to the parent directory
-
-    parentdir = urllib.quote(parentdir)
-    if form.has_key('playlist'):
-        print "<a href='browse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
-            urllib.quote(form['playlist'].value) + "'>One level up</a><br/><br/>"
-    else:
-        print "<a href='browse.py?dir=" + parentdir + mode + \
-            "'>One level up</a><br/><br/>"
+        parentdir = urllib.quote(parentdir)
+        if form.has_key('playlist'):
+            print "<a href='browse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
+                urllib.quote(form['playlist'].value) + "'>One level up</a><br/><br/>"
+        else:
+            print "<a href='browse.py?dir=" + parentdir + mode + \
+                "'>One level up</a><br/><br/>"
 
 elif not os.path.exists(mediadir + givendir):
     # if $mediadir == "/": just build filelist, no dir-splitting needed
@@ -204,13 +211,18 @@ else:
 
     # Escape whitespaces and apostrophe
 
-    for curdir in os.listdir(globdir):
-        if curdir[0] != '.':
-            # If files and directories exist, add them to @files and @dirs
-            if os.path.isdir(globdir + curdir):
-                dirs.append(globdir + curdir)
-            elif os.path.isfile(globdir + curdir):
-                files.append(globdir + curdir)
+    if os.access(globdir, os.R_OK):
+        for curdir in os.listdir(globdir):
+            if curdir[0] != '.':
+                # If files and directories exist, add them to @files and @dirs
+                if os.path.isdir(globdir + curdir):
+                    dirs.append(globdir + curdir)
+                elif os.path.isfile(globdir + curdir):
+                    files.append(globdir + curdir)
+    else:
+        print "Sorry, Oyster does not have not the permission to read this directory!"
+        print "</body></html>"
+        sys.exit()
 
 dirs.sort()
 files.sort()
