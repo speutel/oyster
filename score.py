@@ -38,6 +38,13 @@ mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
+# Is oyster currently running?
+
+if os.path.exists(myconfig['basedir']):
+    oysterruns = 1
+else:
+    oysterruns = 0
+    
 if form.has_key('action'):
     fifocontrol.do_action(form['action'].value, form['file'].value)
 
@@ -92,15 +99,21 @@ while maxscore > 0:
         else:
             cssclass = 'file'
 
-        print "<tr><td><a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
-            "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
-            "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
-            escapedfile + "'>" + display + "</a></td>"
-        print "<td align='center'><a class= '" + cssclass + "' href='score.py?action=scoredown&amp;file=" + escapedfile + "' " + \
-            "title='Score down'><img src='themes/" + myconfig['theme'] + "/scoredown" + cssclass + ".png' " + \
-            "alt='-'/></a> <span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span>"
-        print " <a class='" + cssclass + "' href='score.py?action=scoreup&amp;file=" + escapedfile + "' " + \
-            "title='Score up'><img src='themes/" + myconfig['theme'] + "/scoreup" + cssclass + ".png' alt='+'/></a></td></tr>"
+        if oysterruns:
+            print "<tr><td><a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
+                "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
+                "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
+                escapedfile + "'>" + display + "</a></td>"
+            print "<td align='center'><a class= '" + cssclass + "' href='score.py?action=scoredown&amp;file=" + escapedfile + "' " + \
+                "title='Score down'><img src='themes/" + myconfig['theme'] + "/scoredown" + cssclass + ".png' " + \
+                "alt='-'/></a> <span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span>"
+            print " <a class='" + cssclass + "' href='score.py?action=scoreup&amp;file=" + escapedfile + "' " + \
+                "title='Score up'><img src='themes/" + myconfig['theme'] + "/scoreup" + cssclass + ".png' alt='+'/></a></td></tr>"
+        else:
+            print "<tr><td><a class='" + cssclass + "' href='fileinfo.py?file=" + \
+                escapedfile + "'>" + display + "</a></td>"
+            print "<td align='center'><span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span></td></tr>"
+            
 
     maxscore = maxscore - 1
 
