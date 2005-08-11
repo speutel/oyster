@@ -113,16 +113,16 @@ if editplaylist:
         "/> Regular Expression<br/></td>"
     print "</tr></table><div>"
     print "</div>"
-    print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'>"
-    print "<input type='hidden' name='mode' value='playlist'></form>"
+    print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
+    print "<input type='hidden' name='mode' value='playlist'/></form>"
 else:
     print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
-        normalcheck + "> Normal<br/>"
+        normalcheck + "/> Normal<br/>"
     print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-        "> Regular Expression<br/></td>"
+        "/> Regular Expression<br/></td>"
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-        "> Only current playlist<br/>"
-    print "<input type='radio' name='playlist' value='all' " + allcheck + "> " + \
+        "/> Only current playlist<br/>"
+    print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
         "All Songs<br/></td></tr></table><div>"
     print "</div></form>"
 
