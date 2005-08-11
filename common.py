@@ -143,7 +143,6 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
             if not basepath == '/':
                 escapeddir = urllib.quote(basepath + cutnewpath)
-                print "<div style='padding-left: 1em;'>"
                 if playlistmode == 1:
                 
                     # Browse-window of playlist editor
@@ -205,15 +204,14 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
             # Call listdir recursive, then quit padding with <div>
 
+            print "<div style='padding-left: 1em;'>"
             counter = listdir(newpath, counter, cssclass, playlistmode, playlist)
-            if not basepath == '/':
-                print "</div></div>\n"
+            print "</div>"
 
         else:
 
             # $newpath is a regular file without leading directory
 
-            print "<div style='padding-left: 1em;'>"
             while counter < len(results) and \
                 results[counter].find(basepath) == 0:
 
