@@ -266,6 +266,7 @@ class Oyster:
     def __test_blacklist(self, name):
         """ check whether argument name is in the blacklist for the current
             playlist and returns boolean value """
+        name = name.replace(self.mediadir,'',1)
         if os.access(self.blacklistdir + "/" + self.playlist, os.R_OK):
             bfile = open(self.blacklistdir + "/" + self.playlist, 'r')
             for line in bfile.readlines():
