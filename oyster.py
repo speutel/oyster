@@ -79,8 +79,6 @@ class Oyster:
     nextfilestoplay = []
     len_nextfiles = 5
 
-    skipDeletes = False
-
     # pid of musicplayer     
     playerid = 0
 
@@ -266,12 +264,14 @@ class Oyster:
     def __test_blacklist(self, name):
         """ check whether argument name is in the blacklist for the current
             playlist and returns boolean value """
-        name = name.replace(self.mediadir,'',1)
         if os.access(self.blacklistdir + "/" + self.playlist, os.R_OK):
             bfile = open(self.blacklistdir + "/" + self.playlist, 'r')
             for line in bfile.readlines():
                 if re.compile( line.rstrip() ).search(name) != None:
                     return True
+                if line.startswith('^'):
+                    if re.compile( line.replace('^', "^" + self.mediadir + "/") ).search(name) != None:
+                        return True
         return False
 
     def __choose_file(self):
@@ -404,18 +404,12 @@ class Oyster:
         # blacklist
         sys.setrecursionlimit(200)
 
-        # Workaround:
-        # exec does not work well with multiline strings, and "statement1; if
-        # bla: statement2" does not work either, so init skipDeletes to default (False)
-        self.skipDeletes = False
-
         evalConfig = { "savedir": 'self.savedir = self.config["savedir"].rstrip("/")',
                        "mediadir": 'self.mediadir = self.config["mediadir"].rstrip("/")',
                        "basedir": 'self.basedir = self.config["basedir"].rstrip("/")',
                        "voteplay": 'self.votepercentage = int(self.config["voteplay"].rstrip("/"))',
                        "maxscored": 'self.scoressize = int(self.config["maxscored"])',
                        "control_mode": 'self.controlfilemode = int(self.config["control_mode"], 8)',
-                       "skip_deletes": 'if self.config["skip_deletes"] == "True": self.skipDeletes = True',
                        "filetypes": 'for ftype in self.config["filetypes"].split(","): self.filetypes[ftype] = self.config[ftype]',
                        "len_nextfiles": 'self.len_nextfiles = int(self.config["len_nextfiles"])' 
                       }
@@ -459,11 +453,6 @@ class Oyster:
         self.controlfile = self.basedir + "/control"
         self.controlfilemode = int(self.config["control_mode"], 8)
 
-        if self.config["skip_deletes"] == "True":
-            self.skipDeletes = True
-        else:
-            self.skipDeletes = False
-
         for ftype in self.config["filetypes"].split(","):
             self.filetypes[ftype] = self.config[ftype]
 
@@ -473,13 +462,13 @@ class Oyster:
         # the blacklist
         sys.setrecursionlimit(200)
 
-    def chooseFile(self, filepos):
+    def chooseFile(self, filepos, delete=False):
         """ chooses one of the next files to play from either filelist or
         scores and writes it to basedir/nextfile """
 
         log.debug("choose next file " + str(filepos)  + "to play")
         try:
-            if self.skipDeletes:
+            if delete:
                 del self.nextfilestoplay[filepos]
                 (entry, reason) = self.__choose_file()
                 self.nextfilestoplay.append(entry)
@@ -777,14 +766,21 @@ class ControlThread(threading.Thread):
 
         if command == "NEXT":
             self.oyster.next()
-        elif command == "SKIP":
-            # arg starts with 0!
+        elif command == "CHANGERANDOM":
+            # arg in [0:inf]
             try:
                 arg = int(commandline[cpos+1:])
                 self.oyster.chooseFile(arg)
             except ValueError:
                 print "ValueError! Oh mein Gott!"
                 print "x" + commandline[cpos+1:] + "x"
+                pass
+        elif command == "DELRANDOM":
+            # arg in [0:inf]
+            try:
+                arg = int(commandline[cpos+1:])
+                self.oyster.chooseFile(arg, delete=True)
+            except ValueError:
                 pass
         elif command == "QUIT":
             self.oyster.exit()
