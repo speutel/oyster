@@ -51,5 +51,9 @@ print "<div style='padding-left: 2em;'>"
 print "Edit the global configuration file or change settings for a single playlist."
 print "</div>"
 
+print "<h1><a href='history.py'>History</a></h1>"
+print "<div style='padding-left: 2em;'>"
+print "Want to know which song was played at a specific time? Search the logs here!"
+print "</div>"
 
 print "</body></html>"
