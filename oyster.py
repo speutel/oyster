@@ -270,7 +270,7 @@ class Oyster:
                 if re.compile( line.rstrip() ).search(name) != None:
                     return True
                 if line.startswith('^'):
-                    if re.compile( line.replace('^', "^" + self.mediadir + "/") ).search(name) != None:
+                    if re.compile( line.replace('^', "^" + self.mediadir) ).search(name) != None:
                         return True
         return False
 
