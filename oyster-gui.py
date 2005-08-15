@@ -72,10 +72,11 @@ print """
  <title>Oyster-GUI</title>
  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
  <meta http-equiv="refresh" content="30; URL=oyster-gui.py"/>
- <link rel="stylesheet" type="text/css" href="themes/default/layout.css"/>
-</head>
-<body>
 """
+
+print " <link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css'/>"
+print " </head>"
+print " <body>"
 
 print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
 print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
@@ -218,7 +219,10 @@ for nextinfo in nextarray:
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
     print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=skip" + str(i) + "&file=" + nextinfo + "'>Change</a>"
+    print "<a href='oyster-gui.py?action=changerandom" + str(i) + "&file=" + nextinfo + "'>"
+    print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'></a>"
+    print "<a href='oyster-gui.py?action=delrandom" + str(i) + "&file=" + nextinfo + "'>"
+    print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'></a>"
     print "</td></tr>"
     i += 1
 print "</table>"

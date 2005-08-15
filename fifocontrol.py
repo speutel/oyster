@@ -50,8 +50,8 @@ def do_action (action, filename):
     if action != 'start':
         control = open(myconfig['basedir'] + 'control', 'w')
     
-    if action[:4] == 'skip':
-        nextskip = int(action[4:])
+    if action[:12] == 'changerandom':
+        nextskip = int(action[12:])
         filenum = -1
         
         allnextfiles = open(myconfig['basedir'] + 'nextfile', 'r')
@@ -66,7 +66,26 @@ def do_action (action, filename):
                 nextskip -= 1
         
         if filenum > -1:
-            control.write("SKIP " + str(filenum) + "\n")
+            control.write("CHANGERANDOM " + str(filenum) + "\n")
+        control.close()
+        time.sleep(1)
+    elif action[:9] == 'delrandom':
+        nextskip = int(action[9:])
+        filenum = -1
+        
+        allnextfiles = open(myconfig['basedir'] + 'nextfile', 'r')
+        nextfiles = allnextfiles.readlines()
+        allnextfiles.close()
+        
+        while nextskip > -1:
+            if nextfiles[nextskip].rstrip() == mediadir + filename:
+                filenum = nextskip
+                break
+            else:
+                nextskip -= 1
+        
+        if filenum > -1:
+            control.write("DELRANDOM " + str(filenum) + "\n")
         control.close()
         time.sleep(1)
     elif action == 'next':

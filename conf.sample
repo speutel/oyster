@@ -41,7 +41,3 @@ control_mode=0600
 # how many files oyster shows in advance
 len_nextfiles=5
 
-# if "True", SKIP will delete the chosen song from the random next files and
-# append a new song at the end of the list. Otherwise ist will replace the
-# chosen song.
-skip_deletes=False

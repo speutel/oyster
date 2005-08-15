@@ -150,20 +150,6 @@ def configeditor(playlist):
     print "<p class='configdescription'>" + \
     "How many files oyster shows in advance</p>"
 
-    print "<h2>Skip_Deletes</h2>"
-    print "<select name='skip_deletes'>"
-    if workconfig['skip_deletes'] == 'True':
-        print "<option selected='selected'>True</option><option>False</option>"
-    else:
-        print "<option>True</option><option selected='selected'>False</option>"
-        
-    print "</select>"
-
-    print "<p class='configdescription'>" + \
-    "if &quot;True&quot;, SKIP will delete the chosen song from the " + \
-    "random next files and append a new song at the end of the list. " + \
-    "Otherwise ist will replace the chosen song.</p>"
-
     print "<input type='submit' value='Save Config'/>"
 
     print "</form></body></html>"

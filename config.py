@@ -48,7 +48,6 @@ def get_defaults():
                "mp3": "/usr/bin/mpg123",
                "ogg": "/usr/bin/ogg123",
                "len_nextfiles": "5",
-               "skip_deletes": "False",
                "control_mode": "0600",
                "theme": "default",
                "maxscored": "30",
