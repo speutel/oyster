@@ -66,6 +66,15 @@ if os.path.exists(myconfig['savedir'] + "scores/" + playlist):
             score[line] = 1
     scorefile.close()
 
+# Get Tags of all files
+
+display = {}
+
+for key in score.keys():
+    display[key] = taginfo.get_tag_light(key)
+
+# Print all files
+
 print "<table width='100%'>"
 print "<tr><th>Song</th><th width='75'>Score</th></tr>"
 
@@ -81,7 +90,10 @@ while maxscore > 0:
         if score[key] == maxscore:
             files.append(key)
 
-    files.sort()
+    def filesort(a, b):
+        return cmp(display[a], display[b])
+
+    files.sort(filesort)
 
     for curfile in files:
 
@@ -89,7 +101,6 @@ while maxscore > 0:
 
         escapedfile = curfile.replace(mediadir, '', 1)
         escapedfile = urllib.quote(escapedfile)
-        display = taginfo.get_tag_light(curfile)
 
         # cssclass changes to give each other file
         # another color
@@ -103,7 +114,7 @@ while maxscore > 0:
             print "<tr><td><a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
                 "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
                 "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
-                escapedfile + "'>" + display + "</a></td>"
+                escapedfile + "'>" + display[curfile] + "</a></td>"
             print "<td align='center'><a class= '" + cssclass + "' href='score.py?action=scoredown&amp;file=" + escapedfile + "' " + \
                 "title='Score down'><img src='themes/" + myconfig['theme'] + "/scoredown" + cssclass + ".png' " + \
                 "alt='-'/></a> <span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span>"
@@ -111,7 +122,7 @@ while maxscore > 0:
                 "title='Score up'><img src='themes/" + myconfig['theme'] + "/scoreup" + cssclass + ".png' alt='+'/></a></td></tr>"
         else:
             print "<tr><td><a class='" + cssclass + "' href='fileinfo.py?file=" + \
-                escapedfile + "'>" + display + "</a></td>"
+                escapedfile + "'>" + display[curfile] + "</a></td>"
             print "<td align='center'><span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span></td></tr>"
             
 
