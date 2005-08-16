@@ -32,6 +32,7 @@ import common
 import re
 import sys
 import datetime
+import os
 cgitb.enable()
 
 def whatplayed():
@@ -43,13 +44,14 @@ def whatplayed():
 
     rangelines = []
 
-    logfile = open('logs/default', 'r')
-    for line in logfile.readlines():
-        curdate = datetime.datetime(int(line[0:4]), int(line[4:6]), int(line[6:8]), \
-            int(line[9:11]), int(line[11:13]))
-        if curdate > start and curdate < stop:
-            rangelines.append(line)
-    logfile.close()
+    for log in os.listdir('logs/'):
+        logfile = open('logs/' + log, 'r')
+        for line in logfile.readlines():
+            curdate = datetime.datetime(int(line[0:4]), int(line[4:6]), int(line[6:8]), \
+                int(line[9:11]), int(line[11:13]))
+            if curdate > start and curdate < stop:
+                rangelines.append(line)
+        logfile.close()
 
     print "<table>"
 
