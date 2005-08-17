@@ -91,19 +91,19 @@ except KeyError:
 
 print "<h1>What was played?</h1>"
 print "<form method='post' action='history.py' enctype='application/x-www-form-urlencoded'>"
-print "<input type='hidden' name='action' value='whatplayed'>"
+print "<input type='hidden' name='action' value='whatplayed'/>"
 print "<table>"
-print "<tr>"
-print "<tr><th>Time</th><td><input type='text' name='hour' size='1' value='" + str(searchdate.hour) + "'>:"
-print "<input type='text' name='min' size='1' value='" + str(searchdate.minute) + "'></td></tr>"
-print "<tr><th>Date</th><td><input type='text' name='day' size='1' value='" + str(searchdate.day) + "'>."
-print "<input type='text' name='month' size='1' value='" + str(searchdate.month) + "'>."
-print "<input type='text' name='year' size='3' value='" + str(searchdate.year) + "'></td></tr>"
-print "<tr><th>Range</th><td><input type='text' name='range' size='8' value='" + timerange + "'> minutes</td></tr>"
+print "<tr><th>Time</th><td><input type='text' name='hour' size='1' value='%(hour)02d'/>:" % {"hour": searchdate.hour}
+print "<input type='text' name='min' size='1' value='%(minute)02d'/></td></tr>" % {"minute": searchdate.minute}
+print "<tr><th>Date</th><td><input type='text' name='day' size='1' value='%(day)02d'/>." % {"day": searchdate.day}
+print "<input type='text' name='month' size='1' value='%(month)02d'/>." % {"month": searchdate.month}
+print "<input type='text' name='year' size='3' value='" + str(searchdate.year) + "'/></td></tr>"
+print "<tr><th>Range</th><td><input type='text' name='range' size='8' value='" + timerange + "'/> minutes</td></tr>"
 print "</table>"
-print "<input type='submit' value='Search'>"
+print "<input type='submit' value='Search'/>"
 print "</form>"
 
 if form.has_key('action') and form['action'].value == 'whatplayed':
     whatplayed()
 
+print "</body></html>"
