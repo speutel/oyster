@@ -53,6 +53,8 @@ def whatplayed():
                 rangelines.append(line)
         logfile.close()
 
+    rangelines.sort()
+
     print "<table>"
 
     logmatcher = re.compile('\A([0-9]{8}\-[0-9]{6})\ ([^\ ]*)\ (.*)\Z')
