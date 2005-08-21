@@ -77,7 +77,8 @@ def whatplayed():
         loglines = logfile.readlines()
         logfile.close()
 
-        if stop > gettime(loglines[0]) and start < gettime(loglines[-1]):
+        if len(loglines) > 0 and \
+            stop > gettime(loglines[0]) and start < gettime(loglines[-1]):
 
             counter = searchtime(0, len(loglines)-1)
             curdate = gettime(loglines[counter])
