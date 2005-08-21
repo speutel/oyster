@@ -38,20 +38,57 @@ cgitb.enable()
 def whatplayed():
     start = datetime.datetime(int(form['year'].value), int(form['month'].value), int(form['day'].value), \
         int(form['hour'].value), int(form['min'].value))
-    timerange = datetime.timedelta(0, 0, 0, 0, int(form['range'].value))
-    stop = start + timerange
-    start = start - timerange
+    delta = datetime.timedelta(0, 0, 0, 0, int(form['range'].value))
+    stop = start + delta
+    start = start - delta
 
     rangelines = []
 
-    for log in os.listdir('logs/'):
-        logfile = open('logs/' + log, 'r')
-        for line in logfile.readlines():
-            curdate = datetime.datetime(int(line[0:4]), int(line[4:6]), int(line[6:8]), \
+    def gettime(line):
+    
+        "Parses the given line and returns a datetime object"
+        
+        return datetime.datetime(int(line[0:4]), int(line[4:6]), int(line[6:8]), \
                 int(line[9:11]), int(line[11:13]))
-            if curdate > start and curdate < stop:
-                rangelines.append(line)
+
+
+    def searchtime(begin, end):
+        mid = begin + ((end - begin) / 2)
+        midtime = gettime(loglines[mid])
+
+        if end - begin < 2:
+            if start < midtime:
+                return begin
+            else:
+                return begin + 1
+        
+        if start < midtime:
+            return searchtime(begin, mid)
+        elif start > midtime:
+            return searchtime(mid, end)
+        else:
+            return searchtime(mid, mid)
+
+    for log in os.listdir('logs/'):
+
+        # Read entire logfile into memory
+    
+        logfile = open('logs/' + log, 'r')
+        loglines = logfile.readlines()
         logfile.close()
+
+        if stop > gettime(loglines[0]) and start < gettime(loglines[-1]):
+
+            counter = searchtime(0, len(loglines)-1)
+            curdate = gettime(loglines[counter])
+
+            while curdate < stop:
+                rangelines.append(loglines[counter])
+                counter += 1
+                if counter < len(loglines):
+                    curdate = gettime(loglines[counter])
+                else:
+                    curdate = stop
 
     rangelines.sort()
 
