@@ -9,6 +9,9 @@ savedir=/var/www/oyster/
 # oyster will search your files under this directory and build a 
 # default playlist from these.
 mediadir=/Multimedia/Audio/
+# please specify the encoding which is used to display your filenames
+# most likely this is utf-8 or iso-8859-1
+encoding=utf-8
 # theme specifies the chosen theme
 theme=default
 # maxscored sets the maximum number of saved votes

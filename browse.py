@@ -43,17 +43,17 @@ if form.has_key('mode') and form['mode'].value == 'playlist':
     editplaylist = 1
     mode = '&amp;mode=playlist'
     
-    print "Content-Type: text/html"
+    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
     print """
-    <?xml version="1.0" encoding="iso-8859-1"?>
     <!DOCTYPE html 
          PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
      <title>Oyster-GUI</title>
-     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    """
+    """ 
+    print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"

@@ -94,6 +94,14 @@ def configeditor(playlist):
             "it will search your files under this directory and build a " + \
             "default playlist from these.</p>"
 
+        print "<h2>Encoding</h2>"
+        print "<input type='text' name='encoding' value='" + \
+            workconfig['encoding'] + "' size='50' maxlength='255'/>"
+
+        print "<p class='configdescription'>" + \
+            "please specify the encoding which is used to display your filenames" + \
+            "most likely this is utf-8 or iso-8859-1</p>"
+
         print "<h2>Theme</h2>"
         print "<select name='theme'>"
         for theme in os.listdir(savedir + 'themes/'):

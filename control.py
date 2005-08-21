@@ -52,30 +52,20 @@ try:
 except KeyError:
     pass
 
-print "Content-Type: text/html"
-# print """
-# <!DOCTYPE html
-#        PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-#         "http://www.w3.org/TR/html4/loose.dtd">
-#  <html lang="en-US"><head><title>Oyster-GUI</title>
-#  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-#  <link rel="stylesheet" type="text/css" href="themes/default/layout.css">
-#  </head>
-#  <body>
-# """
+print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
 print """
-<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <title>Oyster-GUI</title>
- <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
- <link rel="stylesheet" type="text/css" href="themes/default/layout.css" />
-</head>
-<body>
 """
+print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
+print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
+print "</head>"
+print "<body>"
 
 print "<div><a href='control.py' style='position:absolute; top:2px; right:2px' title='Refresh'>"
 print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"

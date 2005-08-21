@@ -34,7 +34,7 @@ import re
 cgitb.enable()
 
 def print_frameset ():
-    print "Content-Type: text/html"
+    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
     print """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
    "http://www.w3.org/TR/html4/frameset.dtd">
@@ -59,21 +59,21 @@ def print_frameset ():
     print"</html>"
 
 def print_title ():
-    print "Content-Type: text/html"
+    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
     print """
-    <?xml version="1.0" encoding="iso-8859-1"?>
     <!DOCTYPE html 
          PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
      <title>Oyster-GUI</title>
-     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-    """
+    """ 
+    print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
-    print "<p align='center'><b>Editing playlist " + form['playlist'].value + "</b> <a href='index-python.html' target='_top'>Done</a></p>"
+    print "<p align='center'><b>Editing playlist " + form['playlist'].value + "</b> <a href='index.html' target='_top'>Done</a></p>"
     print "</body></html>"
     
 myconfig = config.get_config()
@@ -96,17 +96,17 @@ elif form.has_key('mode') and form['mode'].value == 'title':
     print_title()
     sys.exit()
 
-print "Content-Type: text/html"
+print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
 print """
-<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <title>Oyster-GUI</title>
- <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 """
+print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
 print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
 print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
 print "</head><body>"
