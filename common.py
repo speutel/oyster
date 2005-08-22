@@ -126,8 +126,6 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
     basepath is cut away for recursive use
     """
 
-    playlist = urllib.quote(playlist)
-
     while counter < len(results) and results[counter].find(basepath) == 0:
         newpath = results[counter]
         newpath = newpath.replace(basepath, '', 1)

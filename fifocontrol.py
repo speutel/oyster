@@ -47,7 +47,7 @@ def do_action (action, filename):
 
     mediadir = myconfig['mediadir'][:-1]
 
-    if action != 'start':
+    if action != 'start' and action != 'addnewlist':
         control = open(myconfig['basedir'] + 'control', 'w')
     
     if action[:12] == 'changerandom':

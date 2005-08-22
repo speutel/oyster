@@ -32,6 +32,7 @@ import config
 import cgitb
 import common
 import re
+import urllib
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -161,7 +162,7 @@ if search != '':
 
     if results != []:
         if editplaylist:
-            common.listdir('/', 0, cssclass, 2, form['playlist'].value)
+            common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
         else:
             common.listdir('/', 0, cssclass)
     else:
