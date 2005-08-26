@@ -673,7 +673,7 @@ class Oyster:
         try:
             lfile = open(filestring, 'r')
         except IOError:
-            pass
+            return
         listpath = filestring[:filestring.rfind("/")]
         for line in lfile.readlines():
             pos_hash = line.find('#')
