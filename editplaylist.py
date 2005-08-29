@@ -140,10 +140,12 @@ if form.has_key('addfile'):
 
 # Add a complete directory
 
+filetypes = myconfig['filetypes'].lower().split(',')
+
 if form.has_key('adddir'):
     for root, dirs, files in os.walk(mediadir + form['adddir'].value, topdown=False):
         for name in files:
-            if name[name.rfind(".")+1:] in ['mp3','ogg']:
+            if name[name.rfind(".")+1:].lower() in filetypes:
                 root = root.replace(mediadir, '', 1)
                 if os.path.join(root, name).rstrip() not in allfiles:
                     allfiles.append(os.path.join(root, name).rstrip())

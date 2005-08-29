@@ -256,12 +256,12 @@ for curdir in dirs:
 
 cssfileclass = 'file2'
 csslistclass = 'playlist2'
+filetypes = myconfig['filetypes'].lower().split(',')
 
 for curfile in files:
     curfile = curfile.replace(mediadir + givendir, '')
     print "<tr>"
-    if curfile[-3:] == 'mp3' or curfile[-3:] == 'ogg':
-        # TODO auf andere Dateitypen und case achten
+    if curfile[curfile.rfind(".")+1:].lower() in filetypes:
         escapeddir = givendir + curfile
         escapeddir = urllib.quote(escapeddir.replace(mediadir,''))
 
