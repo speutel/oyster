@@ -44,3 +44,6 @@ control_mode=0600
 # how many files oyster shows in advance
 len_nextfiles=5
 
+# please specify the encoding which is used to display your filenames
+# most likely this is utf-8 or iso-8859-1
+encoding=utf-8
