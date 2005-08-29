@@ -50,5 +50,5 @@ encoding=utf-8
 
 # since tags of mp3 files do not have any information about the charset used,
 # you need to specify $LANG which should be used.
-# Examples are en_US@UTF-8 or de_DE@euro
-tagencoding=de_DE@UTF-8
+# Examples are en_US.UTF-8 or de_DE@euro
+tagencoding=de_DE.UTF-8
