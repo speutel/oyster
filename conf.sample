@@ -47,3 +47,8 @@ len_nextfiles=5
 # please specify the encoding which is used to display your filenames
 # most likely this is utf-8 or iso-8859-1
 encoding=utf-8
+
+# since tags of mp3 files do not have any information about the charset used,
+# you need to specify $LANG which should be used.
+# Examples are en_US@UTF-8 or de_DE@euro
+tagencoding=de_DE@UTF-8

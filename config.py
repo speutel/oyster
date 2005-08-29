@@ -53,7 +53,8 @@ def get_defaults():
                "maxscored": "30",
                "coverfilenames": "../${album}.png,../${album}.jpg",
                "coverwidth": "150",
-               "encoding": "utf-8"
+               "encoding": "utf-8",
+               "tagencoding": "de_DE@UTF-8"
               }
 
     return config

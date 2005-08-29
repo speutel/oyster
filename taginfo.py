@@ -99,7 +99,7 @@ def get_mp3_tags (filename):
     tag['format'] = 'MP3'
     filename = filename.replace("`","\`")
     filename = filename.replace('"','\\"')
-    os.environ['LANG'] = 'de_DE@euro'
+    os.environ['LANG'] = myconfig['tagencoding']
     mp3 = os.popen('id3v2 -R "' + filename + '"').readlines()
 
     mp3_regex = (
@@ -151,7 +151,8 @@ def get_ogg_tags (filename):
     filename = filename.replace("`","\`")
     filename = filename.replace('"','\\"')
     
-    os.environ['LANG'] = 'de_DE@euro'
+    os.environ['LANG'] = myconfig['tagencoding']
+
     ogg = os.popen('ogginfo "' + filename + '"')
 
     ogg_regex = {
