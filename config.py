@@ -23,7 +23,7 @@ import os
 
 def get_values(filename):
 
-    readconfig = {}
+    readconfig = get_defaults()
     conffile = file(filename)
 
     for line in conffile:
