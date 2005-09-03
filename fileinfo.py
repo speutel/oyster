@@ -85,6 +85,11 @@ if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
 
 escapedfile = urllib.quote(soundfile)
 
+if not os.access(mediadir + soundfile, os.R_OK):
+    print "<h1>Sorry, Oyster does not have the permission to read this file!</h1>"
+    print "</body></html>"
+    sys.exit()
+
 print "<table width='100%'><tr>"
 if oysterruns:
     print "<td align='left'><span class='file'><a class='file' href='oyster-gui.py?" + \
