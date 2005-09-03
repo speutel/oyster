@@ -102,6 +102,15 @@ def configeditor(playlist):
             "please specify the encoding which is used to display your filenames" + \
             "most likely this is utf-8 or iso-8859-1</p>"
 
+        print "<h2>Tagencoding</h2>"
+        print "<input type='text' name='tagencoding' value='" + \
+            workconfig['tagencoding'] + "' size='50' maxlength='255'/>"
+
+        print "<p class='configdescription'>" + \
+            "since tags of mp3 files do not have any information about the charset used, " + \
+            "you need to specify $LANG which should be used.<br>" + \
+            "Examples are en_US.UTF-8 or de_DE@euro</p>"
+
         print "<h2>Theme</h2>"
         print "<select name='theme'>"
         for theme in os.listdir(savedir + 'themes/'):
@@ -226,7 +235,7 @@ def saveconfig(playlist):
 
     # If playlist is currently running, reload it
 
-    if playlist == config.get_playlist():
+    if playlist == config.get_playlist() and os.path.exists(basedir):
         fifocontrol.do_action('loadlist', playlist) 
     
 
@@ -250,8 +259,16 @@ form = cgi.FieldStorage()
 
 common.navigation_header();
 
-playlists = os.listdir(savedir + "lists/")
-configs = os.listdir(savedir + "config/")
+if os.path.exists(savedir + "lists/"):
+    playlists = os.listdir(savedir + "lists/")
+else:
+    playlists = ['default']
+
+if os.path.exists(savedir + "config/"):
+    configs = os.listdir(savedir + "config/")
+else:
+    os.mkdir(savedir + "config")
+    configs = ['default']
 
 if form.has_key('action'):
     if form['action'].value == 'saveconfig' and form.has_key('playlist'):
@@ -261,14 +278,11 @@ if form.has_key('action'):
 elif form.has_key('playlist'):
     configeditor(form['playlist'].value)
 
-playlists = os.listdir(savedir + "lists/")
-configs = os.listdir(savedir + "config/")
-
 files = []
 sections = []
 
 for entry in playlists:
-    if os.path.isfile(savedir + "lists/" + entry):
+    if os.path.isfile(savedir + "lists/" + entry) or entry == 'default':
         files.append(entry)
         if entry.find('_') > -1:
             entry = re.sub('_.*', '', entry)
