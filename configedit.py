@@ -142,7 +142,24 @@ def configeditor(playlist):
         print "<p class='configdescription'>" + \
             "coverwidth is the width of the cover displayed in" + \
             "File Information</p>"
+
+        print "<h2>refresh</h2>"
+        print "<input type='text' name='refresh' value='" + \
+            workconfig['refresh'] + "' size='3' maxlength='8'/>"
             
+        print "<p class='configdescription'>" + \
+            "oyster's left frame refreshes every 30 seconds. If you want to change " + \
+            "the delay, edit this value</p>"
+
+        print "<h2>midvolume</h2>"
+        print "<input type='text' name='midvolume' value='" + \
+            workconfig['midvolume'] + "' size='3' maxlength='3'/>"
+            
+        print "<p class='configdescription'>" + \
+            "If you want to reset your mixer, just click on the volume-link " + \
+            "in the control center. midvolume specifies the value to which " + \
+            "the mixer is reset</p>"
+
     print "<h2>Maxscored</h2>"
     print "<input type='text' name='maxscored' value='" + \
         workconfig['maxscored'] + "' size='8' maxlength='8'/>"

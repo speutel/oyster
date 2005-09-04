@@ -54,7 +54,9 @@ def get_defaults():
                "coverfilenames": "../${album}.png,../${album}.jpg",
                "coverwidth": "150",
                "encoding": "utf-8",
-               "tagencoding": "de_DE.UTF-8"
+               "tagencoding": "de_DE.UTF-8",
+               "refresh": "30",
+               "midvolume": "50"
               }
 
     return config

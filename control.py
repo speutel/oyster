@@ -45,10 +45,10 @@ try:
     volume = form['vol'].value
     if volume == 'down':
         os.system('/usr/bin/aumix -w -5')
-    elif volume == '50':
-        os.system('/usr/bin/aumix -w 50')
     elif volume == 'up':
         os.system('/usr/bin/aumix -w +5')
+    elif int(volume) > 0:
+        os.system('/usr/bin/aumix -w ' + volume)
 except KeyError:
     pass
 
@@ -99,7 +99,7 @@ else:
 
 print "<td rowspan='2' align='center' style='line-height:180%'><a href='control.py?vol=up'"
 print "title='Volume up'><img src='themes/" + myconfig['theme'] + "/volup.png' alt='Volume Up'/></a><br/>"
-print "<a href='control.py?vol=50' title='Set volume to 50%'>Volume " + volume + "</a><br/>"
+print "<a href='control.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig['midvolume'] + "%'>Volume " + volume + "</a><br/>"
 print "<a href='control.py?vol=down' title='Volume down'><img src='themes/" + myconfig['theme'] + "/voldown.png'"
 print "alt='Volume Down'/></a></td>"
 print "</tr><tr>"

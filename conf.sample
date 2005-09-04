@@ -52,3 +52,12 @@ encoding=utf-8
 # you need to specify $LANG which should be used.
 # Examples are en_US.UTF-8 or de_DE@euro
 tagencoding=de_DE.UTF-8
+
+# oyster's left frame refreshes every 30 seconds. If you want to change
+# the delay, edit this value
+refresh=30
+
+# If you want to reset your mixer, just click on the volume-link
+# in the control center. midvolume specifies the value to which
+# the mixer is reset
+midvolume=50

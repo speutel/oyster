@@ -71,8 +71,9 @@ print """
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
  <title>Oyster-GUI</title>
- <meta http-equiv="refresh" content="30; URL=oyster-gui.py"/>
 """
+print " <meta http-equiv='refresh' content='" + myconfig['refresh'] + "; URL=oyster-gui.py'/>"
+
 print " <meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
 
 print " <link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css'/>"
