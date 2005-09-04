@@ -44,7 +44,8 @@ else:
 
 if form.has_key('action'):
     action = form['action'].value
-    fifocontrol.do_action(action, filename)
+    if action == 'start' or os.path.exists(basedir):
+        fifocontrol.do_action(action, filename)
 else:
     action = ''
 
