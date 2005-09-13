@@ -133,13 +133,16 @@ class Oyster:
             os.rmdir(self.basedir)
             os.makedirs(self.basedir)
         
+        
+        self.__setup_savedir()
+        self.__check_access()
+        
         # redirect stdout/stderr - silence! 
         outfile = os.open(self.basedir + "/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
         errfile = os.open(self.basedir + "/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
         os.dup2(outfile, 1)
         os.dup2(errfile, 2)
 
-        self.__setup_savedir()
         
         # write current pid
         log.debug("writing pid")
@@ -190,7 +193,7 @@ class Oyster:
         if len(self.filelist) == 0:
             while len(self.filelist) == 0:
                 pass
-            self.loadPlaylist("default", checkskip=True)
+            self.loadPlaylist("default", skip=True)
 
         # for basedir/status -> playing 
         self.unpause()
@@ -213,7 +216,16 @@ class Oyster:
             os.makedirs(self.logdir)
         if not os.access(self.confdir, os.F_OK):
             os.makedirs(self.confdir)
-
+            
+    def __check_access(self):
+        """ checks if oyster can access the directories r/w """
+        log.debug("checking access-rights")
+        for i in [self.savedir, self.listdir, self.blacklistdir, self.scoresdir, self.logdir, self.confdir]:
+            if not os.access(i, os.R_OK|os.W_OK):
+                log.debug("no r/w-access to all savedir-directories!")
+                print "no r/w-access to all savedir-directories!"
+                print "exiting..."
+                sys.exit(1)
     def __write_favmode(self, status):
         """ writes string argument status to basedir/favmode """
         favfile = open(self.basedir + "/favmode", 'w')
@@ -525,7 +537,6 @@ class Oyster:
             except OSError:
                 pass
         self.__playlog(self.__gettime() + " QUIT " + self.filetoplay )  
-	print "exit!"
         sys.exit()
 
     def play(self, filestring):
