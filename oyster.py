@@ -533,6 +533,7 @@ class Oyster:
 
         if self.playerid != 0:
             try:
+                os.kill(self.playerid, signal.SIGCONT)
                 os.kill(self.playerid, signal.SIGTERM)
             except OSError:
                 pass
