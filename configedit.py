@@ -260,13 +260,11 @@ __revision__ = 1
 
 import cgi
 import config
-import cgitb
 import sys
-import os.path
 import urllib
-import common
 import re
 import fifocontrol
+import cgitb
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -274,8 +272,10 @@ basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 form = cgi.FieldStorage()
 
+import common
 common.navigation_header();
 
+import os.path
 if os.path.exists(savedir + "lists/"):
     playlists = os.listdir(savedir + "lists/")
 else:
@@ -314,8 +314,12 @@ print "<tr><td colspan='5'><h2>Configuration Editor</h2></td></tr>"
 
 # Print playlists without a section
 
+print_playlist('default')
+
+print "<tr style='height: 1em;'><td></td></tr>"
+
 for filename in files:
-    if filename.find('_') == -1:
+    if filename.find('_') == -1 and filename != 'default':
         print_playlist(filename)
 
 # Print all sections
