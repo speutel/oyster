@@ -84,9 +84,25 @@ print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' wi
 print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
 print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
+if not os.path.exists(myconfig['savedir'] + 'blacklists') or not os.path.exists(myconfig['savedir'] + 'lists') \
+or not os.path.exists(myconfig['savedir'] + 'logs') or not os.path.exists(myconfig['savedir'] + 'scores'):
+    print "<h1>New Oyster install?</h1>";
+    print "<p>It seems that this is the first time you started Oyster.<br>"
+    print "You might want to <a href='configedit.py' target='browse'>edit " + \
+        "the configuration</a>.</p>"
+    print "<p>After that you should <a href='configcheck.py'>check your " + \
+        "configuration</a> for common errors such as wrong permissions.</p>"
+    print "<p>If all seems correct, you are able to " + \
+        "<a href='oyster-gui.py?action=start'>start Oyster</a> for the " + \
+        "first time.</p>"
+    print "</body></html>"
+    sys.exit()
+
 if not os.path.isdir(basedir) or action == 'stop':
     print '<p>Oyster has not been started yet!</p>'
-    print "<p><a href='oyster-gui.py?action=start'>Start</a>"
+    print "<p><a href='oyster-gui.py?action=start'>Start</a></p>"
+    print "<p>If you experience any problems, please run at first ",
+    print "the <a href='configcheck.py'>configuration checker</a></p>"
     print "</body></html>"
     sys.exit()
 
