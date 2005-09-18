@@ -1,16 +1,14 @@
 #!/bin/sh
 
-# TODO Check for needed perl modules
-
 MKDIR=`which mkdir`
 CP=`which cp`
 CHMOD=`which chmod`
 
-# Testing perl
+# Testing python
 
-PERL=`which perl`
+PERL=`which python`
 
-echo -n "Searching for perl... "
+echo -n "Searching for python... "
 
 if [ $PERL ]
 then
@@ -18,9 +16,9 @@ then
 else
  echo not found!
  echo
- echo Oyster is a CGI-script based on perl. This script was
- echo unable to locate the perl-binary in the given path.
- echo If perl is installed but not in your path, you may
+ echo Oyster is a CGI-script based on python. This script was
+ echo unable to locate the python-binary in the given path.
+ echo If python is installed but not in your path, you may
  echo proceed anyway.
  echo
  echo -n "Do you want to continue? [y/N] "
@@ -53,7 +51,7 @@ else
  then
   echo mpg123 is needed to play MP3-files, but
   echo it could no be found. If you want to use another
-  echo player, you have to specify this in oyster.conf
+  echo player, you have to specify this in the default configuration
   echo
   echo -n "Do you want to continue? [y/N] "
   read ANSWER
@@ -71,7 +69,7 @@ else
  then
   echo ogg123 is needed to play Vorbis-files, but
   echo it could no be found. If you want to use another
-  echo player, you have to specify this in oyster.conf
+  echo player, you have to specify this in the default configuration
   echo
   echo -n "Do you want to continue? [y/N] "
   read ANSWER
@@ -98,7 +96,7 @@ else
  echo
  echo aumix is needed for oyster to control the mixer of the
  echo soundcard. If you want to use another program than aumix
- echo you have to specify this in control.pl
+ echo you have to specify this in control.py
  echo
  echo -n "Do you want to continue? [y/N] "
  read ANSWER
@@ -133,14 +131,13 @@ echo -n "Copying files... "
 
 # Copying files
 
-$CP *.pl $PATH
-$CP -r oyster themes $PATH
-$CP conf.sample $PATH/oyster.conf
+$CP *.py $PATH
+$CP -r themes $PATH
 $CP index.html $PATH
 
 echo done.
 
-$CHMOD u+x $PATH/*.pl
+$CHMOD u+x $PATH/*.py
 
 echo
 echo Installation mostly finished.
@@ -150,6 +147,5 @@ echo 1. Change owner of the files to the user which runs oyster
 echo "   (usually www-data)"
 echo 2. Give this user the permission to write to your audio device.
 echo 3. Configure your apache to execute those scripts.
-echo 4. Edit $PATH/oyster.conf
-echo 5. Start your browser and have fun using Oyster!
+echo 4. Start your browser and have fun using Oyster!
 echo
