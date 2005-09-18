@@ -100,3 +100,17 @@ img {
 h1 {
 	font-size: 1.5em;
 }
+
+td.configok {
+    color: #000000;
+    background: #00FF00;
+}
+
+td.configerror {
+    color: #000000;
+    background: #FF0000;
+}
+
+th.configsection {
+    text-align: left;
+}

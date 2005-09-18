@@ -35,11 +35,9 @@ def print_result (result):
     "Generates the OK or ERROR labels"
 
     if result == 0:
-        print "<td align='center' style='color: #000000; ",
-        print "background: #00FF00;'>OK</td>"
+        print "<td align='center' class='configok'>OK</td>"
     elif result == 1:
-        print "<td align='center' style='color: #000000; ",
-        print "background: #FF0000;'>ERROR</td>"
+        print "<td align='center' class='configerror'>ERROR</td>"
 
 def test_readable (name, var):
 
@@ -123,7 +121,7 @@ print "<h1>Configuration Checker</h1>"
 
 print "<table width='100%'>"
 
-print "<tr><th colspan='2' style='text-align:left;'>" + \
+print "<tr><th colspan='2' class='configsection'>" + \
     "Testing permissions...</th></tr>"
 
 test_readable('savedir', myconfig['savedir'])
@@ -132,7 +130,7 @@ test_createable('basedir', myconfig['basedir'])
 test_readable('mediadir', myconfig['mediadir'])
 
 print "<tr><td></td></tr>"
-print "<tr><th colspan='2' style='text-align:left'>" + \
+print "<tr><th colspan='2' class='configsection'>" + \
     "Testing playback capabilities...</th></tr>"
 
 test_writeable('the sounddevice', '/dev/dsp')
