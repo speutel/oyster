@@ -21,25 +21,22 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import cgi
-import config
 import taginfo
-import fifocontrol
-import cgitb
-import sys
-import os.path
 import urllib
-import common
 import re
+import cgitb
 cgitb.enable()
 
+import config
 myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
+import cgi
 form = cgi.FieldStorage()
 
 playlist = config.get_playlist()
 
+import common
 common.navigation_header()
 
 try:
@@ -47,9 +44,12 @@ try:
 except KeyError:
     soundfile = ''
 
+import fifocontrol
 if form.has_key('action'):
     fifocontrol.do_action(form['action'].value, soundfile)
 
+import os.path
+import sys
 if not os.path.exists(mediadir + soundfile):
     print "<h1>Error!</h1>"
     print "<p>File <strong>" + soundfile + "</strong> could not be found.</p>"
@@ -73,7 +73,7 @@ for partdir in dirs:
     print "<a href='browse.py?dir=" + escapeddir +"'>" + partdir + "</a> / "
     incdir = incdir + partdir + "/"
 
-print cgi.escape(soundfileonly) + "</p><br clear='all'>"
+print cgi.escape(soundfileonly) + "</p><br clear='all'/>"
 
 isblacklisted = 0
 if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
@@ -131,8 +131,9 @@ else:
 
 if tag.has_key('artist'):
     print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
-    print "<a href='search.py?searchtype=normal&playlist=current&search=" + \
-        tag['artist'] + "' title='Search for this artist'>" + tag['artist'] + "</a>"
+    print "<a href='search.py?searchtype=normal&amp;playlist=current&amp;" + \
+        "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
+        "this artist'>" + tag['artist'] + "</a>"
     print "</td></tr>"
 
 tagtuple = (
@@ -154,10 +155,10 @@ print "<tr><td colspan='2'>&nbsp;</td></tr>"
 print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>" + str(timesplayed) + "</td></tr>"
 print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>"
 print "<td><a href='fileinfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'></a> "
+print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
 print "<strong>" + str(tag['score']) + "</strong>"
 print " <a href='fileinfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'></a></td></tr>"
+print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a></td></tr>"
 print "</table>"
 
 print "</body></html>"
