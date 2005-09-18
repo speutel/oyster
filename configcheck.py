@@ -136,8 +136,11 @@ print "<tr><th colspan='2' style='text-align:left'>" + \
     "Testing playback capabilities...</th></tr>"
 
 test_writeable('the sounddevice', '/dev/dsp')
+test_readable('the mixerdevice', '/dev/mixer')
+test_writeable('the mixerdevice', '/dev/mixer')
 test_program('the MP3-player', myconfig['mp3'])
 test_program('the OGG-player', myconfig['ogg'])
+test_program('the mixer program', '/usr/bin/aumix')
 
 print "</table>"
 
