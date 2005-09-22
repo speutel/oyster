@@ -45,10 +45,10 @@ def print_frameset ():
     print"<link rel='shortcut icon' href='themes/default/favicon.png'>"
     print"</head>"
     print"<frameset rows='50,*'>"
-    print"  <frame src='editplaylist.py?mode=title&playlist=" + playlist + "' name='title'>"
+    print"  <frame src='editplaylist.py?mode=title&playlist=" + urllib.quote(playlist) + "' name='title'>"
     print"  <frameset cols='*,*'>"
-    print"   <frame src='editplaylist.py?mode=edit&playlist=" + playlist + "' name='playlist'>"
-    print"   <frame src='browse.py?mode=playlist&playlist=" + playlist + "' name='browse'>"
+    print"   <frame src='editplaylist.py?mode=edit&playlist=" + urllib.quote(playlist) + "' name='playlist'>"
+    print"   <frame src='browse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
     print"  </frameset>"
     print"    <noframes>"
     print"	<p>"
@@ -73,7 +73,7 @@ def print_title ():
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
-    print "<p align='center'><b>Editing playlist " + form['playlist'].value + "</b> <a href='index.html' target='_top'>Done</a></p>"
+    print "<p align='center'><b>Editing playlist " + playlist + "</b> <a href='index.html' target='_top'>Done</a></p>"
     print "</body></html>"
     
 myconfig = config.get_config()
