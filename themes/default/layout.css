@@ -152,17 +152,21 @@ ul#navigation {
 ul#navigation li {
     list-style: none;
     display: inline;
+    float: left;
+    width: 16.66%;
     padding: 0px;
 }
 
+ul#navigation li.double {
+    width: 50%;
+}
+
 ul#navigation a {
-    margin-left: 0.5em;
-    margin-right: 0.5em;
+    margin-left: auto;
     color: #DDD;
     text-decoration: none;
 }
 
-a.navigation {
-    color: #DDD;
-    text-decoration: none;
+ul#navigation a:hover {
+    color: #AAA;
 }

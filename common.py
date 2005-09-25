@@ -63,7 +63,7 @@ def navigation_header():
     print "<li><a href='blacklist.py'>Blacklist</a></li>"
     print "<li><a href='score.py'>Scoring</a></li>"
     print "<li><a href='extras.py'>Extras</a></li>"
-    print "</ul>"
+    print "</ul><br/>"
     print "<hr/>"
 
 def get_cover (albumdir, imagewidth):

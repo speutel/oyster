@@ -59,10 +59,12 @@ if form.has_key('playlist') and form.has_key('mode') and form['mode'].value == '
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
 
-    print "<table width='100%'><tr>"
-    print "<td align='center'><a class='navigation' href='browse.py?mode=playlist&amp;playlist=" + form['playlist'].value + "'>Browse</a></td>"
-    print "<td align='center'><a class='navigation' href='search.py?mode=playlist&amp;playlist=" + form['playlist'].value + "'>Search</a></td></tr></table>"
-    print "<hr/>"
+    print "<ul id='navigation'>"
+    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
+    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "</ul>"
+    
+    print "<br/><hr/>"
 
 else:
     editplaylist = 0
