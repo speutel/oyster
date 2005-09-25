@@ -126,6 +126,7 @@ fieldset.searchform {
 
 legend.searchform {
     font-weight: bold;
+    font-size: smaller;
     color: #DDD;
     padding-left: 0.5em;
     padding-right: 0.5em;
