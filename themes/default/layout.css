@@ -114,3 +114,21 @@ td.configerror {
 th.configsection {
     text-align: left;
 }
+
+div#searchform {
+    width: 80%;
+    padding: 1em;
+    background-color: #333;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+input#searchsubmit {
+    margin-left: 2em;
+}
+
+table#searchoptions {
+    width: 100%;
+    border: 0px;
+    margin-top: 1em;
+}

@@ -103,29 +103,26 @@ else:
 print "<form method='post' action='search.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
-print "<table border='0'><tr><td><input type='text' name='search' value='" + \
-    search + "'/></td>"
-print "<td><input type='submit' name='.submit' value='Search' " + \
-    "style='margin-left: 2em;'/></td></tr>"
+print "<div id='searchform'>"
+print "<input id='searchfield' type='text' size='40' name='search' value='" + search + "'/>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='Search'>"
+print "<table id='searchoptions'>"
+print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
+    normalcheck + "/> Normal<br/>"
+print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
+    "/> Regular Expression<br/></td>"
+    
 if editplaylist:
-    print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
-        normalcheck + "/> Normal<br/>"
-    print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-        "/> Regular Expression<br/></td>"
-    print "</tr></table><div>"
-    print "</div>"
     print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
-    print "<input type='hidden' name='mode' value='playlist'/></form>"
+    print "<input type='hidden' name='mode' value='playlist'/>"
 else:
-    print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
-        normalcheck + "/> Normal<br/>"
-    print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-        "/> Regular Expression<br/></td>"
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
         "/> Only current playlist<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "All Songs<br/></td></tr></table><div>"
-    print "</div></form>"
+        "All Songs<br/></td>"
+
+print "</tr></table>"
+print "</div></form>"
 
 results = []
 cssclass = 'file2'
