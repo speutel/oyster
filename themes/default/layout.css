@@ -116,6 +116,7 @@ th.configsection {
 }
 
 fieldset#searchform {
+    border-width: thin;
     width: 80%;
     padding: 1em;
     background-color: #222;
