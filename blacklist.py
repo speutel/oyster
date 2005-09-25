@@ -157,15 +157,18 @@ else:
 
 print "<form method='post' action='blacklist.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
-print "<table border='0'><tr><td><input type='text' name='affects'" + \
-    "value='" + escaffects + "'></td>"
-print "<td><input type='radio' name='action' value='test' " + \
-    "checked='checked'> Test Only<br>"
-print "<input type='radio' name='action' value='add'> " + \
-    "Add to Blacklist<br></td>"
-print "<td><input type='submit' name='.submit' value='Go' " + \
-    "style='margin-left: 2em;'></td></tr></table>"
-print "<div><input type='hidden' name='.cgifields' value='action'></div></form>"
+print "<fieldset class='searchform'>"
+print "<legend class='searchform'>Add entries to blacklist</legend>"
+print "<input type='text' size='40' name='affects' value='" + escaffects + "'/>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='Go'/>"
+print "<table id='searchoptions'><tr>"
+print "<td><input type='radio' name='action' value='test' checked='checked'/> " + \
+    "Test only</td></tr>"
+print "<tr><td><input type='radio' name='action' value='add'/> " + \
+    "Add to blacklist</td></tr>"
+print "</table>"
+print "</fieldset>"
+print "</form>"
 
 print "<p><a href='blacklist.py'>Show current blacklist</a></p>"
 
