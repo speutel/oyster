@@ -103,7 +103,7 @@ else:
 print "<form method='post' action='search.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
-print "<div id='searchform'>"
+print "<fieldset id='searchform'>"
 print "<input id='searchfield' type='text' size='40' name='search' value='" + search + "'/>"
 print "<input id='searchsubmit' type='submit' name='.submit' value='Search'>"
 print "<table id='searchoptions'>"
@@ -122,7 +122,7 @@ else:
         "All Songs<br/></td>"
 
 print "</tr></table>"
-print "</div></form>"
+print "</fieldset></form>"
 
 results = []
 cssclass = 'file2'

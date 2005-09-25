@@ -115,10 +115,10 @@ th.configsection {
     text-align: left;
 }
 
-div#searchform {
+fieldset#searchform {
     width: 80%;
     padding: 1em;
-    background-color: #333;
+    background-color: #222;
     margin-left: auto;
     margin-right: auto;
 }
