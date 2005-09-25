@@ -103,14 +103,15 @@ else:
 print "<form method='post' action='search.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
-print "<fieldset id='searchform'>"
+print "<fieldset class='searchform'>"
+print "<legend class='searchform'>Search for music</legend>"
 print "<input id='searchfield' type='text' size='40' name='search' value='" + search + "'/>"
-print "<input id='searchsubmit' type='submit' name='.submit' value='Search'>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='Search'/>"
 print "<table id='searchoptions'>"
 print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
     normalcheck + "/> Normal<br/>"
 print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-    "/> Regular Expression<br/></td>"
+    "/> Regular expression<br/></td>"
     
 if editplaylist:
     print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
@@ -119,7 +120,7 @@ else:
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
         "/> Only current playlist<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "All Songs<br/></td>"
+        "All songs<br/></td>"
 
 print "</tr></table>"
 print "</fieldset></form>"

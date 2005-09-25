@@ -115,13 +115,20 @@ th.configsection {
     text-align: left;
 }
 
-fieldset#searchform {
+fieldset.searchform {
     border-width: thin;
     width: 80%;
     padding: 1em;
     background-color: #222;
     margin-left: auto;
     margin-right: auto;
+}
+
+legend.searchform {
+    font-weight: bold;
+    color: #DDD;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
 }
 
 input#searchsubmit {
