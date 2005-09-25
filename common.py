@@ -56,17 +56,14 @@ def navigation_header():
         "/favicon.png' />"
     print "</head><body>"
     
-    print "<table width='100%'><tr>"
-    print "<td align='center' width='17%'><a href='browse.py'>Browse</a></td>"
-    print "<td align='center' width='16%'><a href='search.py'>Search</a></td>"
-    print "<td align='center' width='17%'>" + \
-        "<a href='playlists.py'>Playlists</a></td>"
-    print "<td align='center' width='17%'>" + \
-        "<a href='blacklist.py'>Blacklist</a></td>"
-    print "<td align='center' width='16%'><a href='score.py'>Scoring</a></td>"
-    print "<td align='center' width='17%'>" + \
-        "<a href='extras.py'>Extras</a></td>"
-    print "</tr></table>"
+    print "<ul id='navigation'>"
+    print "<li><a href='browse.py'>Browse</a></li>"
+    print "<li><a href='search.py'>Search</a></li>"
+    print "<li><a href='playlists.py'>Playlists</a></li>"
+    print "<li><a href='blacklist.py'>Blacklist</a></li>"
+    print "<li><a href='score.py'>Scoring</a></li>"
+    print "<li><a href='extras.py'>Extras</a></li>"
+    print "</ul>"
     print "<hr/>"
 
 def get_cover (albumdir, imagewidth):

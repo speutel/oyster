@@ -59,8 +59,8 @@ if form.has_key('mode') and form['mode'].value == 'playlist':
     print "</head><body>"
 
     print "<table width='100%'><tr>"
-    print "<td align='center'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></td>"
-    print "<td align='center'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></td></tr></table>"
+    print "<td align='center'><a class='navigation' href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></td>"
+    print "<td align='center'><a class='navigation' href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></td></tr></table>"
     print "<hr/>"
 
 else:

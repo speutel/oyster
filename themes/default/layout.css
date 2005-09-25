@@ -141,3 +141,28 @@ table#searchoptions {
     border: 0px;
     margin-top: 1em;
 }
+
+ul#navigation {
+    text-align: center;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+ul#navigation li {
+    list-style: none;
+    display: inline;
+    padding: 0px;
+}
+
+ul#navigation a {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    color: #DDD;
+    text-decoration: none;
+}
+
+a.navigation {
+    color: #DDD;
+    text-decoration: none;
+}
