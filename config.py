@@ -73,7 +73,7 @@ def get_config():
     if os.path.exists('config/default'):
         ownconfig = get_values('config/default')
         for ownkey in ownconfig.keys():
-            config[plkey] = ownconfig[ownkey]
+            config[ownkey] = ownconfig[ownkey]
 
     # Then, read playlist-config if existing
     
