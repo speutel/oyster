@@ -66,11 +66,14 @@ def get_config():
 
     # First, read default values
 
+    config = get_defaults()
+
+    # If config/default exists, overwrite values
+
     if os.path.exists('config/default'):
-        config = get_values('config/default')
-    else:
-        # There is no config-file, use builtin defaults
-        config = get_defaults()
+        ownconfig = get_values('config/default')
+        for ownkey in ownconfig.keys():
+            config[plkey] = ownconfig[ownkey]
 
     # Then, read playlist-config if existing
     
