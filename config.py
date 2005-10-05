@@ -23,7 +23,7 @@ import os
 
 def get_values(filename):
 
-    readconfig = get_defaults()
+    readconfig = {}
     conffile = file(filename)
 
     for line in conffile:
@@ -86,7 +86,7 @@ def get_config():
 
             for plkey in plconfig.keys():
                 config[plkey] = plconfig[plkey]
-
+            
     return config
   
 
