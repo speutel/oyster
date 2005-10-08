@@ -290,8 +290,12 @@ else:
 if form.has_key('action'):
     if form['action'].value == 'saveconfig' and form.has_key('playlist'):
         saveconfig(form['playlist'].value)
+        if form['playlist'].value not in configs:
+            configs.append(form['playlist'].value)
     elif form['action'].value == 'delete' and form.has_key('playlist'):
         os.unlink(savedir + "config/" + os.path.basename(form['playlist'].value))
+        if form['playlist'].value in configs:
+            configs.remove(form['playlist'].value)
 elif form.has_key('playlist'):
     configeditor(form['playlist'].value)
 
@@ -310,7 +314,7 @@ sections.sort()
 
 print "<table width='100%' style='margin-bottom: 2em;'>"
 
-print "<tr><td colspan='5'><h2>Configuration Editor</h2></td></tr>"
+print "<tr><td colspan='5'><h1>Configuration Editor</h1></td></tr>"
 
 # Print playlists without a section
 
