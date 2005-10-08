@@ -185,8 +185,8 @@ print "<a href='oyster-gui.py?action=scoredown&amp;file=" + info + "' title='Sco
 print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
 print "<strong>" + str(tag['score']) + "</strong> "
 print "<a href='oyster-gui.py?action=scoreup&amp;file=" + info + "' title='Score up'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/>"
-print "</a></td></tr>"
+print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a>"
+print "</td></tr>"
 
 print "<tr><td colspan='3'>&nbsp;</td></tr>"
 
