@@ -152,7 +152,10 @@ if form.has_key('playlist') and form.has_key('action') and form['action'].value 
 
 if form.has_key('action') and form['action'].value == 'rename' and \
     form.has_key('playlist') and form.has_key('newname'):
-    section = re.sub('_.*\Z', '_', form['playlist'].value)
+    if form['playlist'].value.find('_') > -1:
+        section = re.sub('_.*\Z', '_', form['playlist'].value)
+    else:
+        section = ''
     listrename(form['playlist'].value, section + form['newname'].value)
 
 # Move playlist to new or existing section
@@ -197,7 +200,7 @@ else:
 
 print "<table width='100%' style='margin-bottom: 2em;'>"
 
-print "<tr><td colspan='5'><h2>Playlists</h2></td></tr>"
+print "<tr><td colspan='5'><h1>Playlists</h1></td></tr>"
 
 # Print playlists without a section
 
