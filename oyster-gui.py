@@ -233,14 +233,17 @@ for nextinfo in nextarray:
     nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', nextinfo)
     nextinfo = urllib.quote("/" + nextinfo)
     print "<tr><td>"
-    print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' target='browse' title='View details'>"
+    print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + \
+        "' target='browse' title='View details'>"
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
     print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=changerandom" + str(i) + "&file=" + nextinfo + "' title='Replace this song by other random song'>"
-    print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'></a>"
-    print "<a href='oyster-gui.py?action=delrandom" + str(i) + "&file=" + nextinfo + "' title='Delete this song from list'>"
-    print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'></a>"
+    print "<a href='oyster-gui.py?action=changerandom" + str(i) + \
+        "&amp;file=" + nextinfo + "' title='Replace this song by other random song'>"
+    print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/></a>"
+    print "<a href='oyster-gui.py?action=delrandom" + str(i) + "&amp;file=" + \
+        nextinfo + "' title='Delete this song from list'>"
+    print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a>"
     print "</td></tr>"
     i += 1
 print "</table>"
