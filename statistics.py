@@ -62,8 +62,8 @@ def print_songs (header, filearray):
 
     cssclass = 'file2'
 
-    print "<table width='100%'>"
-    print "<tr><th align='left'>Song</th><th>" + header + "</th></tr>"
+    print "<table class='statistictable'>"
+    print "<tr><th>Song</th><th>" + header + "</th></tr>"
 
     # for every song in mostplayed
     #  print artist/title
@@ -198,7 +198,7 @@ totalfiles = 0
 for line in open(myconfig['savedir'] + "lists/" + playlist):
     totalfiles += 1
 
-print "<table width='100%'>"
+print "<table class='statistictable'>"
 print "<tr><td><strong>Total files in playlist</strong></td><td>" + str(totalfiles) + "</td></tr>"
 print "<tr><td><strong>Files blacklisted</strong></td><td>" + str(get_blacklisted()) + "</td></tr>"
 print "<tr><td><strong>Total files played</strong></td><td>" + str(totalfilesplayed) + "</td></tr>"

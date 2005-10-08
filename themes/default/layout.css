@@ -45,6 +45,24 @@ b.dir2 {
   color: #1080A0;
 }
 
+h1 {
+	font-size: 1.5em;
+	color: #DDD;
+}
+
+h1 a {
+	color: #DDD;
+}
+
+h1 a:hover {
+	color: #AAA;
+}
+
+h2 {
+	font-size: 1.3em;
+	color: #DDD;
+}
+
 span.blacklisted {
   color: #FF0000;
   font-weight: bold;
@@ -97,8 +115,25 @@ img {
 	border: 0
 }
 
-h1 {
-	font-size: 1.5em;
+table#scoretable {
+	width: 100%;
+}
+
+table#scoretable th {
+	color: #DDD;
+	font-size: larger;
+	padding-bottom: 1em;
+}
+
+table.statistictable {
+	width: 100%;
+}
+
+table.statistictable th {
+	color: #DDD;
+	font-size: larger;
+	padding-bottom: 1em;
+	text-align: left;
 }
 
 td.configok {

@@ -75,7 +75,7 @@ for key in score.keys():
 
 # Print all files
 
-print "<table width='100%'>"
+print "<table id='scoretable'>"
 print "<tr><th>Song</th><th width='75'>Score</th></tr>"
 
 cssclass = 'file2'
