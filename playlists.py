@@ -182,6 +182,7 @@ if form.has_key('action') and form['action'].value == 'movelistsave' and \
     listrename(form['playlist'].value, newsection + onlyplaylist)
 
 entries = os.listdir(savedir + "lists/")
+entries.sort()
 
 files = []
 section = {}

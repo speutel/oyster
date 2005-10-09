@@ -322,6 +322,8 @@ print_playlist('default')
 
 print "<tr style='height: 1em;'><td></td></tr>"
 
+files.sort()
+
 for filename in files:
     if filename.find('_') == -1 and filename != 'default':
         print_playlist(filename)
