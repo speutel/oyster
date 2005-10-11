@@ -20,22 +20,22 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+"""
+index.py creates a frameset and allows the start at a specified site
+(such as playlists.py)
+"""
+
+__revision__ = 1
+
 import cgi
-import config
-import taginfo
-import fifocontrol
 import cgitb
-import sys
-import os.path
-import urllib
-import commands
-import re
 cgitb.enable()
 
 form = cgi.FieldStorage()
 
 if form.has_key('view'):
-    validsites = ['blacklist','browse','configedit','extras','playlists','score','search']
+    validsites = ['blacklist', 'browse', 'configedit', 'extras', 'playlists', \
+        'score', 'search']
     for validsite in validsites:
         if form['view'].value == validsite:
             view = validsite + '.py'
