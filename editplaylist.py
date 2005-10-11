@@ -73,7 +73,9 @@ def print_title ():
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
-    print "<p align='center'><b>Editing playlist " + playlist + "</b> <a href='index.py?view=playlists' target='_top'>Done</a></p>"
+    print "<form method='post' target='_top' action='index.py'><input type='hidden' name='view' value='playlists'>"
+    print "<p align='center'><b>Editing playlist " + playlist + "</b> " +\
+        "<input type='submit' value='Done'></p></form>"
     print "</body></html>"
     
 myconfig = config.get_config()
