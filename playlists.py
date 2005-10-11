@@ -161,7 +161,8 @@ if form.has_key('action') and form['action'].value == 'rename' and \
 # Move playlist to new or existing section
 
 if form.has_key('action') and form['action'].value == 'movelistsave' and \
-    form.has_key('sectiontype') and form.has_key('playlist'):
+    form.has_key('sectiontype') and form.has_key('playlist') and \
+    form.has_key('newsection'):
     
     if form['sectiontype'].value == 'existing' and form.has_key('existingsection'):
     
