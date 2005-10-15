@@ -102,8 +102,16 @@ td.fileinfoimage {
   padding-top:0px;
 }
 
+table#playlists {
+	margin-bottom: 2em;
+}
+
 td.playlists {
   text-align: center;
+}
+
+span.emptylist {
+	font-style: italic;
 }
 
 p.configdescription {

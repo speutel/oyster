@@ -23,17 +23,18 @@
 
 import cgi
 import config
-import taginfo
 import fifocontrol
 import cgitb
 import sys
 import os.path
 import urllib
 import common
-import re
 cgitb.enable()
 
 def print_frameset ():
+    
+    "Generates a frameset for the playlist editor"
+    
     print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
     print """
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN"
@@ -84,8 +85,14 @@ savedir = myconfig['savedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
+if form.has_key('action') and form['action'].value == 'addnewlist' \
+    and form.has_key('newlistname'):
+    fifocontrol.do_action('addnewlist', form['newlistname'].value)
+        
 if form.has_key('playlist'):
     playlist = form['playlist'].value
+elif form.has_key('newlistname'):
+    playlist = form['newlistname'].value
 else:
     sys.exit()
 

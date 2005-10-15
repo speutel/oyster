@@ -24,12 +24,17 @@ def print_playlist(file):
     title = re.sub('\A.*_','',file)
     encfile = urllib.quote(file)
 
+    if os.path.getsize('lists/' + file) == 0:
+        isempty = " <span class='emptylist'>(empty)</span>"
+    else:
+        isempty = ''
+
     if file == playlist and file != 'default':
         print "<tr><td><i>" + title + "</i></td><td class='playlists'><strong>currently playing</strong></td>"
         print "<td class='playlists'><a href='editplaylist.py?" + \
             "playlist=" + encfile + "' target='_top'>Edit</a></td><td></td></tr>"
     elif file != 'default':
-        print "<tr><td>" + title + "</td><td class='playlists'>"
+        print "<tr><td>" + title + isempty + "</td><td class='playlists'>"
         if oysterruns:
             print "<a href='playlists.py?action=loadlist&amp;" + \
                 "listname=" + encfile + "'>Load</a>"
@@ -197,7 +202,7 @@ if form.has_key('action') and form['action'].value == 'loadlist' and form.has_ke
 else:
     playlist = config.get_playlist()
 
-print "<table width='100%' style='margin-bottom: 2em;'>"
+print "<table width='100%' id='playlists'>"
 
 print "<tr><td colspan='5'><h1>Playlists</h1></td></tr>"
 
@@ -232,9 +237,12 @@ for section in sectionkeys:
 
 print "</table>"
 
-print "<form method='post' action='playlists.py' enctype='application/x-www-form-urlencoded'>"
-print "<input type='hidden' name='action' value='addnewlist'/><input type='text' name='newlistname'/>"
-print "<input type='submit' name='.submit' value='Create new list' style='margin-left: 2em;'/>"
+print "<form method='post' target='_top' action='editplaylist.py' " + \
+    "enctype='application/x-www-form-urlencoded'>"
+print "<input type='hidden' name='action' value='addnewlist'/><input " + \
+    "type='text' name='newlistname'/>"
+print "<input type='submit' name='.submit' value='New list' " + \
+    "style='margin-left: 2em;'/>"
 print "<div></div></form><br/>"
 
 print "<a href='configedit.py'>Configuration Editor</a>"

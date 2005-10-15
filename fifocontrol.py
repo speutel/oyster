@@ -129,10 +129,11 @@ def do_action (action, filename):
         control.close()
     elif action == 'addnewlist' and filename:
         filename = os.path.basename(filename)
-        newlist = open(myconfig['savedir'] + "lists/" + filename, 'w')
-        newlist.close()
-        newlist = open(myconfig['savedir'] + "logs/" + filename, 'w')
-        newlist.close()
+        if not os.path.exists(myconfig['savedir'] + "lists/" + filename):
+            newlist = open(myconfig['savedir'] + "lists/" + filename, 'w')
+            newlist.close()
+            newlist = open(myconfig['savedir'] + "logs/" + filename, 'w')
+            newlist.close()
     elif action == 'delete' and filename:
         filename = os.path.basename(filename)
         for dirname in ['blacklists/', 'lists/', 'logs/', 'scores/']:
