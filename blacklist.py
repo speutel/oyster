@@ -159,7 +159,7 @@ print "<form method='post' action='blacklist.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 print "<fieldset class='searchform'>"
 print "<legend class='searchform'>Add entries to blacklist</legend>"
-print "<input type='text' size='40' name='affects' value='" + escaffects + "'/>"
+print "<input id='searchfield' type='text' size='40' name='affects' value='" + escaffects + "'/>"
 print "<input id='searchsubmit' type='submit' name='.submit' value='Go'/>"
 print "<table id='searchoptions'><tr>"
 print "<td><input type='radio' name='action' value='test' checked='checked'/> " + \

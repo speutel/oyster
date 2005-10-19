@@ -175,6 +175,10 @@ legend.searchform {
     padding-right: 0.5em;
 }
 
+input#searchfield {
+	width: 70%;
+}
+
 input#searchsubmit {
     margin-left: 2em;
 }
