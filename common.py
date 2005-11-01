@@ -208,9 +208,9 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
             # $newpath is a regular file without leading directory
 
             while counter < len(results) and \
-                results[counter].find(basepath) == 0:
+                os.path.dirname(results[counter]) + "/" == basepath:
 
-                # Print all filenames in $basedir
+                # Print all filenames in basepath
 
                 filename = results[counter]
                 filename = os.path.basename(filename)
