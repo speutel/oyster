@@ -100,16 +100,17 @@ def sort_results (topdir):
     """
 
     skip = '' # Do not add directories twice
-    dirs = files = []
+    dirs = []
+    files = []
 
     for line in results:
-        if ((skip != '') and not (line.index(skip) == 0)) or (skip == ''):
-            dirmatcher = re.match('\A' + re.escape(topdir) + '([^/]*/)/', line)
-            filematcher = re.match('\A' + re.escape(topdir) + '[^/]*/', line)
+        if ((skip != '') and not (line.find(skip) == 0)) or (skip == ''):
+            dirmatcher = re.match('\A' + re.escape(topdir) + '([^/]+)/', line)
+            filematcher = re.match('\A' + re.escape(topdir) + '[^/]*', line)
             if dirmatcher != None:
                 # line is a directory
-                skip = topdir + dirmatcher.group(1)
-                dirs.append(sort_results(skip))
+                skip = topdir + dirmatcher.group(1) + "/"
+                dirs = dirs + sort_results(skip)
             elif filematcher != None:
                 # line is a file
                 files.append(line)

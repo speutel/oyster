@@ -161,6 +161,7 @@ if search != '':
     # List directory in browser
 
     if results != []:
+        common.results = results
         if editplaylist:
             common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
         else:
