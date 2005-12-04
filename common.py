@@ -125,8 +125,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
     """
 
     while counter < len(results) and results[counter].find(basepath) == 0:
-        newpath = results[counter]
-        newpath = newpath.replace(basepath, '', 1)
+        newpath = results[counter].replace(basepath, '', 1)
         if newpath.find('/') > -1:
             # $newpath is directory and becomes the top one
 
@@ -209,13 +208,12 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
             # $newpath is a regular file without leading directory
 
             while counter < len(results) and \
-                os.path.dirname(results[counter]) + "/" == basepath:
+                (os.path.dirname(results[counter]) + "/" == basepath or os.path.dirname(results[counter]) == basepath):
 
                 # Print all filenames in basepath
 
-                filename = results[counter]
-                filename = os.path.basename(filename)
-                matcher = re.match('(.*)\.(...)\Z', filename)
+                filename = os.path.basename(results[counter])
+                matcher = re.match('(.*)\.(...)\Z', filename) # FIXME Dateiendungen mit < 3 Zeichen
                 nameonly = matcher.group(1)
                 escapedfile = urllib.quote(basepath + filename)
 
