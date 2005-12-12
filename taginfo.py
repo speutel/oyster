@@ -129,7 +129,7 @@ def get_mp3_tags (filename):
         for regex in mp3_regex:
             matcher = re.match(regex[0], line[:-1])
             if matcher != None:
-                tag[regex[1]] = cgi.escape(matcher.group(1).rstrip())
+                tag[regex[1]] = cgi.escape(unicode(matcher.group(1).rstrip(),'latin-1').encode(myconfig['encoding']))
 
     try:
         if tag['playtime'] != '':
