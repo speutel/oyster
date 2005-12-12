@@ -99,16 +99,17 @@ def configeditor(playlist):
             workconfig['encoding'] + "' size='50' maxlength='255'/>"
 
         print "<p class='configdescription'>" + \
-            "please specify the encoding which is used to display your filenames" + \
-            "most likely this is utf-8 or iso-8859-1</p>"
+            "Please specify the encoding which is used to display your filenames. " + \
+            "Most likely this is utf-8 or iso-8859-1</p>"
 
         print "<h2>Tagencoding</h2>"
         print "<input type='text' name='tagencoding' value='" + \
             workconfig['tagencoding'] + "' size='50' maxlength='255'/>"
 
         print "<p class='configdescription'>" + \
-            "since tags of mp3 files do not have any information about the charset used, " + \
-            "you need to specify $LANG which should be used.<br>" + \
+            "The locale to use when oyster has to execute an external program. " + \
+            "(If characters in mp3/ogg-tags don't display correctly in in e.g. " + \
+            "fileinfo try to change this value according to your system locale.)<br>" + \
             "Examples are en_US.UTF-8 or de_DE@euro</p>"
 
         print "<h2>Theme</h2>"
