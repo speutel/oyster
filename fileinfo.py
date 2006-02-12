@@ -133,7 +133,10 @@ if tag.has_key('artist'):
     print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
     print "<a href='search.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
-        "this artist'>" + tag['artist'] + "</a>"
+        "this artist'>" + tag['artist'] + "</a></td></tr>"
+    print "<tr><td></td><td>"
+    print "<a href='similar.py?artist=" + urllib.quote(tag['artist']) + \
+        "' class='file'>Show similar artists</a>"
     print "</td></tr>"
 
 tagtuple = (
