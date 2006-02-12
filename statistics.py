@@ -99,7 +99,6 @@ common.navigation_header()
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]
-form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
 # Check if oyster is started

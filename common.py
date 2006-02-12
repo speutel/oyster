@@ -40,7 +40,7 @@ def navigation_header():
     "Prints the standard header for most pages of Oyster"
 
     print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + " ?>"
+    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
     print """
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
