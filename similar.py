@@ -40,12 +40,10 @@ cgitb.enable()
 
 import config
 myconfig = config.get_config()
-playlist = config.get_playlist()
-mediadir = myconfig['mediadir'][:-1]
 
 # Read all files into memory
 
-playlistfile = open(myconfig['savedir'] + 'lists/' + playlist)
+playlistfile = open(myconfig['savedir'] + 'lists/default')
 allfiles = []
 for line in playlistfile.readlines():
     allfiles.append(line[:-1].lower())
@@ -80,20 +78,19 @@ for line in urldata.readlines():
     if int(rate) > minrate:
         numsongs = searchartist(name)
         print "<tr><td>" + rate + "</td>"
+        similarlink = "<a href='similar.py?artist=" + \
+            urllib.quote(name) + "' title='Show similar artists for " + \
+            name + "'>" + name + "</a>"
+        print "<td>" + similarlink + "</td>"
         if numsongs > 0:
         
-            similarlink = "<a href='similar.py?artist=" + \
-                urllib.quote(name) + "' title='Show similar artists for " + \
-                name + "'>" + name + "</a>"
-            print "<td><b>" + similarlink + "</b></td>"
-            
             searchlink = "<a href='search.py?searchtype=normal&amp;" + \
-                "playlist=current&amp;search=" + urllib.quote(name) + \
+                "playlist=all&amp;search=" + urllib.quote(name) + \
                 "' title='Show songs'>" + str(numsongs) + " songs</a>"
             print "<td align='right'>" + searchlink + "</td>"
             
         else:
-            print "<td>" + name + "</td><td></td>"
+            print "<td></td>"
         print "</tr>" 
 
 print "</table>"
