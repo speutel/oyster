@@ -1,18 +1,13 @@
 ==oyster 0.4==
 
 --Requirements--
-For oyster.pl (the backend), you need mpg321 and/or ogg123 in $PATH.
-For the GUI, you need an apache with the capability to execute perl-CGI, and
-the following perl-modules:
-
-- liburi-perl
-- libcgi-perl
-- ...
+For oyster.py (the backend), you need mpg321 and/or ogg123 in $PATH.
+For the GUI, you need an apache with the capability to execute python-CGI
 
 Below you will find an example for the apache-config. It will allow
-perl-scripts to be executed.
+python-scripts to be executed.
 
-| AddHandler cgi-script .cgi .sh .pl
+| AddHandler cgi-script .cgi .sh .py
 |
 | [...]
 |
@@ -27,43 +22,15 @@ Launch the install-script
 
 Just untar oyster into a directory which is reachable to your
 webserver. Now make sure that the webserver is able to read this
-directory and its contents.
+directory and its contents. Also it should be able to create new
+files and directories here.
 
 --Configuration--
-Backend:
-oyster searches for its config file in the directory where it is started - and
-it has to be started from the dir where oyster.pl resides, because it won't
-find its modules otherwise. ;)
 
-oyster wants to have write access to the directory it is untar'ed. There may be
-some strange effects if it doesn't.
-
-There is a conf.sample in the tarfile, you can rename it to oyster.conf and
-edit it (don't use the default values, except you untar'ed oyster to /var/www/oyster).
-
-At the moment, there are the following keywords in this file:
-
-1. basedir: This is the directory where oyster has its temporary files and
-	 pipes. It will be deleted when oyster quits.
-
-2. savedir: oyster will save logs, playlists, blacklists, ... in this
-	 directory. It won't be deleted automatically. oyster must
-	 have the rights to create files here.
-
-3. mediadir: oyster will only "work" on files below this directory. This is
-	 where your music is.
-
-4. theme: Here you can specify a theme for the GUI.
-
-5. maxlastvotes: This specifies how many votes oyster saves. The probability
-	 for files in this list to be played is higher. (see voteplay)
-
-6. voteplay: The probability in percent that a file from lastvotes is played.
-
-Frontend: (GUI)
-The GUI searches for oyster.conf in the directory it is started.
+Open the location http://servername/oyster in your browser. Here
+you can edit your first configuration, test it and start oyster.
 
 --Enjoy--
-That's it. Start oyster (via the GUI, or by hand with ``perl oyster.pl'') and
+That's it. Start oyster (via the GUI, or by hand with ``python oyster.py'') and
 it will search in $mediadir for ogg and mp3 files, build a playlist and start
 playing. 

@@ -6,11 +6,11 @@ CHMOD=`which chmod`
 
 # Testing python
 
-PERL=`which python`
+PYTHON=`which python`
 
 echo -n "Searching for python... "
 
-if [ $PERL ]
+if [ $PYTHON ]
 then
  echo found!
 else
@@ -147,5 +147,8 @@ echo 1. Change owner of the files to the user which runs oyster
 echo "   (usually www-data)"
 echo 2. Give this user the permission to write to your audio device.
 echo 3. Configure your apache to execute those scripts.
-echo 4. Start your browser and have fun using Oyster!
+echo 4. Start your browser and point it to http://servername/oyster
+echo 5. Use \"Extras / Configuration Editor\"
+echo 6. Test your configuration with the \"configuration checker\" on the left
+echo 7. Have fun using Oyster!
 echo
