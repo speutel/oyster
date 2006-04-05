@@ -65,10 +65,6 @@ print """
 	<p>
 	  Your browser does not seem to support display of frames.
 	</p>
-	<p>
-	  Of course, you can use the
-	  <a href='oyster-gui.pl?frames=no'>oyster-version without frames</a>
-	</p>
   </noframes>
 </frameset>
 </html>
