@@ -99,7 +99,7 @@ if oysterruns:
 else:
     print "<td></td>"
 
-regexfile = cgi.escape("^" + soundfile + "$")
+regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
 
 if isblacklisted:
     print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>"
