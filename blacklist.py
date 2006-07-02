@@ -125,7 +125,7 @@ def delete_from_blacklist (affects):
 
     "removes a rule from the blacklist"
 
-    os.system ("cp " + savedir + "blacklists/" + playlist + " " + \
+    os.system ("cp \"" + savedir + "blacklists/" + playlist + "\" " + \
         savedir + "blacklist.tmp")
     blacklist = open(savedir + "blacklist.tmp")
     newblacklist = open(savedir + "blacklists/" + playlist, 'w')
