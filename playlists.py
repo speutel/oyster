@@ -237,13 +237,16 @@ for section in sectionkeys:
 
 print "</table>"
 
-print "<form method='post' target='_top' action='editplaylist.py' " + \
-    "enctype='application/x-www-form-urlencoded'>"
-print "<input type='hidden' name='action' value='addnewlist'/><input " + \
-    "type='text' name='newlistname'/>"
-print "<input type='submit' name='.submit' value='New list' " + \
-    "style='margin-left: 2em;'/>"
-print "<div></div></form><br/>"
+if oysterruns:
+    print "<form method='post' target='_top' action='editplaylist.py' " + \
+        "enctype='application/x-www-form-urlencoded'>"
+    print "<input type='hidden' name='action' value='addnewlist'/><input " + \
+        "type='text' name='newlistname'/>"
+    print "<input type='submit' name='.submit' value='New list' " + \
+        "style='margin-left: 2em;'/>"
+    print "<div></div></form><br/>"
+else:
+    print "<p>To create a new list, start oyster first!</p><br/>"
 
 print "<a href='configedit.py'>Configuration Editor</a>"
 
