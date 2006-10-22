@@ -107,7 +107,7 @@ print "<form method='post' action='search.py' " + \
 
 print "<fieldset class='searchform'>"
 print "<legend class='searchform'>Search for music</legend>"
-print "<input id='searchfield' type='text' size='40' name='search' value='" + search + "'/>"
+print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
 print "<input id='searchsubmit' type='submit' name='.submit' value='Search'/>"
 print "<table id='searchoptions'>"
 print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
