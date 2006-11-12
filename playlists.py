@@ -20,11 +20,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import config
+myconfig = config.get_config()
+
 def print_playlist(file):
     title = re.sub('\A.*_','',file)
     encfile = urllib.quote(file)
 
-    if os.path.getsize('lists/' + file) == 0:
+    if os.path.getsize(myconfig['savedir'] + '/lists/' + file) == 0:
         isempty = " <span class='emptylist'>(empty)</span>"
     else:
         isempty = ''
@@ -118,7 +121,6 @@ def listrename(oldname, newname):
 
 
 import cgi
-import config
 import taginfo
 import fifocontrol
 import cgitb
@@ -129,7 +131,6 @@ import common
 import re
 cgitb.enable()
 
-myconfig = config.get_config()
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 form = cgi.FieldStorage()
