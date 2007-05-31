@@ -75,6 +75,12 @@ for line in urldata.readlines():
         rate, hashcode, name = line[:-1].split(',')
     except ValueError:
         rate = minrate - 1
+
+    # Convert to "integer strings"
+
+    if rate.find(".") > -1:
+        rate = rate[:-4]
+
     if int(rate) > minrate:
         numsongs = searchartist(name)
         print "<tr><td>" + rate + "</td>"
