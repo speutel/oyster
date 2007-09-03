@@ -79,7 +79,7 @@ for line in urldata.readlines():
     # Convert to "integer strings"
 
     if rate.find(".") > -1:
-        rate = rate[:-4]
+        rate = rate[:rate.find(".")]
 
     if int(rate) > minrate:
         numsongs = searchartist(name)
