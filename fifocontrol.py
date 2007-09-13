@@ -47,7 +47,18 @@ def do_action (action, filename):
 
     mediadir = myconfig['mediadir'][:-1]
 
+    status = ''
+
+    if os.path.isfile(myconfig['basedir'] + 'status'):
+        statusfile = open(myconfig['basedir'] + 'status')
+        status = statusfile.readline()
+        statusfile.close()
+    
     if action != 'start' and action != 'addnewlist':
+        control = open(myconfig['basedir'] + 'control', 'w')
+
+    # Someone wants to start a paused oyster
+    if action == 'start' and status == 'paused':
         control = open(myconfig['basedir'] + 'control', 'w')
     
     if action[:12] == 'changerandom':
@@ -97,14 +108,19 @@ def do_action (action, filename):
         control.close()
         time.sleep(4)
     elif action == 'start':
-        os.system('python oyster.py &')
-        waitmax = 100
-        while waitmax > 0:
-            if os.path.isfile(myconfig['basedir'] + 'info'):
-                waitmax = 0
-            else:
-                time.sleep (1)
-                waitmax = waitmax - 1
+        if status == 'paused':
+            control.write("PAUSE\n")
+            control.close()
+            time.sleep(4)
+        else:
+            os.system('python oyster.py &')
+            waitmax = 100
+            while waitmax > 0:
+                if os.path.isfile(myconfig['basedir'] + 'info'):
+                    waitmax = 0
+                else:
+                    time.sleep (1)
+                    waitmax = waitmax - 1
     elif action == 'stop':
         control.write("QUIT\n")
         control.close()
