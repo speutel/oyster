@@ -218,3 +218,7 @@ ul#navigation a {
 ul#navigation a:hover {
     color: #AAA;
 }
+
+pre#lyric {
+    font-family: sans-serif;
+}

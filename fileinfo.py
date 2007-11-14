@@ -124,10 +124,16 @@ coverdata = common.get_cover(albumdir, myconfig['coverwidth'])
 
 print "<table border='0' width='100%'>"
 if tag.has_key('title'):
-    print "<tr><td class='fileinfo'><strong>Title</strong></td><td>" + tag['title'] + \
-        "</td><td rowspan='6' class='fileinfoimage' width='120'>" + coverdata + "</td></tr>"
+    print "<tr><td class='fileinfo'><strong>Title</strong></td><td>" + tag['title']
+
+    if tag.has_key('artist') and tag.has_key('title'):
+        print "<a href='lyric.py?artist=" + urllib.quote(tag['artist']) + \
+        "&amp;song=" + urllib.quote(tag['title']) + "'> (Songtext)</a>"
+
+    print "</td><td rowspan='6' class='fileinfoimage' width='120'>" + coverdata + "</td></tr>"
 else:
     print "<tr><td class='fileinfo'></td><td rowspan='6'>" + coverdata + "</td></tr>"
+
 
 if tag.has_key('artist'):
     print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
