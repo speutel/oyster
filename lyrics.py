@@ -60,7 +60,7 @@ try:
         lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
 
     if lyric == "Not found":
-        print "The lyric was not found. You may " + \
+        print "The lyrics were not found. You may " + \
             "<a href='lyrics.py?artist=" + urllib.quote(artist) + \
             "&amp;song=" + urllib.quote(song) + "'>try it again</a> " + \
             "or visit <a href='http://www.lyricwiki.org'>LyricWiki</a> yourself."
