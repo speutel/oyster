@@ -127,7 +127,7 @@ if tag.has_key('title'):
     print "<tr><td class='fileinfo'><strong>Title</strong></td><td>" + tag['title']
 
     if tag.has_key('artist') and tag.has_key('title'):
-        print "<a href='lyric.py?artist=" + urllib.quote(tag['artist']) + \
+        print "<a href='lyrics.py?artist=" + urllib.quote(tag['artist']) + \
         "&amp;song=" + urllib.quote(tag['title']) + "'> (Songtext)</a>"
 
     print "</td><td rowspan='6' class='fileinfoimage' width='120'>" + coverdata + "</td></tr>"
