@@ -48,26 +48,31 @@ except ImportError:
     print "</body></html>"
     sys.exit()
 
-print "<h1>Lyric for <i>" + artist + " - " + song + "</i></h1>\n"
+print "<h1>Lyrics for <i>" + artist + " - " + song + "</i></h1>\n"
 
-lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
-
-# Try once again if failed
-if lyric == "Not found":
-    import time
-    time.sleep(5)
+try:
     lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
 
-if lyric == "Not found":
-    print "The lyric was not found. You may " + \
-    "<a href='lyric.py?artist=" + urllib.quote(artist) + \
-    "&amp;song=" + urllib.quote(song) + "'>try it again</a> " + \
-    "or visit <a href='http://www.lyricwiki.org'>LyricWiki</a> yourself."
-else:
-    lyric = lyric.encode("utf-8")
-    print "<pre id='lyric'>"
-    print lyric
-    print "</pre>"
-    print "<strong>This lyric was received from <a href='http://www.lyricwiki.org'>LyricWiki</a></strong>"
+    # Try once again if failed
+    if lyric == "Not found":
+        import time
+        time.sleep(5)
+        lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
+
+    if lyric == "Not found":
+        print "The lyric was not found. You may " + \
+            "<a href='lyrics.py?artist=" + urllib.quote(artist) + \
+            "&amp;song=" + urllib.quote(song) + "'>try it again</a> " + \
+            "or visit <a href='http://www.lyricwiki.org'>LyricWiki</a> yourself."
+    else:
+        lyric = lyric.encode("utf-8")
+        print "<pre id='lyric'>"
+        print lyric
+        print "</pre>"
+        print "<strong>This lyrics were received from <a href='http://www.lyricwiki.org'>LyricWiki</a></strong>"
+except SAXParseException:
+    print "There was an unexpected error while communicating with the " + \
+        "Webservice of LyricWiki. Please <a href='lyrics.py?artist=" + \
+        urllib.quote(artist) + "&amp;song=" + urllib.quote(song) + "'>try it again</a>"
 
 print "</body></html>"
