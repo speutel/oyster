@@ -50,6 +50,9 @@ except ImportError:
 
 print "<h1>Lyrics for <i>" + artist + " - " + song + "</i></h1>\n"
 
+from xml.sax import SAXParseException
+from xml.parsers.expat import ExpatError
+
 try:
     lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
 
@@ -70,7 +73,7 @@ try:
         print lyric
         print "</pre>"
         print "<strong>This lyrics were received from <a href='http://www.lyricwiki.org'>LyricWiki</a></strong>"
-except SAXParseException:
+except (SAXParseException, ExpatError):
     print "There was an unexpected error while communicating with the " + \
         "Webservice of LyricWiki. Please <a href='lyrics.py?artist=" + \
         urllib.quote(artist) + "&amp;song=" + urllib.quote(song) + "'>try it again</a>"
