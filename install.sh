@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 MKDIR=`which mkdir`
 CP=`which cp`
@@ -132,6 +132,8 @@ echo -n "Copying files... "
 # Copying files
 
 $CP *.py $PATH
+$CP oysterlog.conf $PATH
+$CP conf.sample $PATH/oyster.conf
 $CP -r themes $PATH
 $CP index.html $PATH
 
