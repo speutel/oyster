@@ -133,7 +133,8 @@ echo -n "Copying files... "
 
 $CP *.py $PATH
 $CP oysterlog.conf $PATH
-$CP conf.sample $PATH/oyster.conf
+$MKDIR -p "$PATH/config"
+$CP conf.sample $PATH/config/default
 $CP -r themes $PATH
 $CP index.html $PATH
 
