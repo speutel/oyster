@@ -92,6 +92,8 @@ class Oyster:
     playreasons = []
     nextreason = ""
 
+    vol_regex = None
+
     # open fd for reading commands 
     control = None
 
@@ -179,6 +181,8 @@ class Oyster:
 
         # favmod is off at start
         self.__write_favmode("off")
+
+        self.write_volume()
         
         self.control = open(self.controlfile, 'r+')
 
@@ -226,11 +230,27 @@ class Oyster:
                 print "no r/w-access to all savedir-directories!"
                 print "exiting..."
                 sys.exit(1)
+
     def __write_favmode(self, status):
         """ writes string argument status to basedir/favmode """
         favfile = open(self.basedir + "/favmode", 'w')
         favfile.write(status + "\n")
         favfile.close()
+
+    def write_volume(self):
+        """ write volume percentage to basedir/volume """
+        volfile = open(self.basedir + "/volume", 'w')
+        volume = self.get_volume()
+        volfile.write(volume + "\n")
+        volfile.close()
+
+    def get_volume(self):
+        vol = os.popen(self.config['vol_get_cmd'])
+        if self.vol_regex is None:
+            self.vol_regex = re.compile(self.config['vol_filter_regexp'])
+        match = self.vol_regex.search(vol.readline())
+        vol.close()
+        return match.group(1)
 
     def __write_playlist_status(self):
         """ writes name of current playlist to basedir/playlist """
@@ -478,7 +498,7 @@ class Oyster:
         """ chooses one of the next files to play from either filelist or
         scores and writes it to basedir/nextfile """
 
-        log.debug("choose next file " + str(filepos)  + "to play")
+        log.debug("choose next file " + str(filepos)  + " to play")
         try:
             if delete:
                 del self.nextfilestoplay[filepos]
@@ -547,6 +567,7 @@ class Oyster:
             player = self.filetypes[filestring[suffixpos+1:]]
             self.history.append(filestring)
             self.__write_history()
+	    log.debug(player + " " + filestring)
             self.playerid = os.spawnl(os.P_NOWAIT, player, player, filestring)
             pfile = open(self.basedir + "/info", 'w')
             pfile.write(filestring + "\n")
@@ -763,9 +784,11 @@ class ControlThread(threading.Thread):
         self.oyster = oyster_inst
         self.controlfile = cfile
         self.start()
+
     def run(self):
         while 1:
             self.readControl()
+
     def readControl(self):
         commandline = self.controlfile.readline().rstrip()
         cpos = commandline.find(" ")
@@ -840,6 +863,15 @@ class ControlThread(threading.Thread):
                 self.oyster.shift(-1, arg)
             except ValueError:
                  print "ValueError! " + commandline[cpos+1:]
+        elif command == "VOLDOWN":
+            os.system(self.oyster.config['vol_down_cmd'])
+            self.oyster.write_volume()
+        elif command == "VOLUP":
+            os.system(self.oyster.config['vol_up_cmd'])
+            self.oyster.write_volume()
+        elif command == "VOLSET":
+            os.system(self.oyster.config['vol_set_cmd'] + " " + commandline[cpos+1])
+            self.oyster.write_volume()
 
         
 class PlaylistBuilder(threading.Thread):

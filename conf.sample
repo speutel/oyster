@@ -8,7 +8,7 @@ savedir=/var/www/oyster/
 # mediadir is where your files are. ;)
 # oyster will search your files under this directory and build a 
 # default playlist from these.
-mediadir=/Multimedia/Audio/
+mediadir=/data/media/Musik/
 # please specify the encoding which is used to display your filenames
 # most likely this is utf-8 or iso-8859-1
 encoding=utf-8
@@ -61,3 +61,17 @@ refresh=30
 # in the control center. midvolume specifies the value to which
 # the mixer is reset
 midvolume=50
+
+# Volume setting. Up and down commands are called as they are,
+# the set command is given an additional parameter. (volume percentage, range:
+# 1 to 100)
+vol_down_cmd=/usr/bin/aumix -w -5
+vol_up_cmd=/usr/bin/aumix -w +5
+vol_set_cmd=/usr/bin/aumix -w 
+vol_get_cmd=/usr/bin/aumix -w q
+vol_filter_regexp=pcm ([0-9]{1,3}),
+#vol_get_cmd=/usr/bin/setmixer -V 
+#vol_filter_regexp=vol - ([0-9]{1,3}),
+#vol_down_cmd="/usr/bin/setmixer vol -5"
+#vol_up_cmd="/usr/bin/setmixer vol +5"
+#vol_set_cmd="/usr/bin/setmixer vol "

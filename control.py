@@ -42,13 +42,14 @@ except KeyError:
     pass
 
 try:
+    cmd = ""
     volume = form['vol'].value
     if volume == 'down':
-        os.system('/usr/bin/aumix -w -5')
+        fifocontrol.do_action("voldown", '')
     elif volume == 'up':
-        os.system('/usr/bin/aumix -w +5')
+        fifocontrol.do_action("volup", '')
     elif int(volume) > 0:
-        os.system('/usr/bin/aumix -w ' + volume)
+        fifocontrol.do_action("volset " + volume, '')
 except KeyError:
     pass
 
@@ -70,9 +71,15 @@ print "<body>"
 print "<div><a href='control.py' style='position:absolute; top:2px; right:2px' title='Refresh'>"
 print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
-volume = commands.getoutput('aumix -w q')
-volume = re.sub('\Apcm\ ','',volume)
-volume = re.sub(',.*\Z','', volume)
+
+
+try:
+    volfile = open(myconfig['basedir'] + 'volume')
+    volume = volfile.readline()[:-1]
+    volfile.close()
+except IOError:
+    volume = "unknown"
+#volume = re.sub('\Apcm\ ','',volume)
 
 # Is oyster in FAV-Mode?
 

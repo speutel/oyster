@@ -39,6 +39,7 @@ def do_action (action, filename):
     needed commands into the FIFO
     """
 
+
     filename = os.path.normpath(str(filename))
     filename = filename.replace('//','/')
     filename = filename.replace('../','')
@@ -161,6 +162,14 @@ def do_action (action, filename):
     elif action == 'nofavmode':
         control.write("NOFAVMODE\n")
         control.close()
+    elif action.startswith('vol'):
+        if action == 'voldown':
+            control.write("VOLDOWN\n")
+        elif action == 'volup':
+            control.write("VOLUP\n")
+        elif action.startswith('volset'):
+            control.write("VOLSET " + action[7:] + "\n")
+    control.close()
 
 def do_vote (votefile):
     """
