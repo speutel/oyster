@@ -140,7 +140,7 @@ class NowPlaying(threading.Thread):
         #m=<mb-trackid>
             #The MusicBrainz Track ID, or empty if not known.  
         properties = {
-                        "s": self.session_id, 
+                        "s": self.lastfm.session_id, 
                         "a": track.artist, 
                         "t": track.trackname, 
                         "b": track.album, 
@@ -152,9 +152,9 @@ class NowPlaying(threading.Thread):
         params = urllib.urlencode(properties, 1)
         counter = 3
         while counter > 0:
-            ret = self.lastfm.request(self.np_url, body=params)
+            ret = self.lastfm.request(self.lastfm.np_url, body=params)
             if ret[0] == "BADSESSION":
-                ret = self.lastfm.handshake(self.user, self.password)
+                ret = self.lastfm.handshake(self.lastfm.user, self.lastfm.password)
                 return self.run()
             elif ret[0] != "OK":
                 counter -= 1
@@ -209,7 +209,7 @@ class Submit(Scrobbler, threading.Thread):
 
         counter = 3
         while counter > 0:
-            ret = self.lastfm.request(self.submit_url, body=params)
+            ret = self.lastfm.request(self.lastfm.submit_url, body=params)
             if ret[0] == "BADSESSION":
                 log.debug("badsession -> handshake")
                 ret = self.lastfm.handshake(self.lastfm.user, self.lastfm.password)
