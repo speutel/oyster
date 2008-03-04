@@ -211,7 +211,8 @@ class Submit(Scrobbler, threading.Thread):
         while counter > 0:
             ret = self.lastfm.request(self.submit_url, body=params)
             if ret[0] == "BADSESSION":
-                ret = self.lastfm.handshake(self.user, self.password)
+                log.debug("badsession -> handshake")
+                ret = self.lastfm.handshake(self.lastfm.user, self.lastfm.password)
                 return self.submit(track=track)
             elif ret[0] == "OK":
                 log.debug("submitted %s - %s" % (track.artist, track.trackname))
@@ -221,8 +222,7 @@ class Submit(Scrobbler, threading.Thread):
 
         # re-handshake?
         if counter == 0:
-            ret = self.lastfm.handshake(self.user, self.password)
-            (self.status, self.session_id, self.np_url, self.submit_url) = ret
+            self.lastfm.handshake(self.lastfm.user, self.lastfm.password)
             if errorhandling:
                 self.submit(track, False)
                 log.debug("submitted %s - %s" % (track.artist, track.trackname))
