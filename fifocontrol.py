@@ -169,7 +169,7 @@ def do_action (action, filename):
             control.write("VOLUP\n")
         elif action.startswith('volset'):
             control.write("VOLSET " + action[7:] + "\n")
-    control.close()
+        control.close()
 
 def do_vote (votefile):
     """
