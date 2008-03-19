@@ -728,6 +728,26 @@ class Oyster:
                 # path is relative 
                 self.enqueue(listpath + "/" + line.rstrip(), "ENQUEUED")
 
+    def buildRegexpList(self, regexp):
+        deflist = open(self.listdir + "/default", 'r')
+        deflines = deflist.readlines()
+        try:
+            ret = []
+            matcher = re.compile(regexp)
+            for line in deflines:
+                line = line.replace(self.mediadir, '', 1)
+                if matcher.match(line.rstrip()):
+                    ret.append(self.mediadir + line)
+            if len(ret) == 0:
+                log.debug("regexplist: no matches")
+                return deflines
+            return ret
+        except:
+            log.debug("regexplist: exception")
+            return deflines
+
+
+
     def loadPlaylist(self, listname, skip=True, checkskip=False):
         """ load oyster-playlist (discard list in memory) """
         # do we need to skip the next random songs?
@@ -754,7 +774,12 @@ class Oyster:
             self.scoresfile = self.savedir + "/scores/" + self.playlist
             self.__update_scores()
             self.__write_playlist_status()
-            for line in deflist.readlines():
+            lines = deflist.readlines()
+            if lines[0].startswith("^"):
+                log.debug("regex list")
+                ret = self.buildRegexpList(lines[0].rstrip())
+                lines = ret
+            for line in lines:
                 self.filelist.append(line.rstrip())
             self.nextfilestoplay = []
             if skip:
