@@ -54,6 +54,8 @@ def get_tag (filename):
         tag = get_mp3_tags(filename)
     elif ((filename[-3:]).lower() == 'ogg'):
         tag = get_ogg_tags(filename)
+    elif ((filename[-4:]).lower() == 'flac'):
+        tag = get_ogg_tags(filename)
 
     # Count current score
 
@@ -146,14 +148,19 @@ def get_mp3_tags (filename):
 
 def get_ogg_tags (filename):
 
-    tag = {}
-    tag['format'] = 'OGG Vorbis'
     filename = filename.replace("`","\`")
     filename = filename.replace('"','\\"')
-    
-    os.environ['LANG'] = myconfig['tagencoding']
 
-    ogg = os.popen('ogginfo "' + filename + '"')
+    os.environ['LANG'] = myconfig['tagencoding']
+    
+    tag = {}
+
+    if ((filename[-3:]).lower() == 'ogg'):
+        tag['format'] = 'OGG Vorbis'
+        ogg = os.popen('ogginfo "' + filename + '"')
+    elif ((filename[-4:]).lower() == 'flac'):
+        tag['format'] = 'FLAC'
+        ogg = os.popen('metaflac --export-tags-to=- "' + filename + '"')
 
     ogg_regex = {
         'title=(.*)':                 'title',

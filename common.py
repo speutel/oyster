@@ -213,7 +213,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 # Print all filenames in basepath
 
                 filename = os.path.basename(results[counter])
-                matcher = re.match('(.*)\.(...)\Z', filename) # FIXME Dateiendungen mit < 3 Zeichen
+                matcher = re.match('(.*)\.([^\.]+)\Z', filename)
                 nameonly = matcher.group(1)
                 escapedfile = urllib.quote(basepath + filename)
 
