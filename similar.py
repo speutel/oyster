@@ -78,7 +78,7 @@ for line in urldata.readlines():
 
     # Convert to "integer strings"
 
-    if rate.find(".") > -1:
+    if str(rate).find(".") > -1:
         rate = rate[:rate.find(".")]
 
     if int(rate) > minrate:
