@@ -97,16 +97,21 @@ def sort_results (topdir):
     """
     sort_results sorts a directory and its subdirectories by
     "first dirs, then files"
+
+    But do we really need this method?
     """
 
     skip = '' # Do not add directories twice
     dirs = []
     files = []
 
+    dirregexp = re.compile('\A' + re.escape(topdir) + '([^/]+)/')
+    fileregexp = re.compile('\A' + re.escape(topdir) + '[^/]*')
+
     for line in results:
         if ((skip != '') and not (line.find(skip) == 0)) or (skip == ''):
-            dirmatcher = re.match('\A' + re.escape(topdir) + '([^/]+)/', line)
-            filematcher = re.match('\A' + re.escape(topdir) + '[^/]*', line)
+            dirmatcher = dirregexp.match(line)
+            filematcher = fileregexp.match(line)
             if dirmatcher != None:
                 # line is a directory
                 skip = topdir + dirmatcher.group(1) + "/"
