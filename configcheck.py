@@ -141,7 +141,8 @@ test_program('the OGG-player', myconfig['ogg'])
 test_program('the FLAC-player', myconfig['flac'])
 test_program('the mixer program', '/usr/bin/aumix')
 test_program('the mp3 tag reader', '/usr/bin/id3v2')
-test_program('the ogg/flac tag reader', '/usr/bin/ogg123')
+test_program('the ogg tag reader', '/usr/bin/ogginfo')
+test_program('the flac tag reader', '/usr/bin/metaflac')
 
 print "</table>"
 
