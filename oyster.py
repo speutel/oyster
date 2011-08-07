@@ -32,6 +32,7 @@ import signal, re
 import oysterconfig
 import datetime
 import lastfm
+import gstreamer
 
 __version__ = 2
 __revision__ = 1
@@ -194,6 +195,11 @@ class Oyster:
         plhelper = PlaylistBuilder()
         plhelper.buildPlaylist(self)
 
+        if self.config.has_key('enable_gstreamer'):
+            self.gstreamer = gstreamer.GStreamer()
+        else:
+            self.gstreamer = None
+
         self.scrobbler = lastfm.Scrobbler(self.config['lfm_user'], self.config['lfm_password'])
         if self.config['lfm_scrobble'] != "1":
             self.scrobbler.scrobble = False
@@ -255,7 +261,11 @@ class Oyster:
             self.vol_regex = re.compile(self.config['vol_filter_regexp'])
         match = self.vol_regex.search(vol.readline())
         vol.close()
-        return match.group(1)
+        try:
+            return match.group(1)
+        except:
+            return "-1"
+
 
     def __write_playlist_status(self):
         """ writes name of current playlist to basedir/playlist """
@@ -556,12 +566,16 @@ class Oyster:
 
         self.__write_scores()
 
-        if self.playerid != 0:
-            try:
-                os.kill(self.playerid, signal.SIGCONT)
-                os.kill(self.playerid, signal.SIGTERM)
-            except OSError:
-                pass
+        if self.gstreamer is None:
+            if self.playerid != 0:
+                try:
+                    os.kill(self.playerid, signal.SIGCONT)
+                    os.kill(self.playerid, signal.SIGTERM)
+                except OSError:
+                    pass
+        else:
+            self.gstreamer.stop()
+
         self.__playlog(self.__gettime() + " QUIT " + self.filetoplay )  
         sys.exit()
 
@@ -573,12 +587,15 @@ class Oyster:
             self.history.append(filestring)
             self.__write_history()
             log.debug(player + " " + filestring)
-            self.playerid = os.spawnl(os.P_NOWAIT, player, player, filestring)
             pfile = open(self.basedir + "/info", 'w')
             pfile.write(filestring + "\n")
             pfile.close()
             self.scrobbler.nowplaying(filestring)
-            os.waitpid(self.playerid, 0)
+            if self.gstreamer is None:
+                self.playerid = os.spawnl(os.P_NOWAIT, player, player, filestring)
+                os.waitpid(self.playerid, 0)
+            else:
+                self.gstreamer.play(filestring)
             self.scrobbler.submitAll()
         self.__done()
 
@@ -593,11 +610,14 @@ class Oyster:
     def next(self):
         """ skip the playing file """
         self.nextreason = "SKIPPED"
-        if self.playerid != 0:
-            try:
-                os.kill(self.playerid, signal.SIGTERM)
-            except OSError:
-                pass
+        if self.gstreamer is None:
+            if self.playerid != 0:
+                try:
+                    os.kill(self.playerid, signal.SIGTERM)
+                except OSError:
+                    pass
+        else:
+            self.gstreamer.stop()
 
     def pause(self):
         """ pause playing """
@@ -605,11 +625,14 @@ class Oyster:
         pfile = open(self.basedir + "/status", 'w')
         pfile.write("paused")
         pfile.close()
-        if self.playerid != 0:
-            try:
-                os.kill(self.playerid, signal.SIGSTOP)
-            except OSError:
-                pass
+        if self.gstreamer is None:
+            if self.playerid != 0:
+                try:
+                    os.kill(self.playerid, signal.SIGSTOP)
+                except OSError:
+                    pass
+        else:
+            self.gstreamer.pause()
     
     def unpause(self):
         """ resume playing """
@@ -617,11 +640,14 @@ class Oyster:
         pfile = open(self.basedir + "/status", 'w')
         pfile.write("playing")
         pfile.close()
-        if self.playerid != 0:
-            try:
-                os.kill(self.playerid, signal.SIGCONT)
-            except OSError:
-                pass
+        if self.gstreamer is None:
+            if self.playerid != 0:
+                try:
+                    os.kill(self.playerid, signal.SIGCONT)
+                except OSError:
+                    pass
+        else:
+            self.gstreamer.unpause()
 
     def enableFavmode(self):
         """ enable favmode (play only from scores) """
