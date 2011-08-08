@@ -71,10 +71,10 @@ class Scrobbler:
         artist = title = album = length = track = ""
 
         mimetype = self.ms.file(filename)
-        if mimetype == 'application/ogg':
+        if mimetype.startswith('application/ogg'):
             tags = mutagen.oggvorbis.OggVorbis(filename)
             length = str(int(tags.info.length))
-        elif mimetype == 'audio/mpeg':
+        elif mimetype.startswith('audio/mpeg'):
             tags = mutagen.mp3.MP3(filename, ID3=mutagen.easyid3.EasyID3)
             length = str(int(tags.info.length))
         else:
