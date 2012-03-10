@@ -9,56 +9,54 @@ __author__ = 'benjamin@hanzelmann.de'
 class GStreamer(object):
     def __init__(self):
         self.__lock = threading.Condition()
-        self.player = gst.element_factory_make("playbin2", "player")
-        rg = gst.element_factory_make("rgvolume", "rg")
-        gst.Bin.add(self.player, rg)
 
-        sink = gst.element_factory_make("pulsesink", "sink")
-        self.player.set_property("audio-sink", sink)
 
-        self.bus = self.player.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect("message", self.on_message)
+#        self.player = gst.element_factory_make("playbin2", "player")
+#        converter = gst.element_factory_make("audioconvert", "converter")
+#        rg = gst.element_factory_make("rgvolume", "rg")
+#
+#        gst.element_link_many(self.player, converter, rg)
+#
+#        sink = gst.element_factory_make("pulsesink", "sink")
+#        self.player.set_property("audio-sink", sink)
+
 
     def on_message(self, bus, message):
+        print "on_message"
         t = message.type
         print t
         if t == gst.MESSAGE_EOS:
-            # wrap up
-            self.player.set_state(gst.STATE_NULL)
-            self.__lock.acquire()
-            print "notifying gstreamer lock"
-            self.__lock.notifyAll()
-            self.__lock.release()
+            self.stop()
         elif t == gst.MESSAGE_ERROR:
             err, debug = message.parse_error()
             print err
             print debug
-            self.player.set_state(gst.STATE_NULL)
-            self.__lock.acquire()
-            print "notifying gstreamer lock"
-            self.__lock.notifyAll()
-            self.__lock.release()
+            self.stop()
 
 
 
     def play(self, file):
         uri = "file://" + file
-        self.player.set_property("uri", uri)
+        self.player = gst.parse_launch("playbin2 uri=%s| audioconvert | rgvolume | pulsesink" %(uri,))
+#        self.player.set_property("uri", uri)
         self.player.set_state(gst.STATE_PLAYING)
+        self.bus = self.player.get_bus()
+        self.bus.add_signal_watch()
+        self.bus.connect("message", self.on_message)
         # block until done
-        self.__lock.acquire()
-        print "waiting on gstreamer lock"
-        self.__lock.wait()
-        self.__lock.release()
+        while self.player.get_state() == gst.STATE_PLAYING:
+            time.sleep(1)
+
+    def unlock(self):
+        self.__lock.acquire( )
+        self.__lock.notifyAll( )
+        self.__lock.release( )
 
     def stop(self):
         self.player.set_state(gst.STATE_NULL)
-        print "acquiring gstreamer lock"
-        self.__lock.acquire()
-        print "notifying gstreamer lock"
-        self.__lock.notifyAll()
-        self.__lock.release()
+        self.bus.disconnect()
+        self.bus = None
+        self.unlock( )
 
     def pause(self):
         self.player.set_state(gst.STATE_PAUSED)
@@ -76,18 +74,9 @@ if __name__ == "__main__":
     gs = GStreamer()
     class PlayThread(threading.Thread):
         def run(self):
-            gs.play("/mnt/munin/download/Musik/Alben/3 Doors Down/3 Doors Down - Seventeen Days/01 - Right Where I Belong.mp3")
+            gs.play("test_music/2.ogg")
 
     print "play"
     PlayThread().start()
     import time
-    #while gs.playmode:
-    time.sleep(3)
-    print "pause"
-    gs.pause()
-    time.sleep(3)
-    print "cont"
-    gs.unpause()
-    time.sleep(3)
-    print "stop"
-    gs.stop()
+    time.sleep(20)

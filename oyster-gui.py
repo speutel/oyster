@@ -177,7 +177,7 @@ else:
     statusstr = ''
 
 print "<table width='100%' border='0'>"
-print "<tr><td colspan='2'><strong>Now playing" + playreason + ":</strong></td>"
+print "<tr><td colspan='2'><strong>L&auml;uft gerade:</strong></td>"
 print "<td align='center' style='width:75px'><strong>Score</strong></td></tr>"
 print "<tr><td>"
 print "<strong><a class='file' href='fileinfo.py?file=" + info + "' target='browse' title='View details'>" + tag['display'] + "</a>"
@@ -210,7 +210,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 maxvotes = numvotes
     votefile.close()
             
-    print "<tr><td width='70%' align='left'><strong>Voted File</strong></td><td align='center'><strong>Votes</strong></td><td></td></tr>"
+    print "<tr><td width='70%' align='left'><strong>Gew&uuml;nscht</strong></td><td></td></tr>"
 
     while maxvotes > 0:
         for filename in votelist:
@@ -220,7 +220,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 escapedtitle = urllib.quote(title)
                 print "<tr><td>"
                 print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' target='browse'>" + display + "</a>"
-                print "</td><td align='center'>" + str(votes[filename]) + "</td>"
+                print "</td>"
                 print "<td align='center'><a href='oyster-gui.py?action=unvote&amp;file=" + escapedtitle + "'>Unvote</a>"
                 print "</td></tr>"
         maxvotes -= 1
@@ -229,7 +229,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
 
 i = 0
 
-print "<tr><td colspan='2'><strong>Next random:</strong></td>"
+print "<tr><td colspan='2'><strong>Als n&auml;chstes:</strong></td>"
 print "<td></td></tr>"
 for nextinfo in nextarray:
     nexttag = taginfo.get_tag(nextinfo)

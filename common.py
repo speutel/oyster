@@ -151,7 +151,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "<table width='100%'><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
@@ -165,11 +165,11 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "<table width='100%'><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&adddir=" + escapeddir + \
-                        "' target='playlist'>Add</a></td>"
+                        "' >Add</a></td>"
                     print "</tr></table>"
                     
                 else:
@@ -182,7 +182,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "<table width='100%'><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
@@ -192,11 +192,11 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "<table width='100%'><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&adddir=" + escapeddir + \
-                        "' target='playlist'>Add</a></td>"
+                        "' >Add</a></td>"
                     print "</tr></table>"
                 else:
                     print "<strong><a href='browse.py?dir=" + escapeddir + \
@@ -242,12 +242,16 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 elif playlistmode == 2:
                     print "<td align='right'><a href='editplaylist.py?" + \
                     "playlist=" + playlist + "&amp;addfile=" + escapedfile + \
-                        "' target='playlist' class='" + cssclass + "'>Add</a></td>"
+                        "'  class='" + cssclass + "'>Add</a></td>"
                 else:
-                    if os.path.exists(myconfig['basedir']):
+                    (mayVote, reason) = may_vote(basepath+filename, playlist)
+                    if os.path.exists(myconfig['basedir']) and mayVote:
                         print "<td align='right'><a href='oyster-gui.py" + \
                         "?vote=" + escapedfile + "' class='" + cssclass + \
-                        "' target='curplay'>Vote</a></td>"
+                        "' >W&uuml;nschen</a></td>"
+                    elif not mayVote:
+                        print "<td align='right'><span class='" + cssclass + "' " +\
+                              " style='font-style: italic;' '>" + reason + "</span></td>"
                     else:
                         print "<td></td>"
                 print "</tr></table>\n"
@@ -280,6 +284,11 @@ def votes():
 
 def may_vote(f, playlist):
     exists = False
+
+    if playlist is None or len(playlist) == 0:
+        playlistFile = open(myconfig['basedir'] + 'playlist')
+        playlist = playlistFile.readline().rstrip()
+        playlistFile.close()
 
     infoFile = file( myconfig['basedir'] + "/info" )
     currentfile = infoFile.readline( )

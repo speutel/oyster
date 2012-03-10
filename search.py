@@ -106,23 +106,20 @@ print "<form method='post' action='search.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
 print "<fieldset class='searchform'>"
-print "<legend class='searchform'>Search for music</legend>"
+#print "<legend class='searchform'>Musik Suchen</legend>"
 print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
-print "<input id='searchsubmit' type='submit' name='.submit' value='Search'/>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
 print "<table id='searchoptions'>"
-print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
-    normalcheck + "/> Normal<br/>"
-print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-    "/> Regular expression<br/></td>"
-    
+print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
+
 if editplaylist:
     print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
     print "<input type='hidden' name='mode' value='playlist'/>"
 else:
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-        "/> Only current playlist<br/>"
+        "/> Aktuelle Liste<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "All songs<br/></td>"
+        "&Uuml;berall<br/></td>"
 
 print "</tr></table>"
 print "</fieldset></form>"
