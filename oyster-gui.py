@@ -30,6 +30,7 @@ import os.path
 import urllib
 import commands
 import re
+import common
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -62,27 +63,29 @@ if form.has_key('vote'):
 if form.has_key('votelist'):
     fifocontrol.do_votelist(form['votelist'].value)
 
-print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-print """
-<!DOCTYPE html 
-         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
- <title>Oyster-GUI</title>
-"""
-print " <meta http-equiv='refresh' content='" + myconfig['refresh'] + "; URL=oyster-gui.py'/>"
+#print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+#print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
+#print """
+#<!DOCTYPE html
+#         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+#         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+#<html xmlns="http://www.w3.org/1999/xhtml">
+#<head>
+# <title>Oyster-GUI</title>
+#"""
+#print " <meta http-equiv='refresh' content='" + myconfig['refresh'] + "; URL=oyster-gui.py'/>"
+#
+#print " <meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
+#
+#print " <link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css'/>"
+#print " </head>"
+#print " <body>"
 
-print " <meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
+#print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
+#print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
+#print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
-print " <link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css'/>"
-print " </head>"
-print " <body>"
-
-print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
-print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
-print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
+common.navigation_header()
 
 if not os.path.exists(myconfig['savedir'] + 'blacklists') or not os.path.exists(myconfig['savedir'] + 'lists') \
 or not os.path.exists(myconfig['savedir'] + 'logs') or not os.path.exists(myconfig['savedir'] + 'scores'):

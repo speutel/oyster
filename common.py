@@ -35,13 +35,14 @@ cgitb.enable()
 
 myconfig = config.get_config()
 
-def navigation_header():
+def navigation_header(header=True):
 
     "Prints the standard header for most pages of Oyster"
 
-    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-    print """
+    if header:
+        print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+        print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
+        print """
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -49,20 +50,20 @@ def navigation_header():
 <head>
  <title>Oyster-GUI</title>
 """
-    print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + \
-        myconfig['theme'] + "/layout.css' />"
-    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + \
-        "/favicon.png' />"
-    print "</head><body>"
-    
+        print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
+        print "<link rel='stylesheet' type='text/css' href='themes/" + \
+            myconfig['theme'] + "/layout.css' />"
+        print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + \
+            "/favicon.png' />"
+        print "</head><body>"
+        print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
+        print "<div style='position:absolute; top:2px; right:2px'>"
+        print "</div>"
+
     print "<ul id='navigation'>"
-    print "<li><a href='browse.py'>Browse</a></li>"
-    print "<li><a href='search.py'>Search</a></li>"
-    print "<li><a href='playlists.py'>Playlists</a></li>"
-    print "<li><a href='blacklist.py'>Blacklist</a></li>"
-    print "<li><a href='score.py'>Scoring</a></li>"
-    print "<li><a href='extras.py'>Extras</a></li>"
+    print "<li><a href='oyster-gui.py'>Zuhause</a></li>"
+    print "<li><a href='browse.py'>St&ouml;bern</a></li>"
+    print "<li><a href='search.py'>Suchen</a></li>"
     print "</ul><br/>"
     print "<hr/>"
 
