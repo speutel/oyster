@@ -116,14 +116,14 @@ if not editplaylist:
     elif playlist != 'default':
         print "<p ><a class='file' href='browse.py?playlist=" + \
             urllib.quote(playlist) + "&dir=" + curdir + "&checkdir=true'>" + \
-            "Browse in current playlist</a></p>"
+            "Nur in aktueller Playlist st&ouml;bernBrowse in current playlist</a></p>"
 
 if os.path.exists(mediadir + givendir):
     print "<p>" + common.get_cover(mediadir + givendir, "100")
 
     # split path along "/", create link for every part
 
-    print "<strong>Current directory: "
+    print "<strong>Aktuelles Verzeichnis: "
 
     if form.has_key('playlist'):
         print "<a href='browse.py?dir=/" + mode + "&amp;playlist=" + \
@@ -141,7 +141,7 @@ if os.path.exists(mediadir + givendir):
             "&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>"  + escapedpartdir + \
             "</a>"
         else:
-            print "/ <a href='browse.py?dir=" + escapeddir + mode + "'>" + \
+            print "/ <a href='browse.py?dir=/" + escapeddir + mode + "'>" + \
                 escapedpartdir + "</a>"
         incdir = incdir + partdir + '/'
 

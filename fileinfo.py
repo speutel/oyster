@@ -61,7 +61,7 @@ if os.path.exists(myconfig['basedir']):
 else:
     oysterruns = 0
 
-print "<p>Info for "
+print "<p>Info f&uuml;r "
 
 subdir = soundfile.replace(mediadir,'',1)
 subdir = os.path.dirname(subdir)
@@ -91,21 +91,18 @@ if not os.access(mediadir + soundfile, os.R_OK):
     sys.exit()
 
 print "<table width='100%'><tr>"
-if oysterruns:
+(mayVote, reason) = common.may_vote(soundfile,None)
+if oysterruns and mayVote:
     print "<td align='left'><span class='file'><a class='file' href='oyster-gui.py?" + \
-        "vote=" + escapedfile + "' target='curplay'>Vote</a> / " + \
-        "<a class='file' href='oyster-gui.py?action=enqueue&amp;file=" + escapedfile + \
-        "' target='curplay'>Enqueue</a> this song</span></td>"
+        "vote=" + escapedfile + "' >Diesen Song w&uuml;nschen</a> " + \
+        "</span></td>"
+elif oysterruns and not mayVote:
+    print "<td><span class='file' " +\
+          " style='font-style: italic;' '>" + reason + "</span></td>"
 else:
     print "<td></td>"
 
 regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
-
-if isblacklisted:
-    print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>"
-else:
-    print "<td align='right'><a class='file' href='blacklist.py?" + \
-        "affects=" + regexfile + "&amp;action=add'>Add this song to Blacklist</a></td></tr></table>"
 
 tag = taginfo.get_tag(mediadir + soundfile)
 
@@ -124,11 +121,7 @@ coverdata = common.get_cover(albumdir, myconfig['coverwidth'])
 
 print "<table border='0' width='100%'>"
 if tag.has_key('title'):
-    print "<tr><td class='fileinfo'><strong>Title</strong></td><td>" + tag['title']
-
-    if tag.has_key('artist') and tag.has_key('title'):
-        print "<a href='lyrics.py?artist=" + urllib.quote(tag['artist']) + \
-        "&amp;song=" + urllib.quote(tag['title']) + "'> (Songtext)</a>"
+    print "<tr><td class='fileinfo'><strong>Titel</strong></td><td>" + tag['title']
 
     print "</td><td rowspan='6' class='fileinfoimage' width='120'>" + coverdata + "</td></tr>"
 else:
@@ -136,23 +129,20 @@ else:
 
 
 if tag.has_key('artist'):
-    print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
+    print "<tr><td class='fileinfo'><strong>K&uuml;nstler</strong></td><td>"
     print "<a href='search.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
         "this artist'>" + tag['artist'] + "</a></td></tr>"
     print "<tr><td></td><td>"
-    print "<a href='similar.py?artist=" + urllib.quote(tag['artist']) + \
-        "' class='file'>Show similar artists</a>"
     print "</td></tr>"
 
 tagtuple = (
     ('Album', 'album'),
-    ('Track Number', 'track'),
-    ('Year', 'year'),
+    ('Track Nummer', 'track'),
+    ('Jahr', 'year'),
     ('Genre', 'genre'),
-    ('Comment', 'comment'),
-    ('File Format', 'format'),
-    ('Playtime', 'playtime')
+    ('Kommentar', 'comment'),
+    ('Laufzeit', 'playtime')
 )
 
 for line in tagtuple:
@@ -161,13 +151,6 @@ for line in tagtuple:
             "<td>" + tag[line[1]] + "</td></tr>"
 
 print "<tr><td colspan='2'>&nbsp;</td></tr>"
-print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>" + str(timesplayed) + "</td></tr>"
-print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>"
-print "<td><a href='fileinfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
-print "<strong>" + str(tag['score']) + "</strong>"
-print " <a href='fileinfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a></td></tr>"
 print "</table>"
 
 print "</body></html>"

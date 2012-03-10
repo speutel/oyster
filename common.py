@@ -56,12 +56,12 @@ def navigation_header(header=True):
         print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + \
             "/favicon.png' />"
         print "</head><body>"
-        print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
+        print "<div><a href='oyster-gui.py'><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='200' style='margin-bottom:10px'/></a></div>"
         print "<div style='position:absolute; top:2px; right:2px'>"
         print "</div>"
 
     print "<ul id='navigation'>"
-    print "<li><a href='oyster-gui.py'>Zuhause</a></li>"
+    print "<li><a href='oyster-gui.py'>Bimmbammbumm</a></li>"
     print "<li><a href='browse.py'>St&ouml;bern</a></li>"
     print "<li><a href='search.py'>Suchen</a></li>"
     print "</ul><br/>"
