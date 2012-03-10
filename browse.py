@@ -111,10 +111,10 @@ if not editplaylist:
     else:
         curdir = '/'
     if form.has_key('playlist'):
-        print "<p align='right'><a class='file' href='browse.py" + \
+        print "<p ><a class='file' href='browse.py" + \
             "?dir=" + curdir + "'>Browse all files</a></p>"
     elif playlist != 'default':
-        print "<p align='right'><a class='file' href='browse.py?playlist=" + \
+        print "<p ><a class='file' href='browse.py?playlist=" + \
             urllib.quote(playlist) + "&dir=" + curdir + "&checkdir=true'>" + \
             "Browse in current playlist</a></p>"
 
@@ -133,7 +133,7 @@ if os.path.exists(mediadir + givendir):
 
     dirs = givendir[:-1].split('/')
     incdir = ''
-    for partdir in dirs:
+    for partdir in dirs[1:]:
         escapeddir = urllib.quote(incdir + partdir)
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
@@ -141,7 +141,7 @@ if os.path.exists(mediadir + givendir):
             "&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>"  + escapedpartdir + \
             "</a>"
         else:
-            print "<a href='browse.py?dir=" + escapeddir + mode + "'>" + \
+            print "/ <a href='browse.py?dir=" + escapeddir + mode + "'>" + \
                 escapedpartdir + "</a>"
         incdir = incdir + partdir + '/'
 
@@ -231,7 +231,7 @@ else:
 dirs.sort()
 files.sort()
 
-print "<table width='100%'>"
+print "<table >"
 
 # First, display all directories
 
@@ -244,7 +244,7 @@ for curdir in dirs:
         if editplaylist:
             print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
                 urllib.quote(form['playlist'].value) + mode + "'>" + curdir + "</a></td>"
-            print "<td align='right'><a href='editplaylist.py?" + \
+            print "<td ><a href='editplaylist.py?" + \
                 "playlist=" + urllib.quote(form['playlist'].value) + "&adddir=" + \
                 escapeddir + "' target='playlist'>Add</a></td>"
         else:
@@ -313,7 +313,7 @@ for curfile in files:
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         if editplaylist:
-            print "<td align='right'><a class='" + cssfileclass + "' href=" + \
+            print "<td><a class='" + cssfileclass + "' href=" + \
                 "'editplaylist.py?add=" + escapeddir + "' target=" + \
                 "'playlist'>Add</a></td>"
         else:

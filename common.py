@@ -148,7 +148,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 
                     # Browse-window of playlist editor
                     
-                    print "<table width='100%'><tr><td align='left'>"
+                    print "<table><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
                         "' >" + cgi.escape(cutnewpath) + \
@@ -162,7 +162,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
                     # Search-window of playlist-editor
                 
-                    print "<table width='100%'><tr><td align='left'>"
+                    print "<table><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
                         "' >" + cgi.escape(cutnewpath) + \
@@ -179,7 +179,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
             else:
                 escapeddir = urllib.quote("/" + cutnewpath)
                 if playlistmode == 1:
-                    print "<table width='100%'><tr><td align='left'>"
+                    print "<table><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
                         "' >" + cgi.escape(cutnewpath) + \
@@ -189,7 +189,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                         "'>Delete</a></td>"
                     print "</tr></table>"
                 elif playlistmode == 2:
-                    print "<table width='100%'><tr><td align='left'>"
+                    print "<table ><tr><td align='left'>"
                     print "<strong><a href='browse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
                         "' >" + cgi.escape(cutnewpath) + \
@@ -231,7 +231,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 else:
                     cssclass = 'file'
 
-                print "<table width='100%'><tr>"
+                print "<table><tr>"
                 print "<td align='left'><a href='fileinfo.py?file=" + \
                     escapedfile + "' class='" + cssclass + "'>" + \
                     cgi.escape(nameonly) + "</a></td>"

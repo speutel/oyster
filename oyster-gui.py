@@ -176,22 +176,16 @@ if status == 'paused':
 else:
     statusstr = ''
 
-print "<table width='100%' border='0'>"
+print "<table border='0'>"
 print "<tr><td colspan='2'><strong>L&auml;uft gerade:</strong></td>"
-print "<td align='center' style='width:75px'><strong>Score</strong></td></tr>"
+print "</tr>"
 print "<tr><td>"
-print "<strong><a class='file' href='fileinfo.py?file=" + info + "' target='browse' title='View details'>" + tag['display'] + "</a>"
+print "<strong><a class='file' href='fileinfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
 print statusstr + "</strong></td>"
 print "<td></td>"
-print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-print "<a href='oyster-gui.py?action=scoredown&amp;file=" + info + "' title='Score down'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
-print "<strong>" + str(tag['score']) + "</strong> "
-print "<a href='oyster-gui.py?action=scoreup&amp;file=" + info + "' title='Score up'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a>"
 print "</td></tr>"
 
-print "<tr><td colspan='3'>&nbsp;</td></tr>"
+print "<tr><td colspan='2'>&nbsp;</td></tr>"
 
 if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
     maxvotes = 0
@@ -219,13 +213,12 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 title = re.sub('\A' + mediadir, '', filename)
                 escapedtitle = urllib.quote(title)
                 print "<tr><td>"
-                print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' target='browse'>" + display + "</a>"
+                print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' >" + display + "</a>"
                 print "</td>"
-                print "<td align='center'><a href='oyster-gui.py?action=unvote&amp;file=" + escapedtitle + "'>Unvote</a>"
-                print "</td></tr>"
+                print "</tr>"
         maxvotes -= 1
 
-    print "<tr><td colspan='3'>&nbsp;</td></tr>"
+    print "<tr><td colspan='2'>&nbsp;</td></tr>"
 
 i = 0
 
@@ -237,17 +230,10 @@ for nextinfo in nextarray:
     nextinfo = urllib.quote("/" + nextinfo)
     print "<tr><td>"
     print "<strong><a class='file' href='fileinfo.py?file=" + nextinfo + \
-        "' target='browse' title='View details'>"
+        "' title='View details'>"
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
-    print "<td align='center' style='padding-left:10px; padding-right:10px'>"
-    print "<a href='oyster-gui.py?action=changerandom" + str(i) + \
-        "&amp;file=" + nextinfo + "' title='Replace this song by other random song'>"
-    print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/></a>"
-    print "<a href='oyster-gui.py?action=delrandom" + str(i) + "&amp;file=" + \
-        nextinfo + "' title='Delete this song from list'>"
-    print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a>"
-    print "</td></tr>"
+    print "</tr>"
     i += 1
 print "</table>"
 
