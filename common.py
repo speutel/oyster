@@ -254,3 +254,70 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 counter = counter + 1
 
     return counter
+
+def history(listName):
+    done = []
+    historyFile = open( myconfig['savedir'] + 'logs/' + listName, 'r' )
+    lines = historyFile.readlines( ).reverse( )
+
+    if lines is None:
+        return []
+
+    for line in lines:
+        if line.find('DONE'):
+            done.append(line)
+            if len(done) >= 15:
+                break
+    historyFile.close()
+    return done
+
+def votes():
+    votefile = open(myconfig['basedir'] + 'votes')
+    lines = votefile.readlines( )
+    votefile.close()
+    return lines
+
+
+def may_vote(f, playlist):
+    exists = False
+
+    infoFile = file( myconfig['basedir'] + "/info" )
+    currentfile = infoFile.readline( )
+    infoFile.close()
+    if currentfile.find(f) != -1:
+        return (False, "L&auml;uft gerade")
+
+
+    playlistPath = myconfig['savedir'] + 'lists/' + playlist
+    listfile = open( playlistPath )
+    for line in listfile:
+        if line.find(f) >= 0:
+            exists = True
+            break
+    listfile.close()
+
+    votelist = votes( )
+    votematches = [ line for x in votelist if x.find(f) != -1]
+
+    if len(votematches) > 0:
+        # if f in votes
+        return (False, "Schon gew&uuml;nscht")
+
+    if not exists:
+    # if not f in currentList
+        return (False, "Nicht in Playlist")
+
+    if len(votelist) >= 15:
+        # if votes.length >= 15 return (true, "")
+        return (True, None)
+
+    historyList = history( playlist )
+    if historyList is not None:
+        historyMatches = [ line for x in historyList[0:15-len(votelist)] if x.find(f) != -1 ]
+        if len(historyMatches) > 0:
+            # if f in history(0,15-votes.size) return (false, "Es ist noch nicht lang genug her, dass dieser Song gespielt wurde")
+            return (False, "Lief gerade")
+
+    # else return (true, "")
+    return (True, None)
+

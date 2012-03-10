@@ -31,6 +31,8 @@ import os.path
 import urllib
 import re
 import sys
+
+from common import may_vote
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -95,75 +97,6 @@ if form.has_key('playlist') and form.has_key('dir') and \
         givendir = '/'
 
 # Is oyster currently running?
-def history(listName):
-    done = []
-    historyFile = open( myconfig['savedir'] + 'logs/' + listName, 'r' )
-    lines = historyFile.readlines( ).reverse( )
-
-    if lines is None:
-        return []
-
-    for line in lines:
-        if line.find('DONE'):
-            done.append(line)
-            if len(done) >= 15:
-                break
-    historyFile.close()
-    return done
-
-def votes():
-    votefile = open(basedir + 'votes')
-    lines = votefile.readlines( )
-    votefile.close()
-    return lines
-
-
-def may_vote(f):
-    exists = False
-
-    infoFile = file( myconfig['basedir'] + "/info" )
-    currentfile = infoFile.readline( )
-    infoFile.close()
-    if currentfile.find(f) != -1:
-        return (False, "L&auml;uft gerade")
-
-
-    playlistPath = myconfig['savedir'] + 'lists/' + playlist
-    listfile = open( playlistPath )
-    for line in listfile:
-        if not form.has_key('dir'):
-            dir = "/"
-        else:
-            dir = form['dir']
-        if line.find(str(mediadir) + str(dir)) >= 0:
-            exists = True
-            break
-    listfile.close()
-
-    votelist = votes( )
-    votematches = [ line for x in votelist if x.find(f) != -1]
-
-    if len(votematches) > 0:
-        # if f in votes
-        return (False, "Schon gew&uuml;nscht")
-
-    if not exists:
-    # if not f in currentList
-        return (False, "Nicht in Playlist")
-
-    if len(votelist) >= 15:
-        # if votes.length >= 15 return (true, "")
-        return (True, None)
-
-    historyList = history( playlist )
-    if historyList is not None:
-        historyMatches = [ line for x in historyList[0:15-len(votelist)] if x.find(f) != -1 ]
-        if len(historyMatches) > 0:
-            # if f in history(0,15-votes.size) return (false, "Es ist noch nicht lang genug her, dass dieser Song gespielt wurde")
-            return (False, "Lief gerade")
-
-    # else return (true, "")
-    return (True, None)
 
 if os.path.exists(myconfig['basedir']):
     oysterruns = 1
@@ -354,7 +287,7 @@ for curfile in files:
             "&amp;addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
         else:
             # only generate "Vote"-link if oyster is running
-            (mayVote, reason) = may_vote(dir)
+            (mayVote, reason) = may_vote(dir, playlist)
             if oysterruns and mayVote:
                 print "<td><a class='" + cssfileclass + "' " + \
                 "href='oyster-gui.py?vote=" + escapeddir + "' " + \
