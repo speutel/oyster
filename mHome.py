@@ -57,8 +57,11 @@ if os.path.isfile(myconfig['basedir'] + 'status'):
 else:
     status = ''
     
+notVotedReason = None
 if form.has_key('vote'):
-    fifocontrol.do_vote(form['vote'].value)
+    (mayVote, notVotedReason) = mCommon.may_vote(form['vote'].value,None)
+    if mayVote:
+        fifocontrol.do_vote(form['vote'].value)
 
 if form.has_key('votelist'):
     fifocontrol.do_votelist(form['votelist'].value)
@@ -172,6 +175,10 @@ if status == 'paused':
     statusstr = " (angehalten)"
 else:
     statusstr = ''
+
+
+if notVotedReason != None:
+    print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>" 
 
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>L&auml;uft gerade:</strong></td>"
