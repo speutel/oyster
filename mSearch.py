@@ -31,6 +31,7 @@ import cgi
 import config
 import cgitb
 import common
+import mCommon
 import re
 import urllib
 cgitb.enable()
@@ -55,20 +56,20 @@ if form.has_key('playlist') and form.has_key('mode') and form['mode'].value == '
      <title>Oyster-GUI</title>
     """
     print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
+    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/mLayout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
 
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
-    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "<li class='double'><a href='mBrowse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
+    print "<li class='double'><a href='mSearch.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
     print "</ul>"
     
     print "<br/><hr/>"
 
 else:
     editplaylist = 0
-    common.navigation_header()
+    mCommon.navigation_header(title="Suchen")
     mode = ''
 
 if form.has_key('searchtype') and form['searchtype'].value == 'regex':
@@ -102,27 +103,24 @@ else:
 
 # Create form
 
-print "<form method='post' action='search.py' " + \
+print "<form method='post' action='mSearch.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
 print "<fieldset class='searchform'>"
-print "<legend class='searchform'>Search for music</legend>"
+#print "<legend class='searchform'>Musik Suchen</legend>"
 print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
-print "<input id='searchsubmit' type='submit' name='.submit' value='Search'/>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
 print "<table id='searchoptions'>"
-print "<tr><td><input type='radio' name='searchtype' value='normal' " + \
-    normalcheck + "/> Normal<br/>"
-print "<input type='radio' name='searchtype' value='regex' " + regexcheck + \
-    "/> Regular expression<br/></td>"
-    
+print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
+
 if editplaylist:
     print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
     print "<input type='hidden' name='mode' value='playlist'/>"
 else:
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-        "/> Only current playlist<br/>"
+        "/> Aktuelle Liste<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "All songs<br/></td>"
+        "&Uuml;berall<br/></td>"
 
 print "</tr></table>"
 print "</fieldset></form>"
@@ -163,9 +161,9 @@ if search != '':
     if results != []:
         common.results = results
         if editplaylist:
-            common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
+            mCommon.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
         else:
-            common.listdir('/', 0, cssclass)
+            mCommon.listdir('/', 0, cssclass)
     else:
         print "<p>No songs found.</p>"
 

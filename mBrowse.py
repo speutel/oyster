@@ -24,6 +24,7 @@
 __revision__ = 1
 
 import cgi
+import mCommon
 import common
 import config
 import cgitb
@@ -31,6 +32,8 @@ import os.path
 import urllib
 import re
 import sys
+
+from mCommon import may_vote
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -51,23 +54,23 @@ if form.has_key('mode') and form['mode'].value == 'playlist':
               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-     <title>Oyster-GUI</title>
+     <title>Oyster &Uuml;bersicht</title>
     """ 
     print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
+    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/mLayout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
 
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
-    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "<li class='double'><a href='mBrowse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
+    print "<li class='double'><a href='mSearch.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
     print "</ul>"
     
     print "<br/><hr/>"
 
 else:
     editplaylist = 0
-    common.navigation_header()
+    mCommon.navigation_header(title="St&ouml;bern")
     mode = ''
 
 if form.has_key('dir'):
@@ -109,38 +112,38 @@ if not editplaylist:
     else:
         curdir = '/'
     if form.has_key('playlist'):
-        print "<p align='right'><a class='file' href='browse.py" + \
+        print "<p ><a class='file' href='mBrowse.py" + \
             "?dir=" + curdir + "'>Browse all files</a></p>"
     elif playlist != 'default':
-        print "<p align='right'><a class='file' href='browse.py?playlist=" + \
+        print "<p ><a class='file' href='mBrowse.py?playlist=" + \
             urllib.quote(playlist) + "&dir=" + curdir + "&checkdir=true'>" + \
-            "Browse in current playlist</a></p>"
+            "Nur in aktueller Playlist st&ouml;bernBrowse in current playlist</a></p>"
 
 if os.path.exists(mediadir + givendir):
     print "<p>" + common.get_cover(mediadir + givendir, "100")
 
     # split path along "/", create link for every part
 
-    print "<strong>Current directory: "
+    print "<strong>Aktuelles Verzeichnis: "
 
     if form.has_key('playlist'):
-        print "<a href='browse.py?dir=/" + mode + "&amp;playlist=" + \
+        print "<a href='mBrowse.py?dir=/" + mode + "&amp;playlist=" + \
             urllib.quote(form['playlist'].value) + "'>Mediadir</a>"
     else:
-        print "<a href='browse.py?dir=/" + mode + "'>Mediadir</a>"
+        print "<a href='mBrowse.py?dir=/" + mode + "'>Mediadir</a>"
 
     dirs = givendir[:-1].split('/')
     incdir = ''
-    for partdir in dirs:
+    for partdir in dirs[1:]:
         escapeddir = urllib.quote(incdir + partdir)
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
-            print "<a href='browse.py?dir=" + escapeddir + mode + \
+            print "<a href='mBrowse.py?dir=" + escapeddir + mode + \
             "&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>"  + escapedpartdir + \
-            "</a> / "
+            "</a>"
         else:
-            print "<a href='browse.py?dir=" + escapeddir + mode + "'>" + \
-                escapedpartdir + "</a> / "
+            print "/ <a href='mBrowse.py?dir=/" + escapeddir + mode + "'>" + \
+                escapedpartdir + "</a>"
         incdir = incdir + partdir + '/'
 
     print "</strong></p><br clear='all'/>"
@@ -158,10 +161,10 @@ if os.path.exists(mediadir + givendir):
 
         parentdir = urllib.quote(parentdir)
         if form.has_key('playlist'):
-            print "<a href='browse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
+            print "<a href='mBrowse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
                 urllib.quote(form['playlist'].value) + "'>One level up</a><br/><br/>"
         else:
-            print "<a href='browse.py?dir=" + parentdir + mode + \
+            print "<a href='mBrowse.py?dir=" + parentdir + mode + \
                 "'>One level up</a><br/><br/>"
 
 elif not os.path.exists(mediadir + givendir):
@@ -229,7 +232,7 @@ else:
 dirs.sort()
 files.sort()
 
-print "<table width='100%'>"
+print "<table >"
 
 # First, display all directories
 
@@ -240,16 +243,16 @@ for curdir in dirs:
     print "<tr>"
     if form.has_key('playlist'):
         if editplaylist:
-            print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
+            print "<td><a href='mBrowse.py?dir=" + escapeddir + "&playlist=" + \
                 urllib.quote(form['playlist'].value) + mode + "'>" + curdir + "</a></td>"
-            print "<td align='right'><a href='editplaylist.py?" + \
+            print "<td ><a href='editplaylist.py?" + \
                 "playlist=" + urllib.quote(form['playlist'].value) + "&adddir=" + \
                 escapeddir + "' target='playlist'>Add</a></td>"
         else:
-            print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
+            print "<td><a href='mBrowse.py?dir=" + escapeddir + "&playlist=" + \
                 urllib.quote(form['playlist'].value) + mode + "'>" + curdir + "</a></td>"
     else:
-        print "<td><a href='browse.py?dir=" + escapeddir + mode + \
+        print "<td><a href='mBrowse.py?dir=" + escapeddir + mode + \
             "'>" + curdir + "</a></td>"
     print "<td></td>"
     print "</tr>\n"
@@ -264,8 +267,9 @@ for curfile in files:
     curfile = curfile.replace(mediadir + givendir, '')
     print "<tr>"
     if curfile[curfile.rfind(".")+1:].lower() in filetypes:
-        escapeddir = givendir + curfile
-        escapeddir = urllib.quote(escapeddir.replace(mediadir,''))
+        dir = givendir + curfile
+        dir = dir.replace( mediadir, '' )
+        escapeddir = urllib.quote( dir )
 
         # alternate colors
         if cssfileclass == 'file':
@@ -275,7 +279,7 @@ for curfile in files:
 
         escapedfile = cgi.escape(curfile)
 
-        print "<td><a class='" + cssfileclass + "' href='fileinfo.py?file=" \
+        print "<td><a class='" + cssfileclass + "' href='mInfo.py?file=" \
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         if editplaylist:
@@ -284,10 +288,14 @@ for curfile in files:
             "&amp;addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
         else:
             # only generate "Vote"-link if oyster is running
-            if oysterruns:
+            (mayVote, reason) = may_vote(dir, playlist)
+            if oysterruns and mayVote:
                 print "<td><a class='" + cssfileclass + "' " + \
-                "href='oyster-gui.py?vote=" + escapeddir + "' " + \
-                "target='curplay'>Vote</a></td>"
+                "href='mHome.py?vote=" + escapeddir + "' " + \
+                ">W&uuml;nschen</a></td>"
+            elif oysterruns and not mayVote:
+                print "<td><span class='" + cssfileclass + "' " + \
+                      " style='font-style: italic;' '>" + reason + "</span></td>"
             else:
                 print "<td></td>"
     elif curfile[-3:] == 'm3u' or curfile[-3:] == 'pls': # if we have a list...
@@ -306,14 +314,14 @@ for curfile in files:
             + escapeddir + "'>" + escapedfile + "</a></td>"
 
         if editplaylist:
-            print "<td align='right'><a class='" + cssfileclass + "' href=" + \
+            print "<td><a class='" + cssfileclass + "' href=" + \
                 "'editplaylist.py?add=" + escapeddir + "' target=" + \
                 "'playlist'>Add</a></td>"
         else:
             #only generate "Vote"-Link if oyster is running
             if oysterruns:
                 print "<td><a class='" + csslistclass + "' href='" + \
-                "oyster-gui.py?votelist=" + escapeddir + "' " + \
+                "mHome.py?votelist=" + escapeddir + "' " + \
                 "target='curplay'>Vote</a></td>"
             else:
                 print "<td></td>"

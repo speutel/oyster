@@ -35,34 +35,35 @@ cgitb.enable()
 
 myconfig = config.get_config()
 
-def navigation_header():
+def navigation_header(header=True, title="Oyster"):
 
     "Prints the standard header for most pages of Oyster"
 
-    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-    print """
+    if header:
+        print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+        print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
+        print """
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
- <title>Oyster-GUI</title>
 """
-    print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + \
-        myconfig['theme'] + "/layout.css' />"
-    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + \
-        "/favicon.png' />"
-    print "</head><body>"
-    
+ 	print "<title>" + title + "</title>"
+        print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
+        print "<link rel='stylesheet' type='text/css' href='themes/" + \
+            myconfig['theme'] + "/mLayout.css' />"
+        print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + \
+            "/favicon.png' />"
+        print "</head><body>"
+        print "<div><a href='mHome.py'><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='200' style='margin-bottom:10px'/></a></div>"
+        print "<div style='position:absolute; top:2px; right:2px'>"
+        print "</div>"
+
     print "<ul id='navigation'>"
-    print "<li><a href='browse.py'>Browse</a></li>"
-    print "<li><a href='search.py'>Search</a></li>"
-    print "<li><a href='playlists.py'>Playlists</a></li>"
-    print "<li><a href='blacklist.py'>Blacklist</a></li>"
-    print "<li><a href='score.py'>Scoring</a></li>"
-    print "<li><a href='extras.py'>Extras</a></li>"
+    print "<li><a href='mHome.py'>&Uuml;bersicht</a></li>"
+    print "<li><a href='mBrowse.py'>St&ouml;bern</a></li>"
+    print "<li><a href='mSearch.py'>Suchen</a></li>"
     print "</ul><br/>"
     print "<hr/>"
 
@@ -147,10 +148,10 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 
                     # Browse-window of playlist editor
                     
-                    print "<table width='100%'><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<table><tr><td align='left'>"
+                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
@@ -161,44 +162,44 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
                     # Search-window of playlist-editor
                 
-                    print "<table width='100%'><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<table><tr><td align='left'>"
+                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&adddir=" + escapeddir + \
-                        "' target='playlist'>Add</a></td>"
+                        "' >Add</a></td>"
                     print "</tr></table>"
                     
                 else:
-                    print "<strong><a href='browse.py?dir=" + escapeddir + \
+                    print "<strong><a href='mBrowse.py?dir=" + escapeddir + \
                         "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = basepath + newpath
             else:
                 escapeddir = urllib.quote("/" + cutnewpath)
                 if playlistmode == 1:
-                    print "<table width='100%'><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<table><tr><td align='left'>"
+                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&deldir=" + escapeddir + \
                         "'>Delete</a></td>"
                     print "</tr></table>"
                 elif playlistmode == 2:
-                    print "<table width='100%'><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<table ><tr><td align='left'>"
+                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
                         escapeddir + "&amp;playlist=" + playlist + \
-                        "' target='browse'>" + cgi.escape(cutnewpath) + \
+                        "' >" + cgi.escape(cutnewpath) + \
                         "</a></strong>"
                     print "<td align='right'><a href='editplaylist.py?" + \
                         "playlist=" + playlist + "&adddir=" + escapeddir + \
-                        "' target='playlist'>Add</a></td>"
+                        "' >Add</a></td>"
                     print "</tr></table>"
                 else:
-                    print "<strong><a href='browse.py?dir=" + escapeddir + \
+                    print "<strong><a href='mBrowse.py?dir=" + escapeddir + \
                         "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = "/" + newpath
 
@@ -230,8 +231,8 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 else:
                     cssclass = 'file'
 
-                print "<table width='100%'><tr>"
-                print "<td align='left'><a href='fileinfo.py?file=" + \
+                print "<table><tr>"
+                print "<td align='left'><a href='mInfo.py?file=" + \
                     escapedfile + "' class='" + cssclass + "'>" + \
                     cgi.escape(nameonly) + "</a></td>"
                 if playlistmode == 1:
@@ -241,15 +242,91 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                 elif playlistmode == 2:
                     print "<td align='right'><a href='editplaylist.py?" + \
                     "playlist=" + playlist + "&amp;addfile=" + escapedfile + \
-                        "' target='playlist' class='" + cssclass + "'>Add</a></td>"
+                        "'  class='" + cssclass + "'>Add</a></td>"
                 else:
-                    if os.path.exists(myconfig['basedir']):
-                        print "<td align='right'><a href='oyster-gui.py" + \
+                    (mayVote, reason) = may_vote(basepath+filename, playlist)
+                    if os.path.exists(myconfig['basedir']) and mayVote:
+                        print "<td align='right'><a href='mHome.py" + \
                         "?vote=" + escapedfile + "' class='" + cssclass + \
-                        "' target='curplay'>Vote</a></td>"
+                        "' >W&uuml;nschen</a></td>"
+                    elif not mayVote:
+                        print "<td align='right'><span class='" + cssclass + "' " +\
+                              " style='font-style: italic;' '>" + reason + "</span></td>"
                     else:
                         print "<td></td>"
                 print "</tr></table>\n"
                 counter = counter + 1
 
     return counter
+
+def history(listName):
+    done = []
+    historyFile = open( myconfig['savedir'] + 'logs/' + listName, 'r' )
+    lines = historyFile.readlines( ).reverse( )
+
+    if lines is None:
+        return []
+
+    for line in lines:
+        if line.find('DONE'):
+            done.append(line)
+            if len(done) >= 15:
+                break
+    historyFile.close()
+    return done
+
+def votes():
+    votefile = open(myconfig['basedir'] + 'votes')
+    lines = votefile.readlines( )
+    votefile.close()
+    return lines
+
+
+def may_vote(f, playlist):
+    exists = False
+
+    if playlist is None or len(playlist) == 0:
+        playlistFile = open(myconfig['basedir'] + 'playlist')
+        playlist = playlistFile.readline().rstrip()
+        playlistFile.close()
+
+    infoFile = file( myconfig['basedir'] + "/info" )
+    currentfile = infoFile.readline( )
+    infoFile.close()
+    if currentfile.find(f) != -1:
+        return (False, "L&auml;uft gerade")
+
+
+    playlistPath = myconfig['savedir'] + 'lists/' + playlist
+    listfile = open( playlistPath )
+    for line in listfile:
+        if line.find(f) >= 0:
+            exists = True
+            break
+    listfile.close()
+
+    votelist = votes( )
+    votematches = [ line for x in votelist if x.find(f) != -1]
+
+    if len(votematches) > 0:
+        # if f in votes
+        return (False, "Schon gew&uuml;nscht")
+
+    if not exists:
+    # if not f in currentList
+        return (False, "Nicht in Playlist")
+
+    if len(votelist) >= 15:
+        # if votes.length >= 15 return (true, "")
+        return (True, None)
+
+    historyList = history( playlist )
+    if historyList is not None:
+        historyMatches = [ line for x in historyList[0:15-len(votelist)] if x.find(f) != -1 ]
+        if len(historyMatches) > 0:
+            # if f in history(0,15-votes.size) return (false, "Es ist noch nicht lang genug her, dass dieser Song gespielt wurde")
+            return (False, "Lief gerade")
+
+    # else return (true, "")
+    return (True, None)
+

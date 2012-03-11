@@ -102,7 +102,7 @@ def get_mp3_tags (filename):
     filename = filename.replace("`","\`")
     filename = filename.replace('"','\\"')
     os.environ['LANG'] = myconfig['tagencoding']
-    mp3 = os.popen('id3v2 -R "' + filename + '"').readlines()
+    mp3 = os.popen('id3v2 -l "' + filename + '"').readlines()
 
     mp3_regex = (
         ('\ATitle[\s]*:[\s]*(.*)\Z',                     'title'),    # id3v2, old version. Order does matter!
