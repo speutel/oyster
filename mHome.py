@@ -88,7 +88,7 @@ if form.has_key('votelist'):
 #print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
 #print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
-mCommon.navigation_header(title="&Uuml;bersicht")
+mCommon.navigation_header(title="&Uuml;bersicht", refreshPage="mHome.py")
 
 if not os.path.exists(myconfig['savedir'] + 'blacklists') or not os.path.exists(myconfig['savedir'] + 'lists') \
 or not os.path.exists(myconfig['savedir'] + 'logs') or not os.path.exists(myconfig['savedir'] + 'scores'):

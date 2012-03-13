@@ -35,7 +35,7 @@ cgitb.enable()
 
 myconfig = config.get_config()
 
-def navigation_header(header=True, title="Oyster"):
+def navigation_header(header=True, title="Oyster", refreshPage=None):
 
     "Prints the standard header for most pages of Oyster"
 
@@ -49,8 +49,10 @@ def navigation_header(header=True, title="Oyster"):
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 """
- 	print "<title>" + title + "</title>"
+        print "<title>" + title + "</title>"
         print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
+        if refreshPage != None:
+            print " <meta http-equiv='refresh' content='15; URL=" + refreshPage + "'/>"
         print "<link rel='stylesheet' type='text/css' href='themes/" + \
             myconfig['theme'] + "/mLayout.css' />"
         print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + \
