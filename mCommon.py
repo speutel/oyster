@@ -215,6 +215,9 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
             # $newpath is a regular file without leading directory
 
+            playlistContents = mCommon.getPlaylistContents(playlist)
+            historyList = mCommon.history(playlist)
+
             while counter < len(results) and \
                 (os.path.dirname(results[counter]) + "/" == basepath or os.path.dirname(results[counter]) == basepath):
 
@@ -246,7 +249,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     "playlist=" + playlist + "&amp;addfile=" + escapedfile + \
                         "'  class='" + cssclass + "'>Add</a></td>"
                 else:
-                    (mayVote, reason) = may_vote(basepath+filename, playlist)
+                    (mayVote, reason) = may_vote(basepath+filename, playlist, playlistContents, historyList)
                     if os.path.exists(myconfig['basedir']) and mayVote:
                         print "<td align='right'><a href='mHome.py" + \
                         "?vote=" + escapedfile + "' class='" + cssclass + \
@@ -261,10 +264,16 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
     return counter
 
-def history(listName):
+def history(playlistName=None):
+    if playlistName is None or len(playlistName) == 0:
+        playlistFile = open(myconfig['basedir'] + 'playlist')
+        playlistName = playlistFile.readline().rstrip()
+        playlistFile.close()
     done = []
-    historyFile = open( myconfig['savedir'] + 'logs/' + listName, 'r' )
-    lines = historyFile.readlines( ).reverse( )
+    historyPath = myconfig['savedir'] + 'logs/' + playlistName
+    historyFile = open( historyPath, 'r' )
+    lines = historyFile.readlines( )
+    lines.reverse()
 
     if lines is None:
         return []
@@ -284,45 +293,57 @@ def votes():
     return lines
 
 
-def may_vote(f, playlist):
+def getPlaylistContents(playlistName=None):
+    if playlistName is None or len(playlistName) == 0:
+        playlistFile = open(myconfig['basedir'] + 'playlist')
+        playlistName = playlistFile.readline().rstrip()
+        playlistFile.close()
+    playlistPath = myconfig['savedir'] + 'lists/' + playlistName
+    listfile = open( playlistPath )
+    playlistContents = listfile.readlines();
+    listfile.close()
+    return playlistContents
+
+
+def may_vote(f, playlist, playlistContents=None, historyList=None):
     exists = False
 
-    if playlist is None or len(playlist) == 0:
-        playlistFile = open(myconfig['basedir'] + 'playlist')
-        playlist = playlistFile.readline().rstrip()
-        playlistFile.close()
 
+    # Check if f is currently playing
     infoFile = file( myconfig['basedir'] + "/info" )
     currentfile = infoFile.readline( )
     infoFile.close()
     if currentfile.find(f) != -1:
         return (False, "L&auml;uft gerade")
 
-
-    playlistPath = myconfig['savedir'] + 'lists/' + playlist
-    listfile = open( playlistPath )
-    for line in listfile:
-        if line.find(f) >= 0:
-            exists = True
-            break
-    listfile.close()
-
+    # Check if f is in currently voted files
     votelist = votes( )
-    votematches = [ line for x in votelist if x.find(f) != -1]
+    votematches = [ x for x in votelist if x.find(f) != -1]
 
     if len(votematches) > 0:
         # if f in votes
         return (False, "Schon gew&uuml;nscht")
 
+    if playlistContents == None:
+        playlistContents = getPlaylistContents()
+
+    for playlistline in playlistContents:
+        if playlistline.find(f) >= 0:
+            exists = True
+            break
+
     if not exists:
     # if not f in currentList
         return (False, "Nicht in Playlist")
+
 
     if len(votelist) >= 15:
         # if votes.length >= 15 return (true, "")
         return (True, None)
 
-    historyList = history( playlist )
+    if historyList == None:
+        historyList = history( playlist )
+
     if historyList is not None:
         historyMatches = [ line for x in historyList[0:15-len(votelist)] if x.find(f) != -1 ]
         if len(historyMatches) > 0:

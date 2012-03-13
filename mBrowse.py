@@ -263,6 +263,9 @@ cssfileclass = 'file2'
 csslistclass = 'playlist2'
 filetypes = myconfig['filetypes'].lower().split(',')
 
+playlistContents = mCommon.getPlaylistContents(playlist)
+historyList = mCommon.history(playlist)
+
 for curfile in files:
     curfile = curfile.replace(mediadir + givendir, '')
     print "<tr>"
@@ -288,7 +291,7 @@ for curfile in files:
             "&amp;addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
         else:
             # only generate "Vote"-link if oyster is running
-            (mayVote, reason) = may_vote(dir, playlist)
+            (mayVote, reason) = may_vote(dir, playlist, playlistContents, historyList)
             if oysterruns and mayVote:
                 print "<td><a class='" + cssfileclass + "' " + \
                 "href='mHome.py?vote=" + escapeddir + "' " + \
