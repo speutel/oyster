@@ -30,7 +30,6 @@ __revision__ = 1
 import cgi
 import config
 import cgitb
-import common
 import mCommon
 import re
 import urllib
@@ -153,13 +152,13 @@ if search != '':
     # Sort results alphabetically
 
     results.sort()
-    common.results = results
-    results = common.sort_results('/')
+    mCommon.results = results
+    results = mCommon.sort_results('/')
 
     # List directory in browser
 
     if results != []:
-        common.results = results
+        mCommon.results = results
         if editplaylist:
             mCommon.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
         else:

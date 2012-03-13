@@ -215,8 +215,8 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
 
             # $newpath is a regular file without leading directory
 
-            playlistContents = mCommon.getPlaylistContents(playlist)
-            historyList = mCommon.history(playlist)
+            playlistContents = getPlaylistContents(playlist)
+            historyList = history(playlist)
 
             while counter < len(results) and \
                 (os.path.dirname(results[counter]) + "/" == basepath or os.path.dirname(results[counter]) == basepath):
