@@ -345,7 +345,7 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
         historyList = history( playlist )
 
     if historyList is not None:
-        historyMatches = [ line for x in historyList[0:15-len(votelist)] if x.find(f) != -1 ]
+        historyMatches = [ line for line in historyList[0:15-len(votelist)] if line.find(f) != -1 ]
         if len(historyMatches) > 0:
             # if f in history(0,15-votes.size) return (false, "Es ist noch nicht lang genug her, dass dieser Song gespielt wurde")
             return (False, "Lief gerade")
