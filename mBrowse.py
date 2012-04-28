@@ -129,7 +129,10 @@ if os.path.exists(mediadir + givendir):
         print "<a href='mBrowse.py?dir=/" + mode + "&amp;playlist=" + \
             urllib.quote(form['playlist'].value) + "'>Mediadir</a>"
     else:
-        print "<a href='mBrowse.py?dir=/" + mode + "'>Mediadir</a>"
+        if givendir == '/':
+            print "<strong>Mediadir</strong>"
+        else:
+            print "<a href='mBrowse.py?dir=/" + mode + "'>Mediadir</a>"
 
     dirs = givendir[:-1].split('/')
     incdir = ''
@@ -147,7 +150,9 @@ if os.path.exists(mediadir + givendir):
 
     partdir = dirs[len(dirs)-1]
     escapedpartdir = cgi.escape(partdir)
-    print "/ " + escapedpartdir 
+    if escapedpartdir != '':
+        print "/ <strong>" + escapedpartdir + "</strong>"
+    print " /"
 
     print "</p><br clear='all'/>"
 
