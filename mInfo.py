@@ -61,7 +61,7 @@ if os.path.exists(myconfig['basedir']):
 else:
     oysterruns = 0
 
-print "<p>Info f&uuml;r "
+print "<p><a href='mBrowse.py?dir=/'>Mediadir</a>"  
 
 subdir = soundfile.replace(mediadir,'',1)
 subdir = os.path.dirname(subdir)
@@ -117,24 +117,20 @@ for line in log.readlines():
 log.close()
 
 albumdir = os.path.dirname(mediadir + soundfile) + "/"
-coverdata = mCommon.get_cover(albumdir, myconfig['coverwidth'])
+coverdata = mCommon.get_cover(albumdir, "100")
 
-print "<table border='0' width='100%'>"
+print "<table border='0'>"
 if tag.has_key('title'):
-    print "<tr><td class='fileinfo'><strong>Titel</strong></td><td>" + tag['title']
-
-    print "</td><td rowspan='6' class='fileinfoimage' width='120'>" + coverdata + "</td></tr>"
-else:
-    print "<tr><td class='fileinfo'></td><td rowspan='6'>" + coverdata + "</td></tr>"
-
+    print "<tr><td class='fileinfo'><strong>Titel</strong></td><td>" + tag['title'] + "</td></tr>"
 
 if tag.has_key('artist'):
     print "<tr><td class='fileinfo'><strong>K&uuml;nstler</strong></td><td>"
     print "<a href='mSearch.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
         "this artist'>" + tag['artist'] + "</a></td></tr>"
-    print "<tr><td></td><td>"
-    print "</td></tr>"
+
+if coverdata != '':
+    print "<tr><td class='fileinfo'><strong>Cover</strong></td><td>" + coverdata + "</td></tr>"
 
 tagtuple = (
     ('Album', 'album'),
@@ -150,7 +146,6 @@ for line in tagtuple:
         print "<tr><td class='fileinfo'><strong>" + line[0] + "</strong></td>" + \
             "<td>" + tag[line[1]] + "</td></tr>"
 
-print "<tr><td colspan='2'>&nbsp;</td></tr>"
 print "</table>"
 
 print "</body></html>"

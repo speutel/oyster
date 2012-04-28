@@ -120,11 +120,10 @@ if not editplaylist:
             "Nur in aktueller Playlist st&ouml;bernBrowse in current playlist</a></p>"
 
 if os.path.exists(mediadir + givendir):
-    print "<p>" + common.get_cover(mediadir + givendir, "100")
 
     # split path along "/", create link for every part
 
-    print "<strong>Aktuelles Verzeichnis: "
+    print "<p>"
 
     if form.has_key('playlist'):
         print "<a href='mBrowse.py?dir=/" + mode + "&amp;playlist=" + \
@@ -134,7 +133,7 @@ if os.path.exists(mediadir + givendir):
 
     dirs = givendir[:-1].split('/')
     incdir = ''
-    for partdir in dirs[1:]:
+    for partdir in dirs[1:len(dirs)-1]:
         escapeddir = urllib.quote(incdir + partdir)
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
@@ -146,10 +145,15 @@ if os.path.exists(mediadir + givendir):
                 escapedpartdir + "</a>"
         incdir = incdir + partdir + '/'
 
-    print "</strong></p><br clear='all'/>"
+    partdir = dirs[len(dirs)-1]
+    escapedpartdir = cgi.escape(partdir)
+    print "/ " + escapedpartdir 
+
+    print "</p><br clear='all'/>"
 
     # Get the parent directory
 
+    """
     parentdir = re.sub('\A' + re.escape(mediadir), '', givendir)
     if re.search('[^/]*/\Z', parentdir) == None:
         parentdir = ''
@@ -162,10 +166,15 @@ if os.path.exists(mediadir + givendir):
         parentdir = urllib.quote(parentdir)
         if form.has_key('playlist'):
             print "<a href='mBrowse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
-                urllib.quote(form['playlist'].value) + "'>One level up</a><br/><br/>"
+                urllib.quote(form['playlist'].value) + "'>&Uuml;bergeordnetes Verzeichnis</a><br/><br/>"
         else:
             print "<a href='mBrowse.py?dir=" + parentdir + mode + \
-                "'>One level up</a><br/><br/>"
+                "'>&Uuml;bergeordnetes Verzeichnis</a><br/><br/>"
+    """
+
+
+    print "<p>" + mCommon.get_cover(mediadir + givendir, "100") + "</p>"
+
 
 elif not os.path.exists(mediadir + givendir):
     # if $mediadir == "/": just build filelist, no dir-splitting needed
@@ -301,7 +310,9 @@ for curfile in files:
                       " style='font-style: italic;' '>" + reason + "</span></td>"
             else:
                 print "<td></td>"
-    elif curfile[-3:] == 'm3u' or curfile[-3:] == 'pls': # if we have a list...
+
+    """
+    elif False and (curfile[-3:] == 'm3u' or curfile[-3:] == 'pls'): # if we have a list...
         escapeddir = givendir + curfile
         escapeddir = escapeddir.replace(mediadir,'')
         escapeddir = urllib.quote(escapeddir)
@@ -340,7 +351,7 @@ for curfile in files:
         # if we can do nothing - just print it.
         if iscover == 0:
             print "<td>" + curfile + "</td>"
-            print "<td></td>"
+    """
 
     print "</tr>\n"
 

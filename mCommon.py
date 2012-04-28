@@ -93,7 +93,7 @@ def get_cover (albumdir, imagewidth):
         return ''
     else:
         return "<img src='data:image/" + filetype + ";base64," + encoded + \
-            "' width='" + imagewidth + "' style='float:right' alt='Cover'/>"
+            "' width='" + imagewidth + "' alt='Cover'/>"
 
 def sort_results (topdir):
 
@@ -249,6 +249,7 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                     "playlist=" + playlist + "&amp;addfile=" + escapedfile + \
                         "'  class='" + cssclass + "'>Add</a></td>"
                 else:
+                    """ 
                     (mayVote, reason) = may_vote(basepath+filename, playlist, playlistContents, historyList)
                     if os.path.exists(myconfig['basedir']) and mayVote:
                         print "<td align='right'><a href='mHome.py" + \
@@ -258,7 +259,8 @@ def listdir (basepath, counter, cssclass, playlistmode=0, playlist=''):
                         print "<td align='right'><span class='" + cssclass + "' " +\
                               " style='font-style: italic;' '>" + reason + "</span></td>"
                     else:
-                        print "<td></td>"
+                    """
+                    print "<td></td>"
                 print "</tr></table>\n"
                 counter = counter + 1
 

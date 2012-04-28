@@ -127,7 +127,7 @@ print "</fieldset></form>"
 results = []
 cssclass = 'file2'
 
-if search != '':
+if search != '' and len(search) >= 5:
 
     listfile = open(myconfig['savedir'] + 'lists/' + playlist)
     listlines = listfile.readlines()
@@ -164,6 +164,9 @@ if search != '':
         else:
             mCommon.listdir('/', 0, cssclass)
     else:
-        print "<p>No songs found.</p>"
+        print "<p>Keine Songs gefunden.</p>"
+
+else:
+    print "<p>Bitte mindestens 5 Zeichen als Suchbegriff eingeben.</p>";
 
 print "</body></html>"
