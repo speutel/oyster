@@ -208,7 +208,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
                 maxvotes = numvotes
     votefile.close()
             
-    print "<tr><td width='70%' align='left'><strong>Gew&uuml;nscht</strong></td><td></td></tr>"
+    print "<tr><td width='70%' align='left'><strong>Gew&uuml;nscht:</strong></td><td></td></tr>"
 
     while maxvotes > 0:
         for filename in votelist:
@@ -226,7 +226,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
 
 i = 0
 
-print "<tr><td colspan='2'><strong>Als n&auml;chstes:</strong></td>"
+print "<tr><td colspan='2'><strong>N&auml;chste Zuf&auml;llige:</strong></td>"
 print "<td></td></tr>"
 for nextinfo in nextarray:
     nexttag = taginfo.get_tag(nextinfo)
