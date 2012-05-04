@@ -299,7 +299,13 @@ def playlistBlocksVoting(playlistName=None):
         playlistFile = open(myconfig['basedir'] + 'playlist')
         playlistName = playlistFile.readline().rstrip()
         playlistFile.close()
-    return myconfig['novotes']
+    novotes = 'false'
+    try:
+        novotes = myconfig['novotes']
+    except:
+        pass
+
+    return novotes == 'true'
 
 def getPlaylistContents(playlistName=None):
     if playlistName is None or len(playlistName) == 0:
