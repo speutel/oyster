@@ -294,18 +294,14 @@ def votes():
     votefile.close()
     return lines
 
-def playlistBlocksVoting(playlistName=None):
-    if playlistName is None or len(playlistName) == 0:
-        playlistFile = open(myconfig['basedir'] + 'playlist')
-        playlistName = playlistFile.readline().rstrip()
-        playlistFile.close()
+def playlistBlocksVoting():
     novotes = 'false'
     try:
         novotes = myconfig['novotes']
     except:
         pass
 
-    return novotes == 'true'
+    return novotes.lower() == 'true'
 
 def getPlaylistContents(playlistName=None):
     if playlistName is None or len(playlistName) == 0:
@@ -323,7 +319,7 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
     exists = False
 
     # Check if playlist blocks voting
-    if playlistBlocksVoting() is not None:
+    if playlistBlocksVoting():
         return (False, "W&uuml;nschen ist im Moment gesperrt.")
 
     # Check if f is currently playing
