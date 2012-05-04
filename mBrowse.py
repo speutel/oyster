@@ -113,11 +113,11 @@ if not editplaylist:
         curdir = '/'
     if form.has_key('playlist'):
         print "<p ><a class='file' href='mBrowse.py" + \
-            "?dir=" + curdir + "'>Browse all files</a></p>"
+            "?dir=" + curdir + "'>Durch alle Songs st&ouml;bern</a></p>"
     elif playlist != 'default':
         print "<p ><a class='file' href='mBrowse.py?playlist=" + \
             urllib.quote(playlist) + "&dir=" + curdir + "&checkdir=true'>" + \
-            "Nur in aktueller Playlist st&ouml;bernBrowse in current playlist</a></p>"
+            "Nur in aktueller Playlist st&ouml;bern</a></p>"
 
 if os.path.exists(mediadir + givendir):
 
@@ -140,7 +140,7 @@ if os.path.exists(mediadir + givendir):
         escapeddir = urllib.quote(incdir + partdir)
         escapedpartdir = cgi.escape(partdir)
         if form.has_key('playlist'):
-            print "<a href='mBrowse.py?dir=" + escapeddir + mode + \
+            print "/ <a href='mBrowse.py?dir=/" + escapeddir + mode + \
             "&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>"  + escapedpartdir + \
             "</a>"
         else:

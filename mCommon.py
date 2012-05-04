@@ -320,7 +320,7 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
 
     # Check if playlist blocks voting
     if playlistBlocksVoting():
-        return (False, "W&uuml;nschen ist im Moment gesperrt.")
+        return (False, "W&uuml;nschen z.Z. gesperrt.")
 
     # Check if f is currently playing
     infoFile = file( myconfig['basedir'] + "/info" )

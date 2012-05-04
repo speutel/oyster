@@ -1,5 +1,5 @@
 body {
-  background-color: #CCC;
+  background-color: #EEE;
   color: #444;
 }
 
@@ -79,14 +79,14 @@ span.blacklisted {
 }
 
 input {
-  background-color: #222222;
-  color: #08c0e0;
+  background-color: #CCC;
+  color: #444;
   border-color:#000000;
 }
 
 select {
-  background-color: #222222;
-  color: #08c0e0;
+  background-color: #ccc;
+  color: #444;
   border-color:#000000;
 }
 
@@ -159,9 +159,10 @@ th.configsection {
 }
 
 fieldset.searchform {
-    border-width: thin;
+    border-width: 3px;
+	 border-color: #ff9500;
     padding: 1em;
-    background-color: #222;
+    background-color: #EEE;
     margin-left: auto;
     margin-right: auto;
 	 margin-bottom: 1em;

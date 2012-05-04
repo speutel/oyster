@@ -105,7 +105,7 @@ else:
 print "<form method='post' action='mSearch.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
-print "<fieldset class='searchform'>"
+#print "<fieldset class='searchform'>"
 #print "<legend class='searchform'>Musik Suchen</legend>"
 print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
 print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
@@ -122,7 +122,8 @@ else:
         "&Uuml;berall<br/></td>"
 
 print "</tr></table>"
-print "</fieldset></form>"
+print "</fieldset>"
+print "</form>"
 
 results = []
 cssclass = 'file2'
