@@ -2,6 +2,7 @@
 config
 lists
 logs
+oyster.iml
 oyster.log
 oyster_general.log
 tagcache-python
