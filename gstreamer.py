@@ -1,4 +1,4 @@
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 import threading
 import pygst
 pygst.require("0.10")

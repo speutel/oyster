@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #

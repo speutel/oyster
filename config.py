@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*
+# -*- coding: UTF-8 -*
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
