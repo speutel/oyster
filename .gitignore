@@ -1,0 +1,7 @@
+*.pyc
+config
+lists
+logs
+oyster.log
+oyster_general.log
+tagcache-python
