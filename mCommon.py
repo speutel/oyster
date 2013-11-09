@@ -323,18 +323,20 @@ def getPlaylistContents(playlistName=None):
 
 
 def may_vote(f, playlist, playlistContents=None, historyList=None):
+    _ = get_prefered_language()
+
     exists = False
 
     # Check if playlist blocks voting
     if playlistBlocksVoting():
-        return (False, "W&uuml;nschen z.Z. gesperrt.")
+        return False, "W&uuml;nschen z.Z. gesperrt."
 
     # Check if f is currently playing
     infoFile = file(myconfig['basedir'] + "/info")
     currentfile = infoFile.readline()
     infoFile.close()
     if currentfile.find(f) != -1:
-        return (False, "L&auml;uft gerade")
+        return False, _("Currently Playing")
 
     # Check if f is in currently voted files
     votelist = votes()
@@ -342,9 +344,9 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
 
     if len(votematches) > 0:
         # if f in votes
-        return (False, "Schon gew&uuml;nscht")
+        return False, "Schon gew&uuml;nscht"
 
-    if playlistContents == None:
+    if playlistContents is None:
         playlistContents = getPlaylistContents()
 
     for playlistline in playlistContents:
@@ -354,21 +356,36 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
 
     if not exists:
     # if not f in currentList
-        return (False, "Nicht in Playlist")
+        return False, "Nicht in Playlist"
 
     if len(votelist) >= 15:
         # if votes.length >= 15 return (true, "")
-        return (True, None)
+        return True, None
 
-    if historyList == None:
+    if historyList is None:
         historyList = history(playlist)
 
     if historyList is not None:
         historyMatches = [line for line in historyList[0:15 - len(votelist)] if line.find(f) != -1]
         if len(historyMatches) > 0:
             # if f in history(0,15-votes.size) return (false, "Es ist noch nicht lang genug her, dass dieser Song gespielt wurde")
-            return (False, "Lief gerade")
+            return False, "Lief gerade"
 
     # else return (true, "")
-    return (True, None)
+    return True, None
 
+
+def get_prefered_language():
+    import os
+
+    languages = os.environ["HTTP_ACCEPT_LANGUAGE"].split(",")
+    knownLanguages = ['en', 'de']
+    selectedLanguage = 'en'
+    for lang in languages:
+        twoLetterCode = lang[:2]
+        if twoLetterCode in knownLanguages:
+            selectedLanguage = twoLetterCode
+            break
+
+    import gettext
+    return gettext.translation('oyster', 'po', [selectedLanguage]).lgettext

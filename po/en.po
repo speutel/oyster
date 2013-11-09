@@ -1,0 +1,41 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2013-11-09 14:15+CET\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../mHome.py:82
+msgid "Voted"
+msgstr "Voted"
+
+#: ../mHome.py:103
+msgid "Next Random"
+msgstr "Next Random"
+
+#: ../mHome.py:110
+msgid "View details"
+msgstr "View details"
+
+#: ../mHome.py:114
+msgid "Replace_With_Random"
+msgstr "Replace this song by other random song"
+
+#: ../mHome.py:117
+msgid "Delete_Song"
+msgstr "Delete this song from list"
+
+#: ../mHome.py:277
+msgid "Currently Playing"
+msgstr "Currently Playing"
+

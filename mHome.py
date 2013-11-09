@@ -21,16 +21,19 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import cgi
-import config
-import taginfo
-import fifocontrol
 import cgitb
 import sys
 import os.path
 import urllib
 import commands
 import re
+
+import config
+import taginfo
+import fifocontrol
 import mCommon
+
+_ = mCommon.get_prefered_language()
 
 
 def check_oyster_started():
@@ -76,7 +79,7 @@ def display_votes():
                     maxvotes = numvotes
         votefile.close()
 
-        print "<tr><td width='70%' align='left'><strong>Gew&uuml;nscht:</strong></td><td></td></tr>"
+        print "<tr><td width='70%' align='left'><strong>" + _('Voted') + "</strong></td><td></td></tr>"
 
         while maxvotes > 0:
             for filename in votelist:
@@ -96,21 +99,22 @@ def display_votes():
 def display_next_random():
     global i, nextinfo, nexttag
     i = 0
-    print "<tr><td colspan='2'><strong>N&auml;chste Zuf&auml;llige:</strong></td></tr>"
+
+    print "<tr><td colspan='2'><strong>" + _('Next Random') + ":</strong></td></tr>"
     for nextinfo in nextarray:
         nexttag = taginfo.get_tag(nextinfo)
         nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', nextinfo)
         nextinfo = urllib.quote("/" + nextinfo)
         print "<tr>"
 
-        print "<td><strong><a class='file' href='mInfo.py?file=" + nextinfo + "' title='View details'>"
+        print "<td><strong><a class='file' href='mInfo.py?file=" + nextinfo + "' title='" + _('View details') + "'>"
         print nexttag['display'] + "</a></strong></td>"
 
         print "<td style='min-width:40px'><a href='mHome.py?action=changerandom" + str(i) + \
-              "&amp;file=" + nextinfo + "' title='Replace this song by other random song'>"
+              "&amp;file=" + nextinfo + "' title='" + _('Replace_With_Random') + "'>"
         print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/></a>"
         print "<a href='mHome.py?action=delrandom" + str(i) + "&amp;file=" + \
-              nextinfo + "' title='Delete this song from list'>"
+              nextinfo + "' title='" + _('Delete_Song') + "'>"
         print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a></td>"
 
         print "</tr>"
@@ -270,7 +274,7 @@ if notVotedReason is not None:
     print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>"
 
 print "<table border='0'>"
-print "<tr><td colspan='2'><strong>L&auml;uft gerade:</strong></td>"
+print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
 print "</tr>"
 print "<tr><td>"
 print "<strong><a class='file' href='mInfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
