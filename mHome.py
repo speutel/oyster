@@ -214,6 +214,7 @@ tag = taginfo.get_tag(info)
 
 playlist = config.get_playlist()
 playedfile = ''
+playreason = ''
 lastlines = commands.getoutput('tail -n 10 "logs/' + playlist + '"').split("\n")
 lastlines.reverse()
 for line in lastlines:
