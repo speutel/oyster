@@ -25,9 +25,7 @@ import cgitb
 import config
 import fifocontrol
 import os.path
-import urllib
-import re
-import commands
+
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -71,8 +69,6 @@ print "<body>"
 print "<div><a href='control.py' style='position:absolute; top:2px; right:2px' title='Refresh'>"
 print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
-
-
 try:
     volfile = open(myconfig['basedir'] + 'volume')
     volume = volfile.readline()[:-1]
@@ -95,18 +91,18 @@ print "<td align='center' style='margin: 0; padding: 0'><a href='oyster-gui.py?a
 print "<img src='themes/" + myconfig['theme'] + "/play.png' alt='Start'/></a></td>"
 print "<td align='center'><a href='oyster-gui.py?action=stop' target='curplay' title='Stop Oyster'>"
 print "<img src='themes/" + myconfig['theme'] + "/stop.png' alt='Stop'/></a></td>"
- 
-if favmode == 'on':
-	print "<td align='center'><a href='control.py?action=nofavmode' title='Deactivate FAV Mode'>"
-	print "<img src='themes/" + myconfig['theme'] + "/favmodeon.png' alt='FAV on'/></a></td>"
-else:
-	print "<td align='center'><a href='control.py?action=favmode' title='Activate FAV Mode'>"
-	print "<img src='themes/" + myconfig['theme'] + "/favmodeoff.png' alt='FAV off'/></a></td>"
 
+if favmode == 'on':
+    print "<td align='center'><a href='control.py?action=nofavmode' title='Deactivate FAV Mode'>"
+    print "<img src='themes/" + myconfig['theme'] + "/favmodeon.png' alt='FAV on'/></a></td>"
+else:
+    print "<td align='center'><a href='control.py?action=favmode' title='Activate FAV Mode'>"
+    print "<img src='themes/" + myconfig['theme'] + "/favmodeoff.png' alt='FAV off'/></a></td>"
 
 print "<td rowspan='2' align='center' style='line-height:180%'><a href='control.py?vol=up'"
 print "title='Volume up'><img src='themes/" + myconfig['theme'] + "/volup.png' alt='Volume Up'/></a><br/>"
-print "<a href='control.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig['midvolume'] + "%'>Volume " + volume + "</a><br/>"
+print "<a href='control.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig[
+    'midvolume'] + "%'>Volume " + volume + "</a><br/>"
 print "<a href='control.py?vol=down' title='Volume down'><img src='themes/" + myconfig['theme'] + "/voldown.png'"
 print "alt='Volume Down'/></a></td>"
 print "</tr><tr>"
