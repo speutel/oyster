@@ -96,17 +96,23 @@ def display_votes():
 def display_next_random():
     global i, nextinfo, nexttag
     i = 0
-    print "<tr><td colspan='2'><strong>N&auml;chste Zuf&auml;llige:</strong></td>"
-    print "<td></td></tr>"
+    print "<tr><td colspan='2'><strong>N&auml;chste Zuf&auml;llige:</strong></td></tr>"
     for nextinfo in nextarray:
         nexttag = taginfo.get_tag(nextinfo)
         nextinfo = re.sub('\A' + re.escape(myconfig['mediadir']), '', nextinfo)
         nextinfo = urllib.quote("/" + nextinfo)
-        print "<tr><td>"
-        print "<strong><a class='file' href='mInfo.py?file=" + nextinfo + \
-              "' title='View details'>"
+        print "<tr>"
+
+        print "<td><strong><a class='file' href='mInfo.py?file=" + nextinfo + "' title='View details'>"
         print nexttag['display'] + "</a></strong></td>"
-        print "<td></td>"
+
+        print "<td style='min-width:40px'><a href='mHome.py?action=changerandom" + str(i) + \
+              "&amp;file=" + nextinfo + "' title='Replace this song by other random song'>"
+        print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/></a>"
+        print "<a href='mHome.py?action=delrandom" + str(i) + "&amp;file=" + \
+              nextinfo + "' title='Delete this song from list'>"
+        print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a></td>"
+
         print "</tr>"
         i += 1
 
