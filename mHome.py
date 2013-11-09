@@ -31,6 +31,7 @@ import urllib
 import commands
 import re
 import mCommon
+
 cgitb.enable()
 
 myconfig = config.get_config()
@@ -38,12 +39,12 @@ basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
-if form.has_key('file'):
+if 'file' in form:
     filename = form['file'].value
 else:
     filename = ''
 
-if form.has_key('action'):
+if 'action' in form:
     action = form['action'].value
     if action == 'start' or os.path.exists(basedir):
         fifocontrol.do_action(action, filename)
@@ -56,51 +57,29 @@ if os.path.isfile(myconfig['basedir'] + 'status'):
     statusfile.close()
 else:
     status = ''
-    
+
 notVotedReason = None
-if form.has_key('vote'):
-    (mayVote, notVotedReason) = mCommon.may_vote(form['vote'].value,None)
+if 'vote' in form:
+    (mayVote, notVotedReason) = mCommon.may_vote(form['vote'].value, None)
     if mayVote:
         fifocontrol.do_vote(form['vote'].value)
 
-if form.has_key('votelist'):
+if 'votelist' in form:
     fifocontrol.do_votelist(form['votelist'].value)
-
-#print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-#print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-#print """
-#<!DOCTYPE html
-#         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-#         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-#<html xmlns="http://www.w3.org/1999/xhtml">
-#<head>
-# <title>Oyster-GUI</title>
-#"""
-#print " <meta http-equiv='refresh' content='" + myconfig['refresh'] + "; URL=oyster-gui.py'/>"
-#
-#print " <meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-#
-#print " <link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css'/>"
-#print " </head>"
-#print " <body>"
-
-#print "<div><img src='themes/" + myconfig['theme'] + "/logo.png' alt='Oyster' width='300' style='margin-bottom:10px'/></div>"
-#print "<div style='position:absolute; top:2px; right:2px'><a href='oyster-gui.py' title='Refresh'>"
-#print "<img src='themes/" + myconfig['theme'] + "/refresh.png' alt='Refresh'/></a></div>"
 
 mCommon.navigation_header(title="&Uuml;bersicht", refreshPage="mHome.py")
 
 if not os.path.exists(myconfig['savedir'] + 'blacklists') or not os.path.exists(myconfig['savedir'] + 'lists') \
-or not os.path.exists(myconfig['savedir'] + 'logs') or not os.path.exists(myconfig['savedir'] + 'scores'):
-    print "<h1>New Oyster install?</h1>";
+        or not os.path.exists(myconfig['savedir'] + 'logs') or not os.path.exists(myconfig['savedir'] + 'scores'):
+    print "<h1>New Oyster install?</h1>"
     print "<p>It seems that this is the first time you started Oyster.<br>"
     print "You might want to edit " + \
-        "the configuration.</p>"
+          "the configuration.</p>"
     print "<p>After that you should check your " + \
-        "configuration for common errors such as wrong permissions.</p>"
+          "configuration for common errors such as wrong permissions.</p>"
     print "<p>If all seems correct, you are able to " + \
-        "start Oyster for the " + \
-        "first time.</p>"
+          "start Oyster for the " + \
+          "first time.</p>"
     print "</body></html>"
     sys.exit()
 
@@ -134,8 +113,8 @@ playedfile = ''
 lastlines = commands.getoutput('tail -n 10 "logs/' + playlist + '"').split("\n")
 lastlines.reverse()
 for line in lastlines:
-    matcher = re.match('\A[^\ ]*\ ([^\ ]*)\ (.*)\Z', line)
-    if matcher != None:
+    matcher = re.match('\A[^ ]* ([^ ]*) (.*)\Z', line)
+    if matcher is not None:
         playreason = matcher.group(1)
         playedfile = matcher.group(2)
         if playreason in ['PLAYLIST', 'SCORED', 'ENQUEUED', 'VOTED']:
@@ -176,9 +155,8 @@ if status == 'paused':
 else:
     statusstr = ''
 
-
-if notVotedReason != None:
-    print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>" 
+if notVotedReason is not None:
+    print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>"
 
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>L&auml;uft gerade:</strong></td>"
@@ -195,11 +173,11 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
     maxvotes = 0
     votes = {}
     votelist = []
-    
+
     votefile = open(basedir + 'votes')
     for vote in votefile.readlines():
         matcher = re.match('\A(.*),([0-9]*)', vote)
-        if matcher != None:
+        if matcher is not None:
             title = matcher.group(1)
             numvotes = int(matcher.group(2))
             votes[title] = numvotes
@@ -207,7 +185,7 @@ if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
             if numvotes > maxvotes:
                 maxvotes = numvotes
     votefile.close()
-            
+
     print "<tr><td width='70%' align='left'><strong>Gew&uuml;nscht:</strong></td><td></td></tr>"
 
     while maxvotes > 0:
@@ -234,12 +212,11 @@ for nextinfo in nextarray:
     nextinfo = urllib.quote("/" + nextinfo)
     print "<tr><td>"
     print "<strong><a class='file' href='mInfo.py?file=" + nextinfo + \
-        "' title='View details'>"
+          "' title='View details'>"
     print nexttag['display'] + "</a></strong></td>"
     print "<td></td>"
     print "</tr>"
     i += 1
 print "</table>"
-
 
 print "</body></html>"
