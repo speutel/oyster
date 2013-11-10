@@ -52,6 +52,7 @@ def check_oyster_started():
         sys.exit()
     if not os.path.isdir(basedir) or action == 'stop':
         print '<p>Oyster has not been started yet!</p>'
+        print "<p><a href='mHome.py?action=start'>Start</a></p>"
         print "</body></html>"
         sys.exit()
     if not os.path.isfile(basedir + 'info'):
