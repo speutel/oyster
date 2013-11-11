@@ -91,7 +91,11 @@ def display_votes():
                     print "<tr><td>"
                     print "<a class='file' href='mInfo.py?file=" + escapedtitle + "' >" + display + "</a>"
                     print "</td>"
-                    print "</tr>"
+                    print "<td>"
+                    print "<a href='mHome.py?action=unvote&amp;file=" + \
+                          escapedtitle + "' title='" + _('Unvote') + "'>"
+                    print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a>"
+                    print "</td></tr>"
             maxvotes -= 1
 
         print "<tr><td colspan='2'>&nbsp;</td></tr>"
