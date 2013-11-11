@@ -130,7 +130,7 @@ def display_next_random():
 
 def display_play_controls():
 
-    def print_action_link(action, title, image, altTag):
+    def __print_action_link(action, title, image, altTag):
         print "<a href='mHome.py?action=" + action + "' title='" + title + "'>"
         print "<img src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
         pass
@@ -151,22 +151,22 @@ def display_play_controls():
         favmode = 'off'
 
     print "<tr><td>"
-    print_action_link("start", _("Start Oyster"), "play.png", _("Start"))
-    print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"))
-    print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"))
+    __print_action_link("start", _("Start Oyster"), "play.png", _("Start"))
+    __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"))
+    __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"))
     if favmode == 'on':
-        print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on")
+        __print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on")
     else:
-        print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off")
-    print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
-    print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
+        __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off")
+    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
+    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
     print "</td></tr>"
 
     print "<tr><td>"
-    print_action_link("voldown", "Lower Volume", "voldown.png", _("Lower Volume"))
+    __print_action_link("voldown", "Lower Volume", "voldown.png", _("Lower Volume"))
     print "<a href='mHome.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig[
         'midvolume'] + "%'>Volume " + volume + "</a>"
-    print_action_link("volup", "Increase Volume", "volup.png", _("Increase Volume"))
+    __print_action_link("volup", "Increase Volume", "volup.png", _("Increase Volume"))
     print "</td></tr></table>"
 
 cgitb.enable()
