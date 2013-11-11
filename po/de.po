@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-11 22:49+CET\n"
+"POT-Creation-Date: 2013-11-11 22:58+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -42,3 +42,55 @@ msgstr "Diesen Song mit einem zufälligen ersetzen"
 #: ../mHome.py:122
 msgid "Delete_Song"
 msgstr "Diesen Song aus der Liste löschen"
+
+#: ../mHome.py:154
+msgid "Start"
+msgstr ""
+
+#: ../mHome.py:154
+msgid "Start Oyster"
+msgstr "Oyster starten"
+
+#: ../mHome.py:155
+msgid "Pause"
+msgstr ""
+
+#: ../mHome.py:155
+msgid "Pause/Unpause"
+msgstr "Pause/Weiter"
+
+#: ../mHome.py:156
+msgid "Stop"
+msgstr "Stopp"
+
+#: ../mHome.py:156
+msgid "Stop Oyster"
+msgstr "Oyster anhalten"
+
+#: ../mHome.py:158
+msgid "Deactivate FAV Mode"
+msgstr "FAV-Modus deaktivieren"
+
+#: ../mHome.py:160
+msgid "Activate FAV Mode"
+msgstr "FAV-Modus aktivieren"
+
+#: ../mHome.py:161
+msgid "Previous Song"
+msgstr "Vorheriges Lied"
+
+#: ../mHome.py:162
+msgid "Next Song"
+msgstr "Nächstes Lied"
+
+#: ../mHome.py:162
+msgid "Skip Song"
+msgstr "Lied überspringen"
+
+#: ../mHome.py:166
+msgid "Lower Volume"
+msgstr "Lautstärke verringern"
+
+#: ../mHome.py:169
+msgid "Increase Volume"
+msgstr "Lautstärke erhöhen"
