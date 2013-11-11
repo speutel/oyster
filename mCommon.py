@@ -388,4 +388,4 @@ def get_prefered_language():
             break
 
     import gettext
-    return gettext.translation('oyster', 'po', [selectedLanguage]).lgettext
+    return gettext.translation('oyster', 'po', [selectedLanguage]).gettext
