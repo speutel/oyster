@@ -17,11 +17,11 @@ msgstr ""
 
 #: ../mCommon.py:339 ../mHome.py:282
 msgid "Currently Playing"
-msgstr "Currently Playing"
+msgstr ""
 
 #: ../mHome.py:83
 msgid "Voted"
-msgstr "Voted"
+msgstr ""
 
 #: ../mHome.py:96
 msgid "Unvote"
@@ -29,11 +29,11 @@ msgstr ""
 
 #: ../mHome.py:108
 msgid "Next Random"
-msgstr "Next Random"
+msgstr ""
 
 #: ../mHome.py:115
 msgid "View details"
-msgstr "View details"
+msgstr ""
 
 #: ../mHome.py:119
 msgid "Replace_With_Random"
