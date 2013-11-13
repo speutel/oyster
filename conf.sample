@@ -33,10 +33,11 @@ coverwidth=150
 use_hooks=false
 
 # suffixes of files oyster should play
-filetypes=ogg,mp3
+filetypes=ogg,mp3,flac
 # player for filetypes
 ogg=/usr/bin/ogg123
-mp3=/usr/bin/mpg321
+mp3=/usr/bin/mpg123
+flac=/usr/bin/ogg123
 
 # mode of the $basedir/control file (4 digits!)
 control_mode=0600

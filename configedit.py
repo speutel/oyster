@@ -192,55 +192,50 @@ def saveconfig(playlist):
     playlist = os.path.basename(playlist)
 
     if not ((os.path.exists(savedir + "config/" + playlist) and
-                 os.access(savedir + "config/" + playlist, os.W_OK)) or
-                os.access(savedir + "config/", os.W_OK)):
+            os.access(savedir + "config/" + playlist, os.W_OK)) or
+            os.access(savedir + "config/", os.W_OK)):
         print "Sorry, Oyster does not have the permission to write the " + \
               "configuration to " + cgi.escape(savedir + "config/" + playlist)
         print "</body></html>"
         sys.exit()
 
     if os.path.exists(savedir + "config/" + playlist):
-
         # File already exists, rename it first
-
         os.rename(savedir + "config/" + playlist, savedir + "config/" + playlist + ".old")
         oldconfig = open(savedir + "config/" + playlist + ".old")
-        configfile = open(savedir + "config/" + playlist, 'w')
+        removeAfterwards = True
+    else:
+        oldconfig = open(savedir + "conf.sample")
+        removeAfterwards = False
 
-        writtenkeys = []
-        keymatcher = re.compile('\A([^#]\w*)=')
+    configfile = open(savedir + "config/" + playlist, 'w')
 
-        for line in oldconfig.readlines():
-            linematch = keymatcher.match(line[:-1])
-            if linematch is not None:
-                key = linematch.group(1)
-                if form.has_key(key):
-                    configfile.write(key + "=" + form[key].value + "\n")
-                    writtenkeys.append(key)
-                else:
-                    configfile.write(line)
+    writtenkeys = []
+    keymatcher = re.compile('\A([^#]\w*)=')
+
+    for line in oldconfig.readlines():
+        linematch = keymatcher.match(line[:-1])
+        if linematch is not None:
+            key = linematch.group(1)
+            if form.has_key(key):
+                configfile.write(key + "=" + form[key].value + "\n")
+                writtenkeys.append(key)
             else:
                 configfile.write(line)
+        else:
+            configfile.write(line)
 
-        # Check, if any values did not exist in the original config
+    # Check, if any values did not exist in the original config
 
-        for key in form.keys():
-            if key not in ['action', 'playlist'] + writtenkeys:
-                configfile.write(key + "=" + form[key].value + "\n")
+    for key in form.keys():
+        if key not in ['action', 'playlist'] + writtenkeys:
+            configfile.write(key + "=" + form[key].value + "\n")
 
-        configfile.close()
-        oldconfig.close()
+    configfile.close()
+    oldconfig.close()
 
+    if removeAfterwards:
         os.remove(savedir + "config/" + playlist + ".old")
-    else:
-
-        # There was no existing config, simply write a new one
-
-        configfile = open(savedir + "config/" + playlist, 'w')
-        for key in form.keys():
-            if key not in ['action', 'playlist']:
-                configfile.write(key + "=" + form[key].value + "\n")
-        configfile.close()
 
     # If playlist is currently running, reload it
 

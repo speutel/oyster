@@ -119,33 +119,37 @@ print "</head>"
 print "<body>"
 print "<h1>Configuration Checker</h1>"
 
-print "<table width='100%'>"
+if not os.path.exists(myconfig['savedir'] + "config/default"):
+    print "<p>No config file found! Please use the "
+    print "<a href='configedit.py' target='control'>Configuration Editor</a> to create one</p>"
+else:
+    print "<table width='100%'>"
 
-print "<tr><th colspan='2' class='configsection'>" + \
-    "Testing permissions...</th></tr>"
+    print "<tr><th colspan='2' class='configsection'>" + \
+        "Testing permissions...</th></tr>"
 
-test_readable('savedir', myconfig['savedir'])
-test_writeable('savedir', myconfig['savedir'])
-test_createable('basedir', myconfig['basedir'])
-test_readable('mediadir', myconfig['mediadir'])
+    test_readable('savedir', myconfig['savedir'])
+    test_writeable('savedir', myconfig['savedir'])
+    test_createable('basedir', myconfig['basedir'])
+    test_readable('mediadir', myconfig['mediadir'])
 
-print "<tr><td></td></tr>"
-print "<tr><th colspan='2' class='configsection'>" + \
-    "Testing playback capabilities...</th></tr>"
+    print "<tr><td></td></tr>"
+    print "<tr><th colspan='2' class='configsection'>" + \
+        "Testing playback capabilities...</th></tr>"
 
-test_writeable('the sounddevice', '/dev/dsp')
-test_readable('the mixerdevice', '/dev/mixer')
-test_writeable('the mixerdevice', '/dev/mixer')
-test_program('the MP3-player', myconfig['mp3'])
-test_program('the OGG-player', myconfig['ogg'])
-test_program('the FLAC-player', myconfig['flac'])
-test_program('the mixer program', '/usr/bin/aumix')
-test_program('the mp3 tag reader', '/usr/bin/id3v2')
-test_program('the ogg tag reader', '/usr/bin/ogginfo')
-test_program('the flac tag reader', '/usr/bin/metaflac')
+    test_writeable('the sounddevice', '/dev/dsp')
+    test_readable('the mixerdevice', '/dev/mixer')
+    test_writeable('the mixerdevice', '/dev/mixer')
+    test_program('the MP3-player', myconfig['mp3'])
+    test_program('the OGG-player', myconfig['ogg'])
+    test_program('the FLAC-player', myconfig['flac'])
+    test_program('the mixer program', '/usr/bin/aumix')
+    test_program('the mp3 tag reader', '/usr/bin/id3v2')
+    test_program('the ogg tag reader', '/usr/bin/ogginfo')
+    test_program('the flac tag reader', '/usr/bin/metaflac')
 
-print "</table>"
+    print "</table>"
 
-print "<p><a href='oyster-gui.py'>Back to main screen</a></p>"
+    print "<p><a href='oyster-gui.py'>Back to main screen</a></p>"
 
 print "</body></html>"
