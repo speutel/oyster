@@ -259,12 +259,15 @@ class Oyster:
         vol = os.popen(self.config['vol_get_cmd'])
         if self.vol_regex is None:
             self.vol_regex = re.compile(self.config['vol_filter_regexp'])
-        match = self.vol_regex.search(vol.readline())
+
+        for line in vol:
+            match = self.vol_regex.search(line)
+            if match is not None:
+                vol.close()
+                return match.group(1)
+
         vol.close()
-        try:
-            return match.group(1)
-        except:
-            return "-1"
+        return "-1"
 
 
     def __write_playlist_status(self):
@@ -928,7 +931,7 @@ class ControlThread(threading.Thread):
             os.system(self.oyster.config['vol_up_cmd'])
             self.oyster.write_volume()
         elif command == "VOLSET":
-            os.system(self.oyster.config['vol_set_cmd'] + " " + commandline[cpos+1])
+            os.system(self.oyster.config['vol_set_cmd'] + " " + commandline[cpos+1:] + "%")
             self.oyster.write_volume()
 
         
