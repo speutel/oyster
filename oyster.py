@@ -595,7 +595,7 @@ class Oyster:
             pfile.close()
             self.scrobbler.nowplaying(filestring)
             if self.gstreamer is None:
-                self.playerid = os.spawnl(os.P_NOWAIT, player, player, filestring)
+                self.playerid = os.spawnl(os.P_NOWAIT, player, player, "-q", filestring)
                 os.waitpid(self.playerid, 0)
             else:
                 self.gstreamer.play(filestring)
