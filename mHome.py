@@ -160,6 +160,8 @@ def display_play_controls():
         __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off")
     __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
     __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
+    print "<a href='extras.py' title='Extras'>"
+    print "<img src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
     print "</td></tr>"
 
     print "<tr><td>"

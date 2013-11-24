@@ -143,7 +143,8 @@ mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Blacklists")
 
 results = []
 

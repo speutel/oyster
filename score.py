@@ -48,7 +48,8 @@ else:
 if form.has_key('action'):
     fifocontrol.do_action(form['action'].value, form['file'].value)
 
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Scoring")
 
 score = {}
 maxscore = 1
