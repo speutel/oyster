@@ -49,8 +49,8 @@ for line in playlistfile.readlines():
     allfiles.append(line[:-1].lower())
 playlistfile.close()
 
-import common
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Similar Artists")
 
 import urllib
 if form.has_key('artist'):

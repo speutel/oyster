@@ -45,7 +45,7 @@ except KeyError:
     soundfile = ''
 
 import fifocontrol
-if form.has_key('action'):
+if 'action' in form:
     fifocontrol.do_action(form['action'].value, soundfile)
 
 import os.path
@@ -63,21 +63,21 @@ else:
 
 print "<p><a href='mBrowse.py?dir=/'>Mediadir</a>"  
 
-subdir = soundfile.replace(mediadir,'',1)
+subdir = soundfile.replace(mediadir, '', 1)
 subdir = os.path.dirname(subdir)
 soundfileonly = os.path.basename(soundfile)
 dirs = subdir.split('/')
 incdir = ''
 for partdir in dirs:
     escapeddir = urllib.quote(incdir + partdir)
-    print "<a href='mBrowse.py?dir=" + escapeddir +"'>" + partdir + "</a> / "
+    print "<a href='mBrowse.py?dir=" + escapeddir + "'>" + partdir + "</a> / "
     incdir = incdir + partdir + "/"
 
 print cgi.escape(soundfileonly) + "</p><br clear='all'/>"
 
 isblacklisted = 0
 if os.path.exists(myconfig['savedir'] + "blacklists/" + playlist):
-    blacklist = open (myconfig['savedir'] + "blacklists/" + playlist)
+    blacklist = open(myconfig['savedir'] + "blacklists/" + playlist)
     for rule in blacklist.readlines():
         if re.match('.*' + rule[:-1] + '.*', soundfile):
             isblacklisted = 1
@@ -91,10 +91,10 @@ if not os.access(mediadir + soundfile, os.R_OK):
     sys.exit()
 
 print "<table width='100%'><tr>"
-(mayVote, reason) = mCommon.may_vote(soundfile,None)
+(mayVote, reason) = mCommon.may_vote(soundfile, None)
 if oysterruns and mayVote:
     print "<td align='left'><span class='file'><a class='file' href='mHome.py?" + \
-        "vote=" + escapedfile + "' >Diesen Song w&uuml;nschen</a> " + \
+        "vote=" + escapedfile + "' >Vote this song</a> " + \
         "</span></td>"
 elif oysterruns and not mayVote:
     print "<td><span class='file' " +\
@@ -102,17 +102,24 @@ elif oysterruns and not mayVote:
 else:
     print "<td></td>"
 
+if isblacklisted:
+    print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>"
+else:
+    regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
+    print "<td align='right'><a class='file' href='blacklist.py?" + \
+          "affects=" + regexfile + "&amp;action=add'>Add this song to Blacklist</a></td></tr></table>"
+
 regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
 
 tag = taginfo.get_tag(mediadir + soundfile)
 
 timesplayed = 0
-logmatcher = re.compile('\A[0-9]{4}[0-9]{2}[0-9]{2}\-[0-9]{2}[0-9]{2}[0-9]{2}\ ([^\ ]*)\ (.*)\Z')
-log = open (myconfig['savedir'] + "logs/" + playlist)
+logmatcher = re.compile('\A[0-9]{4}[0-9]{2}[0-9]{2}\-[0-9]{2}[0-9]{2}[0-9]{2} ([^ ]*) (.*)\Z')
+log = open(myconfig['savedir'] + "logs/" + playlist)
 for line in log.readlines():
     matcher = logmatcher.match(line[:-1])
-    if matcher != None and matcher.group(2).find(soundfile) > -1 and matcher.group(1) == 'DONE':
-        timesplayed = timesplayed + 1
+    if matcher is not None and matcher.group(2).find(soundfile) > -1 and matcher.group(1) == 'DONE':
+        timesplayed += 1
 
 log.close()
 
@@ -120,31 +127,51 @@ albumdir = os.path.dirname(mediadir + soundfile) + "/"
 coverdata = mCommon.get_cover(albumdir, "100")
 
 print "<table border='0'>"
-if tag.has_key('title'):
-    print "<tr><td class='fileinfo'><strong>Titel</strong></td><td>" + tag['title'] + "</td></tr>"
+if 'title' in tag:
+    print "<tr><td class='fileinfo'><strong>Titel</strong></td><td>" + tag['title']
 
-if tag.has_key('artist'):
-    print "<tr><td class='fileinfo'><strong>K&uuml;nstler</strong></td><td>"
+    if 'artist' in tag and 'title' in tag:
+        print "<a href='lyrics.py?artist=" + urllib.quote(tag['artist']) + \
+              "&amp;song=" + urllib.quote(tag['title']) + "'> (Songtext)</a>"
+
+    print "</td></tr>"
+
+if 'artist' in tag:
+    print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
     print "<a href='mSearch.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
         "this artist'>" + tag['artist'] + "</a></td></tr>"
+    print "<tr><td></td><td>"
+    print "<a href='similar.py?artist=" + urllib.quote(tag['artist']) + \
+          "' class='file'>Show similar artists</a>"
+    print "</td></tr>"
 
 if coverdata != '':
     print "<tr><td class='fileinfo'><strong>Cover</strong></td><td>" + coverdata + "</td></tr>"
 
 tagtuple = (
     ('Album', 'album'),
-    ('Track Nummer', 'track'),
-    ('Jahr', 'year'),
+    ('Track Number', 'track'),
+    ('Year', 'year'),
     ('Genre', 'genre'),
-    ('Kommentar', 'comment'),
-    ('Laufzeit', 'playtime')
+    ('Comment', 'comment'),
+    ('File Format', 'format'),
+    ('Playtime', 'playtime')
 )
 
 for line in tagtuple:
-    if tag.has_key(line[1]):
+    if line[1] in tag:
         print "<tr><td class='fileinfo'><strong>" + line[0] + "</strong></td>" + \
             "<td>" + tag[line[1]] + "</td></tr>"
+
+print "<tr><td colspan='2'>&nbsp;</td></tr>"
+print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>" + str(timesplayed) + "</td></tr>"
+print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>"
+print "<td><a href='mInfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
+print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
+print "<strong>" + str(tag['score']) + "</strong>"
+print " <a href='mInfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
+print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a></td></tr>"
 
 print "</table>"
 
