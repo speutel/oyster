@@ -30,7 +30,7 @@ __revision__ = 1
 import cgi
 import config
 import cgitb
-import mCommon
+import common
 import re
 import urllib
 cgitb.enable()
@@ -60,15 +60,15 @@ if form.has_key('playlist') and form.has_key('mode') and form['mode'].value == '
     print "</head><body>"
 
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='mBrowse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
-    print "<li class='double'><a href='mSearch.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
+    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
     print "</ul>"
     
     print "<br/><hr/>"
 
 else:
     editplaylist = 0
-    mCommon.navigation_header(title="Suchen")
+    common.navigation_header(title="Suchen")
     mode = ''
 
 if form.has_key('searchtype') and form['searchtype'].value == 'regex':
@@ -102,7 +102,7 @@ else:
 
 # Create form
 
-print "<form method='post' action='mSearch.py' " + \
+print "<form method='post' action='search.py' " + \
     "enctype='application/x-www-form-urlencoded'>"
 
 #print "<fieldset class='searchform'>"
@@ -153,17 +153,17 @@ if search != '' and len(search) >= 3:
     # Sort results alphabetically
 
     results.sort()
-    mCommon.results = results
-    results = mCommon.sort_results('/')
+    common.results = results
+    results = common.sort_results('/')
 
     # List directory in browser
 
     if results != []:
-        mCommon.results = results
+        common.results = results
         if editplaylist:
-            mCommon.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
+            common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
         else:
-            mCommon.listdir('/', 0, cssclass)
+            common.listdir('/', 0, cssclass)
     else:
         print "<p>Keine Songs gefunden.</p>"
 

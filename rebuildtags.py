@@ -33,8 +33,8 @@ import os.path
 import taginfo
 cgitb.enable()
 
-import mCommon
-mCommon.navigation_header("Rebuild Tags")
+import common
+common.navigation_header("Rebuild Tags")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

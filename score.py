@@ -47,8 +47,8 @@ else:
 if form.has_key('action'):
     fifocontrol.do_action(form['action'].value, form['file'].value)
 
-import mCommon
-mCommon.navigation_header("Scoring")
+import common
+common.navigation_header("Scoring")
 
 score = {}
 maxscore = 1
@@ -111,9 +111,9 @@ while maxscore > 0:
             cssclass = 'file'
 
         if oysterruns:
-            print "<tr><td><a href='mHome.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
+            print "<tr><td><a href='home.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
                 "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
-                "alt='Enqueue'/></a> <a class='" + cssclass + "' href='mInfo.py?file=" + \
+                "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
                 escapedfile + "'>" + display[curfile] + "</a></td>"
             print "<td align='center'><a class= '" + cssclass + "' href='score.py?action=scoredown&amp;file=" + escapedfile + "' " + \
                 "title='Score down'><img src='themes/" + myconfig['theme'] + "/scoredown" + cssclass + ".png' " + \
@@ -121,7 +121,7 @@ while maxscore > 0:
             print " <a class='" + cssclass + "' href='score.py?action=scoreup&amp;file=" + escapedfile + "' " + \
                 "title='Score up'><img src='themes/" + myconfig['theme'] + "/scoreup" + cssclass + ".png' alt='+'/></a></td></tr>"
         else:
-            print "<tr><td><a class='" + cssclass + "' href='mInfo.py?file=" + \
+            print "<tr><td><a class='" + cssclass + "' href='fileinfo.py?file=" + \
                 escapedfile + "'>" + display[curfile] + "</a></td>"
             print "<td align='center'><span class='" + cssclass + "'><strong>" + str(score[curfile]) + "</strong></span></td></tr>"
             

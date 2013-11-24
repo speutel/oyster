@@ -138,8 +138,8 @@ if os.path.exists(myconfig['basedir']):
 else:
     oysterruns = 0
 
-import mCommon
-mCommon.navigation_header("Playlists")
+import common
+common.navigation_header("Playlists")
 
 if form.has_key('action') and (form.has_key('listname') or form.has_key('newlistname')):
     if form['action'].value == 'confirmdelete':

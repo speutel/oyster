@@ -148,6 +148,6 @@ else:
 
     print "</table>"
 
-    print "<p><a href='mHome.py'>Back to main screen</a></p>"
+    print "<p><a href='home.py'>Back to main screen</a></p>"
 
 print "</body></html>"

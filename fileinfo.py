@@ -36,8 +36,8 @@ form = cgi.FieldStorage()
 
 playlist = config.get_playlist()
 
-import mCommon
-mCommon.navigation_header()
+import common
+common.navigation_header()
 
 try:
     soundfile = form['file'].value
@@ -61,7 +61,7 @@ if os.path.exists(myconfig['basedir']):
 else:
     oysterruns = 0
 
-print "<p><a href='mBrowse.py?dir=/'>Mediadir</a>"  
+print "<p><a href='browse.py?dir=/'>Mediadir</a>"
 
 subdir = soundfile.replace(mediadir, '', 1)
 subdir = os.path.dirname(subdir)
@@ -70,7 +70,7 @@ dirs = subdir.split('/')
 incdir = ''
 for partdir in dirs:
     escapeddir = urllib.quote(incdir + partdir)
-    print "<a href='mBrowse.py?dir=" + escapeddir + "'>" + partdir + "</a> / "
+    print "<a href='browse.py?dir=" + escapeddir + "'>" + partdir + "</a> / "
     incdir = incdir + partdir + "/"
 
 print cgi.escape(soundfileonly) + "</p><br clear='all'/>"
@@ -91,9 +91,9 @@ if not os.access(mediadir + soundfile, os.R_OK):
     sys.exit()
 
 print "<table width='100%'><tr>"
-(mayVote, reason) = mCommon.may_vote(soundfile, None)
+(mayVote, reason) = common.may_vote(soundfile, None)
 if oysterruns and mayVote:
-    print "<td align='left'><span class='file'><a class='file' href='mHome.py?" + \
+    print "<td align='left'><span class='file'><a class='file' href='home.py?" + \
         "vote=" + escapedfile + "' >Vote this song</a> " + \
         "</span></td>"
 elif oysterruns and not mayVote:
@@ -124,7 +124,7 @@ for line in log.readlines():
 log.close()
 
 albumdir = os.path.dirname(mediadir + soundfile) + "/"
-coverdata = mCommon.get_cover(albumdir, "100")
+coverdata = common.get_cover(albumdir, "100")
 
 print "<table border='0'>"
 if 'title' in tag:
@@ -138,7 +138,7 @@ if 'title' in tag:
 
 if 'artist' in tag:
     print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
-    print "<a href='mSearch.py?searchtype=normal&amp;playlist=current&amp;" + \
+    print "<a href='search.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
         "this artist'>" + tag['artist'] + "</a></td></tr>"
     print "<tr><td></td><td>"
@@ -167,10 +167,10 @@ for line in tagtuple:
 print "<tr><td colspan='2'>&nbsp;</td></tr>"
 print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>" + str(timesplayed) + "</td></tr>"
 print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>"
-print "<td><a href='mInfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
+print "<td><a href='fileinfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
 print "<strong>" + str(tag['score']) + "</strong>"
-print " <a href='mInfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
+print " <a href='fileinfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a></td></tr>"
 
 print "</table>"

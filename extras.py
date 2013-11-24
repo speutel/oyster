@@ -28,9 +28,9 @@ __revision__ = 1
 import cgitb
 cgitb.enable()
 
-import mCommon
+import common
 
-mCommon.navigation_header(title="Extras")
+common.navigation_header(title="Extras")
 
 print "<h1><a href='playlists.py'>Playlists</a></h1>"
 print "<div style='padding-left: 2em;'>"

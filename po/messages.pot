@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-11 22:58+CET\n"
+"POT-Creation-Date: 2013-11-24 12:33+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,83 +15,83 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../mCommon.py:339 ../mHome.py:282
+#: ../common.py:339 ../home.py:284
 msgid "Currently Playing"
 msgstr ""
 
-#: ../mHome.py:83
+#: ../home.py:83
 msgid "Voted"
 msgstr ""
 
-#: ../mHome.py:96
+#: ../home.py:96
 msgid "Unvote"
 msgstr ""
 
-#: ../mHome.py:108
+#: ../home.py:108
 msgid "Next Random"
 msgstr ""
 
-#: ../mHome.py:115
+#: ../home.py:115
 msgid "View details"
 msgstr ""
 
-#: ../mHome.py:119
+#: ../home.py:119
 msgid "Replace_With_Random"
 msgstr ""
 
-#: ../mHome.py:122
+#: ../home.py:122
 msgid "Delete_Song"
 msgstr ""
 
-#: ../mHome.py:154
+#: ../home.py:154
 msgid "Start"
 msgstr ""
 
-#: ../mHome.py:154
+#: ../home.py:154
 msgid "Start Oyster"
 msgstr ""
 
-#: ../mHome.py:155
+#: ../home.py:155
 msgid "Pause"
 msgstr ""
 
-#: ../mHome.py:155
+#: ../home.py:155
 msgid "Pause/Unpause"
 msgstr ""
 
-#: ../mHome.py:156
+#: ../home.py:156
 msgid "Stop"
 msgstr ""
 
-#: ../mHome.py:156
+#: ../home.py:156
 msgid "Stop Oyster"
 msgstr ""
 
-#: ../mHome.py:158
+#: ../home.py:158
 msgid "Deactivate FAV Mode"
 msgstr ""
 
-#: ../mHome.py:160
+#: ../home.py:160
 msgid "Activate FAV Mode"
 msgstr ""
 
-#: ../mHome.py:161
+#: ../home.py:161
 msgid "Previous Song"
 msgstr ""
 
-#: ../mHome.py:162
+#: ../home.py:162
 msgid "Next Song"
 msgstr ""
 
-#: ../mHome.py:162
+#: ../home.py:162
 msgid "Skip Song"
 msgstr ""
 
-#: ../mHome.py:166
+#: ../home.py:168
 msgid "Lower Volume"
 msgstr ""
 
-#: ../mHome.py:169
+#: ../home.py:171
 msgid "Increase Volume"
 msgstr ""
 

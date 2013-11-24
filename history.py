@@ -106,15 +106,15 @@ def whatplayed():
             escapedfilename = urllib.quote(filename)
             print "<tr>"
             print "<td><strong>" + playdate[9:11] + ":" + playdate[11:13] + "</strong></td>"
-            print "<td><a class='file' href='mInfo.py?file=" + escapedfilename + "'>" + displayname + "</a><br></td>"
+            print "<td><a class='file' href='fileinfo.py?file=" + escapedfilename + "'>" + displayname + "</a><br></td>"
             print "</tr>"
 
     print "</table>"
     
     sys.exit()
 
-import mCommon
-mCommon.navigation_header("History")
+import common
+common.navigation_header("History")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

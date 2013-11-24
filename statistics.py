@@ -85,17 +85,17 @@ def print_songs (header, filearray):
         print "<tr><td>"
         
         if oysterruns:
-            print "<a href='mHome.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
+            print "<a href='home.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
             "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" +\
             "border='0' alt='Enqueue'/></a>"
         
-        print "<a class='" + cssclass + "' href='mInfo.py?" + \
+        print "<a class='" + cssclass + "' href='fileinfo.py?" + \
         "file=/" + escapedfilename + "'>" + displayname + "</a></td>"
         print "<td class='"  + cssclass + "' align='center'>" + reason + "</td></tr>\n"
     print "</table>"
 
-import mCommon
-mCommon.navigation_header("Statistics")
+import common
+common.navigation_header("Statistics")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

@@ -31,9 +31,9 @@ import re
 import config
 import taginfo
 import fifocontrol
-import mCommon
+import common
 
-_ = mCommon.get_prefered_language()
+_ = common.get_prefered_language()
 
 
 def check_oyster_started():
@@ -52,7 +52,7 @@ def check_oyster_started():
         sys.exit()
     if not os.path.isdir(basedir) or action == 'stop':
         print '<p>Oyster has not been started yet!</p>'
-        print "<p><a href='mHome.py?action=start'>Start</a></p>"
+        print "<p><a href='home.py?action=start'>Start</a></p>"
         print "</body></html>"
         sys.exit()
     if not os.path.isfile(basedir + 'info'):
@@ -89,10 +89,10 @@ def display_votes():
                     title = re.sub('\A' + mediadir, '', filename)
                     escapedtitle = urllib.quote(title)
                     print "<tr><td>"
-                    print "<a class='file' href='mInfo.py?file=" + escapedtitle + "' >" + display + "</a>"
+                    print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' >" + display + "</a>"
                     print "</td>"
                     print "<td>"
-                    print "<a href='mHome.py?action=unvote&amp;file=" + \
+                    print "<a href='home.py?action=unvote&amp;file=" + \
                           escapedtitle + "' title='" + _('Unvote') + "'>"
                     print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a>"
                     print "</td></tr>"
@@ -112,13 +112,13 @@ def display_next_random():
         nextinfo = urllib.quote("/" + nextinfo)
         print "<tr>"
 
-        print "<td><strong><a class='file' href='mInfo.py?file=" + nextinfo + "' title='" + _('View details') + "'>"
+        print "<td><strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' title='" + _('View details') + "'>"
         print nexttag['display'] + "</a></strong></td>"
 
-        print "<td style='min-width:40px'><a href='mHome.py?action=changerandom" + str(i) + \
+        print "<td style='min-width:40px'><a href='home.py?action=changerandom" + str(i) + \
               "&amp;file=" + nextinfo + "' title='" + _('Replace_With_Random') + "'>"
         print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/></a>"
-        print "<a href='mHome.py?action=delrandom" + str(i) + "&amp;file=" + \
+        print "<a href='home.py?action=delrandom" + str(i) + "&amp;file=" + \
               nextinfo + "' title='" + _('Delete_Song') + "'>"
         print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a></td>"
 
@@ -131,7 +131,7 @@ def display_next_random():
 def display_play_controls():
 
     def __print_action_link(action, title, image, altTag):
-        print "<a href='mHome.py?action=" + action + "' title='" + title + "'>"
+        print "<a href='home.py?action=" + action + "' title='" + title + "'>"
         print "<img src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
         pass
 
@@ -166,7 +166,7 @@ def display_play_controls():
 
     print "<tr><td>"
     __print_action_link("voldown", "Lower Volume", "voldown.png", _("Lower Volume"))
-    print "<a href='mHome.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig[
+    print "<a href='home.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig[
         'midvolume'] + "%'>Volume " + volume + "</a>"
     __print_action_link("volup", "Increase Volume", "volup.png", _("Increase Volume"))
     print "</td></tr></table>"
@@ -203,14 +203,14 @@ else:
 
 notVotedReason = None
 if 'vote' in form:
-    (mayVote, notVotedReason) = mCommon.may_vote(form['vote'].value, None)
+    (mayVote, notVotedReason) = common.may_vote(form['vote'].value, None)
     if mayVote:
         fifocontrol.do_vote(form['vote'].value)
 
 if 'votelist' in form:
     fifocontrol.do_votelist(form['votelist'].value)
 
-mCommon.navigation_header(title="&Uuml;bersicht", refreshPage="mHome.py")
+common.navigation_header(title="&Uuml;bersicht", refreshPage="home.py")
 
 check_oyster_started()
 
@@ -284,7 +284,7 @@ print "<table border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
 print "</tr>"
 print "<tr><td>"
-print "<strong><a class='file' href='mInfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
+print "<strong><a class='file' href='fileinfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
 print statusstr + "</strong></td>"
 print "<td></td>"
 print "</td></tr>"

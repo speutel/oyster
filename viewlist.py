@@ -38,8 +38,8 @@ myconfig = config.get_config()
 mediadir = myconfig['mediadir']
 form = cgi.FieldStorage()
 
-import mCommon
-mCommon.navigation_header()
+import common
+common.navigation_header()
 
 if form.has_key('list'):
     givenlist = form['list'].value.replace('../','')
@@ -69,7 +69,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
     topdir = os.path.dirname(givenlist.replace(mediadir, '', 1))
 
     escapeddir = urllib.quote(topdir)
-    print "<a href='mBrowse.py?dir=" + escapeddir + "'>One level up</a><br><br>"
+    print "<a href='browse.py?dir=" + escapeddir + "'>One level up</a><br><br>"
 
     print "<table width='100%'>"
 
@@ -93,8 +93,8 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
                 cssfileclass = 'file'
 
             print "<tr><td><a class='" + cssfileclass + "' href='" + \
-                "mInfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
-            print "<td><a class='" + cssfileclass + "' href='mHome.py?" + \
+                "fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
+            print "<td><a class='" + cssfileclass + "' href='home.py?" + \
                 "vote=" + escapedfile + "' target='curplay'>Vote</a></td></tr>"
 
     print "</table>"

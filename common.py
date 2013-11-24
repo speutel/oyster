@@ -59,15 +59,15 @@ def navigation_header(header=True, title="Oyster", refreshPage=None):
         print "<link rel='stylesheet' media='only screen and (max-width: 800px)' href='themes/default/mLayout.css' />"
         print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
         print "</head><body>"
-        print "<div><a href='mHome.py'><img src='themes/" + myconfig['theme'] + \
+        print "<div><a href='home.py'><img src='themes/" + myconfig['theme'] + \
               "/logo.png' alt='Oyster' width='200' style='margin-bottom:10px'/></a></div>"
         print "<div style='position:absolute; top:2px; right:2px'>"
         print "</div>"
 
     print "<ul id='navigation'>"
-    print "<li><a href='mHome.py'>&Uuml;bersicht</a></li>"
-    print "<li><a href='mBrowse.py'>St&ouml;bern</a></li>"
-    print "<li><a href='mSearch.py'>Suchen</a></li>"
+    print "<li><a href='home.py'>&Uuml;bersicht</a></li>"
+    print "<li><a href='browse.py'>St&ouml;bern</a></li>"
+    print "<li><a href='search.py'>Suchen</a></li>"
     print "</ul><br/>"
     print "<hr/>"
 
@@ -153,7 +153,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     # Browse-window of playlist editor
 
                     print "<table><tr><td align='left'>"
-                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -167,7 +167,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     # Search-window of playlist-editor
 
                     print "<table><tr><td align='left'>"
-                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -177,14 +177,14 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "</tr></table>"
 
                 else:
-                    print "<strong><a href='mBrowse.py?dir=" + escapeddir + \
+                    print "<strong><a href='browse.py?dir=" + escapeddir + \
                           "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = basepath + newpath
             else:
                 escapeddir = urllib.quote("/" + cutnewpath)
                 if playlistmode == 1:
                     print "<table><tr><td align='left'>"
-                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -194,7 +194,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "</tr></table>"
                 elif playlistmode == 2:
                     print "<table ><tr><td align='left'>"
-                    print "<strong><a href='mBrowse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -203,7 +203,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                           "' >Add</a></td>"
                     print "</tr></table>"
                 else:
-                    print "<strong><a href='mBrowse.py?dir=" + escapeddir + \
+                    print "<strong><a href='browse.py?dir=" + escapeddir + \
                           "'>" + cgi.escape(cutnewpath) + "</a></strong>"
                 newpath = "/" + newpath
 
@@ -240,7 +240,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     cssclass = 'file'
 
                 print "<table><tr>"
-                print "<td align='left'><a href='mInfo.py?file=" + \
+                print "<td align='left'><a href='fileinfo.py?file=" + \
                       escapedfile + "' class='" + cssclass + "'>" + \
                       cgi.escape(nameonly) + "</a></td>"
                 if playlistmode == 1:
@@ -255,7 +255,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     """ 
                     (mayVote, reason) = may_vote(basepath+filename, playlist, playlistContents, historyList)
                     if os.path.exists(myconfig['basedir']) and mayVote:
-                        print "<td align='right'><a href='mHome.py" + \
+                        print "<td align='right'><a href='home.py" + \
                         "?vote=" + escapedfile + "' class='" + cssclass + \
                         "' >W&uuml;nschen</a></td>"
                     elif not mayVote:

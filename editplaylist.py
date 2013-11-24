@@ -48,7 +48,7 @@ def print_frameset ():
     print"  <frame src='editplaylist.py?mode=title&playlist=" + urllib.quote(playlist) + "' name='title'>"
     print"  <frameset cols='*,*'>"
     print"   <frame src='editplaylist.py?mode=edit&playlist=" + urllib.quote(playlist) + "' name='playlist'>"
-    print"   <frame src='mBrowse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
+    print"   <frame src='browse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
     print"  </frameset>"
     print"    <noframes>"
     print"	<p>"
@@ -184,8 +184,8 @@ if form.has_key('addfile') or form.has_key('adddir') or \
         playlistfile.write(mediadir + curfile + "\n")
     playlistfile.close()
 
-import mCommon
-mCommon.results = allfiles
-allfiles = mCommon.sort_results('/')
+import common
+common.results = allfiles
+allfiles = common.sort_results('/')
 
-mCommon.listdir('/', 0, 'file2', 1, urllib.quote(playlist))
+common.listdir('/', 0, 'file2', 1, urllib.quote(playlist))

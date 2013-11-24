@@ -107,8 +107,8 @@ def print_affects (affects):
 
     if affectresults != []:
         affectresults.sort()
-        mCommon.results = affectresults
-        mCommon.listdir('/', 0,'file2')
+        common.results = affectresults
+        common.listdir('/', 0,'file2')
     else:
         print "<p>No songs match these rule.</p>"
 
@@ -142,8 +142,8 @@ mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
-import mCommon
-mCommon.navigation_header("Blacklists")
+import common
+common.navigation_header("Blacklists")
 
 results = []
 
