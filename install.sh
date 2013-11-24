@@ -82,20 +82,20 @@ else
  fi 
 fi
 
-# Testing aumix
+# Testing amixer
 
-AUMIX=`which aumix`
+AMIXER=`which amixer`
 
-echo -n "Searching for aumix... "
+echo -n "Searching for amixer... "
 
-if [ $AUMIX ]
+if [ $AMIXER ]
 then
  echo found!
 else
  echo not found!
  echo
- echo aumix is needed for oyster to control the mixer of the
- echo soundcard. If you want to use another program than aumix
+ echo amixer is needed for oyster to control the mixer of the
+ echo soundcard. If you want to use another program than amixer
  echo you have to specify this in control.py
  echo
  echo -n "Do you want to continue? [y/N] "
