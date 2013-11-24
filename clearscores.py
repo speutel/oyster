@@ -28,13 +28,13 @@ __revision__ = 1
 import cgi
 import config
 import cgitb
-import common
 import os.path
 import fifocontrol
 import sys
 cgitb.enable()
 
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Clear Scores")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]
@@ -42,7 +42,7 @@ form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
 if not os.path.exists(myconfig['basedir']):
-    print "<h1>Please <a href='oyster-gui.py?action=start' target='curplay'>" \
+    print "<h1>Please <a href='mHome.py?action=start' target='curplay'>" \
         + "start oyster</a> before clearing the scorefile!</h1>"
     sys.exit()
 

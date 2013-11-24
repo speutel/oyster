@@ -25,7 +25,6 @@ __revision__ = 1
 
 import cgi
 import mCommon
-import common
 import config
 import cgitb
 import os.path
@@ -42,7 +41,7 @@ mediadir = re.sub('/\Z', '', myconfig['mediadir'][:-1])
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
-if form.has_key('mode') and form['mode'].value == 'playlist':
+if 'mode' in form and form['mode'].value == 'playlist':
     editplaylist = 1
     mode = '&amp;mode=playlist'
     
@@ -246,7 +245,7 @@ else:
 dirs.sort()
 files.sort()
 
-print "<table >"
+print "<table width='100%'>"
 
 # First, display all directories
 

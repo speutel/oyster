@@ -90,7 +90,7 @@ for line in urldata.readlines():
         print "<td>" + similarlink + "</td>"
         if numsongs > 0:
         
-            searchlink = "<a href='search.py?searchtype=normal&amp;" + \
+            searchlink = "<a href='mSearch.py?searchtype=normal&amp;" + \
                 "playlist=all&amp;search=" + urllib.quote(name) + \
                 "' title='Show songs'>" + str(numsongs) + " songs</a>"
             print "<td align='right'>" + searchlink + "</td>"

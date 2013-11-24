@@ -260,9 +260,8 @@ basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 form = cgi.FieldStorage()
 
-import common
-
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Config Editor")
 
 import os.path
 

@@ -28,7 +28,6 @@ import cgitb
 import sys
 import os.path
 import urllib
-import common
 cgitb.enable()
 
 def print_frameset ():
@@ -49,7 +48,7 @@ def print_frameset ():
     print"  <frame src='editplaylist.py?mode=title&playlist=" + urllib.quote(playlist) + "' name='title'>"
     print"  <frameset cols='*,*'>"
     print"   <frame src='editplaylist.py?mode=edit&playlist=" + urllib.quote(playlist) + "' name='playlist'>"
-    print"   <frame src='browse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
+    print"   <frame src='mBrowse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
     print"  </frameset>"
     print"    <noframes>"
     print"	<p>"
@@ -74,7 +73,7 @@ def print_title ():
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "</head><body>"
-    print "<form method='post' target='_top' action='index.py'><input type='hidden' name='view' value='playlists'>"
+    print "<form method='post' target='_top' action='index.html'><input type='hidden' name='view' value='playlists'>"
     print "<p align='center'><b>Editing playlist " + playlist + "</b> " +\
         "<input type='submit' value='Done'></p></form>"
     print "</body></html>"
@@ -185,7 +184,8 @@ if form.has_key('addfile') or form.has_key('adddir') or \
         playlistfile.write(mediadir + curfile + "\n")
     playlistfile.close()
 
-common.results = allfiles
-allfiles = common.sort_results('/')
+import mCommon
+mCommon.results = allfiles
+allfiles = mCommon.sort_results('/')
 
-common.listdir('/', 0, 'file2', 1, urllib.quote(playlist))
+mCommon.listdir('/', 0, 'file2', 1, urllib.quote(playlist))

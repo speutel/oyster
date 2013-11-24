@@ -126,7 +126,6 @@ import cgitb
 import sys
 import os.path
 import urllib
-import common
 import re
 cgitb.enable()
 

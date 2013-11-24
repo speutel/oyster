@@ -28,13 +28,13 @@ __revision__ = 1
 import cgi
 import config
 import cgitb
-import common
 import anydbm
 import os.path
 import taginfo
 cgitb.enable()
 
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Rebuild Tags")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

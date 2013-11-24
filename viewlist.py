@@ -32,14 +32,14 @@ import config
 import cgitb
 import os.path
 import urllib
-import common
 cgitb.enable()
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir']
 form = cgi.FieldStorage()
 
-common.navigation_header()
+import mCommon
+mCommon.navigation_header()
 
 if form.has_key('list'):
     givenlist = form['list'].value.replace('../','')
@@ -60,7 +60,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
             print "<a class='playlist' href='viewlist.py?list=" + \
             escapeddir + "'>" + partdir + "</a>"
         else:
-            print "<a href='browse.py?dir=" + escapeddir + \
+            print "<a href='mBbrowse.py?dir=" + escapeddir + \
                 "'>" + partdir + "</a> / "
         incdir = incdir + partdir + "/"
 
@@ -69,7 +69,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
     topdir = os.path.dirname(givenlist.replace(mediadir, '', 1))
 
     escapeddir = urllib.quote(topdir)
-    print "<a href='browse.py?dir=" + escapeddir + "'>One level up</a><br><br>"
+    print "<a href='mBrowse.py?dir=" + escapeddir + "'>One level up</a><br><br>"
 
     print "<table width='100%'>"
 
@@ -93,8 +93,8 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
                 cssfileclass = 'file'
 
             print "<tr><td><a class='" + cssfileclass + "' href='" + \
-                "fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
-            print "<td><a class='" + cssfileclass + "' href='oyster-gui.py?" + \
+                "mInfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
+            print "<td><a class='" + cssfileclass + "' href='mHome.py?" + \
                 "vote=" + escapedfile + "' target='curplay'>Vote</a></td></tr>"
 
     print "</table>"

@@ -21,15 +21,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import cgi
 import config
 import taginfo
 import cgitb
 import urllib
-import common
 import re
 import os.path
 cgitb.enable()
+
 
 def get_blacklisted():
 
@@ -86,16 +85,17 @@ def print_songs (header, filearray):
         print "<tr><td>"
         
         if oysterruns:
-            print "<a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
+            print "<a href='mHome.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
             "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" +\
             "border='0' alt='Enqueue'/></a>"
         
-        print "<a class='" + cssclass + "' href='fileinfo.py?" + \
+        print "<a class='" + cssclass + "' href='mInfo.py?" + \
         "file=/" + escapedfilename + "'>" + displayname + "</a></td>"
         print "<td class='"  + cssclass + "' align='center'>" + reason + "</td></tr>\n"
     print "</table>"
 
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Statistics")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

@@ -31,8 +31,8 @@ cgitb.enable()
 import cgi
 form = cgi.FieldStorage()
 
-import common
-common.navigation_header()
+import mCommon
+mCommon.navigation_header("Lyrics")
 
 if form.has_key('artist') and form.has_key('song'):
     artist = form['artist'].value

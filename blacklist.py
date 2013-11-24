@@ -33,7 +33,6 @@ import config
 import cgitb
 import os.path
 import urllib
-import common
 import re
 cgitb.enable()
 
@@ -108,8 +107,8 @@ def print_affects (affects):
 
     if affectresults != []:
         affectresults.sort()
-        common.results = affectresults
-        common.listdir('/', 0,'file2')
+        mCommon.results = affectresults
+        mCommon.listdir('/', 0,'file2')
     else:
         print "<p>No songs match these rule.</p>"
 
