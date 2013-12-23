@@ -326,7 +326,7 @@ class Oyster:
         """
         log.debug("choose file from list")
         if len(self.scorelist) != 0:
-            # test if we play from scores or normal playlist 
+            # test if we play from scores or normal playlist
             #randi = random.randint(0, 100)
             if random.randint(0, 100) < self.votepercentage:
                 playreason = "SCORED"
@@ -339,7 +339,7 @@ class Oyster:
             except RuntimeError:
                 log.debug("recursion error! too many matches from blacklist!")
                 playreason = "BLACKLISTFORCED"
-                return chosen
+                return chosen, playreason
         playreason = "PLAYLIST"
         return chosen, playreason
 
@@ -656,7 +656,7 @@ class Oyster:
 
     def disableFavmode(self):
         """ disable favmode (normal playing) """
-        self.votepercentage = self.config["voteplay"]
+        self.votepercentage = int(self.config["voteplay"])
         self.__write_favmode("off")
 
     def enqueue(self, filestring, reason):
