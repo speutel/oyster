@@ -325,11 +325,16 @@ def getPlaylistContents(playlistName=None):
 def may_vote(f, playlist, playlistContents=None, historyList=None):
     _ = get_prefered_language()
 
+    if not os.path.exists(myconfig['basedir']):
+        return False, _("Oyster is not started")
+
     exists = False
 
     # Check if playlist blocks voting
     if playlistBlocksVoting():
         return False, "W&uuml;nschen z.Z. gesperrt."
+
+
 
     # Check if f is currently playing
     infoFile = file(myconfig['basedir'] + "/info")
