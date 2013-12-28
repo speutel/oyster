@@ -4,7 +4,7 @@
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
-#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -314,11 +314,9 @@ for curfile in files:
                       " style='font-style: italic;' '>" + reason + "</span></td>"
             else:
                 print "<td></td>"
-
-    """
-    elif False and (curfile[-3:] == 'm3u' or curfile[-3:] == 'pls'): # if we have a list...
+    elif curfile[-3:] == 'm3u' or curfile[-3:] == 'pls':  # if we have a list...
         escapeddir = givendir + curfile
-        escapeddir = escapeddir.replace(mediadir,'')
+        escapeddir = escapeddir.replace(mediadir, '')
         escapeddir = urllib.quote(escapeddir)
 
         # alternate colors
@@ -343,8 +341,7 @@ for curfile in files:
                 "target='curplay'>Vote</a></td>"
             else:
                 print "<td></td>"
-
-    else: # some other kind of file
+    else:  # some other kind of file
         iscover = 0
         coverfiles = myconfig['coverfilenames'].split(',')
         for cover in coverfiles:
@@ -355,7 +352,6 @@ for curfile in files:
         # if we can do nothing - just print it.
         if iscover == 0:
             print "<td>" + curfile + "</td>"
-    """
 
     print "</tr>\n"
 
