@@ -20,7 +20,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-"Tests the configuration of oyster for common errors"
+"""Tests the configuration of oyster for common errors"""
 
 __revision__ = '1.0'
 
@@ -31,18 +31,20 @@ import re
 import cgitb
 cgitb.enable()
 
-def print_result (result):
 
-    "Generates the OK or ERROR labels"
+def print_result(result):
+
+    """Generates the OK or ERROR labels"""
 
     if result == 0:
         print "<td align='center' class='configok'>OK</td>"
     elif result == 1:
         print "<td align='center' class='configerror'>ERROR</td>"
 
-def test_readable (name, var):
 
-    "Tests if the given var exists and is readable"
+def test_readable(name, var):
+
+    """Tests if the given var exists and is readable"""
 
     if os.path.exists(var) and os.access(var, os.R_OK):
         result = 0
@@ -54,9 +56,10 @@ def test_readable (name, var):
     print_result(result)
     print "</tr>"
 
-def test_writeable (name, var):
 
-    "Tests if the given var exists and is writeable"
+def test_writeable(name, var):
+
+    """Tests if the given var exists and is writeable"""
     
     if os.path.exists(var) and os.access(var, os.W_OK):
         result = 0
@@ -68,14 +71,15 @@ def test_writeable (name, var):
     print_result(result)
     print "</tr>"
 
-def test_createable (name, var):
 
-    "Tests if the given directory can be created"
+def test_createable(name, var):
+
+    """Tests if the given directory can be created"""
     
     if os.path.exists(var) and os.access(var, os.W_OK):
         # basedir already exists
         result = 0
-    elif os.access(re.sub('[^/]*/\Z','',var), os.W_OK):
+    elif os.access(re.sub('[^/]*/\Z', '', var), os.W_OK):
         # basedir can be created
         result = 0
     else:
@@ -86,9 +90,10 @@ def test_createable (name, var):
     print_result(result)
     print "</tr>"
 
-def test_program (name, var):
 
-    "Tests if the given program exists and can be executed"
+def test_program(name, var):
+
+    """Tests if the given program exists and can be executed"""
     
     if os.path.exists(var) and os.access(var, os.X_OK):
         result = 0

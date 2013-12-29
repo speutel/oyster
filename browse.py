@@ -53,7 +53,6 @@ if 'mode' in form and form['mode'].value == 'playlist':
     print "</ul>"
     
     print "<br/><hr/>"
-
 else:
     editplaylist = 0
     common.navigation_header(title="St&ouml;bern")

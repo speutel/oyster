@@ -40,7 +40,7 @@ basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
-if form.has_key('playlist') and form.has_key('mode') and form['mode'].value == 'playlist':
+if 'playlist' in form and 'mode' in form and form['mode'].value == 'playlist':
     editplaylist = 1
     mode = '&mode=playlist'
 
@@ -134,7 +134,7 @@ if search != '' and len(search) >= 3:
             line = line.replace(mediadir, '', 1)
             name = line[:-5]
             matcher = re.match(search, name)
-            if matcher != None:
+            if matcher is not None:
                 results.append(line[:-1])
 
     # Sort results alphabetically
@@ -145,7 +145,7 @@ if search != '' and len(search) >= 3:
 
     # List directory in browser
 
-    if results != []:
+    if results:
         common.results = results
         if editplaylist:
             common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))

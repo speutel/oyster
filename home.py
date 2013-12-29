@@ -210,7 +210,7 @@ if 'vote' in form:
 if 'votelist' in form:
     fifocontrol.do_votelist(form['votelist'].value)
 
-common.navigation_header(title="&Uuml;bersicht", refreshPage="home.py")
+common.navigation_header(title="&Uuml;bersicht", refreshpage="home.py")
 
 check_oyster_started()
 
