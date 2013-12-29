@@ -239,6 +239,12 @@ div.ui-page-theme-a {
     text-shadow: none !important;
 }
 
+.ui-navbar .ui-btn {
+    background-color: #222222 !important;
+    color: #FFFFFF !important;
+    text-shadow: none !important;
+}
+
 .ui-mini-btn {
     padding: 0.1em;
 }
