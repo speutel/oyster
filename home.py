@@ -115,12 +115,14 @@ def display_next_random():
         print "<td><strong><a class='file' href='fileinfo.py?file=" + nextinfo + "' title='" + _('View details') + "'>"
         print nexttag['display'] + "</a></strong></td>"
 
-        print "<td style='min-width:40px'><a href='home.py?action=changerandom" + str(i) + \
-              "&amp;file=" + nextinfo + "' title='" + _('Replace_With_Random') + "'>"
-        print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/></a>"
-        print "<a href='home.py?action=delrandom" + str(i) + "&amp;file=" + \
-              nextinfo + "' title='" + _('Delete_Song') + "'>"
-        print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a></td>"
+        print "<td>"
+        #print "<a href='home.py?action=changerandom" + str(i) + "&amp;file=" + nextinfo + "' title='" + _('Replace_With_Random') + "'>"
+        #print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/>"
+        #print "</a>"
+        print "<a href='home.py?action=delrandom" + str(i) + "&amp;file=" + nextinfo + "' title='" + _('Delete_Song') + "'>"
+        print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/>"
+        print "</a>"
+        print "</td>"
 
         print "</tr>"
         i += 1
@@ -284,7 +286,12 @@ else:
 if notVotedReason is not None:
     print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>"
 
-pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
+
+# TODO: Workaround for issue #5; remove when fixed. there should be no more empty playreason then.
+if playreason != '':
+    pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
+else:
+    pr_img = "[?] "
 
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
