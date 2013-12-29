@@ -41,38 +41,43 @@ def html_header(title="Oyster", refreshpage=None):
     print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
     print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
     print """
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 """
     print "<title>" + title + "</title>"
-    print "<meta name='viewport' content='width=device-width'/>"
+    print "<meta name='viewport' content='width=device-width, initial-scale=1'>"
     print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
-    if refreshpage is not None:
-        print " <meta http-equiv='refresh' content='15; URL=" + refreshpage + "'/>"
+    # if refreshpage is not None:
+        # print " <meta http-equiv='refresh' content='15; URL=" + refreshpage + "'/>"
+    print "<link rel='stylesheet' href='contrib/jquery.mobile-1.4.0.min.css' />"
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
+    print "<script src='contrib/jquery-1.8.2.min.js'></script>"
+    print "<script src='contrib/jquery.mobile-1.4.0.min.js'></script>"
     print "</head><body>"
 
 
-def navigation_header(header=True, title="Oyster", refreshpage=None):
+def navigation_header(title="Oyster", refreshpage=None):
     """Prints the standard header for most pages of Oyster"""
 
-    if header:
-        html_header(title, refreshpage)
-        print "<div><a href='home.py'><img src='themes/" + myconfig['theme'] + \
-              "/logo.png' alt='Oyster' width='200' style='margin-bottom:10px'/></a></div>"
-        print "<div style='position:absolute; top:2px; right:2px'>"
-        print "</div>"
+    html_header(title, refreshpage)
+    print "<div data-role='page'>"
 
-    print "<ul id='navigation'>"
+    print "<div data-role='header'>"
+    print "<div><a href='home.py'><img src='themes/" + myconfig['theme'] + \
+          "/logo.png' alt='Oyster' width='200' style='margin-bottom:10px'/></a></div>"
+    print "<div style='position:absolute; top:2px; right:2px'>"
+    print "</div>"
+
+    print "<div data-role='navbar'>"
+    print "<ul>"
     print "<li><a href='browse.py'>St&ouml;bern</a></li>"
     print "<li><a href='search.py'>Suchen</a></li>"
     print "<li><a href='playlists.py'>Playlisten</a></li>"
-    print "</ul><br/>"
-    print "<hr/>"
+    print "</ul></div><br/>"
+    print "</div>"
+    print "<div data-role='content'>"
 
 
 def get_cover(albumdir, imagewidth):

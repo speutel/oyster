@@ -223,3 +223,18 @@ ul#navigation a:hover {
 pre#lyric {
     font-family: sans-serif;
 }
+
+/* Overriding jquery CSS, perhaps use a custom theme here */
+
+div.ui-header {
+    background-color: #111111 !important;
+}
+
+div.ui-content {
+    background-color: #111111 !important;
+}
+
+div.ui-page-theme-a {
+    color: #08c0e0 !important;
+    text-shadow: none !important;
+}
