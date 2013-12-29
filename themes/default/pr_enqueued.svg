@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
    sodipodi:docname="pr_enqueued.svg"
-   inkscape:export-filename="/home/ethric/git/oyster/themes/default/pr_voted.png"
+   inkscape:export-filename="/home/ethric/git/oyster/themes/default/pr_enqueued.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -28,11 +28,11 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="22.627417"
-     inkscape:cx="2.708929"
-     inkscape:cy="6.8502806"
+     inkscape:cx="1.9013547"
+     inkscape:cy="9.1729913"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
-     showgrid="false"
+     showgrid="true"
      inkscape:window-width="1920"
      inkscape:window-height="1016"
      inkscape:window-x="0"
@@ -64,17 +64,9 @@
      id="layer1"
      transform="translate(0,-1036.3622)">
     <path
+       style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffcc00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+       d="m 4.4389413,1036.3669 c -0.3033223,-0.021 -0.621158,0.03 -0.9369144,0.1249 -1.9466223,0.5841 -3.59653148,2.418 -3.49781388,4.7451 0.30138336,4.9217 3.98880998,8.6339 7.40162398,10.9575 0.3288883,0.2237 0.7954089,0.2237 1.1242973,0 3.4273737,-2.3279 7.1259467,-6.0388 7.4640847,-10.9575 0.116082,-2.3257 -1.532559,-4.1518 -3.466583,-4.7451 -1.26146,-0.3872 -2.484017,0.272 -3.3728921,1.1238 -0.4888717,0.4684 -0.780191,1.1419 -1.1555278,1.7482 -0.3709469,-0.6057 -0.670011,-1.2785 -1.1555278,-1.7482 -0.6620804,-0.6406 -1.4947799,-1.1862 -2.404747,-1.2487 z m 6.5584017,3.9959 0.999375,0 0,2.9969 -0.999375,0 0,1.9979 -0.9993758,0 0,0.999 -2.9981265,0 0,1.9979 -0.9993753,0 0,-0.9989 -0.9993754,0 0,-0.999 -0.9993754,0 0,-0.999 -0.9993754,0 0,-0.999 0.9993754,0 0,-0.9989 0.9993754,0 0,-0.999 0.9993754,0 0,-0.999 0.9993753,0 0,1.998 2.9981265,0 0,-0.999 0.9993758,0 0,-1.9979 z"
        id="path3771"
-       style="fill:none;stroke:#ffcc00;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;fill-opacity:1"
-       d="m 1.0032496,1041.1653 c -0.0775116,-1.8268 1.2424764,-3.2697 2.7970908,-3.7362 1.5546143,-0.4665 3.3380448,1.5848 4.1990384,3.7362 0.8771091,-2.161 2.6760802,-4.2052 4.2271732,-3.7294 1.551093,0.4758 2.860118,1.9034 2.768956,3.7294 -0.305925,4.4492 -3.737443,7.9583 -7.0341162,10.1969 -3.2799651,-2.2327 -6.6854799,-5.7451 -6.9581422,-10.1969 z"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cscsccc" />
-    <path
-       style="fill:#ffcc00;fill-opacity:1;stroke:none"
-       d="m 8,4.34375 0,10.4375 -2.3125,-1.3125 -3.25,-3.5625 -1.46875,-3.9375 0.1875,-2.5 L 2.6875,1.40625 4.71875,0.93749996 6.84375,2.46875 z"
-       id="path3912"
-       inkscape:connector-curvature="0"
-       transform="translate(0,1036.3622)"
-       sodipodi:nodetypes="cccccccccc" />
+       inkscape:connector-curvature="0" />
   </g>
 </svg>
