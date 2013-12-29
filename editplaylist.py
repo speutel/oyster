@@ -22,6 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import cgi
+import common
 import config
 import fifocontrol
 import cgitb
@@ -30,7 +31,8 @@ import os.path
 import urllib
 cgitb.enable()
 
-def print_frameset ():
+
+def print_frameset():
     
     "Generates a frameset for the playlist editor"
     
@@ -58,7 +60,8 @@ def print_frameset ():
     print"</frameset>"
     print"</html>"
 
-def print_title ():
+
+def print_title():
     print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
     print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
     print """
@@ -93,20 +96,7 @@ if form.has_key('playlist'):
 elif form.has_key('newlistname'):
     playlist = form['newlistname'].value
 else:
-    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-    print """
-    <!DOCTYPE html 
-         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-     <title>Oyster-GUI</title>
-    """
-    print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
-    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
-    print "</head><body>"
+    common.navigation_header()
     print "<p>You did not specify a name for the playlist.</p>"
     print "<p>Please press the <i>Back</i> button in your browser and try again.</a></p>"
     sys.exit()
@@ -120,20 +110,9 @@ elif form.has_key('mode') and form['mode'].value == 'title':
     print_title()
     sys.exit()
 
-print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-print """
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
- <title>Oyster-GUI</title>
-"""
-print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
-print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
-print "</head><body>"
+common.html_header()
+
+print "<div data-role='content'>"
 
 allfiles = []
 playlistfile = open (savedir + "lists/" + playlist)

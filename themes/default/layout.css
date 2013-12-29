@@ -239,6 +239,10 @@ div.ui-page-theme-a {
     text-shadow: none !important;
 }
 
+.ui-mini-btn {
+    padding: 0.1em;
+}
+
 a.file:visited {
     color: #FFCC00;
 }
@@ -246,3 +250,4 @@ a.file:visited {
 a.file:hover {
     color: #FFCC00;
 }
+

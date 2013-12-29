@@ -56,13 +56,13 @@ def html_header(title="Oyster", refreshpage=None):
     print "<script src='contrib/jquery-1.8.2.min.js'></script>"
     print "<script src='contrib/jquery.mobile-1.4.0.min.js'></script>"
     print "</head><body>"
+    print "<div data-role='page'>"
 
 
 def navigation_header(title="Oyster", refreshpage=None):
     """Prints the standard header for most pages of Oyster"""
 
     html_header(title, refreshpage)
-    print "<div data-role='page'>"
 
     print "<div data-role='header'>"
     print "<div><a href='home.py'><img src='themes/" + myconfig['theme'] + \
@@ -165,7 +165,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
-                    print "<td align='right'><a href='editplaylist.py?" + \
+                    print "<td align='right'><a class='ui-btn ui-mini ui-mini-btn' href='editplaylist.py?" + \
                           "playlist=" + playlist + "&deldir=" + escapeddir + \
                           "'>Delete</a></td>"
                     print "</tr></table>"
@@ -196,7 +196,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
-                    print "<td align='right'><a href='editplaylist.py?" + \
+                    print "<td align='right'><a class='ui-btn ui-mini ui-mini-btn' href='editplaylist.py?" + \
                           "playlist=" + playlist + "&deldir=" + escapeddir + \
                           "'>Delete</a></td>"
                     print "</tr></table>"
@@ -252,7 +252,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                       escapedfile + "' class='" + cssclass + "'>" + \
                       cgi.escape(nameonly) + "</a></td>"
                 if playlistmode == 1:
-                    print "<td align='right'><a href='editplaylist.py?" + \
+                    print "<td align='right'><a class='ui-btn ui-mini ui-mini-btn' href='editplaylist.py?" + \
                           "playlist=" + playlist + "&delfile=" + escapedfile + \
                           "' class='" + cssclass + "'>Delete</a></td>"
                 elif playlistmode == 2:

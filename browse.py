@@ -47,12 +47,15 @@ if 'mode' in form and form['mode'].value == 'playlist':
 
     common.html_header(title="St&ouml;bern")
 
-    print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
-    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "<div data-role='header'>"
+    print "<div data-role='navbar'>"
+    print "<ul>"
+    print "<li><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
+    print "<li><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
     print "</ul>"
-    
-    print "<br/><hr/>"
+    print "</div></div>"
+
+    print "<div data-role='content'>"
 else:
     editplaylist = 0
     common.navigation_header(title="St&ouml;bern")
