@@ -276,13 +276,6 @@ favfile = open(basedir + 'favmode')
 favmode = favfile.readline()[:-1]
 favfile.close()
 
-# If FAVMODE is on, every "scored" is substituded to "favorites only", but
-# enqueued and voted remain. (random should not be possible ;))
-if favmode == 'on' and not (playreason == ' (voted)' or playreason == ' (enqueued)'):
-    playreason = ' (favorites only)'
-    pr_image = 'pr_scored.png'
-    pr_alt = 'favorites only'
-
 if status == 'paused':
     statusstr = " (paused)"
 else:
