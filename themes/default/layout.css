@@ -238,3 +238,11 @@ div.ui-page-theme-a {
     color: #08c0e0 !important;
     text-shadow: none !important;
 }
+
+a.file:visited {
+    color: #FFCC00;
+}
+
+a.file:hover {
+    color: #FFCC00;
+}
