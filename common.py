@@ -50,8 +50,8 @@ def html_header(title="Oyster", refreshpage=None):
     print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
     # if refreshpage is not None:
         # print " <meta http-equiv='refresh' content='15; URL=" + refreshpage + "'/>"
-    print "<link rel='stylesheet' href='contrib/jquery.mobile-1.4.0.min.css' />"
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
+    print "<link rel='stylesheet' href='contrib/jquery.mobile-1.4.0.min.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "<script src='contrib/jquery-1.8.2.min.js'></script>"
     print """
@@ -66,7 +66,7 @@ $(document).on("mobileinit", function () {
 """
     print "<script src='contrib/jquery.mobile-1.4.0.min.js'></script>"
     print "</head><body>"
-    print "<div data-role='page'>"
+    print "<div data-role='page' data-theme='b' data-content-theme='b'>"
 
 
 def navigation_header(title="Oyster", refreshpage=None):
