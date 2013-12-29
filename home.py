@@ -273,7 +273,7 @@ if favmode == 'on' and not (playreason == ' (voted)' or playreason == ' (enqueue
     playreason = ' (favorites only)'
 
 if status == 'paused':
-    statusstr = " (angehalten)"
+    statusstr = " (paused)"
 else:
     statusstr = ''
 
@@ -285,6 +285,7 @@ print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>
 print "</tr>"
 print "<tr><td>"
 print "<strong><a class='file' href='fileinfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
+print playreason + " "
 print statusstr + "</strong></td>"
 print "<td></td>"
 print "</td></tr>"
