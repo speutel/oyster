@@ -68,9 +68,9 @@ def navigation_header(header=True, title="Oyster", refreshpage=None):
         print "</div>"
 
     print "<ul id='navigation'>"
-    print "<li><a href='home.py'>&Uuml;bersicht</a></li>"
     print "<li><a href='browse.py'>St&ouml;bern</a></li>"
     print "<li><a href='search.py'>Suchen</a></li>"
+    print "<li><a href='playlists.py'>Playlisten</a></li>"
     print "</ul><br/>"
     print "<hr/>"
 
