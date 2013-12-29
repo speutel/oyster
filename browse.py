@@ -142,7 +142,7 @@ if os.path.exists(mediadir + givendir):
         print "/ <strong>" + escapedpartdir + "</strong>"
     print " /"
 
-    print "</p><br clear='all'/>"
+    print "</p>"
 
     # Get the parent directory
 
