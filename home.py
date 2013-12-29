@@ -249,14 +249,23 @@ if playedfile != info:
 
 if playreason == 'PLAYLIST':
     playreason = ' (random)'
+    pr_image = 'pr_random.png'
+    pr_alt = 'random'
 elif playreason == 'SCORED':
     playreason = ' (scored)'
+    pr_image = 'pr_scored.png'
+    pr_alt = 'scored'
 elif playreason == 'ENQUEUED':
     playreason = ' (enqueued)'
+    pr_image = 'pr_enqueued.png'
+    pr_alt = 'enqueued'
 elif playreason == 'VOTED':
     playreason = ' (voted)'
+    pr_image = 'pr_voted.png'
+    pr_alt = 'voted'
 else:
     playreason = ''
+
 
 info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
 info = urllib.quote("/" + info)
@@ -271,6 +280,8 @@ favfile.close()
 # enqueued and voted remain. (random should not be possible ;))
 if favmode == 'on' and not (playreason == ' (voted)' or playreason == ' (enqueued)'):
     playreason = ' (favorites only)'
+    pr_image = 'pr_scored.png'
+    pr_alt = 'favorites only'
 
 if status == 'paused':
     statusstr = " (paused)"
@@ -280,12 +291,15 @@ else:
 if notVotedReason is not None:
     print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>"
 
+pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
+
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
 print "</tr>"
 print "<tr><td>"
-print "<strong><a class='file' href='fileinfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
-print playreason + " "
+print "<strong>"
+print pr_img + " "
+print "<a class='file' href='fileinfo.py?file=" + info + "' title='View details'>" + tag['display'] + "</a>"
 print statusstr + "</strong></td>"
 print "<td></td>"
 print "</td></tr>"
