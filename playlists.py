@@ -23,31 +23,41 @@
 import config
 myconfig = config.get_config()
 
-def print_playlist(file):
-    title = re.sub('\A.*_','',file)
-    encfile = urllib.quote(file)
 
-    if os.path.getsize(myconfig['savedir'] + '/lists/' + file) == 0:
+def print_playlist(filename):
+    title = re.sub('\A.*_', '', filename)
+    encfile = urllib.quote(filename)
+
+    if os.path.getsize(myconfig['savedir'] + '/lists/' + filename) == 0:
         isempty = " <span class='emptylist'>(empty)</span>"
     else:
         isempty = ''
 
-    if file == playlist and file != 'default':
-        print "<tr><td><i>" + title + "</i></td><td class='playlists'><strong>currently playing</strong></td>"
-        print "<td class='playlists'><a href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>Edit</a></td><td></td></tr>"
-    elif file != 'default':
-        print "<tr><td>" + title + isempty + "</td><td class='playlists'>"
+    print "<div class='ui-grid-b'>"
+
+    if filename == playlist and filename != 'default':
+        print "<div class='ui-block-a'><i>" + title + "</i></div>"
+        print "<div class='ui-block-b'><strong class='ui-btn'>currently playing</strong></div>"
+        print "<div class='ui-block-c'><a class='ui-btn' href='editplaylist.py?" + \
+            "playlist=" + encfile + "' target='_top'>Edit</a></div>"
+    elif filename != 'default':
+        print "<div class='ui-block-a'>" + title + isempty + "</div>"
+        print "<div class='ui-block-b'>"
         if oysterruns:
-            print "<a href='playlists.py?action=loadlist&amp;" + \
+            print "<a class='ui-btn' href='playlists.py?action=loadlist&amp;" + \
                 "listname=" + encfile + "'>Load</a>"
-        print "</td>"
-        print "<td class='playlists'><a href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>Edit</a></td>"
-        print "<td class='playlists'><a href='playlists.py?action=move&amp;" + \
-            "playlist=" + encfile + "'>Move/Rename</a></td>"
-        print "<td class='playlists'><a href='playlists.py?action=confirmdelete&amp;" + \
-            "listname=" + encfile + "'>Delete</a></td></tr>"
+        print "</div>"
+        print "<div class='ui-block-c'><a class='ui-btn' href='editplaylist.py?" + \
+            "playlist=" + encfile + "' target='_top'>Edit</a></div>"
+        print "</div><div class='ui-grid-b'>"
+        print "<div class='ui-block-a'></div>"
+        print "<div class='ui-block-b'><a class='ui-btn' href='playlists.py?action=move&amp;" + \
+            "playlist=" + encfile + "'>Move/Rename</a></div>"
+        print "<div class='ui-block-c'><a class='ui-btn' href='playlists.py?action=confirmdelete&amp;" + \
+            "listname=" + encfile + "'>Delete</a></div>"
+
+    print "</div>"
+
 
 def confirmdelete():
     playlist = form['listname'].value
@@ -57,6 +67,7 @@ def confirmdelete():
     print "<br/>"
     print "<a href='playlists.py'>No, return to overview</a>"
     print "</body></html>"
+
 
 def renameform(playlist):
 
@@ -202,27 +213,26 @@ if form.has_key('action') and form['action'].value == 'loadlist' and form.has_ke
 else:
     playlist = config.get_playlist()
 
-print "<table width='100%' id='playlists'>"
-
-print "<tr><td colspan='5'><h1>Playlists</h1></td></tr>"
+print "<h1>Playlists</h1>"
 
 # Print playlists without a section
 
-if playlist == 'default':
-    print "<tr style='height:3em;'><td><i>default (All songs)</i></td>" + \
-        "<td class='playlists' colspan='4'><strong>currently playing</strong></td>"
-    print "</tr>"
-else:
-    print "<tr style='height:3em;'><td>default (All songs)</td>" + \
-        "<td class='playlists'>"
-    if oysterruns:
-        print "<a href='playlists.py?action=loadlist&amp;" + \
-            "listname=default'>Load</a>"
-    print "</td><td></td><td></td><td></td></tr>"
+print "<div class='ui-grid-b'>"
 
-for file in files:
-    if file.find('_') == -1:
-        print_playlist(file)
+if playlist == 'default':
+    print "<div class='ui-block-a'><i>default (All songs)</i></div>" + \
+        "<div class='ui-block-b'><strong>currently playing</strong></div>"
+else:
+    print "<div class='ui-block-a'>default (All songs)</div>"
+    if oysterruns:
+        print "<div class='ui-block-b'><a class='ui-btn' href='playlists.py?action=loadlist&amp;" + \
+            "listname=default'>Load</a></div>"
+
+print "</div>"
+
+for filename in files:
+    if filename.find('_') == -1:
+        print_playlist(filename)
 
 # Print all sections
 
@@ -230,12 +240,11 @@ sectionkeys = section.keys()
 sectionkeys.sort()
 
 for section in sectionkeys:
-    print "<tr><td colspan='5'><h2>" + section + "</h2></td></tr>"
-    for file in files:
-        if file.find(section + "_") == 0:
-            print_playlist(file)
+    print "<h2>" + section + "</h2>"
+    for filename in files:
+        if filename.find(section + "_") == 0:
+            print_playlist(filename)
 
-print "</table>"
 
 if oysterruns:
     print "<form method='post' target='_top' action='editplaylist.py' " + \
