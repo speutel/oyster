@@ -54,6 +54,16 @@ def html_header(title="Oyster", refreshpage=None):
     print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
     print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
     print "<script src='contrib/jquery-1.8.2.min.js'></script>"
+    print """
+<script>
+$(document).on("mobileinit", function () {
+   $.mobile.loader.prototype.options.text = "Loading...";
+   $.mobile.loader.prototype.options.textVisible = true;
+   $.mobile.loader.prototype.options.theme = "a";
+   $.mobile.loader.prototype.options.html = "";
+});
+</script>
+"""
     print "<script src='contrib/jquery.mobile-1.4.0.min.js'></script>"
     print "</head><body>"
     print "<div data-role='page'>"
@@ -72,9 +82,9 @@ def navigation_header(title="Oyster", refreshpage=None):
 
     print "<div data-role='navbar'>"
     print "<ul>"
-    print "<li><a href='browse.py'>St&ouml;bern</a></li>"
-    print "<li><a href='search.py'>Suchen</a></li>"
-    print "<li><a href='playlists.py'>Playlisten</a></li>"
+    print "<li><a class='bbla' href='browse.py'>St&ouml;bern</a></li>"
+    print "<li><a class='bbla' href='search.py'>Suchen</a></li>"
+    print "<li><a class='bbla' href='playlists.py'>Playlisten</a></li>"
     print "</ul></div><br/>"
     print "</div>"
     print "<div data-role='content'>"
