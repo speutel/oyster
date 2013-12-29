@@ -94,22 +94,22 @@ print "<form method='post' action='search.py' " + \
 
 #print "<fieldset class='searchform'>"
 #print "<legend class='searchform'>Musik Suchen</legend>"
-print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
-print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
-print "<table id='searchoptions'>"
-print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
+print "<input id='searchfield' type='search' size='40' name='search' value=\"" + cgi.escape(search, 1) + "\"/>"
+print "<input type='hidden' name='searchtype' value='normal'/> "
 
 if editplaylist:
     print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
     print "<input type='hidden' name='mode' value='playlist'/>"
 else:
-    print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-        "/> Aktuelle Liste<br/>"
-    print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "&Uuml;berall<br/></td>"
+    print "<fieldset data-role='controlgroup' data-type='horizontal'>"
+    print "<label for='playlist-all'>Aktuelle Liste</label>"
+    print "<input type='radio' name='playlist' id='playlist-all' value='current' " + curcheck + " />"
+    print "<label for='playlist-current'>&Uuml;berall</label>"
+    print "<input type='radio' name='playlist' id='playlist-current' value='all' " + allcheck + " />"
+    print "</fieldset>"
 
-print "</tr></table>"
-print "</fieldset>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
+
 print "</form>"
 
 results = []
