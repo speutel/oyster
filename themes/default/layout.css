@@ -1,12 +1,13 @@
 body {
   background-color: #111111;
   color: #08c0e0;
+  font-size: 16pt;
 }
 
 a { 
   color: #08c0e0;
-  text-decoration: underline;
-  font-weight: bold;
+  text-decoration: none;
+  font-weight: normal;
 }
 
 a:hover {
@@ -35,6 +36,10 @@ a.playlist {
 
 a.playlist2 {
   color: #ff5500;
+}
+
+a.actionlink {
+  margin: 4px;
 }
 
 b.dir {
@@ -70,12 +75,10 @@ span.blacklisted {
 
 .file {
   color: #FFCC00;
-  font-weight: bold;
 }
 
 .file2 {
   color: #ff8800;
-  font-weight: bold;
 }
 
 input {
