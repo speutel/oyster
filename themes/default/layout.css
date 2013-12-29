@@ -160,7 +160,6 @@ th.configsection {
 
 fieldset.searchform {
     border-width: thin;
-    width: 80%;
     padding: 1em;
     background-color: #222;
     margin-left: auto;
@@ -177,7 +176,7 @@ legend.searchform {
 }
 
 input#searchfield {
-	width: 70%;
+	width: 150px;
 }
 
 input#searchsubmit {
@@ -192,7 +191,6 @@ table#searchoptions {
 
 ul#navigation {
     text-align: center;
-    width: 100%;
     margin: 0;
     padding: 0;
 }
@@ -201,12 +199,12 @@ ul#navigation li {
     list-style: none;
     display: inline;
     float: left;
-    width: 25%;
-    padding: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 ul#navigation li.double {
-    width: 50%;
+    width: 40%;
 }
 
 ul#navigation a {

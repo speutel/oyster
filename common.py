@@ -37,28 +37,31 @@ cgitb.enable()
 myconfig = config.get_config()
 
 
-def navigation_header(header=True, title="Oyster", refreshPage=None):
-    """Prints the standard header for most pages of Oyster"""
-
-    if header:
-        print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-        print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-        print """
-<!DOCTYPE html 
+def html_header(title="Oyster", refreshpage=None):
+    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
+    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
+    print """
+<!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
           "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 """
-        print "<title>" + title + "</title>"
-        print "<meta name='viewport' content='width=device-width'/>"
-        print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
-        if refreshPage is not None:
-            print " <meta http-equiv='refresh' content='15; URL=" + refreshPage + "'/>"
-        print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
-        print "<link rel='stylesheet' media='only screen and (max-width: 800px)' href='themes/default/mLayout.css' />"
-        print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
-        print "</head><body>"
+    print "<title>" + title + "</title>"
+    print "<meta name='viewport' content='width=device-width'/>"
+    print "<meta http-equiv='Content-Type' content='text/html;charset=" + myconfig['encoding'] + "' />"
+    if refreshpage is not None:
+        print " <meta http-equiv='refresh' content='15; URL=" + refreshpage + "'/>"
+    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
+    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
+    print "</head><body>"
+
+
+def navigation_header(header=True, title="Oyster", refreshpage=None):
+    """Prints the standard header for most pages of Oyster"""
+
+    if header:
+        html_header(title, refreshpage)
         print "<div><a href='home.py'><img src='themes/" + myconfig['theme'] + \
               "/logo.png' alt='Oyster' width='200' style='margin-bottom:10px'/></a></div>"
         print "<div style='position:absolute; top:2px; right:2px'>"

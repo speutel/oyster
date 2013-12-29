@@ -44,21 +44,8 @@ playlist = config.get_playlist()
 if 'mode' in form and form['mode'].value == 'playlist':
     editplaylist = 1
     mode = '&amp;mode=playlist'
-    
-    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-    print """
-    <!DOCTYPE html 
-         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-     <title>Oyster &Uuml;bersicht</title>
-    """ 
-    print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/mLayout.css' />"
-    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
-    print "</head><body>"
+
+    common.html_header(title="St&ouml;bern")
 
     print "<ul id='navigation'>"
     print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"

@@ -24,6 +24,7 @@
 
 __revision__ = '1.0'
 
+import common
 import config
 import os.path
 import re
@@ -101,22 +102,8 @@ def test_program (name, var):
 
 myconfig = config.get_config()
 
-print "Content-Type: text/html\n"
-print "<?xml version='1.0' ?>"
-print """
-<!DOCTYPE html 
-         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
- <title>Oyster Configuration Checker</title>
-"""
-print " <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />"
+common.html_header(title="Oyster Configuration Checker")
 
-print " <link rel='stylesheet' type='text/css' href='themes/" + \
-    myconfig['theme'] + "/layout.css'/>"
-print "</head>"
-print "<body>"
 print "<h1>Configuration Checker</h1>"
 
 if not os.path.exists(myconfig['savedir'] + "config/default"):
