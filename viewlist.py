@@ -95,7 +95,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
             print "<tr><td><a class='" + cssfileclass + "' href='" + \
                 "fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
             print "<td><a class='" + cssfileclass + "' href='home.py?" + \
-                "vote=" + escapedfile + "' target='curplay'>Vote</a></td></tr>"
+                "vote=" + escapedfile + "'>Vote</a></td></tr>"
 
     print "</table>"
 

@@ -42,7 +42,7 @@ form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
 if not os.path.exists(myconfig['basedir']):
-    print "<h1>Please <a href='home.py?action=start' target='curplay'>" \
+    print "<h1>Please <a href='home.py?action=start'>" \
         + "start oyster</a> before clearing the scorefile!</h1>"
     sys.exit()
 

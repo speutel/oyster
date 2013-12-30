@@ -85,7 +85,7 @@ def print_songs (header, filearray):
         print "<tr><td>"
         
         if oysterruns:
-            print "<a href='home.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
+            print "<a href='home.py?action=enqueue&amp;file=" + escapedfilename + "' " + \
             "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" +\
             "border='0' alt='Enqueue'/></a>"
         

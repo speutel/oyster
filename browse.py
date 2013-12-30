@@ -324,7 +324,7 @@ for curfile in files:
             if oysterruns:
                 print "<td><a class='" + csslistclass + "' href='" + \
                 "home.py?votelist=" + escapeddir + "' " + \
-                "target='curplay'>Vote</a></td>"
+                ">Vote</a></td>"
             else:
                 print "<td></td>"
     else:  # some other kind of file
