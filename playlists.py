@@ -33,21 +33,25 @@ def print_playlist(file):
         isempty = ''
 
     if file == playlist and file != 'default':
-        print "<tr><td><i>" + title + "</i></td><td class='playlists'><strong>currently playing</strong></td>"
+        print "<tr>"
+        print "<td class='playlists'><img src='themes/" + myconfig['theme'] +"/currentlyplaying.png' alt='currently playing'/></td>"
+        print "<td><i>" + title + "</i></td>"
+        print "<td></td>"
         print "<td class='playlists'><a href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>Edit</a></td><td></td></tr>"
+            "playlist=" + encfile + "' target='_top'>ed</a></td><td></td><td></td></tr>"
     elif file != 'default':
-        print "<tr><td>" + title + isempty + "</td><td class='playlists'>"
+        print "<tr><td>"
         if oysterruns:
             print "<a href='playlists.py?action=loadlist&amp;" + \
-                "listname=" + encfile + "'>Load</a>"
+                "listname=" + encfile + "' + title='Load'><img src='themes/" + myconfig['theme'] +"/loadplaylist_action.png' alt='load'/></a>"
         print "</td>"
+        print "<td>" + title + isempty + "</td><td class='playlists'>"
         print "<td class='playlists'><a href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>Edit</a></td>"
+            "playlist=" + encfile + "' target='_top'>ed</a></td>"
         print "<td class='playlists'><a href='playlists.py?action=move&amp;" + \
-            "playlist=" + encfile + "'>Move/Rename</a></td>"
+            "playlist=" + encfile + "'>mv</a></td>"
         print "<td class='playlists'><a href='playlists.py?action=confirmdelete&amp;" + \
-            "listname=" + encfile + "'>Delete</a></td></tr>"
+            "listname=" + encfile + "'>del</a></td></tr>"
 
 def confirmdelete():
     playlist = form['listname'].value
@@ -202,23 +206,29 @@ if form.has_key('action') and form['action'].value == 'loadlist' and form.has_ke
 else:
     playlist = config.get_playlist()
 
-print "<table width='100%' id='playlists'>"
+print "<table id='playlists'>"
 
-print "<tr><td colspan='5'><h1>Playlists</h1></td></tr>"
+print "<tr><td colspan='6'><h1>Playlists</h1></td></tr>"
 
-# Print playlists without a section
+# Print default playlist
 
 if playlist == 'default':
-    print "<tr style='height:3em;'><td><i>default (All songs)</i></td>" + \
-        "<td class='playlists' colspan='4'><strong>currently playing</strong></td>"
+    print "<tr style='height:3em;'>"
+    print "<td class='playlists'><img src='themes/" + myconfig['theme'] +"/currentlyplaying.png' alt='currently playing'/></td>"
+    print "<td colspan='5'><i>default (All songs)</i></td>"
     print "</tr>"
 else:
-    print "<tr style='height:3em;'><td>default (All songs)</td>" + \
-        "<td class='playlists'>"
+    print "<tr style='height:3em;'>"
+    print "<td class='playlists'>"
     if oysterruns:
-        print "<a href='playlists.py?action=loadlist&amp;" + \
-            "listname=default'>Load</a>"
-    print "</td><td></td><td></td><td></td></tr>"
+        print "<a href='playlists.py?action=loadlist&amp;listname=default' title='Load'>"
+        print "<img src='themes/" + myconfig['theme'] +"/loadplaylist_action.png' alt='load'/>"
+        print "</a>"
+    print "</td>"
+    print "<td colspan='5'>default (All songs)</td>"
+    print "</tr>"
+
+# Print playlists without a section
 
 for file in files:
     if file.find('_') == -1:
