@@ -80,6 +80,7 @@ class Oyster:
 
     filetypes = {"mp3": "/usr/bin/mpg123", "ogg": "/usr/bin/ogg123"}
     filetoplay = ""
+    current_playreason = ""
 
     nextfilestoplay = []
     len_nextfiles = 5
@@ -383,7 +384,8 @@ class Oyster:
                 # there are votes that have not been played:
                 # play first file (has most votes)
                 self.filetoplay = self.votelist[0][0]
-                self.__playlog(self.__gettime() + " " + self.votelist[0][2] + 
+                self.current_playreason = self.votelist[0][2]
+                self.__playlog(self.__gettime() + " " + self.current_playreason +
                                " " + self.filetoplay)
                 self.votelist = self.votelist[1:]
                 self.__write_votelist()
@@ -395,7 +397,8 @@ class Oyster:
                 self.filetoplay = self.nextfilestoplay[0]
                 self.nextfilestoplay = self.nextfilestoplay[1:]
                 self.nextfilestoplay.append("filler")
-                self.__playlog(self.__gettime() + " " + self.playreasons[0] + " " +
+                self.current_playreason = self.playreasons[0]
+                self.__playlog(self.__gettime() + " " + self.current_playreason + " " +
                                self.filetoplay)
                 self.playreasons = self.playreasons[1:]
                 self.playreasons.append("filler")
@@ -555,7 +558,7 @@ class Oyster:
         self.__playlog(self.__gettime() + " QUIT " + self.filetoplay)
         sys.exit()
 
-    def play(self, filestring):
+    def play(self, filestring, playreason):
         """ play file """
         if self.filetoplay != "":
             suffixpos = filestring.rfind(".")
@@ -564,7 +567,7 @@ class Oyster:
             self.__write_history()
             log.debug(player + " " + filestring)
             pfile = open(self.basedir + "/info", 'w')
-            pfile.write(filestring + "\n")
+            pfile.write(playreason + " " + filestring + "\n")
             pfile.close()
             self.scrobbler.nowplaying(filestring)
             if self.gstreamer is None:
@@ -927,4 +930,4 @@ if __name__ == '__main__':
     log = logging.getLogger("oyster")
     oy = Oyster()
     while not oy.do_exit:
-        oy.play(oy.filetoplay)
+        oy.play(oy.filetoplay, oy.current_playreason)

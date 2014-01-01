@@ -229,25 +229,11 @@ if os.path.exists(basedir + 'nextfile'):
 
 tag = taginfo.get_tag(info)
 
-# Get playreason from last 10 lines of logfile
-
 playlist = config.get_playlist()
-playedfile = ''
-playreason = ''
-lastlines = commands.getoutput('tail -n 10 "logs/' + playlist + '"').split("\n")
-lastlines.reverse()
-for line in lastlines:
-    matcher = re.match('\A[^ ]* ([^ ]*) (.*)\Z', line)
-    if matcher is not None:
-        playreason = matcher.group(1)
-        playedfile = matcher.group(2)
-        if playreason in ['PLAYLIST', 'SCORED', 'ENQUEUED', 'VOTED']:
-            break
+playreason = info.split()[0]
 
-# Possible wrong playlist - check filename
-
-if playedfile != info:
-    playreason = ''
+# Remove playreason from info line
+info = " ".join(info.split()[1:])
 
 if playreason == 'PLAYLIST':
     playreason = ' (random)'
