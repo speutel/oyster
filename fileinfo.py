@@ -142,10 +142,6 @@ if 'artist' in tag:
     print "<a href='search.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
         "this artist' class='file'>" + tag['artist'] + "</a></td></tr>"
-    print "<tr><td></td><td>"
-    print "<a href='similar.py?artist=" + urllib.quote(tag['artist']) + \
-          "' class='file'>Show similar artists</a>"
-    print "</td></tr>"
 
 if coverdata != '':
     print "<tr><td class='fileinfo'>Cover: </td><td>" + coverdata + "</td></tr>"
