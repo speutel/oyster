@@ -39,22 +39,22 @@ def print_playlist(filename):
         print "<div class='ui-block-a'><i>" + title + "</i></div>"
         print "<div class='ui-block-b'><strong class='ui-btn'>currently playing</strong></div>"
         print "<div class='ui-block-c'><a class='ui-btn' href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>Edit</a></div>"
+            "playlist=" + encfile + "' target='_top' data-role='button' data-icon='grid'>Edit</a></div>"
     elif filename != 'default':
         print "<div class='ui-block-a'>" + title + isempty + "</div>"
         print "<div class='ui-block-b'>"
         if oysterruns:
-            print "<a class='ui-btn' href='playlists.py?action=loadlist&amp;" + \
-                "listname=" + encfile + "'>Load</a>"
+            print "<a href='playlists.py?action=loadlist&amp;" + "listname=" + encfile +\
+                  "' data-role='button' data-icon='refresh'>Load</a>"
         print "</div>"
-        print "<div class='ui-block-c'><a class='ui-btn' href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>Edit</a></div>"
+        print "<div class='ui-block-c'><a href='editplaylist.py?" + \
+            "playlist=" + encfile + "' target='_top' data-role='button' data-icon='grid'>Edit</a></div>"
         print "</div><div class='ui-grid-b'>"
         print "<div class='ui-block-a'></div>"
-        print "<div class='ui-block-b'><a class='ui-btn' href='playlists.py?action=move&amp;" + \
-            "playlist=" + encfile + "'>Move/Rename</a></div>"
-        print "<div class='ui-block-c'><a class='ui-btn' href='playlists.py?action=confirmdelete&amp;" + \
-            "listname=" + encfile + "'>Delete</a></div>"
+        print "<div class='ui-block-b'><a href='playlists.py?action=move&amp;" + \
+            "playlist=" + encfile + "' data-role='button' data-icon='gear'>Move/Rename</a></div>"
+        print "<div class='ui-block-c'><a href='playlists.py?action=confirmdelete&amp;" + \
+            "listname=" + encfile + "' data-role='button' data-icon='delete'>Delete</a></div>"
 
     print "</div>"
 
@@ -225,7 +225,7 @@ else:
     print "<div class='ui-block-a'>default (All songs)</div>"
     if oysterruns:
         print "<div class='ui-block-b'><a class='ui-btn' href='playlists.py?action=loadlist&amp;" + \
-            "listname=default'>Load</a></div>"
+            "listname=default' data-role='button' data-icon='refresh'>Load</a></div>"
 
 print "</div>"
 
@@ -251,7 +251,7 @@ if oysterruns:
     print "<input type='hidden' name='action' value='addnewlist'/><input " + \
         "type='text' name='newlistname'/>"
     print "<input type='submit' name='.submit' value='New list' " + \
-        "style='margin-left: 2em;'/>"
+        "style='margin-left: 2em;'/ data-role='button' data-icon='plus'>"
     print "<div></div></form><br/>"
 else:
     print "<p>To create a new list, start oyster first!</p><br/>"
