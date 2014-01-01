@@ -60,7 +60,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
             print "<a class='playlist' href='viewlist.py?list=" + \
             escapeddir + "'>" + partdir + "</a>"
         else:
-            print "<a href='mBbrowse.py?dir=" + escapeddir + \
+            print "<a href='browse.py?dir=" + escapeddir + \
                 "'>" + partdir + "</a> / "
         incdir = incdir + partdir + "/"
 
