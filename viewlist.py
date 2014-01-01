@@ -50,7 +50,9 @@ else:
 
 if givenlist != '' and os.path.exists(mediadir + givenlist):
 
-    print "<p><strong>Current directory: "
+    print "<p>"
+
+    print "<a href='browse.py?dir=/'>Mediadir</a>"
 
     dirs = givenlist.split('/')
     incdir = ''
@@ -67,9 +69,6 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
     print "</strong></p>"
 
     topdir = os.path.dirname(givenlist.replace(mediadir, '', 1))
-
-    escapeddir = urllib.quote(topdir)
-    print "<a href='browse.py?dir=" + escapeddir + "'>One level up</a><br><br>"
 
     print "<table width='100%'>"
 
