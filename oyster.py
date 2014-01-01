@@ -70,6 +70,7 @@ class Oyster:
 
     votefile = ""
     votepercentage = 20
+    favmode = False
 
     playlist = "default"
     playlist_changed = ""
@@ -328,7 +329,12 @@ class Oyster:
         if len(self.scorelist) != 0:
             # test if we play from scores or normal playlist
             #randi = random.randint(0, 100)
-            if random.randint(0, 100) < self.votepercentage:
+            scoreprobability = self.votepercentage
+
+            if self.favmode:
+                scoreprobability = 100
+
+            if random.randint(0, 100) < scoreprobability:
                 playreason = "SCORED"
                 return random.choice(self.scorelist), playreason
         chosen = random.choice(self.filelist)
@@ -650,13 +656,12 @@ class Oyster:
 
     def enableFavmode(self):
         """ enable favmode (play only from scores) """
-        if len(self.scorelist) != 0:
-            self.votepercentage = 100
+        self.favmode = True
         self.__write_favmode("on")
 
     def disableFavmode(self):
         """ disable favmode (normal playing) """
-        self.votepercentage = int(self.config["voteplay"])
+        self.favmode = False
         self.__write_favmode("off")
 
     def enqueue(self, filestring, reason):
