@@ -58,7 +58,6 @@ def print_playlist(filename):
 
     print "</div>"
 
-
 def confirmdelete():
     playlist = form['listname'].value
     enclist = urllib.quote(playlist)
@@ -215,7 +214,7 @@ else:
 
 print "<h1>Playlists</h1>"
 
-# Print playlists without a section
+# Print default playlist
 
 print "<div class='ui-grid-b'>"
 

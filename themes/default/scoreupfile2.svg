@@ -14,8 +14,8 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="pr_scored.svg"
-   inkscape:export-filename="/home/ethric/git/oyster/themes/default/pr_scored.png"
+   sodipodi:docname="scoreupfile.svg"
+   inkscape:export-filename="/home/ethric/git/oyster/themes/default/scoreupfile.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -27,9 +27,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="32"
-     inkscape:cx="-1.1053227"
-     inkscape:cy="5.7440734"
+     inkscape:zoom="22.627417"
+     inkscape:cx="2.4268498"
+     inkscape:cy="8.5319062"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -37,7 +37,10 @@
      inkscape:window-height="1016"
      inkscape:window-x="0"
      inkscape:window-y="0"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-nodes="false">
     <inkscape:grid
        type="xygrid"
        id="grid2985"
@@ -64,10 +67,12 @@
      id="layer1"
      transform="translate(0,-1036.3622)">
     <path
-       id="path3771-6"
-       style="fill:none;stroke:#08c0e0;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 1.0032496,1041.1653 c -0.077512,-1.8268 1.2424764,-3.2697 2.7970908,-3.7362 1.5546143,-0.4665 3.3380448,1.5848 4.1990384,3.7362 0.8771091,-2.161 2.6760802,-4.2052 4.2271732,-3.7294 1.551093,0.4758 2.860118,1.9034 2.768956,3.7294 -0.305925,4.4492 -3.737443,7.9583 -7.0341162,10.1969 -3.2799651,-2.2327 -6.6854799,-5.7451 -6.9581422,-10.1969 z"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cscsccc" />
+       style="color:#000000;fill:#ff8800;fill-opacity:1;stroke:none;stroke-width:2;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 8 0 C 3.581722 0 0 3.581722 0 8 C 0 12.418278 3.581722 16 8 16 C 12.418278 16 16 12.418278 16 8 C 16 3.581722 12.418278 0 8 0 z M 6.5 3.03125 L 9.5 3.03125 L 9.5 6.5 L 12.96875 6.5 L 12.96875 9.5 L 9.5 9.5 L 9.5 12.96875 L 6.5 12.96875 L 6.5 9.5 L 3.03125 9.5 L 3.03125 6.5 L 6.5 6.5 L 6.5 3.03125 z "
+       transform="translate(0,1036.3622)"
+       id="path3935-3" />
+    <g
+       style="font-size:13.73966694px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:FreeSans;-inkscape-font-specification:FreeSans Bold"
+       id="text3025" />
   </g>
 </svg>

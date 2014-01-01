@@ -90,24 +90,25 @@ if not os.access(mediadir + soundfile, os.R_OK):
     print "</body></html>"
     sys.exit()
 
-print "<table width='100%'><tr>"
 (mayVote, reason) = common.may_vote(soundfile, None)
+
+print "<p>"
 if oysterruns and mayVote:
-    print "<td align='left'><span class='file'><a class='file' href='home.py?" + \
-        "vote=" + escapedfile + "' >Vote this song</a> " + \
-        "</span></td>"
+    print "<span class='file'><a class='file' href='home.py?vote=" + escapedfile + "' >Vote this song</a></span>"
 elif oysterruns and not mayVote:
-    print "<td><span class='file' " +\
-          " style='font-style: italic;' '>" + reason + "</span></td>"
+    print "<span class='file' style='font-style: italic;' '>" + reason + "</span>"
 else:
-    print "<td></td>"
+    print ""
+print "</p>"
+
+print "<p>"
 
 if isblacklisted:
-    print "<td align='right'><span class='blacklisted'>File is blacklisted</span></td></tr></table>"
+    print "<span class='blacklisted'>This song is blacklisted</span>"
 else:
     regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
-    print "<td align='right'><a class='file' href='blacklist.py?" + \
-          "affects=" + regexfile + "&amp;action=add'>Add this song to Blacklist</a></td></tr></table>"
+    print "<a class='file' href='blacklist.py?affects=" + regexfile + "&amp;action=add'>Add this song to blacklist</a>"
+print "</p>"
 
 regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
 
@@ -124,49 +125,45 @@ for line in log.readlines():
 log.close()
 
 albumdir = os.path.dirname(mediadir + soundfile) + "/"
-coverdata = common.get_cover(albumdir, "100")
+coverdata = common.get_cover(albumdir, "200")
 
 print "<table border='0'>"
 if 'title' in tag:
-    print "<tr><td class='fileinfo'><strong>Titel</strong></td><td>" + tag['title']
+    print "<tr><td class='fileinfo'>Title: </td><td>" + tag['title']
 
     if 'artist' in tag and 'title' in tag:
-        print "<a href='lyrics.py?artist=" + urllib.quote(tag['artist']) + \
+        print "<a class='file' href='lyrics.py?artist=" + urllib.quote(tag['artist']) + \
               "&amp;song=" + urllib.quote(tag['title']) + "'> (Songtext)</a>"
 
     print "</td></tr>"
 
 if 'artist' in tag:
-    print "<tr><td class='fileinfo'><strong>Artist</strong></td><td>"
+    print "<tr><td class='fileinfo'>Artist: </td><td>"
     print "<a href='search.py?searchtype=normal&amp;playlist=current&amp;" + \
         "search=" + urllib.quote(tag['artist']) + "' title='Search for " + \
-        "this artist'>" + tag['artist'] + "</a></td></tr>"
-    print "<tr><td></td><td>"
-    print "<a href='similar.py?artist=" + urllib.quote(tag['artist']) + \
-          "' class='file'>Show similar artists</a>"
-    print "</td></tr>"
+        "this artist' class='file'>" + tag['artist'] + "</a></td></tr>"
 
 if coverdata != '':
-    print "<tr><td class='fileinfo'><strong>Cover</strong></td><td>" + coverdata + "</td></tr>"
+    print "<tr><td class='fileinfo'>Cover: </td><td>" + coverdata + "</td></tr>"
 
 tagtuple = (
-    ('Album', 'album'),
-    ('Track Number', 'track'),
-    ('Year', 'year'),
-    ('Genre', 'genre'),
-    ('Comment', 'comment'),
-    ('File Format', 'format'),
-    ('Playtime', 'playtime')
+    ('Album: ', 'album'),
+    ('Track: ', 'track'),
+    ('Year: ', 'year'),
+    ('Genre: ', 'genre'),
+    ('Comment: ', 'comment'),
+    ('Format: ', 'format'),
+    ('Length: ', 'playtime')
 )
 
 for line in tagtuple:
     if line[1] in tag:
-        print "<tr><td class='fileinfo'><strong>" + line[0] + "</strong></td>" + \
+        print "<tr><td class='fileinfo'>" + line[0] + "</td>" + \
             "<td>" + tag[line[1]] + "</td></tr>"
 
 print "<tr><td colspan='2'>&nbsp;</td></tr>"
-print "<tr><td class='fileinfo'><strong>Times played</strong></td><td>" + str(timesplayed) + "</td></tr>"
-print "<tr><td class='fileinfo'><strong>Current Oyster-Score</strong></td>"
+print "<tr><td class='fileinfo'>Played: </td><td>" + str(timesplayed) + " times</td></tr>"
+print "<tr><td class='fileinfo'>Score: </td>"
 print "<td><a href='fileinfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
 print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
 print "<strong>" + str(tag['score']) + "</strong>"

@@ -111,7 +111,7 @@ while maxscore > 0:
             cssclass = 'file'
 
         if oysterruns:
-            print "<tr><td><a href='home.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
+            print "<tr><td><a href='home.py?action=enqueue&amp;file=" + escapedfile + "'" + \
                 "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
                 "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
                 escapedfile + "'>" + display[curfile] + "</a></td>"
