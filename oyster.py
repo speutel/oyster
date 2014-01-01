@@ -657,11 +657,15 @@ class Oyster:
     def enableFavmode(self):
         """ enable favmode (play only from scores) """
         self.favmode = True
+        self.nextfilestoplay = []
+        self.fill_next_files_to_play()
         self.__write_favmode("on")
 
     def disableFavmode(self):
         """ disable favmode (normal playing) """
         self.favmode = False
+        self.nextfilestoplay = []
+        self.fill_next_files_to_play()
         self.__write_favmode("off")
 
     def enqueue(self, filestring, reason):
@@ -776,6 +780,11 @@ class Oyster:
             log.debug("regexplist: exception")
             return deflines
 
+    def fill_next_files_to_play(self):
+        for i in range(0, self.len_nextfiles):
+            self.nextfilestoplay.append("filler")
+            self.chooseFile(i)
+
     def loadPlaylist(self, listname, skip=True, checkskip=False):
         """ load oyster-playlist (discard list in memory) """
         # do we need to skip the next random songs?
@@ -811,9 +820,7 @@ class Oyster:
                 self.filelist.append(line.rstrip())
             self.nextfilestoplay = []
             if skip:
-                for i in range(0, self.len_nextfiles):
-                    self.nextfilestoplay.append("filler")
-                    self.chooseFile(i)
+                self.fill_next_files_to_play()
 
     def shift(self, amount, pos):
         """ shift the votelist entry on position /pos/ by /amount/ (positive values shift up) """
