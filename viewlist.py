@@ -84,16 +84,20 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
                 line = line[2:]
             escapedfile = urllib.quote(topdir + "/" + line)
 
-            # changes to give every other file a different color
             if alt == '':
                 alt = '2'
             else:
                 alt = ''
 
             print "<tr>"
-            print "<td><a title='Vote this file' class='file" + alt + "' href='home.py?vote=" + escapedfile +\
-                  "'><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
-            print "<td><a class='file" + alt + "' href='fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
+
+            if os.path.exists(mediadir + topdir + "/" + line):
+                print "<td><a title='Vote this file' class='file" + alt + "' href='home.py?vote=" + escapedfile +\
+                      "'><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
+                print "<td><a class='file" + alt + "' href='fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
+            else:
+                print "<td></td><td><span class='file" + alt + "'>" + line + "</span> (file missing)</td>"
+
             print "</tr>"
 
     print "</table>"
