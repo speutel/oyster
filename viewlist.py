@@ -41,8 +41,8 @@ form = cgi.FieldStorage()
 import common
 common.navigation_header()
 
-if form.has_key('list'):
-    givenlist = form['list'].value.replace('../','')
+if 'list' in form:
+    givenlist = form['list'].value.replace('../', '')
     if givenlist == '..':
         givenlist = ''
 else:
@@ -60,7 +60,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
         escapeddir = urllib.quote(incdir + partdir)
         if partdir[-4:] == '.m3u' or partdir[-4:] == '.pls':
             print "<a class='playlist' href='viewlist.py?list=" + \
-            escapeddir + "'>" + partdir + "</a>"
+                  escapeddir + "'>" + partdir + "</a>"
         else:
             print "<a href='browse.py?dir=" + escapeddir + \
                 "'>" + partdir + "</a> / "
@@ -75,7 +75,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
     # alternating betweeen '' and '2'
     alt = '2'
 
-    playlist = open (mediadir + givenlist)
+    playlist = open(mediadir + givenlist)
     for line in playlist:
         line = line
         if line[0] != '#':
@@ -91,7 +91,8 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
                 alt = ''
 
             print "<tr>"
-            print "<td><a title='Vote this file' class='file" + alt + "' href='home.py?vote=" + escapedfile + "'><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
+            print "<td><a title='Vote this file' class='file" + alt + "' href='home.py?vote=" + escapedfile +\
+                  "'><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
             print "<td><a class='file" + alt + "' href='fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
             print "</tr>"
 
