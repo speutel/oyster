@@ -70,9 +70,10 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
 
     topdir = os.path.dirname(givenlist.replace(mediadir, '', 1))
 
-    print "<table width='100%'>"
-
-    cssfileclass = 'file2'
+    print "<table>"
+    
+    # alternating betweeen '' and '2'
+    alt = '2'
 
     playlist = open (mediadir + givenlist)
     for line in playlist:
@@ -83,18 +84,16 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
                 line = line[2:]
             escapedfile = urllib.quote(topdir + "/" + line)
 
-            # cssclass changes to give each other file
-            # another color
-
-            if cssfileclass == 'file':
-                cssfileclass = 'file2'
+            # changes to give every other file a different color
+            if alt == '':
+                alt = '2'
             else:
-                cssfileclass = 'file'
+                alt = ''
 
-            print "<tr><td><a class='" + cssfileclass + "' href='" + \
-                "fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
-            print "<td><a class='" + cssfileclass + "' href='home.py?" + \
-                "vote=" + escapedfile + "'>Vote</a></td></tr>"
+            print "<tr>"
+            print "<td><a title='Vote this file' class='file" + alt + "' href='home.py?vote=" + escapedfile + "'><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
+            print "<td><a class='file" + alt + "' href='fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
+            print "</tr>"
 
     print "</table>"
 

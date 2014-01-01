@@ -231,7 +231,7 @@ else:
 dirs.sort()
 files.sort()
 
-print "<table width='100%'>"
+print "<table>"
 
 # First, display all directories
 
@@ -240,6 +240,7 @@ for curdir in dirs:
     escapeddir = urllib.quote(curdir + "/")
     curdir = cgi.escape(re.sub('\A.*/', '', curdir))
     print "<tr>"
+    print "<td></td>"
     if form.has_key('playlist'):
         if editplaylist:
             print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
@@ -253,13 +254,14 @@ for curdir in dirs:
     else:
         print "<td><a href='browse.py?dir=" + escapeddir + mode + \
             "'>" + curdir + "</a></td>"
-    print "<td></td>"
     print "</tr>\n"
 
 # Now display all files
 
 cssfileclass = 'file2'
 csslistclass = 'playlist2'
+alt = '2'
+
 filetypes = myconfig['filetypes'].lower().split(',')
 
 playlistContents = common.getPlaylistContents(playlist)
@@ -273,16 +275,22 @@ for curfile in files:
         dir = dir.replace( mediadir, '' )
         escapeddir = urllib.quote( dir )
 
+
         # alternate colors
         if cssfileclass == 'file':
             cssfileclass = 'file2'
         else:
             cssfileclass = 'file'
 
+        # more generic alternation
+        if alt == '':
+            alt = '2'
+        else:
+            alt = ''
+            
+
         escapedfile = cgi.escape(curfile)
 
-        print "<td><a class='" + cssfileclass + "' href='fileinfo.py?file=" \
-            + escapeddir + "'>" + escapedfile + "</a></td>"
 
         if editplaylist:
             print "<td><a class='" + cssfileclass + "' href=" + \
@@ -292,14 +300,17 @@ for curfile in files:
             # only generate "Vote"-link if oyster is running
             (mayVote, reason) = may_vote(dir, playlist, playlistContents, historyList)
             if oysterruns and mayVote:
-                print "<td><a class='" + cssfileclass + "' " + \
-                "href='home.py?vote=" + escapeddir + "' " + \
-                ">W&uuml;nschen</a></td>"
+                print "<td><a title='Vote this file' class='" + cssfileclass + "' href='home.py?vote=" + escapeddir + "' ><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
             elif oysterruns and not mayVote:
-                print "<td><span class='" + cssfileclass + "' " + \
-                      " style='font-style: italic;' '>" + reason + "</span></td>"
+                print "<td><span class='" + cssfileclass + "' style='font-style: italic;' '>"
+                print "<img title='Voting not allowed: " + reason + "' src='themes/" + myconfig['theme'] + "/notmayvote" + alt + ".png'/>"
+                print "</span></td>"
             else:
                 print "<td></td>"
+
+        print "<td><a class='" + cssfileclass + "' href='fileinfo.py?file=" \
+            + escapeddir + "'>" + escapedfile + "</a></td>"
+
     elif curfile[-3:] == 'm3u' or curfile[-3:] == 'pls':  # if we have a list...
         escapeddir = givendir + curfile
         escapeddir = escapeddir.replace(mediadir, '')
@@ -311,9 +322,13 @@ for curfile in files:
         else:
             csslistclass = 'playlist'
 
+        # more generic alternation
+        if alt == '':
+            alt = '2'
+        else:
+            alt = ''
+
         escapedfile = cgi.escape(curfile)
-        print "<td><a class='" + csslistclass + "' href='viewlist.py?list=" \
-            + escapeddir + "'>" + escapedfile + "</a></td>"
 
         if editplaylist:
             print "<td><a class='" + cssfileclass + "' href=" + \
@@ -322,11 +337,15 @@ for curfile in files:
         else:
             #only generate "Vote"-Link if oyster is running
             if oysterruns:
-                print "<td><a class='" + csslistclass + "' href='" + \
-                "home.py?votelist=" + escapeddir + "' " + \
-                ">Vote</a></td>"
+                print "<td><a title='Enqueue whole list' class='" + csslistclass + "' href='home.py?votelist=" + escapeddir + "' >"
+                print "<img src='themes/" + myconfig['theme'] + "/enqueuelist" + alt + ".png'/>"
+                print "</a></td>"
             else:
                 print "<td></td>"
+
+        print "<td><a class='" + csslistclass + "' href='viewlist.py?list=" \
+            + escapeddir + "'>" + escapedfile + "</a></td>"
+
     else:  # some other kind of file
         iscover = 0
         coverfiles = myconfig['coverfilenames'].split(',')
@@ -337,7 +356,7 @@ for curfile in files:
                 
         # if we can do nothing - just print it.
         if iscover == 0:
-            print "<td>" + curfile + "</td>"
+            print "<td></td><td><span style='color:#999'>" + curfile + "</span></td>"
 
     print "</tr>\n"
 
