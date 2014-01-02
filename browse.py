@@ -73,15 +73,15 @@ else:
     givendir = '/'
 
 if 'playlist' in form and 'dir' in form and 'checkdir' in form:
-    direxists = 0
+    direxists = False
     listfile = open(myconfig['savedir'] + 'lists/' + form['playlist'].value)
     for line in listfile:
         if line.find(mediadir + form['dir'].value) == 0:
-            direxists = 1
+            direxists = True
             break
     listfile.close()
     
-    if direxists == 0:
+    if not direxists:
         givendir = '/'
 
 # Is oyster currently running?
