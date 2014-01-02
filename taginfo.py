@@ -73,8 +73,8 @@ def get_tag(filename):
 def get_display(filename, tag):
 
     if not 'title' in tag or tag['title'] == '':
-        filename = os.path.basename(filename)[:-4]
-        display = filename
+        filename, fileextension = os.path.splitext(filename)
+        display = os.path.basename(filename)
     elif not 'artist' in tag or tag['artist'] == '':
         display = tag['title']
     else:
