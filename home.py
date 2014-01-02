@@ -272,12 +272,7 @@ else:
 if notVotedReason is not None:
     print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>"
 
-
-# TODO: Workaround for issue #5; remove when fixed. there should be no more empty playreason then.
-if playreason != '':
-    pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
-else:
-    pr_img = "[?] "
+pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
 
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
