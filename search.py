@@ -35,6 +35,8 @@ import re
 import urllib
 cgitb.enable()
 
+_ = common.get_prefered_language()
+
 myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
@@ -47,8 +49,10 @@ if 'playlist' in form and 'mode' in form and form['mode'].value == 'playlist':
     common.html_header(title="Suchen")
     
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
-    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" +\
+          urllib.quote(form['playlist'].value) + "'>" + _("Browse") + "</a></li>"
+    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" +\
+          urllib.quote(form['playlist'].value) + "'>" + _("Search") + "</a></li>"
     print "</ul>"
     
     print "<br/><hr/>"
@@ -95,7 +99,7 @@ print "<form method='post' action='search.py' " + \
 #print "<fieldset class='searchform'>"
 #print "<legend class='searchform'>Musik Suchen</legend>"
 print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
-print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='" + _("Search") + "'/>"
 print "<table id='searchoptions'>"
 print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
 
@@ -104,9 +108,9 @@ if editplaylist:
     print "<input type='hidden' name='mode' value='playlist'/>"
 else:
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-        "/> Aktuelle Liste<br/>"
+        "/> " + _("Current List") + "<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "&Uuml;berall<br/></td>"
+        _("All Lists") + "<br/></td>"
 
 print "</tr></table>"
 print "</fieldset>"
@@ -152,9 +156,9 @@ if search != '' and len(search) >= 3:
         else:
             common.listdir('/', 0, cssclass)
     else:
-        print "<p>Keine Songs gefunden.</p>"
+        print "<p>" + _("No songs found.") + "</p>"
 
 else:
-    print "<p>Bitte mindestens 3 Zeichen als Suchbegriff eingeben.</p>";
+    print "<p>" + _("Please enter at least three characters as a search criterion.") + "</p>";
 
 print "</body></html>"

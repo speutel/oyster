@@ -37,6 +37,22 @@ cgitb.enable()
 myconfig = config.get_config()
 
 
+def get_prefered_language():
+    import os
+
+    languages = os.environ["HTTP_ACCEPT_LANGUAGE"].split(",")
+    knownLanguages = ['en', 'de']
+    selectedLanguage = 'en'
+    for lang in languages:
+        twoLetterCode = lang[:2]
+        if twoLetterCode in knownLanguages:
+            selectedLanguage = twoLetterCode
+            break
+
+    import gettext
+    return gettext.translation('oyster', 'po', [selectedLanguage]).gettext
+
+
 def html_header(title="Oyster", refreshpage=None):
     print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
     print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
@@ -67,10 +83,12 @@ def navigation_header(header=True, title="Oyster", refreshpage=None):
         print "<div style='position:absolute; top:2px; right:2px'>"
         print "</div>"
 
+    _ = get_prefered_language()
+
     print "<ul id='navigation'>"
-    print "<li><a href='browse.py'>St&ouml;bern</a></li>"
-    print "<li><a href='search.py'>Suchen</a></li>"
-    print "<li><a href='playlists.py'>Playlisten</a></li>"
+    print "<li><a href='browse.py'>" + _("Browse") + "</a></li>"
+    print "<li><a href='search.py'>" + _("Search") + "</a></li>"
+    print "<li><a href='playlists.py'>" + _("Playlists") + "</a></li>"
     print "</ul><br/>"
     print "<hr/>"
 
@@ -260,7 +278,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     if os.path.exists(myconfig['basedir']) and mayVote:
                         print "<td align='right'><a href='home.py" + \
                         "?vote=" + escapedfile + "' class='" + cssclass + \
-                        "' >W&uuml;nschen</a></td>"
+                        "' >Vote</a></td>"
                     elif not mayVote:
                         print "<td align='right'><span class='" + cssclass + "' " +\
                               " style='font-style: italic;' '>" + reason + "</span></td>"
@@ -335,7 +353,7 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
 
     # Check if playlist blocks voting
     if playlistBlocksVoting():
-        return False, "W&uuml;nschen z.Z. gesperrt."
+        return False, _("Voting is currently disabled.")
 
 
 
@@ -352,7 +370,7 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
 
     if len(votematches) > 0:
         # if f in votes
-        return False, "Schon gew&uuml;nscht"
+        return False, "Already voted"
 
     if playlistContents is None:
         playlistContents = getPlaylistContents()
@@ -364,7 +382,7 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
 
     if not exists:
     # if not f in currentList
-        return False, "Nicht in Playlist"
+        return False, "Not in playlist"
 
     if len(votelist) >= 15:
         # if votes.length >= 15 return (true, "")
@@ -377,23 +395,9 @@ def may_vote(f, playlist, playlistContents=None, historyList=None):
         historyMatches = [line for line in historyList[0:15 - len(votelist)] if line.find(f) != -1]
         if len(historyMatches) > 0:
             # if f in history(0,15-votes.size) return (false, "Es ist noch nicht lang genug her, dass dieser Song gespielt wurde")
-            return False, "Lief gerade"
+            return False, "Just played"
 
     # else return (true, "")
     return True, None
 
 
-def get_prefered_language():
-    import os
-
-    languages = os.environ["HTTP_ACCEPT_LANGUAGE"].split(",")
-    knownLanguages = ['en', 'de']
-    selectedLanguage = 'en'
-    for lang in languages:
-        twoLetterCode = lang[:2]
-        if twoLetterCode in knownLanguages:
-            selectedLanguage = twoLetterCode
-            break
-
-    import gettext
-    return gettext.translation('oyster', 'po', [selectedLanguage]).gettext
