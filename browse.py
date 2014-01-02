@@ -141,7 +141,7 @@ if os.path.exists(mediadir + givendir):
         print "/ <strong>" + escapedpartdir + "</strong>"
     print " /"
 
-    print "</p><br clear='all'/>"
+    print "</p>"
 
     print "<p>" + common.get_cover(mediadir + givendir, myconfig['coverwidth']) + "</p>"
 
