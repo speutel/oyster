@@ -35,6 +35,8 @@ import re
 import urllib
 cgitb.enable()
 
+_ = common.get_prefered_language()
+
 myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
@@ -47,8 +49,10 @@ if 'playlist' in form and 'mode' in form and form['mode'].value == 'playlist':
     common.html_header(title="Suchen")
     
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
-    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Search</a></li>"
+    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" +\
+          urllib.quote(form['playlist'].value) + "'>" + _("Browse") + "</a></li>"
+    print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" +\
+          urllib.quote(form['playlist'].value) + "'>" + _("Search") + "</a></li>"
     print "</ul>"
     
     print "<br/><hr/>"
@@ -58,7 +62,7 @@ else:
     common.navigation_header(title="Suchen")
     mode = ''
 
-if form.has_key('searchtype') and form['searchtype'].value == 'regex':
+if 'searchtype' in form and form['searchtype'].value == 'regex':
     searchtype = 'regex'
     regexcheck = "checked='checked'"
     normalcheck = ''
@@ -69,11 +73,11 @@ else:
     
 # Check in which playlist to search
 
-if not editplaylist and form.has_key('playlist') and form['playlist'].value == 'current':
+if not editplaylist and 'playlist' in form and form['playlist'].value == 'current':
     playlist = config.get_playlist()
     curcheck = "checked='checked'"
     allcheck = ''
-elif not editplaylist and form.has_key('playlist') and form['playlist'].value == 'all':
+elif not editplaylist and 'playlist' in form and form['playlist'].value == 'all':
     playlist = 'default'
     allcheck = "checked='checked'"
     curcheck = ''
@@ -82,7 +86,7 @@ else:
     curcheck = "checked='checked'"
     allcheck = ''
 
-if form.has_key('search'):
+if 'search' in form:
     search = form['search'].value
 else:
     search = ''
@@ -94,8 +98,8 @@ print "<form method='post' action='search.py' " + \
 
 #print "<fieldset class='searchform'>"
 #print "<legend class='searchform'>Musik Suchen</legend>"
-print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
-print "<input id='searchsubmit' type='submit' name='.submit' value='Suchen'/>"
+print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search, 1) + "\"/>"
+print "<input id='searchsubmit' type='submit' name='.submit' value='" + _("Search") + "'/>"
 print "<table id='searchoptions'>"
 print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
 
@@ -104,9 +108,9 @@ if editplaylist:
     print "<input type='hidden' name='mode' value='playlist'/>"
 else:
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
-        "/> Aktuelle Liste<br/>"
+        "/> " + _("Current List") + "<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
-        "&Uuml;berall<br/></td>"
+        _("All Lists") + "<br/></td>"
 
 print "</tr></table>"
 print "</fieldset>"
@@ -126,7 +130,7 @@ if search != '' and len(search) >= 3:
 
     if searchtype == 'normal':
         for line in listlines:
-            line = line.replace(mediadir,'')
+            line = line.replace(mediadir, '')
             if line.lower().find(search.lower()) > -1:
                 results.append(line[:-1])
     elif searchtype == 'regex':
@@ -152,9 +156,9 @@ if search != '' and len(search) >= 3:
         else:
             common.listdir('/', 0, cssclass)
     else:
-        print "<p>Keine Songs gefunden.</p>"
+        print "<p>" + _("No songs found.") + "</p>"
 
 else:
-    print "<p>Bitte mindestens 3 Zeichen als Suchbegriff eingeben.</p>";
+    print "<p>" + _("Please enter at least three characters as a search criterion.") + "</p>"
 
 print "</body></html>"

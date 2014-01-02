@@ -35,6 +35,8 @@ import sys
 from common import may_vote
 cgitb.enable()
 
+_ = common.get_prefered_language()
+
 myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = re.sub('/\Z', '', myconfig['mediadir'][:-1])
@@ -45,7 +47,7 @@ if 'mode' in form and form['mode'].value == 'playlist':
     editplaylist = 1
     mode = '&amp;mode=playlist'
 
-    common.html_header(title="St&ouml;bern")
+    common.html_header(title=_("Browse"))
 
     print "<ul id='navigation'>"
     print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) + "'>Browse</a></li>"
@@ -55,7 +57,7 @@ if 'mode' in form and form['mode'].value == 'playlist':
     print "<br/><hr/>"
 else:
     editplaylist = 0
-    common.navigation_header(title="St&ouml;bern")
+    common.navigation_header(title=_("Browse"))
     mode = ''
 
 if form.has_key('dir'):
@@ -98,11 +100,11 @@ if not editplaylist:
         curdir = '/'
     if form.has_key('playlist'):
         print "<p ><a class='file' href='browse.py" + \
-            "?dir=" + curdir + "'>Durch alle Songs st&ouml;bern</a></p>"
+            "?dir=" + curdir + "'>" + _("Browse all songs") + "</a></p>"
     elif playlist != 'default':
         print "<p ><a class='file' href='browse.py?playlist=" + \
             urllib.quote(playlist) + "&dir=" + curdir + "&checkdir=true'>" + \
-            "Nur in aktueller Playlist st&ouml;bern</a></p>"
+            _("Browse in current playlist only") + "</a></p>"
 
 if os.path.exists(mediadir + givendir):
 
@@ -156,10 +158,10 @@ if os.path.exists(mediadir + givendir):
         parentdir = urllib.quote(parentdir)
         if form.has_key('playlist'):
             print "<a href='browse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
-                urllib.quote(form['playlist'].value) + "'>&Uuml;bergeordnetes Verzeichnis</a><br/><br/>"
+                urllib.quote(form['playlist'].value) + "'>Parent directory</a><br/><br/>"
         else:
             print "<a href='browse.py?dir=" + parentdir + mode + \
-                "'>&Uuml;bergeordnetes Verzeichnis</a><br/><br/>"
+                "'>Parent directory</a><br/><br/>"
     """
 
     print "<p>" + common.get_cover(mediadir + givendir, myconfig['coverwidth']) + "</p>"
@@ -263,7 +265,7 @@ alt = '2'
 
 filetypes = myconfig['filetypes'].lower().split(',')
 
-playlistContents = common.getPlaylistContents(playlist)
+playlistContents = common.get_playlist_contents(playlist)
 historyList = common.history(playlist)
 
 for curfile in files:

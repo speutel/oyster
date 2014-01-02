@@ -123,7 +123,10 @@ import sys
 import os.path
 import urllib
 import re
+import common
 cgitb.enable()
+
+_ = common.get_prefered_language()
 
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
@@ -200,7 +203,7 @@ else:
 
 print "<table id='playlists'>"
 
-print "<tr><td colspan='2'><h1>Playlists</h1></td></tr>"
+print "<tr><td colspan='2'><h1>" + _("Playlists") + "</h1></td></tr>"
 
 # Print default playlist
 
