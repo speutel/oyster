@@ -22,6 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import cgi
+import common
 import config
 import fifocontrol
 import cgitb
@@ -94,22 +95,16 @@ if 'playlist' in form:
 elif 'newlistname' in form:
     playlist = form['newlistname'].value
 else:
-    print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-    print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-    print """
-    <!DOCTYPE html 
-         PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-     <title>Oyster-GUI</title>
-    """
-    print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-    print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
-    print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
-    print "</head><body>"
+    common.navigation_header(title="Oyster-GUI")
     print "<p>You did not specify a name for the playlist.</p>"
     print "<p>Please press the <i>Back</i> button in your browser and try again.</a></p>"
+    common.html_footer()
+    sys.exit()
+
+if playlist == 'default':
+    common.navigation_header(title="Oyster-GUI")
+    print "<p>It is not allowed to edit the default playlist.</p>"
+    common.html_footer()
     sys.exit()
 
 if not 'mode' in form and not 'delfile' in form and not 'deldir' in form and not 'addfile' in form\
@@ -122,20 +117,7 @@ elif 'mode' in form and form['mode'].value == 'title':
 
 # Starting from here: mode == edit
 
-print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
-print "<?xml version='1.0' encoding='" + myconfig['encoding'] + "' ?>"
-print """
-<!DOCTYPE html 
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
- <title>Oyster-GUI</title>
-"""
-print "<meta http-equiv='Content-Type' content='text/html; charset=" + myconfig['encoding'] + "' />"
-print "<link rel='stylesheet' type='text/css' href='themes/" + myconfig['theme'] + "/layout.css' />"
-print "<link rel='shortcut icon' href='themes/" + myconfig['theme'] + "/favicon.png' />"
-print "</head><body>"
+common.html_header(title="Oyster-GUI")
 
 allfiles = []
 playlistfile = open(savedir + "lists/" + playlist)
@@ -190,3 +172,5 @@ common.results = allfiles
 allfiles = common.sort_results('/')
 
 common.listdir('/', 0, 'file2', 1, urllib.quote(playlist))
+
+common.html_footer()

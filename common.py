@@ -73,6 +73,10 @@ def html_header(title="Oyster", refreshpage=None):
     print "</head><body>"
 
 
+def html_footer():
+    print "</head></body>"
+
+
 def navigation_header(header=True, title="Oyster", refreshpage=None):
     """Prints the standard header for most pages of Oyster"""
 
