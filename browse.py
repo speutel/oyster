@@ -44,6 +44,7 @@ form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
 if 'mode' in form and form['mode'].value == 'editplaylist':
+    viewplaylist = False
     editplaylist = True
     mode = '&amp;mode=editplaylist'
 
@@ -57,7 +58,15 @@ if 'mode' in form and form['mode'].value == 'editplaylist':
     print "</ul>"
     
     print "<br/><hr/>"
+elif 'mode' in form and form['mode'].value == 'browseplaylist' and 'playlist' in form:
+    viewplaylist = True
+    editplaylist = False
+    title = _("Songs in playlist") + " '" + form['playlist'].value + "'"
+    common.navigation_header(title=title)
+    print "<h1>" + title + "</h1>"
+    mode = '&amp;mode=browseplaylist'
 else:
+    viewplaylist = False
     editplaylist = False
     common.navigation_header(title=_("Browse"))
     mode = ''
@@ -151,6 +160,18 @@ elif not os.path.exists(mediadir + givendir):
     print "<h1>Error!</h1>"
     print "The directory " + givendir + " could not be found."
     print "</body></html>"
+
+if viewplaylist and 'playlist' in form:
+    allfiles = []
+    playlistfile = open(myconfig['savedir'] + "lists/" + form['playlist'].value)
+    for line in playlistfile.readlines():
+        line = line.replace(mediadir, '', 1)
+        allfiles.append(line[:-1])
+    playlistfile.close()
+    common.results = allfiles
+    common.listdir('/', 0, 'file2', 0, urllib.quote(playlist))
+    print "</div></body></html>"
+    sys.exit(0)
 
 files = []
 dirs = []  # All files and directories which should be displayed

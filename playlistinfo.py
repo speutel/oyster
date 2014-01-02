@@ -46,7 +46,6 @@ except KeyError:
 
 import os.path
 import sys
-import fifocontrol
 
 if not os.path.exists(myconfig['savedir'] + '/lists/' + playlist):
     print "<h1>Error!</h1>"
@@ -91,6 +90,9 @@ print "<tr><td class='fileinfo'>Size: </td><td>" + str(songsinlist) + " songs</t
 print "<tr><td class='fileinfo'>Played: </td><td>" + str(songsplayed) + " songs</td></tr>"
 print "<tr><td class='fileinfo'>Actions: </td><td>"
 print "<a class='file' href='editplaylist.py?playlist=" + escapedlistname + "'>Edit</a></td>"
+if listname != "default":
+    print "<tr><td></td><td><a class='file' href='browse.py?mode=browseplaylist&playlist=" +\
+          escapedlistname + "'>Browse</a></td></tr>"
 print "<tr><td class='fileinfo'>&nbsp;</td><td>"
 if listname != playlist and listname != "default":
     print "<a class='file' href='playlists.py?action=move&amp;playlist=" + escapedlistname + "'>Move/Rename</a> "
