@@ -35,23 +35,15 @@ def print_playlist(file):
     if file == playlist and file != 'default':
         print "<tr>"
         print "<td class='playlists'><img src='themes/" + myconfig['theme'] +"/currentlyplaying.png' alt='currently playing'/></td>"
-        print "<td><i>" + title + "</i></td>"
-        print "<td></td>"
-        print "<td class='playlists'><a href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>ed</a></td><td></td><td></td></tr>"
+        print "<td><i><a href='playlistinfo.py?list=" + encfile + "'>" + title + "</a></i></td>"
+        print "</tr>"
     elif file != 'default':
         print "<tr><td>"
         if oysterruns:
             print "<a href='playlists.py?action=loadlist&amp;" + \
                 "listname=" + encfile + "' + title='Load'><img src='themes/" + myconfig['theme'] +"/loadplaylist_action.png' alt='load'/></a>"
         print "</td>"
-        print "<td>" + title + isempty + "</td><td class='playlists'>"
-        print "<td class='playlists'><a href='editplaylist.py?" + \
-            "playlist=" + encfile + "' target='_top'>ed</a></td>"
-        print "<td class='playlists'><a href='playlists.py?action=move&amp;" + \
-            "playlist=" + encfile + "'>mv</a></td>"
-        print "<td class='playlists'><a href='playlists.py?action=confirmdelete&amp;" + \
-            "listname=" + encfile + "'>del</a></td></tr>"
+        print "<td><a href='playlistinfo.py?list=" + encfile + "'>"+ title + isempty + "</a></td></tr>"
 
 def confirmdelete():
     playlist = form['listname'].value
@@ -208,14 +200,14 @@ else:
 
 print "<table id='playlists'>"
 
-print "<tr><td colspan='6'><h1>Playlists</h1></td></tr>"
+print "<tr><td colspan='2'><h1>Playlists</h1></td></tr>"
 
 # Print default playlist
 
 if playlist == 'default':
     print "<tr style='height:3em;'>"
     print "<td class='playlists'><img src='themes/" + myconfig['theme'] +"/currentlyplaying.png' alt='currently playing'/></td>"
-    print "<td colspan='5'><i>default (All songs)</i></td>"
+    print "<td><a href='playlistinfo.py?list=default'><i>default (All songs)</i></a></td>"
     print "</tr>"
 else:
     print "<tr style='height:3em;'>"
@@ -225,7 +217,7 @@ else:
         print "<img src='themes/" + myconfig['theme'] +"/loadplaylist_action.png' alt='load'/>"
         print "</a>"
     print "</td>"
-    print "<td colspan='5'>default (All songs)</td>"
+    print "<td><a href='playlistinfo.py?list=default'>default (All songs)</a></td>"
     print "</tr>"
 
 # Print playlists without a section
