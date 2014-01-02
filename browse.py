@@ -45,7 +45,7 @@ playlist = config.get_playlist()
 
 if 'mode' in form and form['mode'].value == 'editplaylist':
     editplaylist = True
-    mode = '&amp;mode=playlist'
+    mode = '&amp;mode=editplaylist'
 
     common.html_header(title=_("Browse"))
 
