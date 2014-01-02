@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2013-11-24 12:33+CET\n"
+"POT-Creation-Date: 2014-01-02 15:00+CET\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,35 @@ msgstr ""
 "Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.5\n"
 
-#: ../common.py:339 ../home.py:284
+#: ../browse.py:50 ../browse.py:60 ../common.py:89 ../search.py:53
+msgid "Browse"
+msgstr "Stöbern"
+
+#: ../browse.py:103
+msgid "Browse all songs"
+msgstr "Durch alle Songs stöbern"
+
+#: ../browse.py:107
+msgid "Browse in current playlist only"
+msgstr "Nur in aktueller Playlist stöbern"
+
+#: ../common.py:90 ../search.py:55 ../search.py:102
+msgid "Search"
+msgstr "Suchen"
+
+#: ../common.py:91
+msgid "Playlists"
+msgstr "Playlisten"
+
+#: ../common.py:350
+msgid "Oyster is not started"
+msgstr "Oyster ist nicht gestartet"
+
+#: ../common.py:356
+msgid "Voting is currently disabled."
+msgstr "Wünschen ist derzeit gesperrt."
+
+#: ../common.py:365 ../home.py:278
 msgid "Currently Playing"
 msgstr "Läuft gerade"
 
@@ -35,62 +63,85 @@ msgstr "Nächste Zufällige"
 msgid "View details"
 msgstr "Zeige Details"
 
-#: ../home.py:119
-msgid "Replace_With_Random"
-msgstr "Diesen Song mit einem zufälligen ersetzen"
-
 #: ../home.py:122
 msgid "Delete_Song"
 msgstr "Diesen Song aus der Liste löschen"
 
-#: ../home.py:154
+#: ../home.py:156
 msgid "Start"
 msgstr ""
 
-#: ../home.py:154
+#: ../home.py:156
 msgid "Start Oyster"
 msgstr "Oyster starten"
 
-#: ../home.py:155
+#: ../home.py:157
 msgid "Pause"
 msgstr ""
 
-#: ../home.py:155
+#: ../home.py:157
 msgid "Pause/Unpause"
 msgstr "Pause/Weiter"
 
-#: ../home.py:156
+#: ../home.py:158
 msgid "Stop"
 msgstr "Stopp"
 
-#: ../home.py:156
+#: ../home.py:158
 msgid "Stop Oyster"
 msgstr "Oyster anhalten"
 
-#: ../home.py:158
+#: ../home.py:160
 msgid "Deactivate FAV Mode"
 msgstr "FAV-Modus deaktivieren"
 
-#: ../home.py:160
+#: ../home.py:162
 msgid "Activate FAV Mode"
 msgstr "FAV-Modus aktivieren"
 
-#: ../home.py:161
+#: ../home.py:163
 msgid "Previous Song"
 msgstr "Vorheriges Lied"
 
-#: ../home.py:162
+#: ../home.py:164
 msgid "Next Song"
 msgstr "Nächstes Lied"
 
-#: ../home.py:162
+#: ../home.py:164
 msgid "Skip Song"
 msgstr "Lied überspringen"
 
-#: ../home.py:168
+#: ../home.py:170
 msgid "Lower Volume"
 msgstr "Lautstärke verringern"
 
-#: ../home.py:171
+#: ../home.py:173
 msgid "Increase Volume"
 msgstr "Lautstärke erhöhen"
+
+#: ../home.py:215
+msgid "Overview"
+msgstr "Übersicht"
+
+#: ../home.py:273
+msgid "Song must not be voted. The reason is: "
+msgstr "Song kann nicht gewünscht werden. Grund:"
+
+#: ../search.py:111
+msgid "Current List"
+msgstr "Läuft gerade"
+
+#: ../search.py:113
+msgid "All Lists"
+msgstr "Alle Listen"
+
+#: ../search.py:159
+msgid "No songs found."
+msgstr "Keine Songs gefunden."
+
+#: ../search.py:162
+msgid "Please enter at least three characters as a search criterion."
+msgstr "Bitte mindestens drei Zeichen als Suchbegriff eingeben."
+
+#~ msgid "Replace_With_Random"
+#~ msgstr "Diesen Song mit einem zufälligen ersetzen"

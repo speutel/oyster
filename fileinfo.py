@@ -125,7 +125,7 @@ for line in log.readlines():
 log.close()
 
 albumdir = os.path.dirname(mediadir + soundfile) + "/"
-coverdata = common.get_cover(albumdir, "200")
+coverdata = common.get_cover(albumdir, myconfig['coverwidth'])
 
 print "<table border='0'>"
 if 'title' in tag:

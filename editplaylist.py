@@ -34,7 +34,7 @@ cgitb.enable()
 
 def print_frameset():
     
-    "Generates a frameset for the playlist editor"
+    """Generates a frameset for the playlist editor"""
     
     print "Content-Type: text/html; charset=" + myconfig['encoding'] + "\n"
     print """
@@ -50,7 +50,7 @@ def print_frameset():
     print"  <frame src='editplaylist.py?mode=title&playlist=" + urllib.quote(playlist) + "' name='title'>"
     print"  <frameset cols='*,*'>"
     print"   <frame src='editplaylist.py?mode=edit&playlist=" + urllib.quote(playlist) + "' name='playlist'>"
-    print"   <frame src='browse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
+    print"   <frame src='browse.py?mode=editplaylist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
     print"  </frameset>"
     print"    <noframes>"
     print"	<p>"
@@ -87,35 +87,43 @@ savedir = myconfig['savedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
-if form.has_key('action') and form['action'].value == 'addnewlist' \
-    and form.has_key('newlistname'):
+if 'action' in form and form['action'].value == 'addnewlist' and 'newlistname' in form:
     fifocontrol.do_action('addnewlist', form['newlistname'].value)
         
-if form.has_key('playlist'):
+if 'playlist' in form:
     playlist = form['playlist'].value
-elif form.has_key('newlistname'):
+elif 'newlistname' in form:
     playlist = form['newlistname'].value
 else:
-    common.navigation_header()
+    common.navigation_header(title="Oyster-GUI")
     print "<p>You did not specify a name for the playlist.</p>"
     print "<p>Please press the <i>Back</i> button in your browser and try again.</a></p>"
+    common.html_footer()
     sys.exit()
 
-if not form.has_key('mode') and not form.has_key('delfile') \
-    and not form.has_key('deldir') and not form.has_key('addfile') \
-    and not form.has_key('adddir'):
+if playlist == 'default':
+    common.navigation_header(title="Oyster-GUI")
+    print "<p>It is not allowed to edit the default playlist.</p>"
+    common.html_footer()
+    sys.exit()
+
+if not 'mode' in form and not 'delfile' in form and not 'deldir' in form and not 'addfile' in form\
+        and not 'adddir' in form:
     print_frameset()
     sys.exit()
-elif form.has_key('mode') and form['mode'].value == 'title':
+elif 'mode' in form and form['mode'].value == 'title':
     print_title()
     sys.exit()
 
 common.html_header()
 
 print "<div data-role='content'>"
+# Starting from here: mode == edit
+
+common.html_header(title="Oyster-GUI")
 
 allfiles = []
-playlistfile = open (savedir + "lists/" + playlist)
+playlistfile = open(savedir + "lists/" + playlist)
 for line in playlistfile.readlines():
     line = line.replace(mediadir, '', 1)
     allfiles.append(line[:-1])
@@ -123,12 +131,12 @@ playlistfile.close()
 
 # Delete a single file
 
-if form.has_key('delfile'):
+if 'delfile' in form:
     allfiles.remove(form['delfile'].value)
 
 # Delete a complete directory
 
-if form.has_key('deldir'):
+if 'deldir' in form:
     tmpfiles = []
     for tmpfile in allfiles:
         if tmpfile.find(form['deldir'].value) != 0:
@@ -137,7 +145,7 @@ if form.has_key('deldir'):
 
 # Add a single file
 
-if form.has_key('addfile'):
+if 'addfile' in form:
     if form['addfile'].value not in allfiles:
         allfiles.append(form['addfile'].value)
 
@@ -145,7 +153,7 @@ if form.has_key('addfile'):
 
 filetypes = myconfig['filetypes'].lower().split(',')
 
-if form.has_key('adddir'):
+if 'adddir' in form:
     for root, dirs, files in os.walk(mediadir + form['adddir'].value, topdown=False):
         for name in files:
             if name[name.rfind(".")+1:].lower() in filetypes:
@@ -156,9 +164,8 @@ if form.has_key('adddir'):
 
 allfiles.sort()
 
-if form.has_key('addfile') or form.has_key('adddir') or \
-    form.has_key('delfile') or form.has_key('deldir'):
-    playlistfile = open (savedir + "lists/" + playlist, "w")
+if 'addfile' in form or 'adddir' in form or 'delfile' in form or 'deldir' in form:
+    playlistfile = open(savedir + "lists/" + playlist, "w")
     for curfile in allfiles:
         playlistfile.write(mediadir + curfile + "\n")
     playlistfile.close()
@@ -168,3 +175,5 @@ common.results = allfiles
 allfiles = common.sort_results('/')
 
 common.listdir('/', 0, 'file2', 1, urllib.quote(playlist))
+
+common.html_footer()

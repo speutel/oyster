@@ -2,7 +2,9 @@
 # -*- coding: UTF-8 -*
 # oyster - a python-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,6 +23,7 @@
 import string
 import os
 
+
 def get_values(filename):
 
     readconfig = {}
@@ -30,7 +33,7 @@ def get_values(filename):
         if line[0] in string.letters:
             key, value = string.split(line[:-1], '=')
             if (key[-3:] == 'dir') & (value[-1:] != '/'):
-                value = value + '/'
+                value += '/'
             readconfig[key] = value
 
     conffile.close()
@@ -40,23 +43,24 @@ def get_values(filename):
 
 def get_defaults():
 
-    config = { "savedir": os.getcwd() + "/",
-               "basedir": "/tmp/oyster/",
-               "mediadir": "/",
-               "voteplay": "10",
-               "filetypes": "mp3,ogg",
-               "mp3": "/usr/bin/mpg123",
-               "ogg": "/usr/bin/ogg123",
-               "len_nextfiles": "5",
-               "control_mode": "0600",
-               "theme": "default",
-               "maxscored": "30",
-               "coverfilenames": "../${album}.png,../${album}.jpg",
-               "coverwidth": "150",
-               "encoding": "utf-8",
-               "tagencoding": "de_DE.UTF-8",
-               "refresh": "30",
-               "midvolume": "50"
+    config = {"savedir": os.getcwd() + "/",
+              "basedir": "/tmp/oyster/",
+              "mediadir": "/",
+              "voteplay": "10",
+              "filetypes": "mp3,ogg",
+              "mp3": "/usr/bin/mpg123",
+              "ogg": "/usr/bin/ogg123",
+              "len_nextfiles": "5",
+              "control_mode": "0600",
+              "theme": "default",
+              "maxscored": "30",
+              "coverfilenames": "../${album}.png,../${album}.jpg",
+              "coverwidth": "150",
+              "encoding": "utf-8",
+              "tagencoding": "de_DE.UTF-8",
+              "refresh": "30",
+              "midvolume": "50",
+              "language": "auto"
               }
 
     return config
@@ -82,11 +86,8 @@ def get_config():
         playlist = fifo.readline()[:-1]
         fifo.close()
 
-        if playlist != 'default' and \
-            os.path.exists(config['savedir'] + 'config/' + playlist):
-
+        if playlist != 'default' and os.path.exists(config['savedir'] + 'config/' + playlist):
             plconfig = get_values(config['savedir'] + 'config/' + playlist)
-
             for plkey in plconfig.keys():
                 config[plkey] = plconfig[plkey]
             
@@ -102,5 +103,5 @@ def get_playlist():
         fifo = file(config['basedir'] + 'playlist')
         playlist = fifo.readline()[:-1]
         fifo.close()
-	
+
     return playlist

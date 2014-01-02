@@ -25,7 +25,6 @@ import cgitb
 import sys
 import os.path
 import urllib
-import commands
 import re
 
 import config
@@ -212,7 +211,7 @@ if 'vote' in form:
 if 'votelist' in form:
     fifocontrol.do_votelist(form['votelist'].value)
 
-common.navigation_header(title="&Uuml;bersicht", refreshpage="home.py")
+common.navigation_header(title=_("Overview"), refreshpage="home.py")
 
 check_oyster_started()
 
@@ -227,13 +226,13 @@ if os.path.exists(basedir + 'nextfile'):
         nextarray.append(line[:-1])
     nextfile.close()
 
-tag = taginfo.get_tag(info)
-
 playlist = config.get_playlist()
 playreason = info.split()[0]
 
 # Remove playreason from info line
 info = " ".join(info.split()[1:])
+
+tag = taginfo.get_tag(info)
 
 if playreason == 'PLAYLIST':
     playreason = ' (random)'
@@ -270,14 +269,9 @@ else:
     statusstr = ''
 
 if notVotedReason is not None:
-    print "<p style='color:red'>Song kann nicht gew&uuml;nscht werden. Grund: " + notVotedReason + ".</p>"
+    print "<p style='color:red'>" + _("Song must not be voted. The reason is: ") + notVotedReason + ".</p>"
 
-
-# TODO: Workaround for issue #5; remove when fixed. there should be no more empty playreason then.
-if playreason != '':
-    pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
-else:
-    pr_img = "[?] "
+pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
 
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
@@ -299,5 +293,3 @@ display_play_controls()
 print "</table>"
 
 print "</body></html>"
-
-

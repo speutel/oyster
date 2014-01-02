@@ -36,7 +36,7 @@ def print_playlist(filename):
     print "<div class='ui-grid-b'>"
 
     if filename == playlist and filename != 'default':
-        print "<div class='ui-block-a'><i>" + title + "</i></div>"
+        print "<div class='ui-block-a'><i><a href='playlistinfo.py?list=" + encfile + "'>" + title + "</a></i></div>"
         print "<div class='ui-block-b'><strong class='ui-btn'>currently playing</strong></div>"
         print "<div class='ui-block-c'><a class='ui-btn' href='editplaylist.py?" + \
             "playlist=" + encfile + "' target='_top' data-role='button' data-icon='grid'>Edit</a></div>"
@@ -137,7 +137,10 @@ import sys
 import os.path
 import urllib
 import re
+import common
 cgitb.enable()
+
+_ = common.get_prefered_language()
 
 basedir = myconfig['basedir']
 savedir = myconfig['savedir']
@@ -212,17 +215,19 @@ if form.has_key('action') and form['action'].value == 'loadlist' and form.has_ke
 else:
     playlist = config.get_playlist()
 
-print "<h1>Playlists</h1>"
+print "<h1>" + _("Playlists") + "</h1>"
+
+print "<tr><td colspan='6'><h1>Playlists</h1></td></tr>"
 
 # Print default playlist
 
 print "<div class='ui-grid-b'>"
 
 if playlist == 'default':
-    print "<div class='ui-block-a'><i>default (All songs)</i></div>" + \
+    print "<div class='ui-block-a'><a href='playlistinfo.py?list=default'><i>default (All songs)</i></a></div>" + \
         "<div class='ui-block-b'><strong>currently playing</strong></div>"
 else:
-    print "<div class='ui-block-a'>default (All songs)</div>"
+    print "<div class='ui-block-a'><a href='playlistinfo.py?list=default'>default (All songs)</a></div>"
     if oysterruns:
         print "<div class='ui-block-b'><a class='ui-btn' href='playlists.py?action=loadlist&amp;" + \
             "listname=default' data-role='button' data-icon='refresh'>Load</a></div>"
