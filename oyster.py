@@ -785,6 +785,10 @@ class Oyster:
             self.scoresfile = self.savedir + "/scores/" + self.playlist
             self.__update_scores()
             self.__write_playlist_status()
+
+            if self.favmode:
+                self.disable_favmode()
+
             lines = deflist.readlines()
             if lines[0].startswith("^"):
                 log.debug("regex list")
