@@ -62,7 +62,7 @@ else:
     common.navigation_header(title="Suchen")
     mode = ''
 
-if form.has_key('searchtype') and form['searchtype'].value == 'regex':
+if 'searchtype' in form and form['searchtype'].value == 'regex':
     searchtype = 'regex'
     regexcheck = "checked='checked'"
     normalcheck = ''
@@ -73,11 +73,11 @@ else:
     
 # Check in which playlist to search
 
-if not editplaylist and form.has_key('playlist') and form['playlist'].value == 'current':
+if not editplaylist and 'playlist' in form and form['playlist'].value == 'current':
     playlist = config.get_playlist()
     curcheck = "checked='checked'"
     allcheck = ''
-elif not editplaylist and form.has_key('playlist') and form['playlist'].value == 'all':
+elif not editplaylist and 'playlist' in form and form['playlist'].value == 'all':
     playlist = 'default'
     allcheck = "checked='checked'"
     curcheck = ''
@@ -86,7 +86,7 @@ else:
     curcheck = "checked='checked'"
     allcheck = ''
 
-if form.has_key('search'):
+if 'search' in form:
     search = form['search'].value
 else:
     search = ''
@@ -98,7 +98,7 @@ print "<form method='post' action='search.py' " + \
 
 #print "<fieldset class='searchform'>"
 #print "<legend class='searchform'>Musik Suchen</legend>"
-print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search,1) + "\"/>"
+print "<input id='searchfield' type='text' size='40' name='search' value=\"" + cgi.escape(search, 1) + "\"/>"
 print "<input id='searchsubmit' type='submit' name='.submit' value='" + _("Search") + "'/>"
 print "<table id='searchoptions'>"
 print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
@@ -130,7 +130,7 @@ if search != '' and len(search) >= 3:
 
     if searchtype == 'normal':
         for line in listlines:
-            line = line.replace(mediadir,'')
+            line = line.replace(mediadir, '')
             if line.lower().find(search.lower()) > -1:
                 results.append(line[:-1])
     elif searchtype == 'regex':
@@ -159,6 +159,6 @@ if search != '' and len(search) >= 3:
         print "<p>" + _("No songs found.") + "</p>"
 
 else:
-    print "<p>" + _("Please enter at least three characters as a search criterion.") + "</p>";
+    print "<p>" + _("Please enter at least three characters as a search criterion.") + "</p>"
 
 print "</body></html>"

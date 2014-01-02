@@ -25,7 +25,6 @@ import cgitb
 import sys
 import os.path
 import urllib
-import commands
 import re
 
 import config
@@ -294,5 +293,3 @@ display_play_controls()
 print "</table>"
 
 print "</body></html>"
-
-

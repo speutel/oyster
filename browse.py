@@ -265,7 +265,7 @@ alt = '2'
 
 filetypes = myconfig['filetypes'].lower().split(',')
 
-playlistContents = common.getPlaylistContents(playlist)
+playlistContents = common.get_playlist_contents(playlist)
 historyList = common.history(playlist)
 
 for curfile in files:
