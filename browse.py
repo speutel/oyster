@@ -94,14 +94,12 @@ if 'playlist' in form and 'dir' in form and 'checkdir' in form:
         givendir = '/'
 
 # Is oyster currently running?
-
 if os.path.exists(myconfig['basedir']):
     oysterruns = 1
 else:
     oysterruns = 0
 
 # Give an option to browse all files or only the playlist
-
 if not editplaylist:
     if 'dir' in form:
         curdir = urllib.quote(givendir)
@@ -116,9 +114,7 @@ if not editplaylist:
             _("Browse in current playlist only") + "</a></p>"
 
 if os.path.exists(mediadir + givendir):
-
     # split path along "/", create link for every part
-
     print "<p>"
 
     if 'playlist' in form:
@@ -148,13 +144,8 @@ if os.path.exists(mediadir + givendir):
     escapedpartdir = cgi.escape(partdir)
     if escapedpartdir != '':
         print "/ <strong>" + escapedpartdir + "</strong>"
-    print " /"
-
-    print "</p>"
-
+    print " /</p>"
     print "<p>" + common.get_cover(mediadir + givendir, myconfig['coverwidth']) + "</p>"
-
-
 elif not os.path.exists(mediadir + givendir):
     # if $mediadir == "/": just build filelist, no dir-splitting needed
     print "<h1>Error!</h1>"
@@ -188,7 +179,6 @@ if 'playlist' in form and not 'mode' in form:
     dirhash = {}  # All directories in a hash to prevent doubles
 
     # Collect all matching files and directories
-
     listfile = open(myconfig['savedir'] + 'lists/' + playlist)
     for line in listfile.readlines():
         line = line[:-1]
@@ -202,20 +192,16 @@ if 'playlist' in form and not 'mode' in form:
     listfile.close()
     
     # Add all directories to @entries
-
     for key in dirhash.keys():
         dirs.append(key)
 
     dirs.sort()
 
 else:
-
     # Browse all files
-
     globdir = mediadir + givendir
 
     # Escape whitespaces and apostrophe
-
     if os.access(globdir, os.R_OK):
         for curdir in os.listdir(globdir):
             if curdir[0] != '.':
@@ -235,7 +221,6 @@ files.sort()
 print "<table>"
 
 # First, display all directories
-
 for curdir in dirs:
     curdir = curdir.replace(mediadir, '')
     escapeddir = urllib.quote(curdir + "/")
@@ -258,7 +243,6 @@ for curdir in dirs:
     print "</tr>\n"
 
 # Now display all files
-
 cssfileclass = 'file2'
 csslistclass = 'playlist2'
 alt = '2'
@@ -275,7 +259,6 @@ for curfile in files:
         dir = givendir + curfile
         dir = dir.replace(mediadir, '')
         escapeddir = urllib.quote(dir)
-
 
         # alternate colors
         if cssfileclass == 'file':
