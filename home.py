@@ -227,13 +227,13 @@ if os.path.exists(basedir + 'nextfile'):
         nextarray.append(line[:-1])
     nextfile.close()
 
-tag = taginfo.get_tag(info)
-
 playlist = config.get_playlist()
 playreason = info.split()[0]
 
 # Remove playreason from info line
 info = " ".join(info.split()[1:])
+
+tag = taginfo.get_tag(info)
 
 if playreason == 'PLAYLIST':
     playreason = ' (random)'
