@@ -92,6 +92,16 @@ def configeditor(playlist):
               "it will search your files under this directory and build a " + \
               "default playlist from these.</p>"
 
+        print "<h2>Language</h2>"
+        print "<input type='text' name='language' value='" + \
+              workconfig['language'] + "' size='50' maxlength='255'/>"
+
+        print "<p class='configdescription'>" + \
+              "Oyster currently supports an English (en) and a German (de) interface. " + \
+              "Please specify the two-letter code here if you want to present Oyster " + \
+              "to all users in the same language. If 'auto' is set, the user's browser " + \
+              "setting is used.</p>"
+
         print "<h2>Encoding</h2>"
         print "<input type='text' name='encoding' value='" + \
               workconfig['encoding'] + "' size='50' maxlength='255'/>"
@@ -260,9 +270,6 @@ basedir = myconfig['basedir']
 savedir = myconfig['savedir']
 form = cgi.FieldStorage()
 
-import common
-common.navigation_header("Config Editor")
-
 import os.path
 
 if os.path.exists(savedir + "lists/"):
@@ -285,7 +292,11 @@ if 'action' in form:
         os.unlink(savedir + "config/" + os.path.basename(form['playlist'].value))
         if form['playlist'].value in configs:
             configs.remove(form['playlist'].value)
-elif 'playlist' in form:
+
+import common
+common.navigation_header("Config Editor")
+
+if 'action' not in form and 'playlist' in form:
     configeditor(form['playlist'].value)
 
 files = []

@@ -59,7 +59,8 @@ def get_defaults():
               "encoding": "utf-8",
               "tagencoding": "de_DE.UTF-8",
               "refresh": "30",
-              "midvolume": "50"
+              "midvolume": "50",
+              "language": "auto"
               }
 
     return config

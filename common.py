@@ -40,14 +40,17 @@ myconfig = config.get_config()
 def get_prefered_language():
     import os
 
-    languages = os.environ["HTTP_ACCEPT_LANGUAGE"].split(",")
-    known_languages = ['en', 'de']
-    selected_language = 'en'
-    for lang in languages:
-        two_letter_code = lang[:2]
-        if two_letter_code in known_languages:
-            selected_language = two_letter_code
-            break
+    selected_language = myconfig['language']
+
+    if selected_language == 'auto':
+        languages = os.environ["HTTP_ACCEPT_LANGUAGE"].split(",")
+        known_languages = ['en', 'de']
+        selected_language = 'en'
+        for lang in languages:
+            two_letter_code = lang[:2]
+            if two_letter_code in known_languages:
+                selected_language = two_letter_code
+                break
 
     import gettext
     return gettext.translation('oyster', 'po', [selected_language]).gettext
