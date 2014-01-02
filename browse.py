@@ -143,27 +143,6 @@ if os.path.exists(mediadir + givendir):
 
     print "</p><br clear='all'/>"
 
-    # Get the parent directory
-
-    """
-    parentdir = re.sub('\A' + re.escape(mediadir), '', givendir)
-    if re.search('[^/]*/\Z', parentdir) == None:
-        parentdir = ''
-    else:
-        parentdir = re.sub('/[^/]*/\Z', '', parentdir)
-
-    if givendir != '/':
-        # Create a link to the parent directory
-
-        parentdir = urllib.quote(parentdir)
-        if form.has_key('playlist'):
-            print "<a href='browse.py?dir=" + parentdir + mode + "&amp;playlist=" + \
-                urllib.quote(form['playlist'].value) + "'>Parent directory</a><br/><br/>"
-        else:
-            print "<a href='browse.py?dir=" + parentdir + mode + \
-                "'>Parent directory</a><br/><br/>"
-    """
-
     print "<p>" + common.get_cover(mediadir + givendir, myconfig['coverwidth']) + "</p>"
 
 
