@@ -2,7 +2,9 @@
 # -*- coding: UTF-8 -*
 # oyster - a python-based jukebox and web-frontend
 #
-# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, Stephan Windmüller <windy@white-hawk.de>, Stefan Naujokat <git@ethric.de>
+# Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
+# Stephan Windmüller <windy@white-hawk.de>,
+# Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -28,40 +30,38 @@ import re
 myconfig = config.get_config()
 playlist = config.get_playlist()
 
-def get_tag_light (filename):
+
+def get_tag_light(filename):
 
     cache = anydbm.open(myconfig['savedir'] + 'tagcache-python', 'c')
     tag = {}
      
-    if cache.has_key(filename):
+    if filename in cache:
         tag['display'] = cache[filename]
         cache.close()
     else:
         cache.close()
         tag = get_tag(filename)
     
-
     return tag['display']
 
 
-def get_tag (filename):
+def get_tag(filename):
 
-    tag = {}
+    tag = {'title': ''}
 
-    tag['title'] = '';
-
-    if ((filename[-3:]).lower() == 'mp3'):
+    if (filename[-3:]).lower() == 'mp3':
         tag = get_mp3_tags(filename)
-    elif ((filename[-3:]).lower() == 'ogg'):
+    elif (filename[-3:]).lower() == 'ogg':
         tag = get_ogg_tags(filename)
-    elif ((filename[-4:]).lower() == 'flac'):
+    elif (filename[-4:]).lower() == 'flac':
         tag = get_ogg_tags(filename)
 
     # Count current score
 
     tag['score'] = get_score(filename)
 
-    tag['display'] = get_display(filename,tag)
+    tag['display'] = get_display(filename, tag)
 
     cache = anydbm.open(myconfig['savedir'] + 'tagcache-python', 'c')
     cache[filename] = tag['display']
@@ -69,19 +69,21 @@ def get_tag (filename):
 
     return tag
 
-def get_display (filename,tag):
 
-    if not tag.has_key('title') or tag['title'] == '':
+def get_display(filename, tag):
+
+    if not 'title' in tag or tag['title'] == '':
         filename = os.path.basename(filename)[:-4]
         display = filename
-    elif not tag.has_key('artist') or tag['artist'] == '':
+    elif not 'artist' in tag or tag['artist'] == '':
         display = tag['title']
     else:
         display = tag['artist'] + ' - ' + tag['title']
 
     return display
 
-def get_score (filename):
+
+def get_score(filename):
 
     score = 0
     scorefile = myconfig['savedir'] + 'scores/' + playlist
@@ -90,17 +92,17 @@ def get_score (filename):
         lastopen = file(scorefile)
         for line in lastopen:
             if line[:-1] == filename:
-                score = score + 1
+                score += 1
         lastopen.close()
 
     return score
 
-def get_mp3_tags (filename):
 
-    tag = {}
-    tag['format'] = 'MP3'
-    filename = filename.replace("`","\`")
-    filename = filename.replace('"','\\"')
+def get_mp3_tags(filename):
+
+    tag = {'format': 'MP3'}
+    filename = filename.replace("`", "\`")
+    filename = filename.replace('"', '\\"')
     os.environ['LANG'] = myconfig['tagencoding']
     mp3 = os.popen('id3v2 -l "' + filename + '"').readlines()
 
@@ -130,8 +132,8 @@ def get_mp3_tags (filename):
     for line in mp3:
         for regex in mp3_regex:
             matcher = re.match(regex[0], line[:-1])
-            if matcher != None:
-                tag[regex[1]] = cgi.escape(unicode(matcher.group(1).rstrip(),'latin-1').encode(myconfig['encoding']))
+            if matcher is not None:
+                tag[regex[1]] = cgi.escape(unicode(matcher.group(1).rstrip(), 'latin-1').encode(myconfig['encoding']))
 
     try:
         if tag['playtime'] != '':
@@ -146,21 +148,24 @@ def get_mp3_tags (filename):
     
     return tag
 
-def get_ogg_tags (filename):
 
-    filename = filename.replace("`","\`")
-    filename = filename.replace('"','\\"')
+def get_ogg_tags(filename):
+
+    filename = filename.replace("`", "\`")
+    filename = filename.replace('"', '\\"')
 
     os.environ['LANG'] = myconfig['tagencoding']
     
     tag = {}
 
-    if ((filename[-3:]).lower() == 'ogg'):
+    if (filename[-3:]).lower() == 'ogg':
         tag['format'] = 'OGG Vorbis'
         ogg = os.popen('ogginfo "' + filename + '"')
-    elif ((filename[-4:]).lower() == 'flac'):
+    elif (filename[-4:]).lower() == 'flac':
         tag['format'] = 'FLAC'
         ogg = os.popen('metaflac --export-tags-to=- "' + filename + '"')
+    else:
+        ogg = []
 
     ogg_regex = {
         'title=(.*)':                 'title',
@@ -171,13 +176,13 @@ def get_ogg_tags (filename):
         'tracknumber=(.*)':           'track',
         'comment=(.*)':               'comment',
         'playback\ length:\ (.*)':    'playtime'
-        }
+    }
 
     for line in ogg:
         line = line.lstrip()
         for regex in ogg_regex:
             matcher = re.match(regex, line, re.I)
-            if matcher != None:
+            if matcher is not None:
                 tag[ogg_regex[regex]] = cgi.escape(matcher.group(1).rstrip())
 
     try:
