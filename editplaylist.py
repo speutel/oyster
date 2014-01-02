@@ -49,7 +49,7 @@ def print_frameset():
     print"  <frame src='editplaylist.py?mode=title&playlist=" + urllib.quote(playlist) + "' name='title'>"
     print"  <frameset cols='*,*'>"
     print"   <frame src='editplaylist.py?mode=edit&playlist=" + urllib.quote(playlist) + "' name='playlist'>"
-    print"   <frame src='browse.py?mode=playlist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
+    print"   <frame src='browse.py?mode=editplaylist&playlist=" + urllib.quote(playlist) + "' name='browse'>"
     print"  </frameset>"
     print"    <noframes>"
     print"	<p>"

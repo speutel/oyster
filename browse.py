@@ -43,14 +43,14 @@ mediadir = re.sub('/\Z', '', myconfig['mediadir'][:-1])
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
-if 'mode' in form and form['mode'].value == 'playlist':
-    editplaylist = 1
+if 'mode' in form and form['mode'].value == 'editplaylist':
+    editplaylist = True
     mode = '&amp;mode=playlist'
 
     common.html_header(title=_("Browse"))
 
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) +\
+    print "<li class='double'><a href='browse.py?mode=editplaylist&amp;playlist=" + urllib.quote(form['playlist'].value) +\
           "'>Browse</a></li>"
     print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" + urllib.quote(form['playlist'].value) +\
           "'>Search</a></li>"
@@ -58,7 +58,7 @@ if 'mode' in form and form['mode'].value == 'playlist':
     
     print "<br/><hr/>"
 else:
-    editplaylist = 0
+    editplaylist = False
     common.navigation_header(title=_("Browse"))
     mode = ''
 

@@ -49,7 +49,7 @@ if 'playlist' in form and 'mode' in form and form['mode'].value == 'playlist':
     common.html_header(title="Suchen")
     
     print "<ul id='navigation'>"
-    print "<li class='double'><a href='browse.py?mode=playlist&amp;playlist=" +\
+    print "<li class='double'><a href='browse.py?mode=editplaylist&amp;playlist=" +\
           urllib.quote(form['playlist'].value) + "'>" + _("Browse") + "</a></li>"
     print "<li class='double'><a href='search.py?mode=playlist&amp;playlist=" +\
           urllib.quote(form['playlist'].value) + "'>" + _("Search") + "</a></li>"

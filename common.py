@@ -174,7 +174,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     # Browse-window of playlist editor
 
                     print "<table><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=editplaylist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -188,7 +188,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     # Search-window of playlist-editor
 
                     print "<table><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=editplaylist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -205,7 +205,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                 escapeddir = urllib.quote("/" + cutnewpath)
                 if playlistmode == 1:
                     print "<table><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=editplaylist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
@@ -215,7 +215,7 @@ def listdir(basepath, counter, cssclass, playlistmode=0, playlist=''):
                     print "</tr></table>"
                 elif playlistmode == 2:
                     print "<table ><tr><td align='left'>"
-                    print "<strong><a href='browse.py?mode=playlist&dir=" + \
+                    print "<strong><a href='browse.py?mode=editplaylist&dir=" + \
                           escapeddir + "&amp;playlist=" + playlist + \
                           "' >" + cgi.escape(cutnewpath) + \
                           "</a></strong>"
