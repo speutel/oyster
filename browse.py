@@ -162,8 +162,7 @@ if os.path.exists(mediadir + givendir):
                 "'>&Uuml;bergeordnetes Verzeichnis</a><br/><br/>"
     """
 
-
-    print "<p>" + common.get_cover(mediadir + givendir, "100") + "</p>"
+    print "<p>" + common.get_cover(mediadir + givendir, myconfig['coverwidth']) + "</p>"
 
 
 elif not os.path.exists(mediadir + givendir):
