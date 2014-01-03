@@ -94,9 +94,12 @@ if not os.access(mediadir + soundfile, os.R_OK):
 
 print "<p>"
 if oysterruns and mayVote:
-    print "<span class='file'><a class='file' href='home.py?vote=" + escapedfile + "' >Vote this song</a></span>"
+    print "<span class='file'><a class='file' href='home.py?vote=" + escapedfile + "' >"
+    print "<img src='themes/" + myconfig['theme'] + "/votefile.png'/> Vote this song</a></span>"
 elif oysterruns and not mayVote:
-    print "<span class='file' style='font-style: italic;' '>" + reason + "</span>"
+    print "<span class='file' style='font-style: italic;' '>" 
+    print "<img src='themes/" + myconfig['theme'] + "/notmayvote.png'/> "
+    print reason + "</span>"
 else:
     print ""
 print "</p>"
