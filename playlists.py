@@ -23,38 +23,43 @@
 import config
 myconfig = config.get_config()
 
-def print_playlist(file):
-    title = re.sub('\A.*_','',file)
-    encfile = urllib.quote(file)
 
-    if os.path.getsize(myconfig['savedir'] + '/lists/' + file) == 0:
+def print_playlist():
+    title = re.sub('\A.*_', '', filename)
+    encfile = urllib.quote(filename)
+
+    if os.path.getsize(myconfig['savedir'] + '/lists/' + filename) == 0:
         isempty = " <span class='emptylist'>(empty)</span>"
     else:
         isempty = ''
 
-    if file == playlist and file != 'default':
+    if filename == playlist and filename != 'default':
         print "<tr>"
-        print "<td class='playlists'><img src='themes/" + myconfig['theme'] +"/currentlyplaying.png' alt='currently playing'/></td>"
+        print "<td class='playlists'><img src='themes/" + myconfig['theme'] +\
+              "/currentlyplaying.png' alt='currently playing'/></td>"
         print "<td><i><a href='playlistinfo.py?list=" + encfile + "'>" + title + "</a></i></td>"
         print "</tr>"
-    elif file != 'default':
+    elif filename != 'default':
         print "<tr><td>"
         if oysterruns:
             print "<a href='playlists.py?action=loadlist&amp;" + \
-                "listname=" + encfile + "' + title='Load'><img src='themes/" + myconfig['theme'] +"/loadplaylist_action.png' alt='load'/></a>"
+                  "listname=" + encfile + "' + title='Load'><img src='themes/" + myconfig['theme'] +\
+                  "/loadplaylist_action.png' alt='load'/></a>"
         print "</td>"
-        print "<td><a href='playlistinfo.py?list=" + encfile + "'>"+ title + isempty + "</a></td></tr>"
+        print "<td><a href='playlistinfo.py?list=" + encfile + "'>" + title + isempty + "</a></td></tr>"
+
 
 def confirmdelete():
-    playlist = form['listname'].value
-    enclist = urllib.quote(playlist)
-    print "<h1>Should " + playlist + " be deleted?</h1>"
+    playlist_to_delete = form['listname'].value
+    enclist = urllib.quote(playlist_to_delete)
+    print "<h1>Should " + playlist_to_delete + " be deleted?</h1>"
     print "<a href='playlists.py?action=delete&amp;listname=" + enclist + "'>Yes, delete it</a>"
     print "<br/>"
     print "<a href='playlists.py'>No, return to overview</a>"
     print "</body></html>"
 
-def renameform(playlist):
+
+def renameform(playlist_to_rename):
 
     entries = os.listdir(myconfig['savedir'] + 'lists/')
     section = {}
@@ -62,7 +67,7 @@ def renameform(playlist):
     for entry in entries:
         if os.path.exists(myconfig['savedir'] + 'lists/' + entry) and entry.find('_') > -1:
             entry = re.sub('_.*', '', entry)
-            section[entry] = 1;
+            section[entry] = 1
 
     sections = ['Default']
 
@@ -72,7 +77,7 @@ def renameform(playlist):
     for section in sectionkeys:
         sections.append(section)
 
-    title = re.sub('\A.*_', '', playlist)
+    title = re.sub('\A.*_', '', playlist_to_rename)
 
     print "<h1>" + title + "</h1>"
     print "<h2>Move to another section</h2>"
@@ -80,9 +85,9 @@ def renameform(playlist):
 
     print "<form method='post' action='playlists.py' enctype='application/x-www-form-urlencoded'>"
     print "<input type='hidden' name='action' value='movelistsave'>"
-    print "<input type='hidden' name='playlist' value='" + playlist + "'>"
+    print "<input type='hidden' name='playlist' value='" + playlist_to_rename + "'>"
     print "<input type='radio' name='sectiontype' value='existing' checked> " + \
-            "in existing Section "
+          "in existing Section "
 
     print "<select name='existingsection'>"
     for existingsection in sections:
@@ -90,7 +95,7 @@ def renameform(playlist):
     print "</select><br/><br/>"
 
     print "<input type='radio' name='sectiontype' value='new'> " + \
-            "in new Section <input type='text' name='newsection'>"
+          "in new Section <input type='text' name='newsection'>"
     print "<br/><br/>"
     print "<input type='submit' value='Move'>"
     print "</form>"
@@ -101,7 +106,7 @@ def renameform(playlist):
     print "<div style='padding-left: 2em;'>"
     print "<form method='post' action='playlists.py' enctype='application/x-www-form-urlencoded'>"
     print "<input type='hidden' name='action' value='rename'>"
-    print "<input type='hidden' name='playlist' value='" + playlist + "'>"
+    print "<input type='hidden' name='playlist' value='" + playlist_to_rename + "'>"
     print "<input type='textfield' name='newname'><br/><br/>"
     print "<input type='submit' value='Rename'>"
     print "</form></div>"
@@ -112,18 +117,18 @@ def listrename(oldname, newname):
     
     for dirname in ['blacklists/', 'lists/', 'logs/', 'scores/']:
         if os.path.exists(myconfig['savedir'] + dirname + oldname):
-            os.rename(myconfig['savedir'] + dirname + oldname, \
-            myconfig['savedir'] + dirname + newname)
+            os.rename(myconfig['savedir'] + dirname + oldname,
+                      myconfig['savedir'] + dirname + newname)
 
 
 import cgi
+import common
 import fifocontrol
 import cgitb
 import sys
 import os.path
 import urllib
 import re
-import common
 cgitb.enable()
 
 _ = common.get_prefered_language()
@@ -133,29 +138,27 @@ savedir = myconfig['savedir']
 form = cgi.FieldStorage()
 
 if os.path.exists(myconfig['basedir']):
-    oysterruns = 1
+    oysterruns = True
 else:
-    oysterruns = 0
+    oysterruns = False
 
-import common
 common.navigation_header("Playlists")
 
-if form.has_key('action') and (form.has_key('listname') or form.has_key('newlistname')):
-    if form['action'].value == 'confirmdelete':
+if 'action' in form and ('listname' in form or 'newlistname' in form):
+    if form['action'].value is 'confirmdelete':
         confirmdelete()
         sys.exit()
     else:
-        if form.has_key('listname'):
-            file = form['listname'].value
+        if 'listname' in form:
+            filename = form['listname'].value
         else:
-            file = form['newlistname'].value
-        fifocontrol.do_action(form['action'].value, file)
+            filename = form['newlistname'].value
+        fifocontrol.do_action(form['action'].value, filename)
 
-if form.has_key('playlist') and form.has_key('action') and form['action'].value == 'move':
+if 'playlist' in form and 'action' in form and form['action'].value == 'move':
     renameform(form['playlist'].value)
 
-if form.has_key('action') and form['action'].value == 'rename' and \
-    form.has_key('playlist') and form.has_key('newname'):
+if 'action' in form and form['action'].value == 'rename' and 'playlist' in form and 'newname' in form:
     if form['playlist'].value.find('_') > -1:
         section = re.sub('_.*\Z', '_', form['playlist'].value)
     else:
@@ -164,19 +167,18 @@ if form.has_key('action') and form['action'].value == 'rename' and \
 
 # Move playlist to new or existing section
 
-if form.has_key('action') and form['action'].value == 'movelistsave' and \
-    form.has_key('sectiontype') and form.has_key('playlist'):
+if 'action' in form and form['action'].value == 'movelistsave' and 'sectiontype' in form and 'playlist' in form:
 
     newsection = ''
     
-    if form['sectiontype'].value == 'existing' and form.has_key('existingsection'):
+    if form['sectiontype'].value == 'existing' and 'existingsection' in form:
     
         if not form['existingsection'].value == 'Default':
             newsection = form['existingsection'].value + '_'
 
-    elif form['sectiontype'].value == 'new' and form.has_key('newsection'):
+    elif form['sectiontype'].value == 'new' and 'newsection' in form:
 
-        if form.has_key('newsection') and not form['newsection'].value == 'Default':
+        if 'newsection' in form and not form['newsection'].value == 'Default':
             newsection = form['newsection'].value + '_'
         
     onlyplaylist = re.sub('\A.*_', '', form['playlist'].value)
@@ -193,10 +195,10 @@ for entry in entries:
     if os.path.isfile(savedir + "lists/" + entry):
         files.append(entry)
         if entry.find('_') > -1:
-            entry = re.sub('_.*','',entry)
+            entry = re.sub('_.*', '', entry)
             section[entry] = 1
 
-if form.has_key('action') and form['action'].value == 'loadlist' and form.has_key('listname'):
+if 'action' in form and form['action'].value == 'loadlist' and 'listname' in form:
     playlist = form['listname'].value
 else:
     playlist = config.get_playlist()
@@ -209,7 +211,8 @@ print "<tr><td colspan='2'><h1>" + _("Playlists") + "</h1></td></tr>"
 
 if playlist == 'default':
     print "<tr style='height:3em;'>"
-    print "<td class='playlists'><img src='themes/" + myconfig['theme'] +"/currentlyplaying.png' alt='currently playing'/></td>"
+    print "<td class='playlists'><img src='themes/" + myconfig['theme'] +\
+          "/currentlyplaying.png' alt='currently playing'/></td>"
     print "<td><a href='playlistinfo.py?list=default'><i>default (All songs)</i></a></td>"
     print "</tr>"
 else:
@@ -217,7 +220,8 @@ else:
     print "<td class='playlists'>"
     if oysterruns:
         print "<a href='playlists.py?action=loadlist&amp;listname=default' title='Load'>"
-        print "<img src='themes/" + myconfig['theme'] +"/loadplaylist_action.png' alt='load'/>"
+        print "<img src='themes/" + myconfig['theme'] +\
+              "/loadplaylist_action.png' alt='load'/>"
         print "</a>"
     print "</td>"
     print "<td><a href='playlistinfo.py?list=default'>default (All songs)</a></td>"
@@ -225,9 +229,9 @@ else:
 
 # Print playlists without a section
 
-for file in files:
-    if file.find('_') == -1:
-        print_playlist(file)
+for filename in files:
+    if filename.find('_') == -1:
+        print_playlist()
 
 # Print all sections
 
@@ -236,9 +240,9 @@ sectionkeys.sort()
 
 for section in sectionkeys:
     print "<tr><td colspan='5'><h2>" + section + "</h2></td></tr>"
-    for file in files:
-        if file.find(section + "_") == 0:
-            print_playlist(file)
+    for filename in files:
+        if filename.find(section + "_") == 0:
+            print_playlist()
 
 print "</table>"
 
