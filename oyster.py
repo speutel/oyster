@@ -110,24 +110,7 @@ class Oyster:
         if not os.access(self.basedir, os.F_OK):
             log.debug("setup basedir")
             os.makedirs(self.basedir)
-        else: 
-            # TODO scheint nicht zu funktionieren...
-            # already exists. check for another running oyster and unpause.
-            # no oyster -> remove dir
-            log.debug("basedir exists")
-            if os.access(self.basedir + "/pid", os.R_OK):
-                pidfile = open(self.basedir + "/pid", 'r')
-                pid = pidfile.readline()
-                pidfile.close()
-                # check pid - is this pid an instance of oyster?
-                pspipe = os.popen("ps -o command= -p " + pid, 'r')
-                if pspipe.readline().find("oyster") != -1:
-                    controlfile = open(self.basedir + "/control", 'w')
-                    controlfile.writeline("UNPAUSE\n")
-                    controlfile.close()
-                    sys.exit()
-            # no pid file or pid is no oyster (-> sys.exit() is not triggered,
-            # no "else:")
+        else:
             log.debug("removing old basedir")
             for root, dirs, files in os.walk(self.basedir, topdown=False):
                 for name in files:
@@ -139,12 +122,12 @@ class Oyster:
         
         self.__setup_savedir()
         self.__check_access()
-        
-        # redirect stdout/stderr - silence! 
-        outfile = os.open(self.basedir + "/oyster.stdout", os.O_RDWR | os.O_CREAT | os.O_TRUNC)
-        errfile = os.open(self.basedir + "/oyster.stderr", os.O_RDWR | os.O_CREAT | os.O_TRUNC)
-        os.dup2(outfile, 1)
-        os.dup2(errfile, 2)
+        if __name__ == '__main__':
+            # redirect stdout/stderr - silence!
+            outfile = os.open(self.basedir + "/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+            errfile = os.open(self.basedir + "/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+            os.dup2(outfile, 1)
+            os.dup2(errfile, 2)
 
         # write current pid
         log.debug("writing pid")
@@ -191,12 +174,6 @@ class Oyster:
 
         plhelper = PlaylistBuilder()
         plhelper.build_playlist(self)
-
-        # if we have nothing to play, wait until plhelper is done
-        if len(self.filelist) == 0:
-            while len(self.filelist) == 0:
-                pass
-            self.load_playlist("default", skip=True)
 
         # for basedir/status -> playing 
         self.unpause()
@@ -901,9 +878,18 @@ class PlaylistBuilder(threading.Thread):
     def run(self):
         self.oyster.build_playlist(self.oyster.mediadir)
 
-if __name__ == '__main__':
+if os.path.exists("oysterlog.conf"):
     logging.config.fileConfig("oysterlog.conf")
-    log = logging.getLogger("oyster")
+
+log = logging.getLogger("oyster")
+
+if __name__ == '__main__':
     oy = Oyster()
-    while not oy.do_exit:
-        oy.play(oy.filetoplay, oy.current_playreason)
+    # if we have nothing to play, wait until first default playlist is built
+    if len(oy.filelist) == 0:
+        while len(oy.filelist) == 0:
+            pass
+        oy.loadPlaylist("default", skip=True)
+
+    while not oy.doExit:
+        oy.play(oy.filetoplay)
