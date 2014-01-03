@@ -282,7 +282,7 @@ for curfile in files:
             # only generate "Vote"-link if oyster is running
             (mayVote, reason) = may_vote(dir, playlist, playlistContents, historyList)
             if oysterruns and mayVote:
-                print "<td><a title='Vote this file' class='" + cssfileclass + "' href='home.py?vote=" + escapeddir +\
+                print "<td><a title='Vote this song' class='" + cssfileclass + "' href='home.py?vote=" + escapeddir +\
                       "' ><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
             elif oysterruns and not mayVote:
                 print "<td><span class='" + cssfileclass + "' style='font-style: italic;' '>"
