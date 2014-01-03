@@ -31,7 +31,6 @@ import time
 import signal, re
 import oysterconfig
 import datetime
-import lastfm
 import gstreamer
 
 __version__ = 2
@@ -200,11 +199,7 @@ class Oyster:
         else:
             self.gstreamer = None
 
-        self.scrobbler = lastfm.Scrobbler(self.config['lfm_user'], self.config['lfm_password'])
-        if self.config['lfm_scrobble'] != "1":
-            self.scrobbler.scrobble = False
-        
-        # if we have nothing to play, wait until plhelper is done 
+        # if we have nothing to play, wait until plhelper is done
         if len(self.filelist) == 0:
             while len(self.filelist) == 0:
                 pass
@@ -590,13 +585,11 @@ class Oyster:
             pfile = open(self.basedir + "/info", 'w')
             pfile.write(filestring + "\n")
             pfile.close()
-            self.scrobbler.nowplaying(filestring)
             if self.gstreamer is None:
                 self.playerid = os.spawnl(os.P_NOWAIT, player, player, filestring)
                 os.waitpid(self.playerid, 0)
             else:
                 self.gstreamer.play(filestring)
-            self.scrobbler.submitAll()
         self.__done()
 
     def playPrevious(self):
