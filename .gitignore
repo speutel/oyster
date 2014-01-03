@@ -1,9 +1,9 @@
 *.pyc
+*.iml
 blacklists
 config
 lists
 logs
-oyster.iml
 oyster.log
 oyster_general.log
 scores

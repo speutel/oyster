@@ -891,5 +891,5 @@ if __name__ == '__main__':
             pass
         oy.loadPlaylist("default", skip=True)
 
-    while not oy.doExit:
+    while not oy.do_exit:
         oy.play(oy.filetoplay)
