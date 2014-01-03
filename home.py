@@ -271,7 +271,7 @@ else:
 if notVotedReason is not None:
     print "<p style='color:red'>" + _("Song must not be voted. The reason is: ") + notVotedReason + ".</p>"
 
-pr_img = "<img src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
+pr_img = "<img title='play reason: " + pr_alt + "' src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
 
 print "<table border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
