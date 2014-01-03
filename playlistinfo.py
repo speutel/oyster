@@ -64,9 +64,14 @@ escapedlistname = urllib.quote(listname)
 
 print "<p>"
 if playlist != listname:
-    print "<span class='file'><a class='file' href='playlists.py?action=loadlist&amp;listname=" + escapedlistname + "' >Load this playlist</a></span>"
+    print "<span class='file'>"
+    print "<a class='file' href='playlists.py?action=loadlist&amp;listname=" + escapedlistname + "' >"
+    print "<img src='themes/" + myconfig['theme'] + "/loadplaylist_action.png'/> Load this playlist</a>"
+    print "</span>"
+     
 else:
-    print "<i>Already playing this list</i>"
+    print "<img src='themes/" + myconfig['theme'] + "/currentlyplaying.png'/>"
+    print "<i>This list is currently playing</i>"
 print "</p>"
 
 songsplayed = 0
@@ -86,13 +91,20 @@ listfile.close()
 
 print "<table border='0'>"
 print "<tr><td class='fileinfo'>Name: </td><td>" + listname + "</td></tr>"
-print "<tr><td class='fileinfo'>Size: </td><td>" + str(songsinlist) + " songs</td></tr>"
-print "<tr><td class='fileinfo'>Played: </td><td>" + str(songsplayed) + " songs</td></tr>"
-print "<tr><td class='fileinfo'>Actions: </td><td>"
-print "<a class='file' href='editplaylist.py?playlist=" + escapedlistname + "'>Edit</a></td>"
+print "<tr><td class='fileinfo'>Size: </td><td>" + str(songsinlist) + " songs"
 if listname != "default":
-    print "<tr><td></td><td><a class='file' href='browse.py?mode=browseplaylist&playlist=" +\
-          escapedlistname + "'>Browse</a></td></tr>"
+    # TODO: make this threshold configurable
+    if songsinlist < 5000:
+        print " (<a href='browse.py?mode=browseplaylist&playlist=" + escapedlistname + "' class='file'>List</a>)"
+    else:
+        print " (<a href='browse.py?playlist=" + escapedlistname + "&amp;dir=/&amp;checkdir=true' class='file'>Browse</a>)"
+print "</td></tr>"
+print "<tr><td class='fileinfo'>Played: </td><td>" + str(songsplayed) + " songs</td></tr>"
+print "<tr><td class='fileinfo'>Modify: </td><td>"
+print "<a class='file' href='editplaylist.py?playlist=" + escapedlistname + "'>Edit</a></td>"
+print "<tr><td class='fileinfo'>&nbsp;</td><td>"
+print "<a class='file' href='configedit.py?playlist=" + escapedlistname + "'>Configure</a> "
+print "</td></tr>"
 print "<tr><td class='fileinfo'>&nbsp;</td><td>"
 if listname != playlist and listname != "default":
     print "<a class='file' href='playlists.py?action=move&amp;playlist=" + escapedlistname + "'>Move/Rename</a> "
