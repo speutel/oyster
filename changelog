@@ -1,0 +1,25 @@
+Oyster (0.5)
+
+  * Interface for mobile devices
+  * "May Vote" feature blocks voting for songs which e.g. just have been played
+  * Fixed perfomance issues for large playlists or logs
+  * Display reason for playing (scored, random, voted)
+  * i18n for some strings
+  * Sample config is used as template for new configs
+  * Removed deprecated usage of /dev/dsp and /dev/mixer
+  * Start external players in quiet mode to prevent large logfiles
+  * Enabling or disabling FAV mode now clears the "next to play" list
+  * Removed "Similar artists" because of API changes of Last.fm
+  * Show link to complete lyrics
+  * Mark missing files in playlist viewer (fixes #11)
+  * New playlist browser
+  * Do not allow edit of default playlist (fixes #20)
+  * Various code cleanups
+
+-- Stephan Windmüller <windy@white-hawk.de>
+
+Oyster (0.4)
+
+  * Start of changelog
+
+-- Stephan Windmüller <windy@white-hawk.de>
