@@ -32,15 +32,17 @@ For the GUI, you need an apache with the capability to execute python-CGI
 Below you will find an example for the apache-config. It will allow
 python-scripts to be executed.
 
-| AddHandler cgi-script .cgi .sh .py
-|
-| [...]
-|
-| <Location /oyster>
-|        Options +ExecCGI
-| </Location>
+    AddHandler cgi-script .cgi .sh .py
 
---Installation--
+    [...]
+
+    <Location /oyster>
+         Options +ExecCGI
+    </Location>
+
+Installation
+------------
+
 Launch the install-script
 
  OR
