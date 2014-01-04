@@ -34,7 +34,10 @@ def get_values(filename):
             key, value = string.split(line[:-1], '=')
             if (key[-3:] == 'dir') & (value[-1:] != '/'):
                 value += '/'
-            readconfig[key] = value
+            if key == 'partymode':
+                readconfig[key] = value == "True"
+            else:
+                readconfig[key] = value
 
     conffile.close()
     
@@ -53,6 +56,8 @@ def get_defaults():
               "len_nextfiles": "5",
               "control_mode": "0600",
               "theme": "default",
+              "partymode": False,
+              "partymodepassword": "admin",
               "maxscored": "30",
               "coverfilenames": "../${album}.png,../${album}.jpg",
               "coverwidth": "150",

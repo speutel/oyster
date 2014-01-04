@@ -28,12 +28,17 @@ form = cgi.FieldStorage()
 
 just_authenticated = False
 
+import config
+config = config.get_config()
+
 if 'password' in form:
     password = form['password'].value
-    # TODO Make password configurable
-    if password == 'admin':
+    if password == config['partymodepassword']:
         import Cookie
         cookie = Cookie.SimpleCookie()
+        # TODO Generate random session ID
+        # TODO Store session ID in file
+        # TODO Clear old session ids
         cookie["sessionid"] = "12345"
         print cookie
         just_authenticated = True
