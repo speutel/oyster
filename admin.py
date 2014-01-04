@@ -20,31 +20,37 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+import anydbm
+import cgi
 import cgitb
+import common
+import config
+import Cookie
+import datetime
+import uuid
+
 cgitb.enable()
 
-import cgi
 form = cgi.FieldStorage()
 
 just_authenticated = False
 
-import config
 config = config.get_config()
 
 if 'password' in form:
     password = form['password'].value
     if password == config['partymodepassword']:
-        import Cookie
         cookie = Cookie.SimpleCookie()
-        # TODO Store session ID in file
         # TODO Clear old session ids
-        import uuid
-        cookie["oyster-sessionid"] = uuid.uuid1()
+        sessionid = str(uuid.uuid1())
+        cookie["oyster-sessionid"] = sessionid
+        id_storage = anydbm.open(config['savedir'] + 'sessionids', 'c')
+        id_storage[sessionid] = str(datetime.datetime.now())
+        id_storage.close()
         print cookie
         just_authenticated = True
 
 
-import common
 common.navigation_header(title="Admin Login")
 
 if just_authenticated or common.is_authenticated():

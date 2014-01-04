@@ -107,8 +107,11 @@ def is_authenticated():
         thiscookie.load(os.environ['HTTP_COOKIE'])
 
     if 'oyster-sessionid' in thiscookie:
-        # FIXME Check session id
-        return True
+        import anydbm
+        id_storage = anydbm.open(myconfig['savedir'] + 'sessionids', 'r')
+        result = thiscookie["oyster-sessionid"].value in id_storage.keys()
+        id_storage.close()
+        return result
     else:
         return False
 

@@ -6,5 +6,6 @@ logs
 oyster.iml
 oyster.log
 oyster_general.log
+sessionids
 scores
 tagcache-python
