@@ -36,10 +36,10 @@ if 'password' in form:
     if password == config['partymodepassword']:
         import Cookie
         cookie = Cookie.SimpleCookie()
-        # TODO Generate random session ID
         # TODO Store session ID in file
         # TODO Clear old session ids
-        cookie["sessionid"] = "12345"
+        import uuid
+        cookie["oyster-sessionid"] = uuid.uuid1()
         print cookie
         just_authenticated = True
 

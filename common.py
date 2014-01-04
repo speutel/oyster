@@ -106,7 +106,7 @@ def is_authenticated():
     if 'HTTP_COOKIE' in os.environ:
         thiscookie.load(os.environ['HTTP_COOKIE'])
 
-    if 'sessionid' in thiscookie:
+    if 'oyster-sessionid' in thiscookie:
         # FIXME Check session id
         return True
     else:
