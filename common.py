@@ -100,6 +100,19 @@ def navigation_header(header=True, title="Oyster", refreshpage=None):
     print "<hr/>"
 
 
+def is_authenticated():
+    import Cookie
+    thiscookie = Cookie.SimpleCookie()
+    if 'HTTP_COOKIE' in os.environ:
+        thiscookie.load(os.environ['HTTP_COOKIE'])
+
+    if 'sessionid' in thiscookie:
+        # FIXME Check session id
+        return True
+    else:
+        return False
+
+
 def get_cover(albumdir, imagewidth):
     """Returns a cover-image as a base64-string"""
 
