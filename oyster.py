@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: iso8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
-#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -28,18 +28,20 @@ import logging.config
 import random
 import threading
 import time
-import signal, re
+import signal
+import re
 import oysterconfig
 import datetime
 
 __version__ = 2
 __revision__ = 1
 
+
 class Oyster:
     """ By creating an instance of this class the configfile is read and
         initialized.  Use play(oyster_instance.filetoplay) to start playing."""
 
-    """ the config file needs to be in pwd """
+    # the config file needs to be in pwd
     configfile = os.getcwd() + "/config/default"
     config = {}
     confdir = ""
@@ -66,6 +68,7 @@ class Oyster:
 
     votefile = ""
     votepercentage = 20
+    favmode = False
 
     playlist = "default"
     playlist_changed = ""
@@ -73,8 +76,9 @@ class Oyster:
     controlfile = ""
     controlfilemode = 0600
 
-    filetypes = { "mp3": "/usr/bin/mpg123", "ogg": "/usr/bin/ogg123"}
+    filetypes = {"mp3": "/usr/bin/mpg123", "ogg": "/usr/bin/ogg123"}
     filetoplay = ""
+    current_playreason = ""
 
     nextfilestoplay = []
     len_nextfiles = 5
@@ -83,11 +87,10 @@ class Oyster:
     playerid = 0
 
     # state variables 
-    favmode = False
-    doExit = False
+    do_exit = False
     paused = False
     mode = "vote"
-    doNotSwitch = False
+    do_not_switch = False
 
     playreasons = []
     nextreason = ""
@@ -97,12 +100,11 @@ class Oyster:
     # open fd for reading commands 
     control = None
 
-
     def __init__(self):
         """ initialise configuration and build filelist """
         log.debug("start init")
 
-        self.initConfig()
+        self.init_config()
 
         # setup basedir
         if not os.access(self.basedir, os.F_OK):
@@ -119,7 +121,7 @@ class Oyster:
                 pidfile.close()
                 # check pid - is this pid an instance of oyster?
                 pspipe = os.popen("ps -o command= -p " + pid, 'r')
-                if (pspipe.readline().find("oyster") != -1):
+                if pspipe.readline().find("oyster") != -1:
                     controlfile = open(self.basedir + "/control", 'w')
                     controlfile.writeline("UNPAUSE\n")
                     controlfile.close()
@@ -135,25 +137,22 @@ class Oyster:
             os.rmdir(self.basedir)
             os.makedirs(self.basedir)
         
-        
         self.__setup_savedir()
         self.__check_access()
         
         # redirect stdout/stderr - silence! 
-        outfile = os.open(self.basedir + "/oyster.stdout", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
-        errfile = os.open(self.basedir + "/oyster.stderr", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+        outfile = os.open(self.basedir + "/oyster.stdout", os.O_RDWR | os.O_CREAT | os.O_TRUNC)
+        errfile = os.open(self.basedir + "/oyster.stderr", os.O_RDWR | os.O_CREAT | os.O_TRUNC)
         os.dup2(outfile, 1)
         os.dup2(errfile, 2)
 
-        
         # write current pid
         log.debug("writing pid")
         pidfile = open(self.basedir + "/pid", 'w')
         pidfile.write(str(os.getpid()) + "\n")
         pidfile.close()
 
-        
-        # write name of current playlist (in init -> default) 
+        # write name of current playlist (in init -> default)
         self.__write_playlist_status()
 
         # read old default-playlist (list of all files in mediadir)
@@ -161,7 +160,7 @@ class Oyster:
         log.debug("reading old default list")
         for i in range(0, self.len_nextfiles):
             self.playreasons.append("filler")
-        self.loadPlaylist("default")
+        self.load_playlist("default")
 
         # read scores for playlist 
         self.__update_scores()
@@ -188,16 +187,16 @@ class Oyster:
 
         cthread = ControlThread()
         cthread.setDaemon(True)
-        cthread.startController(self, self.control)
+        cthread.start_controller(self, self.control)
 
         plhelper = PlaylistBuilder()
-        plhelper.buildPlaylist(self)
+        plhelper.build_playlist(self)
 
         # if we have nothing to play, wait until plhelper is done
         if len(self.filelist) == 0:
             while len(self.filelist) == 0:
                 pass
-            self.loadPlaylist("default", skip=True)
+            self.load_playlist("default", skip=True)
 
         # for basedir/status -> playing 
         self.unpause()
@@ -225,7 +224,7 @@ class Oyster:
         """ checks if oyster can access the directories r/w """
         log.debug("checking access-rights")
         for i in [self.savedir, self.listdir, self.blacklistdir, self.scoresdir, self.logdir, self.confdir]:
-            if not os.access(i, os.R_OK|os.W_OK):
+            if not os.access(i, os.R_OK | os.W_OK):
                 log.debug("no r/w-access to all savedir-directories!")
                 print "no r/w-access to all savedir-directories!"
                 print "exiting..."
@@ -248,13 +247,15 @@ class Oyster:
         vol = os.popen(self.config['vol_get_cmd'])
         if self.vol_regex is None:
             self.vol_regex = re.compile(self.config['vol_filter_regexp'])
-        match = self.vol_regex.search(vol.readline())
-        vol.close()
-        try:
-            return match.group(1)
-        except:
-            return "-1"
 
+        for line in vol:
+            match = self.vol_regex.search(line)
+            if match is not None:
+                vol.close()
+                return match.group(1)
+
+        vol.close()
+        return "-1"
 
     def __write_playlist_status(self):
         """ writes name of current playlist to basedir/playlist """
@@ -303,10 +304,10 @@ class Oyster:
         if os.access(self.blacklistdir + "/" + self.playlist, os.R_OK):
             bfile = open(self.blacklistdir + "/" + self.playlist, 'r')
             for line in bfile.readlines():
-                if re.compile( line.rstrip() ).search(name) != None:
+                if re.compile(line.rstrip()).search(name) is not None:
                     return True
                 if line.startswith('^'):
-                    if re.compile( line.replace('^', "^" + self.mediadir).rstrip() ).search(name) != None:
+                    if re.compile(line.replace('^', "^" + self.mediadir).rstrip()).search(name) is not None:
                         return True
         return False
 
@@ -315,22 +316,27 @@ class Oyster:
         """
         log.debug("choose file from list")
         if len(self.scorelist) != 0:
-            # test if we play from scores or normal playlist 
+            # test if we play from scores or normal playlist
             #randi = random.randint(0, 100)
-            if random.randint(0, 100) < self.votepercentage:
+            scoreprobability = self.votepercentage
+
+            if self.favmode:
+                scoreprobability = 100
+
+            if random.randint(0, 100) < scoreprobability:
                 playreason = "SCORED"
-                return (random.choice(self.scorelist), playreason)
+                return random.choice(self.scorelist), playreason
         chosen = random.choice(self.filelist)
         if self.__test_blacklist(chosen):
-            self.__playlog(self.__gettime() + " BLACKLIST " + chosen )
+            self.__playlog(self.__gettime() + " BLACKLIST " + chosen)
             try:
                 return self.__choose_file()
             except RuntimeError:
                 log.debug("recursion error! too many matches from blacklist!")
                 playreason = "BLACKLISTFORCED"
-                return chosen
+                return chosen, playreason
         playreason = "PLAYLIST"
-        return (chosen, playreason)
+        return chosen, playreason
 
     def __write_votelist(self):
         log.debug("writing votelist")
@@ -346,8 +352,8 @@ class Oyster:
                 vfile.write("")
                 vfile.close()
                 
-    
-    def __gettime(self):
+    @staticmethod
+    def __gettime():
         """ returns time in "%Y%m%d-%H%M"-format """
         dateinst = datetime.datetime(1, 2, 3)
         return dateinst.today().strftime("%Y%m%d-%H%M%S")
@@ -357,37 +363,39 @@ class Oyster:
             It writes the appropriate log entry and plays the next file. """
         log.debug("done playing")
         # if doExit is set don't play again 
-        if not self.doExit:
+        if not self.do_exit:
             # first song is always empty -> no log entry 
             if self.filetoplay != "":
                 self.__playlog(self.__gettime() + " " + self.nextreason + " " +
-                               self.filetoplay )
+                               self.filetoplay)
 
             if len(self.votelist) != 0:
                 # there are votes that have not been played:
                 # play first file (has most votes)
                 self.filetoplay = self.votelist[0][0]
-                self.__playlog(self.__gettime() + " " + self.votelist[0][2] + 
-                               " " + self.filetoplay )
+                self.current_playreason = self.votelist[0][2]
+                self.__playlog(self.__gettime() + " " + self.current_playreason +
+                               " " + self.filetoplay)
                 self.votelist = self.votelist[1:]
                 self.__write_votelist()
 
-            # doNotSwitch may be set when playPrevious is used
+            # do_not_switch may be set when play_previous is used
             # in this case, the file is already set -> do nothing 
-            elif not self.doNotSwitch:
+            elif not self.do_not_switch:
                 # normal operation: play next file and choose another one 
                 self.filetoplay = self.nextfilestoplay[0]
                 self.nextfilestoplay = self.nextfilestoplay[1:]
                 self.nextfilestoplay.append("filler")
-                self.__playlog(self.__gettime() + " " + self.playreasons[0] + " " +
-                               self.filetoplay )
+                self.current_playreason = self.playreasons[0]
+                self.__playlog(self.__gettime() + " " + self.current_playreason + " " +
+                               self.filetoplay)
                 self.playreasons = self.playreasons[1:]
                 self.playreasons.append("filler")
-                self.chooseFile(self.len_nextfiles-1)
+                self.choose_file(self.len_nextfiles-1)
                 self.hist_pointer = len(self.history)
 
             # reset state
-            self.doNotSwitch = False
+            self.do_not_switch = False
             # nextreason can be "SKIPPED"
             self.nextreason = "DONE"
 
@@ -409,30 +417,31 @@ class Oyster:
         plfile.write(string + "\n")
         plfile.close()
 
-    def getDefaults(self):
-        defaults = { "savedir": "/var/www/oyster",
-                     "basedir": "/tmp/oyster",
-                     "mediadir": "/",
-                     "voteplay": "10",
-                     "filetypes": "mp3,ogg",
-                     "mp3": "/usr/bin/mpg123",
-                     "ogg": "/usr/bin/ogg123",
-                     "len_nextfiles": "5",
-                     "skip_deletes": "False",
-                     "control_mode": "0600",
-                     "maxscored": "30"
+    @staticmethod
+    def get_defaults():
+        defaults = {"savedir": "/var/www/oyster",
+                    "basedir": "/tmp/oyster",
+                    "mediadir": "/",
+                    "voteplay": "10",
+                    "filetypes": "mp3,ogg",
+                    "mp3": "/usr/bin/mpg123",
+                    "ogg": "/usr/bin/ogg123",
+                    "len_nextfiles": "5",
+                    "skip_deletes": "False",
+                    "control_mode": "0600",
+                    "maxscored": "30"
                     }
         return defaults
 
-    def initConfig(self, configfile=os.getcwd()+"/config/default", configdict=None):
+    def init_config(self, configfile=os.getcwd()+"/config/default", configdict=None):
         """ read config and set attributes """
 
-        if configdict == None:
+        if configdict is None:
             # get config and get values into "real" variables
             if os.access(configfile, os.R_OK):
                 self.config = oysterconfig.getConfig(configfile)
             else:
-                self.config = self.getDefaults()
+                self.config = self.get_defaults()
         else:
             self.config = configdict
 
@@ -440,19 +449,20 @@ class Oyster:
         # blacklist
         sys.setrecursionlimit(200)
 
-        evalConfig = { "savedir": 'self.savedir = self.config["savedir"].rstrip("/")',
-                       "mediadir": 'self.mediadir = self.config["mediadir"].rstrip("/")',
-                       "basedir": 'self.basedir = self.config["basedir"].rstrip("/")',
-                       "voteplay": 'self.votepercentage = int(self.config["voteplay"].rstrip("/"))',
-                       "maxscored": 'self.scoressize = int(self.config["maxscored"])',
-                       "control_mode": 'self.controlfilemode = int(self.config["control_mode"], 8)',
-                       "filetypes": 'for ftype in self.config["filetypes"].split(","): self.filetypes[ftype] = self.config[ftype]',
-                       "len_nextfiles": 'self.len_nextfiles = int(self.config["len_nextfiles"])' 
+        evalconfig = {"savedir": 'self.savedir = self.config["savedir"].rstrip("/")',
+                      "mediadir": 'self.mediadir = self.config["mediadir"].rstrip("/")',
+                      "basedir": 'self.basedir = self.config["basedir"].rstrip("/")',
+                      "voteplay": 'self.votepercentage = int(self.config["voteplay"].rstrip("/"))',
+                      "maxscored": 'self.scoressize = int(self.config["maxscored"])',
+                      "control_mode": 'self.controlfilemode = int(self.config["control_mode"], 8)',
+                      "filetypes": 'for ftype in self.config["filetypes"].split(","):' +
+                                   ' self.filetypes[ftype] = self.config[ftype]',
+                      "len_nextfiles": 'self.len_nextfiles = int(self.config["len_nextfiles"])'
                       }
         
         for key in self.config.keys():
             try:
-                exec evalConfig[key]
+                exec evalconfig[key]
             except KeyError:
                 pass
 
@@ -467,42 +477,11 @@ class Oyster:
 
         self.confdir = self.savedir + "/config"
 
-    def initConfigOld(self):
-        """ read config and set attributes """
-        # get config and get values into "real" variables
-        self.config = oysterconfig.getConfig(self.configfile)
-       
-        # paths never end with "/" 
-        self.savedir = self.config["savedir"].rstrip("/")
-        self.listdir = self.savedir + "/lists"
-        self.scoresfile = self.savedir + "/scores/" + self.playlist
-        self.scoresdir = self.savedir + "/scores"
-        self.blacklistdir = self.savedir + "/blacklists"
-        self.logdir = self.savedir + "/logs"
-
-        self.mediadir = self.config["mediadir"].rstrip("/")
-
-        self.basedir = self.config["basedir"].rstrip("/")
-        self.votefile = self.basedir + "/votes"
-        self.votepercentage = int(self.config["voteplay"].rstrip("/"))
-        self.scoressize = int(self.config["maxscored"])
-        self.controlfile = self.basedir + "/control"
-        self.controlfilemode = int(self.config["control_mode"], 8)
-
-        for ftype in self.config["filetypes"].split(","):
-            self.filetypes[ftype] = self.config[ftype]
-
-        self.len_nextfiles = int(self.config["len_nextfiles"])
-
-        # "needed" for __test_blacklist - stop recursing after 200 hits from
-        # the blacklist
-        sys.setrecursionlimit(200)
-
-    def chooseFile(self, filepos, delete=False):
+    def choose_file(self, filepos, delete=False):
         """ chooses one of the next files to play from either filelist or
         scores and writes it to basedir/nextfile """
 
-        log.debug("choose next file " + str(filepos)  + " to play")
+        log.debug("choose next file " + str(filepos) + " to play")
         try:
             if delete:
                 del self.nextfilestoplay[filepos]
@@ -515,11 +494,11 @@ class Oyster:
             # TODO log!
             pass
         nfile = open(self.basedir + "/nextfile", 'w')
-        for file in self.nextfilestoplay:
-            nfile.write(file + "\n")
+        for filename in self.nextfilestoplay:
+            nfile.write(filename + "\n")
         nfile.close()
 
-    def buildPlaylist(self, mdir):
+    def build_playlist(self, mdir):
         """ builds the default playlist with argument mdir as root """
         log.debug("building playlist")
         flist = []
@@ -544,7 +523,7 @@ class Oyster:
         """ cleanup basedir, write scores and kill player """
         log.debug("exiting oyster")
 
-        self.doExit = True
+        self.do_exit = True
         
         for root, dirs, files in os.walk(self.basedir, topdown=False):
             for name in files:
@@ -562,10 +541,10 @@ class Oyster:
             except OSError:
                 pass
 
-        self.__playlog(self.__gettime() + " QUIT " + self.filetoplay )  
+        self.__playlog(self.__gettime() + " QUIT " + self.filetoplay)
         sys.exit()
 
-    def play(self, filestring):
+    def play(self, filestring, playreason):
         """ play file """
         if self.filetoplay != "":
             suffixpos = filestring.rfind(".")
@@ -574,18 +553,18 @@ class Oyster:
             self.__write_history()
             log.debug(player + " " + filestring)
             pfile = open(self.basedir + "/info", 'w')
-            pfile.write(filestring + "\n")
+            pfile.write(playreason + " " + filestring + "\n")
             pfile.close()
             self.playerid = os.spawnl(os.P_NOWAIT, player, player, filestring)
             os.waitpid(self.playerid, 0)
         self.__done()
 
-    def playPrevious(self):
+    def play_previous(self):
         """ play previous file from history """
         if self.hist_pointer > 0:
             self.hist_pointer -= 1
             self.filetoplay = self.history[self.hist_pointer]
-            self.doNotSwitch = True
+            self.do_not_switch = True
             self.next()
 
     def next(self):
@@ -621,15 +600,18 @@ class Oyster:
             except OSError:
                 pass
 
-    def enableFavmode(self):
+    def enable_favmode(self):
         """ enable favmode (play only from scores) """
-        if len(self.scorelist) != 0:
-            self.votepercentage = 100
+        self.favmode = True
+        self.nextfilestoplay = []
+        self.fill_next_files_to_play()
         self.__write_favmode("on")
 
-    def disableFavmode(self):
+    def disable_favmode(self):
         """ disable favmode (normal playing) """
-        self.votepercentage = self.config["voteplay"]
+        self.favmode = False
+        self.nextfilestoplay = []
+        self.fill_next_files_to_play()
         self.__write_favmode("off")
 
     def enqueue(self, filestring, reason):
@@ -643,8 +625,8 @@ class Oyster:
                     self.votelist[i][1] += 1
                     found = self.votelist[i]
                     foundpos = i
-                if found != None:
-                    if ( self.votelist[i][1] >= found[1] and self.votelist[i][0] != found[0]):
+                if found is not None:
+                    if self.votelist[i][1] >= found[1] and self.votelist[i][0] != found[0]:
                         self.votelist = self.votelist[:i] + [found] + self.votelist[i:]
                         del self.votelist[foundpos]
                         self.votelist.reverse()
@@ -657,7 +639,7 @@ class Oyster:
                         self.__write_votelist()
                         return None
             self.votelist.reverse()
-            self.votelist.append( [filestring, 1, reason] ) 
+            self.votelist.append([filestring, 1, reason])
             self.__write_votelist()
 
     def vote(self, filestring, reason):
@@ -700,13 +682,13 @@ class Oyster:
         """ remove file from the queue of files to play. If the score was
             raised before, lower it. """
         tup = self.dequeue(filestring)
-        if tup != None:
+        if tup is not None:
             if tup[2] == "VOTED":
                 for i in range(1, tup[1]):
                     self.scoredown(filestring)
         self.__write_votelist()
 
-    def enqueueList(self, filestring):
+    def enqueue_list(self, filestring):
         """ Open xmms-style playlist and enqueue the files in it. """
         try:
             lfile = open(filestring, 'r')
@@ -716,7 +698,7 @@ class Oyster:
         for line in lfile.readlines():
             pos_hash = line.find('#')
             # forget comments (hash with only spaces before) 
-            if (pos_hash != -1) and (line[:(pos_hash)] == " "*(pos_hash+1)) :
+            if (pos_hash != -1) and (line[:pos_hash] == " "*(pos_hash+1)):
                 continue
             pos_slash = line.find("/")
             if pos_slash == 0:
@@ -726,7 +708,7 @@ class Oyster:
                 # path is relative 
                 self.enqueue(listpath + "/" + line.rstrip(), "ENQUEUED")
 
-    def buildRegexpList(self, regexp):
+    def build_regexp_list(self, regexp):
         deflist = open(self.listdir + "/default", 'r')
         deflines = deflist.readlines()
         try:
@@ -744,13 +726,16 @@ class Oyster:
             log.debug("regexplist: exception")
             return deflines
 
+    def fill_next_files_to_play(self):
+        for i in range(0, self.len_nextfiles):
+            self.nextfilestoplay.append("filler")
+            self.choose_file(i)
 
-
-    def loadPlaylist(self, listname, skip=True, checkskip=False):
+    def load_playlist(self, listname, skip=True, checkskip=False):
         """ load oyster-playlist (discard list in memory) """
         # do we need to skip the next random songs?
         if checkskip:
-            if self.filelist == []:
+            if not self.filelist:
                 skip = True
             else:
                 skip = False
@@ -758,12 +743,12 @@ class Oyster:
         if os.access(self.listdir + "/" + listname, os.R_OK):
             # load config for this list or reload default
             if os.access(self.confdir + "/" + listname, os.R_OK):
-                self.initConfig(configfile=self.confdir + "/default")
-                self.initConfig(configfile=self.confdir + "/" + listname)
+                self.init_config(configfile=self.confdir + "/default")
+                self.init_config(configfile=self.confdir + "/" + listname)
             elif os.access(self.confdir + "/default", os.R_OK):
-                self.initConfig(configfile=self.confdir + "/default")
+                self.init_config(configfile=self.confdir + "/default")
             else:
-                self.initConfig(configdict=self.getDefaults())
+                self.init_config(configdict=self.get_defaults())
 
             deflist = open(self.listdir + "/" + listname, 'r')
             self.filelist = []
@@ -772,19 +757,20 @@ class Oyster:
             self.scoresfile = self.savedir + "/scores/" + self.playlist
             self.__update_scores()
             self.__write_playlist_status()
+
+            if self.favmode:
+                self.disable_favmode()
+
             lines = deflist.readlines()
             if lines[0].startswith("^"):
                 log.debug("regex list")
-                ret = self.buildRegexpList(lines[0].rstrip())
+                ret = self.build_regexp_list(lines[0].rstrip())
                 lines = ret
             for line in lines:
                 self.filelist.append(line.rstrip())
             self.nextfilestoplay = []
             if skip:
-                for i in range(0, self.len_nextfiles):
-                    self.nextfilestoplay.append("filler")
-                    self.chooseFile(i)
-
+                self.fill_next_files_to_play()
 
     def shift(self, amount, pos):
         """ shift the votelist entry on position /pos/ by /amount/ (positive values shift up) """
@@ -793,14 +779,14 @@ class Oyster:
                 self.votelist = [self.votelist[pos]] + self.votelist
                 del self.votelist[pos+1]
             else:
-                self.votelist = self.votelist[:pos-amount] + [ self.votelist[pos] ] + self.votelist[pos-amount:]
+                self.votelist = self.votelist[:pos-amount] + [self.votelist[pos]] + self.votelist[pos-amount:]
                 del self.votelist[pos+1]
         elif amount < 0:
             if pos-amount >= len(self.votelist)-1:
                 self.votelist = self.votelist + [self.votelist[pos]]
                 del self.votelist[pos]
             else:
-                self.votelist = self.votelist[:pos-amount+1] + [ self.votelist[pos] ] + self.votelist[pos-amount+1:]
+                self.votelist = self.votelist[:pos-amount+1] + [self.votelist[pos]] + self.votelist[pos-amount+1:]
                 del self.votelist[pos]
         self.__write_votelist()
             
@@ -808,7 +794,7 @@ class Oyster:
 class ControlThread(threading.Thread):
     """ This Thread opens controlfifo for reading and translates commands into
         method-invocations. """
-    def startController(self, oyster_inst, cfile):
+    def start_controller(self, oyster_inst, cfile):
         """ sets oyster-instance and starts the Thread. Use this method for
             starting the Thread. """
         self.oyster = oyster_inst
@@ -817,9 +803,9 @@ class ControlThread(threading.Thread):
 
     def run(self):
         while 1:
-            self.readControl()
+            self.read_control()
 
-    def readControl(self):
+    def read_control(self):
         commandline = self.controlfile.readline().rstrip()
         cpos = commandline.find(" ")
         if cpos == -1:
@@ -835,7 +821,7 @@ class ControlThread(threading.Thread):
             # arg in [0:inf]
             try:
                 arg = int(commandline[cpos+1:])
-                self.oyster.chooseFile(arg)
+                self.oyster.choose_file(arg)
             except ValueError:
                 print "ValueError! Oh mein Gott!"
                 print "x" + commandline[cpos+1:] + "x"
@@ -844,7 +830,7 @@ class ControlThread(threading.Thread):
             # arg in [0:inf]
             try:
                 arg = int(commandline[cpos+1:])
-                self.oyster.chooseFile(arg, delete=True)
+                self.oyster.choose_file(arg, delete=True)
             except ValueError:
                 pass
         elif command == "QUIT":
@@ -857,7 +843,7 @@ class ControlThread(threading.Thread):
         elif command == "UNPAUSE":
             self.oyster.unpause()
         elif command == "PREV":
-            self.oyster.playPrevious()
+            self.oyster.play_previous()
         elif command == "VOTE":
             self.oyster.vote(commandline[cpos+1:], "VOTED")
         elif command == "ENQUEUE":
@@ -872,15 +858,15 @@ class ControlThread(threading.Thread):
             elif commandline[cpos+1:cpos+2] == "-":
                 self.oyster.scoredown(commandline[cpos+3:])
         elif command == "ENQLIST":
-            self.oyster.enqueueList(commandline[cpos+1:])
+            self.oyster.enqueue_list(commandline[cpos+1:])
         elif command == "RELOADCONFIG":
-            self.oyster.initConfig()
+            self.oyster.init_config()
         elif command == "FAVMODE":
-            self.oyster.enableFavmode()
+            self.oyster.enable_favmode()
         elif command == "NOFAVMODE":
-            self.oyster.disableFavmode()
+            self.oyster.disable_favmode()
         elif command == "LOAD":
-            self.oyster.loadPlaylist(commandline[cpos+1:])
+            self.oyster.load_playlist(commandline[cpos+1:])
         elif command == "SHIFTUP":
             try:
                 arg = int(commandline[cpos+1:])
@@ -892,7 +878,7 @@ class ControlThread(threading.Thread):
                 arg = int(commandline[cpos+1:])
                 self.oyster.shift(-1, arg)
             except ValueError:
-                 print "ValueError! " + commandline[cpos+1:]
+                print "ValueError! " + commandline[cpos+1:]
         elif command == "VOLDOWN":
             os.system(self.oyster.config['vol_down_cmd'])
             self.oyster.write_volume()
@@ -900,22 +886,24 @@ class ControlThread(threading.Thread):
             os.system(self.oyster.config['vol_up_cmd'])
             self.oyster.write_volume()
         elif command == "VOLSET":
-            os.system(self.oyster.config['vol_set_cmd'] + " " + commandline[cpos+1])
+            os.system(self.oyster.config['vol_set_cmd'] + " " + commandline[cpos+1:] + "%")
             self.oyster.write_volume()
 
         
 class PlaylistBuilder(threading.Thread):
     """ asynchronus default playlist building. Wonderful. """
     oyster = None
-    def buildPlaylist(self, oyster_inst):
+
+    def build_playlist(self, oyster_inst):
         self.oyster = oyster_inst 
         self.start()
+
     def run(self):
-        self.oyster.buildPlaylist(self.oyster.mediadir)
+        self.oyster.build_playlist(self.oyster.mediadir)
 
 if __name__ == '__main__':
     logging.config.fileConfig("oysterlog.conf")
     log = logging.getLogger("oyster")
     oy = Oyster()
-    while not oy.doExit:
-        oy.play(oy.filetoplay)
+    while not oy.do_exit:
+        oy.play(oy.filetoplay, oy.current_playreason)

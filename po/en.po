@@ -1,0 +1,148 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2014-01-02 15:00+CET\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: ../browse.py:50 ../browse.py:60 ../common.py:89 ../search.py:53
+msgid "Browse"
+msgstr ""
+
+#: ../browse.py:103
+msgid "Browse all songs"
+msgstr ""
+
+#: ../browse.py:107
+msgid "Browse in current playlist only"
+msgstr ""
+
+#: ../common.py:90 ../search.py:55 ../search.py:102
+msgid "Search"
+msgstr ""
+
+#: ../common.py:91
+msgid "Playlists"
+msgstr ""
+
+#: ../common.py:350
+msgid "Oyster is not started"
+msgstr ""
+
+#: ../common.py:356
+msgid "Voting is currently disabled."
+msgstr ""
+
+#: ../common.py:365 ../home.py:278
+msgid "Currently Playing"
+msgstr ""
+
+#: ../home.py:83
+msgid "Voted"
+msgstr ""
+
+#: ../home.py:96
+msgid "Unvote"
+msgstr ""
+
+#: ../home.py:108
+msgid "Next Random"
+msgstr ""
+
+#: ../home.py:115
+msgid "View details"
+msgstr ""
+
+#: ../home.py:122
+msgid "Delete_Song"
+msgstr "Delete this song from list"
+
+#: ../home.py:156
+msgid "Start"
+msgstr ""
+
+#: ../home.py:156
+msgid "Start Oyster"
+msgstr ""
+
+#: ../home.py:157
+msgid "Pause"
+msgstr ""
+
+#: ../home.py:157
+msgid "Pause/Unpause"
+msgstr ""
+
+#: ../home.py:158
+msgid "Stop"
+msgstr ""
+
+#: ../home.py:158
+msgid "Stop Oyster"
+msgstr ""
+
+#: ../home.py:160
+msgid "Deactivate FAV Mode"
+msgstr ""
+
+#: ../home.py:162
+msgid "Activate FAV Mode"
+msgstr ""
+
+#: ../home.py:163
+msgid "Previous Song"
+msgstr ""
+
+#: ../home.py:164
+#, fuzzy
+msgid "Next Song"
+msgstr "Delete this song from list"
+
+#: ../home.py:164
+msgid "Skip Song"
+msgstr ""
+
+#: ../home.py:170
+msgid "Lower Volume"
+msgstr ""
+
+#: ../home.py:173
+msgid "Increase Volume"
+msgstr ""
+
+#: ../home.py:215
+msgid "Overview"
+msgstr ""
+
+#: ../home.py:273
+msgid "Song must not be voted. The reason is: "
+msgstr ""
+
+#: ../search.py:111
+msgid "Current List"
+msgstr ""
+
+#: ../search.py:113
+msgid "All Lists"
+msgstr ""
+
+#: ../search.py:159
+msgid "No songs found."
+msgstr ""
+
+#: ../search.py:162
+msgid "Please enter at least three characters as a search criterion."
+msgstr ""
+
+#~ msgid "Replace_With_Random"
+#~ msgstr "Replace this song by other random song"

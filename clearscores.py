@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, 
-#  Stephan Windmüller <windy@white-hawk.de>, 
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>, 
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -28,13 +28,13 @@ __revision__ = 1
 import cgi
 import config
 import cgitb
-import common
 import os.path
 import fifocontrol
 import sys
 cgitb.enable()
 
-common.navigation_header()
+import common
+common.navigation_header("Clear Scores")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]
@@ -42,7 +42,7 @@ form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
 if not os.path.exists(myconfig['basedir']):
-    print "<h1>Please <a href='oyster-gui.py?action=start' target='curplay'>" \
+    print "<h1>Please <a href='home.py?action=start'>" \
         + "start oyster</a> before clearing the scorefile!</h1>"
     sys.exit()
 

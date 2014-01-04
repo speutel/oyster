@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
-#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -32,7 +32,7 @@ import cgi
 form = cgi.FieldStorage()
 
 import common
-common.navigation_header()
+common.navigation_header("Lyrics")
 
 if form.has_key('artist') and form.has_key('song'):
     artist = form['artist'].value
@@ -54,13 +54,16 @@ from xml.sax import SAXParseException
 from xml.parsers.expat import ExpatError
 
 try:
-    lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
+    proxy = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl")
+    result = proxy.getSong(artist.decode("utf-8"), song.decode("utf-8"))
+    lyric = result["lyrics"]
 
     # Try once again if failed
     if lyric == "Not found":
         import time
         time.sleep(5)
-        lyric = WSDL.Proxy("http://lyricwiki.org/server.php?wsdl").getSong(artist.decode("utf-8"), song.decode("utf-8"))["lyrics"]
+        result = proxy.getSong(artist.decode("utf-8"), song.decode("utf-8"))
+        lyric = result["lyrics"]
 
     if lyric == "Not found":
         print "The lyrics were not found. You may " + \
@@ -69,10 +72,12 @@ try:
             "or visit <a href='http://www.lyricwiki.org'>LyricWiki</a> yourself."
     else:
         lyric = lyric.encode("utf-8")
+        url = result["url"]
         print "<pre id='lyric'>"
         print lyric
         print "</pre>"
-        print "<strong>This lyrics were received from <a href='http://www.lyricwiki.org'>LyricWiki</a></strong>"
+        print "Due to licensing restrictions, only a few lines of the " \
+              "<a class='file' href='" + url + "'>complete lyrics</a> are returned from LyricWiki."
 except (SAXParseException, ExpatError):
     print "There was an unexpected error while communicating with the " + \
         "Webservice of LyricWiki. Please <a href='lyrics.py?artist=" + \

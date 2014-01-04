@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
-#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,6 @@ import config
 import cgitb
 import os.path
 import urllib
-import common
 import re
 cgitb.enable()
 
@@ -143,7 +142,8 @@ mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 playlist = config.get_playlist()
 
-common.navigation_header()
+import common
+common.navigation_header("Blacklists")
 
 results = []
 

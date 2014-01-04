@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
-#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -32,17 +32,17 @@ import config
 import cgitb
 import os.path
 import urllib
-import common
 cgitb.enable()
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir']
 form = cgi.FieldStorage()
 
+import common
 common.navigation_header()
 
-if form.has_key('list'):
-    givenlist = form['list'].value.replace('../','')
+if 'list' in form:
+    givenlist = form['list'].value.replace('../', '')
     if givenlist == '..':
         givenlist = ''
 else:
@@ -50,7 +50,9 @@ else:
 
 if givenlist != '' and os.path.exists(mediadir + givenlist):
 
-    print "<p><strong>Current directory: "
+    print "<p>"
+
+    print "<a href='browse.py?dir=/'>Mediadir</a>"
 
     dirs = givenlist.split('/')
     incdir = ''
@@ -58,7 +60,7 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
         escapeddir = urllib.quote(incdir + partdir)
         if partdir[-4:] == '.m3u' or partdir[-4:] == '.pls':
             print "<a class='playlist' href='viewlist.py?list=" + \
-            escapeddir + "'>" + partdir + "</a>"
+                  escapeddir + "'>" + partdir + "</a>"
         else:
             print "<a href='browse.py?dir=" + escapeddir + \
                 "'>" + partdir + "</a> / "
@@ -68,14 +70,12 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
 
     topdir = os.path.dirname(givenlist.replace(mediadir, '', 1))
 
-    escapeddir = urllib.quote(topdir)
-    print "<a href='browse.py?dir=" + escapeddir + "'>One level up</a><br><br>"
+    print "<table>"
+    
+    # alternating betweeen '' and '2'
+    alt = '2'
 
-    print "<table width='100%'>"
-
-    cssfileclass = 'file2'
-
-    playlist = open (mediadir + givenlist)
+    playlist = open(mediadir + givenlist)
     for line in playlist:
         line = line
         if line[0] != '#':
@@ -84,18 +84,21 @@ if givenlist != '' and os.path.exists(mediadir + givenlist):
                 line = line[2:]
             escapedfile = urllib.quote(topdir + "/" + line)
 
-            # cssclass changes to give each other file
-            # another color
-
-            if cssfileclass == 'file':
-                cssfileclass = 'file2'
+            if alt == '':
+                alt = '2'
             else:
-                cssfileclass = 'file'
+                alt = ''
 
-            print "<tr><td><a class='" + cssfileclass + "' href='" + \
-                "fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
-            print "<td><a class='" + cssfileclass + "' href='oyster-gui.py?" + \
-                "vote=" + escapedfile + "' target='curplay'>Vote</a></td></tr>"
+            print "<tr>"
+
+            if os.path.exists(mediadir + topdir + "/" + line):
+                print "<td><a title='Vote this file' class='file" + alt + "' href='home.py?vote=" + escapedfile +\
+                      "'><img src='themes/" + myconfig['theme'] + "/votefile" + alt + ".png'/></a></td>"
+                print "<td><a class='file" + alt + "' href='fileinfo.py?file=" + escapedfile + "'>" + line + "</a></td>"
+            else:
+                print "<td></td><td><span class='file" + alt + "'>" + line + "</span> (file missing)</td>"
+
+            print "</tr>"
 
     print "</table>"
 

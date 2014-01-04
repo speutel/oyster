@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>,
-#  Stephan Windmüller <windy@white-hawk.de>,
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>,
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,6 @@ import taginfo
 import fifocontrol
 import cgitb
 import urllib
-import common
 import os.path
 cgitb.enable()
 
@@ -48,7 +47,8 @@ else:
 if form.has_key('action'):
     fifocontrol.do_action(form['action'].value, form['file'].value)
 
-common.navigation_header()
+import common
+common.navigation_header("Scoring")
 
 score = {}
 maxscore = 1
@@ -111,7 +111,7 @@ while maxscore > 0:
             cssclass = 'file'
 
         if oysterruns:
-            print "<tr><td><a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfile + "' target='curplay' " + \
+            print "<tr><td><a href='home.py?action=enqueue&amp;file=" + escapedfile + "'" + \
                 "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" + \
                 "alt='Enqueue'/></a> <a class='" + cssclass + "' href='fileinfo.py?file=" + \
                 escapedfile + "'>" + display[curfile] + "</a></td>"

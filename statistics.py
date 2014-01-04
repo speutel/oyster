@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, 
-#  Stephan Windmüller <windy@white-hawk.de>, 
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>, 
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21,15 +21,14 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import cgi
 import config
 import taginfo
 import cgitb
 import urllib
-import common
 import re
 import os.path
 cgitb.enable()
+
 
 def get_blacklisted():
 
@@ -86,7 +85,7 @@ def print_songs (header, filearray):
         print "<tr><td>"
         
         if oysterruns:
-            print "<a href='oyster-gui.py?action=enqueue&amp;file=" + escapedfilename + "' target='curplay' " + \
+            print "<a href='home.py?action=enqueue&amp;file=" + escapedfilename + "' " + \
             "title='Enqueue'><img src='themes/" + myconfig['theme'] + "/enqueue" + cssclass + ".png'" +\
             "border='0' alt='Enqueue'/></a>"
         
@@ -95,7 +94,8 @@ def print_songs (header, filearray):
         print "<td class='"  + cssclass + "' align='center'>" + reason + "</td></tr>\n"
     print "</table>"
 
-common.navigation_header()
+import common
+common.navigation_header("Statistics")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

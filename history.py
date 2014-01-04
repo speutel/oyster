@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, 
-#  Stephan Windmüller <windy@white-hawk.de>, 
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>, 
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -28,7 +28,6 @@ import config
 import taginfo
 import cgitb
 import urllib
-import common
 import re
 import sys
 import datetime
@@ -114,7 +113,8 @@ def whatplayed():
     
     sys.exit()
 
-common.navigation_header()
+import common
+common.navigation_header("History")
 
 myconfig = config.get_config()
 mediadir = myconfig['mediadir'][:-1]

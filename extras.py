@@ -1,10 +1,10 @@
 #!/usr/bin/python
-# -*- coding: ISO-8859-1 -*-
+# -*- coding: UTF-8 -*-
 
 # oyster - a python-based jukebox and web-frontend
 #
 # Copyright (C) 2004 Benjamin Hanzelmann <ben@nabcos.de>, 
-#  Stephan Windmüller <windy@white-hawk.de>, 
+#  Stephan WindmÃ¼ller <windy@white-hawk.de>, 
 #  Stefan Naujokat <git@ethric.de>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21,15 +21,27 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-"Print a static page containing links of the Extras-section"
+"""Print a static page containing links of the Extras-section"""
 
 __revision__ = 1
 
 import cgitb
-import common
 cgitb.enable()
 
-common.navigation_header()
+import common
+
+common.navigation_header(title="Extras")
+
+print "<h1><a href='playlists.py'>Playlists</a></h1>"
+print "<div style='padding-left: 2em;'>"
+print "Manage or select playlist</div>"
+
+print "<h1><a href='score.py'>Scoring</a></h1>"
+print "<div style='padding-left: 2em;'>Specify which songs should be played more often</div>"
+
+print "<h1><a href='blacklist.py'>Blacklists</a></h1>"
+print "<div style='padding-left: 2em;'>"
+print "Specify files (e.g. audio books) which should never be played</div>"
 
 print "<h1><a href='statistics.py'>Statistics</a></h1>"
 print "<div style='padding-left: 2em;'>"
