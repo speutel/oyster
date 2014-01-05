@@ -411,7 +411,7 @@ def may_vote(f, playlist, playlist_contents=None, history_list=None):
 
     exists = False
 
-    if is_authenticated():
+    if not myconfig["partymode"] or is_authenticated():
         return True, None
 
     # Check if playlist blocks voting
