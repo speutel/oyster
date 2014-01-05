@@ -29,6 +29,7 @@ which should not be played at random
 __revision__ = 1
 
 import cgi
+import common
 import config
 import cgitb
 import os.path
@@ -36,9 +37,12 @@ import urllib
 import re
 cgitb.enable()
 
-def print_blacklist ():
+common.hide_page_in_party_mode()
 
-    "Opens current blacklist and prints each line"
+
+def print_blacklist():
+
+    """Opens current blacklist and prints each line"""
 
     lineaffects = {}
     blacklistmatchers = {}

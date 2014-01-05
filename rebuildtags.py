@@ -21,7 +21,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-"Updates all cached Taginfos"
+"""Updates all cached Taginfos"""
 
 __revision__ = 1
 
@@ -34,6 +34,7 @@ import taginfo
 cgitb.enable()
 
 import common
+common.hide_page_in_party_mode()
 common.navigation_header("Rebuild Tags")
 
 myconfig = config.get_config()

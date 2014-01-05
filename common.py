@@ -127,6 +127,23 @@ def is_show_admin_controls():
         return is_authenticated()
 
 
+def hide_page_in_party_mode():
+    """
+     If a page should not be displayed at all in party mode without admin access,
+     this function will render a complete "access denied" page.
+    """
+
+    if is_show_admin_controls():
+        return
+
+    navigation_header()
+    print "<p>This page is not accessible in party mode. Please <a href='admin.py' class='file'>Login</a>."
+    html_footer()
+
+    import sys
+    sys.exit()
+
+
 def get_cover(albumdir, imagewidth):
     """Returns a cover-image as a base64-string"""
 

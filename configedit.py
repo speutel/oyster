@@ -287,6 +287,7 @@ def saveconfig(playlist):
 __revision__ = 1
 
 import cgi
+import common
 import config
 import sys
 import urllib
@@ -295,6 +296,8 @@ import fifocontrol
 import cgitb
 
 cgitb.enable()
+
+common.hide_page_in_party_mode()
 
 myconfig = config.get_config()
 basedir = myconfig['basedir']

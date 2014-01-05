@@ -22,6 +22,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import cgi
+import common
 import config
 import taginfo
 import fifocontrol
@@ -29,6 +30,8 @@ import cgitb
 import urllib
 import os.path
 cgitb.enable()
+
+common.hide_page_in_party_mode()
 
 myconfig = config.get_config()
 basedir = myconfig['basedir']

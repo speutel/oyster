@@ -22,17 +22,20 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 import config
-import taginfo
+import common
 import cgitb
 import urllib
+import taginfo
 import re
 import os.path
 cgitb.enable()
 
+common.hide_page_in_party_mode()
+
 
 def get_blacklisted():
 
-    # Counts all files, which are affected by a blacklist-rule
+    """Counts all files, which are affected by a blacklist-rule"""
 
     count = 0
     affectmatchers = []

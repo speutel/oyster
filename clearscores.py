@@ -21,7 +21,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-"Checks the scorefile for non-existing files"
+"""Checks the scorefile for non-existing files"""
 
 __revision__ = 1
 
@@ -34,6 +34,7 @@ import sys
 cgitb.enable()
 
 import common
+common.hide_page_in_party_mode()
 common.navigation_header("Clear Scores")
 
 myconfig = config.get_config()

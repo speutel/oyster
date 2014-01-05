@@ -131,6 +131,8 @@ import urllib
 import re
 cgitb.enable()
 
+common.hide_page_in_party_mode()
+
 _ = common.get_prefered_language()
 
 basedir = myconfig['basedir']
