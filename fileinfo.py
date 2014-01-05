@@ -53,7 +53,7 @@ import sys
 if not os.path.exists(mediadir + soundfile):
     print "<h1>Error!</h1>"
     print "<p>File <strong>" + soundfile + "</strong> could not be found.</p>"
-    print "</body></html>"
+    common.html_footer()
     sys.exit()
 
 if os.path.exists(myconfig['basedir']):
@@ -87,7 +87,7 @@ escapedfile = urllib.quote(soundfile)
 
 if not os.access(mediadir + soundfile, os.R_OK):
     print "<h1>Sorry, Oyster does not have the permission to read this file!</h1>"
-    print "</body></html>"
+    common.html_footer()
     sys.exit()
 
 (mayVote, reason) = common.may_vote(soundfile, None)
@@ -175,4 +175,4 @@ print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' al
 
 print "</table>"
 
-print "</body></html>"
+common.html_footer()
