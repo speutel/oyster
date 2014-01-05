@@ -182,6 +182,8 @@ basedir = myconfig['basedir']
 mediadir = myconfig['mediadir'][:-1]
 form = cgi.FieldStorage()
 
+common.navigation_header(title=_("Overview"), refreshpage="home.py")
+
 if 'file' in form:
     filename = form['file'].value
 else:
@@ -213,8 +215,6 @@ if 'vote' in form:
 
 if 'votelist' in form:
     fifocontrol.do_votelist(form['votelist'].value)
-
-common.navigation_header(title=_("Overview"), refreshpage="home.py")
 
 check_oyster_started()
 
