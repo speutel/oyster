@@ -95,7 +95,12 @@ def navigation_header(header=True, title="Oyster", refreshpage=None):
     print "<ul id='navigation'>"
     print "<li><a href='browse.py'>" + _("Browse") + "</a></li>"
     print "<li><a href='search.py'>" + _("Search") + "</a></li>"
-    print "<li><a href='playlists.py'>" + _("Playlists") + "</a></li>"
+
+    if is_show_admin_controls():
+        print "<li><a href='playlists.py'>" + _("Playlists") + "</a></li>"
+    else:
+        print "<li><a href='history.py'>" + _("History") + "</a></li>"
+
     print "</ul><br/>"
     print "<hr/>"
 
