@@ -108,7 +108,7 @@ def is_authenticated():
 
     if 'oyster-sessionid' in thiscookie:
         import anydbm
-        id_storage = anydbm.open(myconfig['savedir'] + 'sessionids', 'r')
+        id_storage = anydbm.open(myconfig['basedir'] + 'sessionids', 'r')
         result = thiscookie["oyster-sessionid"].value in id_storage.keys()
         id_storage.close()
         return result

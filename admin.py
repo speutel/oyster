@@ -27,7 +27,9 @@ import common
 import config
 import Cookie
 import datetime
+import os
 import uuid
+import sys
 
 cgitb.enable()
 
@@ -37,14 +39,14 @@ just_authenticated = False
 
 config = config.get_config()
 
-if 'password' in form:
+if 'password' in form and os.path.exists(config['basedir']):
     password = form['password'].value
     if password == config['partymodepassword']:
         cookie = Cookie.SimpleCookie()
         # TODO Clear old session ids
         sessionid = str(uuid.uuid1())
         cookie["oyster-sessionid"] = sessionid
-        id_storage = anydbm.open(config['savedir'] + 'sessionids', 'c')
+        id_storage = anydbm.open(config['basedir'] + 'sessionids', 'c')
         id_storage[sessionid] = str(datetime.datetime.now())
         id_storage.close()
         print cookie
@@ -52,6 +54,12 @@ if 'password' in form:
 
 
 common.navigation_header(title="Admin Login")
+
+if not os.path.exists(config['basedir']):
+    print "<p>Please start Oyster before trying to login.</p>"
+    common.html_footer()
+    sys.exit()
+
 
 if just_authenticated or common.is_authenticated():
     print "<p>Authenticated! Please visit the <a class='file' href='home.py'>main page</a> now.</p>"
