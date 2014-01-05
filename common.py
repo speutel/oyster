@@ -406,6 +406,9 @@ def may_vote(f, playlist, playlist_contents=None, history_list=None):
 
     exists = False
 
+    if is_authenticated():
+        return True, None
+
     # Check if playlist blocks voting
     if playlist_blocks_voting():
         return False, _("Voting is currently disabled.")
