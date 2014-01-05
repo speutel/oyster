@@ -27,6 +27,7 @@ import common
 import config
 import Cookie
 import datetime
+import hashlib
 import os
 import uuid
 import sys
@@ -45,9 +46,10 @@ if 'password' in form and os.path.exists(config['basedir']):
         cookie = Cookie.SimpleCookie()
         # TODO Clear old session ids
         sessionid = str(uuid.uuid1())
+        hashed_id = hashlib.sha1(sessionid).hexdigest()
         cookie["oyster-sessionid"] = sessionid
         id_storage = anydbm.open(config['basedir'] + 'sessionids', 'c')
-        id_storage[sessionid] = str(datetime.datetime.now())
+        id_storage[hashed_id] = str(datetime.datetime.now())
         id_storage.close()
         print cookie
         just_authenticated = True

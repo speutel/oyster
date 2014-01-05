@@ -106,10 +106,14 @@ def is_authenticated():
     if 'HTTP_COOKIE' in os.environ:
         thiscookie.load(os.environ['HTTP_COOKIE'])
 
-    if 'oyster-sessionid' in thiscookie:
+    storagefile = myconfig['basedir'] + 'sessionids'
+
+    if 'oyster-sessionid' in thiscookie and os.path.exists(storagefile):
         import anydbm
-        id_storage = anydbm.open(myconfig['basedir'] + 'sessionids', 'r')
-        result = thiscookie["oyster-sessionid"].value in id_storage.keys()
+        id_storage = anydbm.open(storagefile, 'r')
+        import hashlib
+        hashed_id = hashlib.sha1(thiscookie["oyster-sessionid"].value).hexdigest()
+        result = hashed_id in id_storage.keys()
         id_storage.close()
         return result
     else:
