@@ -60,7 +60,7 @@ def check_oyster_started():
         sys.exit()
 
 
-def display_votes():
+def __display_votes():
     global maxvotes, votes, votelist, votefile, vote, matcher, title, numvotes, filename, display, escapedtitle
     if os.path.exists(basedir + 'votes') and os.path.getsize(basedir + 'votes') > 0:
         maxvotes = 0
@@ -100,7 +100,7 @@ def display_votes():
         print "<tr><td colspan='2'>&nbsp;</td></tr>"
 
 
-def display_next_random():
+def __display_next_random():
     global i, nextinfo, nexttag
     i = 0
 
@@ -118,9 +118,11 @@ def display_next_random():
         #print "<a href='home.py?action=changerandom" + str(i) + "&amp;file=" + nextinfo + "' title='" + _('Replace_With_Random') + "'>"
         #print "<img src='themes/" + myconfig['theme'] + "/changerandom.png' alt='Change'/>"
         #print "</a>"
-        print "<a href='home.py?action=delrandom" + str(i) + "&amp;file=" + nextinfo + "' title='" + _('Delete_Song') + "'>"
-        print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/>"
-        print "</a>"
+        if common.is_show_admin_controls():
+            print "<a href='home.py?action=delrandom" + str(i) + "&amp;file=" + nextinfo + "' title='" +\
+                  _('Delete_Song') + "'>"
+            print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/>"
+            print "</a>"
         print "</td>"
 
         print "</tr>"
@@ -129,7 +131,7 @@ def display_next_random():
     print "<tr><td colspan='2'>&nbsp;</td></tr>"
 
 
-def display_play_controls():
+def __display_play_controls():
 
     def __print_action_link(action, title, image, altTag):
         print "<a href='home.py?action=" + action + "' title='" + title + "'>"
@@ -286,9 +288,11 @@ print "</td></tr>"
 
 print "<tr><td colspan='2'>&nbsp;</td></tr>"
 
-display_votes()
-display_next_random()
-display_play_controls()
+__display_votes()
+__display_next_random()
+
+if common.is_show_admin_controls():
+    __display_play_controls()
 
 print "</table>"
 

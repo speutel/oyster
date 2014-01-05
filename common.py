@@ -120,6 +120,13 @@ def is_authenticated():
         return False
 
 
+def is_show_admin_controls():
+    if not myconfig['partymode']:
+        return True
+    else:
+        return is_authenticated()
+
+
 def get_cover(albumdir, imagewidth):
     """Returns a cover-image as a base64-string"""
 
