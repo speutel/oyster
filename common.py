@@ -127,6 +127,10 @@ def is_show_admin_controls():
         return is_authenticated()
 
 
+def is_oyster_running():
+    return os.path.exists(myconfig["basedir"])
+
+
 def hide_page_in_party_mode():
     """
      If a page should not be displayed at all in party mode without admin access,

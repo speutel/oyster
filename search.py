@@ -73,7 +73,7 @@ else:
     
 # Check in which playlist to search
 
-if not editplaylist and 'playlist' in form and form['playlist'].value == 'current':
+if not editplaylist and common.is_oyster_running() and 'playlist' in form and form['playlist'].value == 'current':
     playlist = config.get_playlist()
     curcheck = "checked='checked'"
     allcheck = ''
@@ -85,6 +85,10 @@ else:
     playlist = 'default'
     curcheck = "checked='checked'"
     allcheck = ''
+
+# In Party-Mode, always search current playlist
+if not common.is_show_admin_controls() and common.is_oyster_running():
+    playlist = config.get_playlist()
 
 if 'search' in form:
     search = form['search'].value
@@ -106,7 +110,7 @@ print "<tr><td><input type='hidden' name='searchtype' value='normal'/> "
 if editplaylist:
     print "<input type='hidden' name='playlist' value='" + form['playlist'].value + "'/>"
     print "<input type='hidden' name='mode' value='playlist'/>"
-else:
+elif common.is_show_admin_controls():
     print "<td><input type='radio' name='playlist' value='current' " + curcheck + \
         "/> " + _("Current List") + "<br/>"
     print "<input type='radio' name='playlist' value='all' " + allcheck + "/> " + \
@@ -154,7 +158,7 @@ if search != '' and len(search) >= 3:
         if editplaylist:
             common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
         else:
-            common.listdir('/', 0, cssclass)
+            common.listdir('/', 0, cssclass, 0, playlist)
     else:
         print "<p>" + _("No songs found.") + "</p>"
 
