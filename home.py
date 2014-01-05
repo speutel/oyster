@@ -91,9 +91,10 @@ def __display_votes():
                     print "<a class='file' href='fileinfo.py?file=" + escapedtitle + "' >" + display + "</a>"
                     print "</td>"
                     print "<td>"
-                    print "<a href='home.py?action=unvote&amp;file=" + \
-                          escapedtitle + "' title='" + _('Unvote') + "'>"
-                    print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a>"
+                    if common.is_show_admin_controls():
+                        print "<a href='home.py?action=unvote&amp;file=" + \
+                              escapedtitle + "' title='" + _('Unvote') + "'>"
+                        print "<img src='themes/" + myconfig['theme'] + "/delrandom.png' alt='Delete'/></a>"
                     print "</td></tr>"
             maxvotes -= 1
 
