@@ -889,7 +889,7 @@ if __name__ == '__main__':
     if len(oy.filelist) == 0:
         while len(oy.filelist) == 0:
             pass
-        oy.loadPlaylist("default", skip=True)
+        oy.load_playlist("default", skip=True)
 
     while not oy.do_exit:
-        oy.play(oy.filetoplay)
+        oy.play(oy.filetoplay, oy.current_playreason)
