@@ -111,7 +111,7 @@ def is_authenticated():
     if 'HTTP_COOKIE' in os.environ:
         thiscookie.load(os.environ['HTTP_COOKIE'])
 
-    storagefile = myconfig['basedir'] + 'sessionids'
+    storagefile = '/tmp/oyster_sessionids'
 
     if 'oyster-sessionid' in thiscookie and os.path.exists(storagefile):
         import anydbm

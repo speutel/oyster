@@ -47,7 +47,7 @@ if 'password' in form and os.path.exists(config['basedir']):
         sessionid = str(uuid.uuid1())
         hashed_id = hashlib.sha1(sessionid).hexdigest()
         cookie["oyster-sessionid"] = sessionid
-        id_storage = anydbm.open(config['basedir'] + 'sessionids', 'c')
+        id_storage = anydbm.open('/tmp/oyster_sessionids', 'c')
         id_storage[hashed_id] = str(datetime.datetime.now())
         id_storage.close()
         print cookie
