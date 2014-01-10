@@ -40,6 +40,8 @@ just_authenticated = False
 
 config = config.get_config()
 
+password_failed = False
+
 if 'password' in form and os.path.exists(config['basedir']):
     password = form['password'].value
     if password == config['partymodepassword']:
@@ -52,7 +54,8 @@ if 'password' in form and os.path.exists(config['basedir']):
         id_storage.close()
         print cookie
         just_authenticated = True
-
+    else:
+        password_failed = True
 
 common.navigation_header(title="Admin Login")
 
@@ -61,8 +64,9 @@ if not os.path.exists(config['basedir']):
     common.html_footer()
     sys.exit()
 
-
-if just_authenticated or common.is_authenticated():
+if password_failed:
+    print "<p>Password incorrect.</p>"
+elif just_authenticated or common.is_authenticated():
     print "<p>Authenticated! Please visit the <a class='file' href='home.py'>main page</a> now.</p>"
 
 print """
