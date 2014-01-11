@@ -306,9 +306,12 @@ for curfile in files:
         escapedfile = cgi.escape(curfile)
 
         if editplaylist:
-            print "<td><a class='" + cssfileclass + "' href=" + \
-                  "'editplaylist.py?playlist=" + urllib.quote(form['playlist'].value) + \
-                  "&amp;addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
+            if mediadir + dir + '\n' in playlistContents:
+                print "<td></td>"
+            else:
+                print "<td><a class='" + cssfileclass + "' href=" + \
+                      "'editplaylist.py?playlist=" + urllib.quote(form['playlist'].value) + \
+                      "&amp;addfile=" + escapeddir + "' target='playlist'>Add</a></td>"
         else:
             # only generate "Vote"-link if oyster is running
             (mayVote, reason) = may_vote(dir, playlist, playlistContents, historyList)
