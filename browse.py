@@ -245,7 +245,7 @@ def __directory_in_playlist(directory, playlist_contents):
         for name in walkfiles:
             filename, file_extension = os.path.splitext(name)
             if file_extension.lower()[1:] in filetypes:
-                if os.path.join(root, name).rstrip() + '\n' not in playlist_contents:
+                if os.path.join(root, name).rstrip() not in playlist_contents:
                     return False
 
     return True
@@ -306,7 +306,7 @@ for curfile in files:
         escapedfile = cgi.escape(curfile)
 
         if editplaylist:
-            if mediadir + dir + '\n' in playlistContents:
+            if mediadir + dir in playlistContents:
                 print "<td></td>"
             else:
                 print "<td><a class='" + cssfileclass + "' href=" + \
