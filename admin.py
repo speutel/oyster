@@ -68,6 +68,8 @@ if password_failed:
     print "<p>Password incorrect.</p>"
 elif just_authenticated or common.is_authenticated():
     print "<p>Authenticated! Please visit the <a class='file' href='home.py'>main page</a> now.</p>"
+    common.html_footer()
+    sys.exit()
 
 print """
 <form method='post' action='admin.py' " + "enctype='application/x-www-form-urlencoded'>
