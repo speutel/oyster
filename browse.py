@@ -41,7 +41,11 @@ myconfig = config.get_config()
 basedir = myconfig['basedir']
 mediadir = re.sub('/\Z', '', myconfig['mediadir'][:-1])
 form = cgi.FieldStorage()
-playlist = config.get_playlist()
+
+if 'playlist' in form:
+    playlist = form['playlist'].value
+else:
+    playlist = config.get_playlist()
 
 if 'mode' in form and form['mode'].value == 'editplaylist':
     viewplaylist = False
@@ -218,11 +222,38 @@ else:
 dirs.sort()
 files.sort()
 
+playlistContents = common.get_playlist_contents(playlist)
+filetypes = myconfig['filetypes'].lower().split(',')
+
 print "<table>"
 
+
+def __directory_in_playlist(directory, playlist_contents):
+    # First check if the directory is present at all
+    at_least_once = False
+    for filename in playlist_contents:
+        if filename.startswith(directory):
+            at_least_once = True
+            break
+
+    if not at_least_once:
+        return False
+
+    # Now check if all subdirectories are contained
+
+    for root, walkdirs, walkfiles in os.walk(directory, topdown=False):
+        for name in walkfiles:
+            filename, file_extension = os.path.splitext(name)
+            if file_extension.lower()[1:] in filetypes:
+                if os.path.join(root, name).rstrip() + '\n' not in playlist_contents:
+                    return False
+
+    return True
+
+
 # First, display all directories
-for curdir in dirs:
-    curdir = curdir.replace(mediadir, '')
+for directory in dirs:
+    curdir = directory.replace(mediadir, '')
     escapeddir = urllib.quote(curdir + "/")
     curdir = cgi.escape(re.sub('\A.*/', '', curdir))
     print "<tr>"
@@ -231,9 +262,12 @@ for curdir in dirs:
         if editplaylist:
             print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
                 urllib.quote(form['playlist'].value) + mode + "'>" + curdir + "</a></td>"
-            print "<td ><a href='editplaylist.py?" + \
-                "playlist=" + urllib.quote(form['playlist'].value) + "&adddir=" + \
-                escapeddir + "' target='playlist'>Add</a></td>"
+            if not __directory_in_playlist(directory, playlistContents):
+                print "<td><a href='editplaylist.py?" + \
+                    "playlist=" + urllib.quote(form['playlist'].value) + "&adddir=" + \
+                    escapeddir + "' target='playlist'>Add</a></td>"
+            else:
+                print "<td></td>"
         else:
             print "<td><a href='browse.py?dir=" + escapeddir + "&playlist=" + \
                 urllib.quote(form['playlist'].value) + mode + "'>" + curdir + "</a></td>"
@@ -247,9 +281,6 @@ cssfileclass = 'file2'
 csslistclass = 'playlist2'
 alt = '2'
 
-filetypes = myconfig['filetypes'].lower().split(',')
-
-playlistContents = common.get_playlist_contents(playlist)
 historyList = common.history(playlist)
 
 for curfile in files:
