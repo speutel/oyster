@@ -95,9 +95,62 @@ def navigation_header(header=True, title="Oyster", refreshpage=None):
     print "<ul id='navigation'>"
     print "<li><a href='browse.py'>" + _("Browse") + "</a></li>"
     print "<li><a href='search.py'>" + _("Search") + "</a></li>"
-    print "<li><a href='playlists.py'>" + _("Playlists") + "</a></li>"
+
+    if is_show_admin_controls():
+        print "<li><a href='playlists.py'>" + _("Playlists") + "</a></li>"
+    else:
+        print "<li><a href='history.py'>" + _("History") + "</a></li>"
+
     print "</ul><br/>"
     print "<hr/>"
+
+
+def is_authenticated():
+    import Cookie
+    thiscookie = Cookie.SimpleCookie()
+    if 'HTTP_COOKIE' in os.environ:
+        thiscookie.load(os.environ['HTTP_COOKIE'])
+
+    storagefile = '/tmp/oyster_sessionids'
+
+    if 'oyster-sessionid' in thiscookie and os.path.exists(storagefile):
+        import anydbm
+        id_storage = anydbm.open(storagefile, 'r')
+        import hashlib
+        hashed_id = hashlib.sha1(thiscookie["oyster-sessionid"].value).hexdigest()
+        result = hashed_id in id_storage.keys()
+        id_storage.close()
+        return result
+    else:
+        return False
+
+
+def is_show_admin_controls():
+    if not myconfig['partymode']:
+        return True
+    else:
+        return is_authenticated()
+
+
+def is_oyster_running():
+    return os.path.exists(myconfig["basedir"])
+
+
+def hide_page_in_party_mode():
+    """
+     If a page should not be displayed at all in party mode without admin access,
+     this function will render a complete "access denied" page.
+    """
+
+    if is_show_admin_controls():
+        return
+
+    navigation_header()
+    print "<p>This page is not accessible in party mode. Please <a href='admin.py' class='file'>Login</a>."
+    html_footer()
+
+    import sys
+    sys.exit()
 
 
 def get_cover(albumdir, imagewidth):
@@ -357,6 +410,9 @@ def may_vote(f, playlist, playlist_contents=None, history_list=None):
         return False, _("Oyster is not started")
 
     exists = False
+
+    if not myconfig["partymode"] or is_authenticated():
+        return True, None
 
     # Check if playlist blocks voting
     if playlist_blocks_voting():

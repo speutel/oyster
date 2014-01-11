@@ -53,7 +53,7 @@ import sys
 if not os.path.exists(mediadir + soundfile):
     print "<h1>Error!</h1>"
     print "<p>File <strong>" + soundfile + "</strong> could not be found.</p>"
-    print "</body></html>"
+    common.html_footer()
     sys.exit()
 
 if os.path.exists(myconfig['basedir']):
@@ -87,7 +87,7 @@ escapedfile = urllib.quote(soundfile)
 
 if not os.access(mediadir + soundfile, os.R_OK):
     print "<h1>Sorry, Oyster does not have the permission to read this file!</h1>"
-    print "</body></html>"
+    common.html_footer()
     sys.exit()
 
 (mayVote, reason) = common.may_vote(soundfile, None)
@@ -108,7 +108,7 @@ print "<p>"
 
 if isblacklisted:
     print "<span class='blacklisted'>This song is blacklisted</span>"
-else:
+elif common.is_show_admin_controls():
     regexfile = urllib.quote("^" + re.escape(soundfile) + "$")
     print "<a class='file' href='blacklist.py?affects=" + regexfile + "&amp;action=add'>Add this song to blacklist</a>"
 print "</p>"
@@ -166,13 +166,15 @@ for line in tagtuple:
 
 print "<tr><td colspan='2'>&nbsp;</td></tr>"
 print "<tr><td class='fileinfo'>Played: </td><td>" + str(timesplayed) + " times</td></tr>"
-print "<tr><td class='fileinfo'>Score: </td>"
-print "<td><a href='fileinfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
-print "<strong>" + str(tag['score']) + "</strong>"
-print " <a href='fileinfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
-print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a></td></tr>"
+
+if common.is_show_admin_controls():
+    print "<tr><td class='fileinfo'>Score: </td>"
+    print "<td><a href='fileinfo.py?action=scoredown&amp;file=" + escapedfile + "' title='Score down'>"
+    print "<img src='themes/" + myconfig['theme'] + "/scoredownfile.png' border='0' alt='-'/></a> "
+    print "<strong>" + str(tag['score']) + "</strong>"
+    print " <a href='fileinfo.py?action=scoreup&amp;file=" + escapedfile + "' title='Score up'>"
+    print "<img src='themes/" + myconfig['theme'] + "/scoreupfile.png' border='0' alt='+'/></a></td></tr>"
 
 print "</table>"
 
-print "</body></html>"
+common.html_footer()

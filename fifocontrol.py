@@ -26,6 +26,7 @@ fifocontrol provides functions to use the oyster-FIFO
 
 __revision__ = 1
 
+import common
 import config
 import os
 import os.path
@@ -33,22 +34,26 @@ import time
 
 myconfig = config.get_config()
 
-def do_action (action, filename):
+
+def do_action(action, filename):
     """
     Parses the action parameter and writes the
     needed commands into the FIFO
     """
 
-
     filename = os.path.normpath(str(filename))
-    filename = filename.replace('//','/')
-    filename = filename.replace('../','')
+    filename = filename.replace('//', '/')
+    filename = filename.replace('../', '')
     if filename == '..':
         filename = ''
 
     mediadir = myconfig['mediadir'][:-1]
 
     status = ''
+
+    if action != 'start' and not common.is_show_admin_controls():
+        # Only allow start of oyster for non-admins in party mode
+        return
 
     if os.path.isfile(myconfig['basedir'] + 'status'):
         statusfile = open(myconfig['basedir'] + 'status')
@@ -171,7 +176,8 @@ def do_action (action, filename):
             control.write("VOLSET " + action[7:] + "\n")
         control.close()
 
-def do_vote (votefile):
+
+def do_vote(votefile):
     """
     Votes a single file
     """
@@ -179,9 +185,10 @@ def do_vote (votefile):
     control = open(myconfig['basedir'] + "control",'w')
     control.write("VOTE " + votefile + "\n")
     control.close()
-    time.sleep (1)
+    time.sleep(1)
 
-def do_votelist (votelist):
+
+def do_votelist(votelist):
     """
     Enqueues a complete playlist in m3u-format
     """

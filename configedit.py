@@ -120,6 +120,25 @@ def configeditor(playlist):
               "fileinfo try to change this value according to your system locale.)<br>" + \
               "Examples are en_US.UTF-8 or de_DE@euro</p>"
 
+        print "<h2>Party Mode</h2>"
+
+        if workconfig['partymode'] is True:
+            partymode_value = "checked"
+        else:
+            partymode_value = ''
+
+        print "<input type='checkbox' name='partymode' " + partymode_value + "/> Activate Party Mode"
+
+        print "<p class='configdescription'>" + \
+              "Hides admin functionality for most users. Admins may <a class='file' href='admin.py'>Login</a> " + \
+              "to see the normal view. Please specify a password for admins below.</p>"
+
+        print "<h2>Party Mode Password</h2>"
+        print "<input type='password' name='partymodepassword' value='" + workconfig['partymodepassword'] + "'/>"
+
+        print "<p class='configdescription'>" + \
+              "Please specify here the password used for admin login.</p>"
+
         print "<h2>Theme</h2>"
         print "<select name='theme'>"
         for theme in os.listdir(savedir + 'themes/'):
@@ -213,10 +232,10 @@ def saveconfig(playlist):
         # File already exists, rename it first
         os.rename(savedir + "config/" + playlist, savedir + "config/" + playlist + ".old")
         oldconfig = open(savedir + "config/" + playlist + ".old")
-        removeAfterwards = True
+        remove_afterwards = True
     else:
         oldconfig = open(savedir + "conf.sample")
-        removeAfterwards = False
+        remove_afterwards = False
 
     configfile = open(savedir + "config/" + playlist, 'w')
 
@@ -227,24 +246,36 @@ def saveconfig(playlist):
         linematch = keymatcher.match(line[:-1])
         if linematch is not None:
             key = linematch.group(1)
-            if form.has_key(key):
-                configfile.write(key + "=" + form[key].value + "\n")
+            if key in form:
+                if key == 'partymode':
+                    configfile.write("partymode=True\n")
+                else:
+                    configfile.write(key + "=" + form[key].value + "\n")
                 writtenkeys.append(key)
+            elif key == 'partymode' and 'partymode' not in form:
+                configfile.write("partymode=False\n")
+                writtenkeys.append("partymode")
             else:
                 configfile.write(line)
         else:
             configfile.write(line)
 
-    # Check, if any values did not exist in the original config
+    # Check if any values did not exist in the original config
 
     for key in form.keys():
-        if key not in ['action', 'playlist'] + writtenkeys:
+        if key not in ['action', 'playlist', 'partymode'] + writtenkeys:
             configfile.write(key + "=" + form[key].value + "\n")
+
+    if 'partymode' not in writtenkeys:
+        if 'partymode' in form:
+            configfile.write("partymode=True\n")
+        else:
+            configfile.write("partymode=False\n")
 
     configfile.close()
     oldconfig.close()
 
-    if removeAfterwards:
+    if remove_afterwards:
         os.remove(savedir + "config/" + playlist + ".old")
 
     # If playlist is currently running, reload it
@@ -256,6 +287,7 @@ def saveconfig(playlist):
 __revision__ = 1
 
 import cgi
+import common
 import config
 import sys
 import urllib
@@ -264,6 +296,8 @@ import fifocontrol
 import cgitb
 
 cgitb.enable()
+
+common.hide_page_in_party_mode()
 
 myconfig = config.get_config()
 basedir = myconfig['basedir']

@@ -30,6 +30,7 @@ cgitb.enable()
 
 import common
 
+common.hide_page_in_party_mode()
 common.navigation_header(title="Extras")
 
 print "<h1><a href='playlists.py'>Playlists</a></h1>"

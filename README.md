@@ -21,6 +21,7 @@ Features
 * Option to blacklist single songs or entire directories
 * Themable interface
 * Statistics
+* Party-mode with restricted functionality
 * Open Source (GPL)
 
 Requirements
