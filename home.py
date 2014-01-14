@@ -155,7 +155,6 @@ def __display_play_controls():
         favmode = 'off'
 
     print "<tr><td>"
-    __print_action_link("start", _("Start Oyster"), "play.png", _("Start"))
     __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"))
     __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"))
     if favmode == 'on':
