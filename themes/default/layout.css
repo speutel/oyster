@@ -126,6 +126,13 @@ img {
 	border: 0
 }
 
+img.actionButton {
+    width: 40px;
+    margin-left:5px;
+    margin-right:5px;
+}
+
+
 table#scoretable {
 	width: 100%;
 }

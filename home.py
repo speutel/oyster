@@ -134,9 +134,13 @@ def __display_next_random():
 
 def __display_play_controls():
 
-    def __print_action_link(action, title, image, altTag):
+    def __print_action_link(action, title, image, altTag, cssclass=None):
         print "<a href='home.py?action=" + action + "' title='" + title + "'>"
-        print "<img src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
+
+        if cssclass != None:
+            print "<img class='" + cssclass + "'  src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
+        else:
+            print "<img src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
         pass
 
     try:
@@ -155,19 +159,19 @@ def __display_play_controls():
         favmode = 'off'
 
     print "<tr><td>"
-    __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"))
-    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
-    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
+    __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"), "actionButton")
+    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"), "actionButton")
+    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"), "actionButton")
     print "</td></tr>"
     print "<tr><td>"
 
-    __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"))
+    __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"), "actionButton")
     if favmode == 'on':
-        __print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on")
+        __print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on", "actionButton")
     else:
-        __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off")
+        __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off", "actionButton")
     print "<a href='extras.py' title='Extras'>"
-    print "<img src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
+    print "<img class='actionButton' src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
     print "</td></tr>"
 
     print "<tr><td>"
