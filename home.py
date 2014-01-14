@@ -156,13 +156,16 @@ def __display_play_controls():
 
     print "<tr><td>"
     __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"))
+    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
+    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
+    print "</td></tr>"
+    print "<tr><td>"
+
     __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"))
     if favmode == 'on':
         __print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on")
     else:
         __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off")
-    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
-    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
     print "<a href='extras.py' title='Extras'>"
     print "<img src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
     print "</td></tr>"
