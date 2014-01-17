@@ -204,7 +204,7 @@ else:
 
 if 'vol' in form:
     volumeLevel = form['vol'].value
-    fifocontrol.do_action("volset " + myconfig['midvolume'], filename)
+    fifocontrol.do_action("volset " + volumeLevel, filename)
 
 if os.path.isfile(myconfig['basedir'] + 'status'):
     statusfile = open(myconfig['basedir'] + 'status')
