@@ -398,7 +398,7 @@ def get_playlist_contents(playlist_name=None):
         playlist_file.close()
     playlist_path = myconfig['savedir'] + 'lists/' + playlist_name
     listfile = open(playlist_path)
-    playlist_contents = listfile.readlines()
+    playlist_contents = listfile.read().splitlines()
     listfile.close()
     return playlist_contents
 
