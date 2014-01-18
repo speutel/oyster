@@ -200,4 +200,4 @@ def do_votelist(votelist):
     control = open(myconfig['basedir'] + "control", 'w')
     control.write("ENQLIST " + votelist + "\n")
     control.close()
-    time.sleep (1)
+    time.sleep(1)

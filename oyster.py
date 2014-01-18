@@ -674,16 +674,22 @@ class Oyster:
         listpath = filestring[:filestring.rfind("/")]
         for line in lfile.readlines():
             pos_hash = line.find('#')
-            # forget comments (hash with only spaces before) 
-            if (pos_hash != -1) and (line[:pos_hash] == " "*(pos_hash+1)):
+            # forget comments (hash with only spaces before)
+            if (pos_hash != -1) and (line[:pos_hash] == " "*pos_hash):
                 continue
+
             pos_slash = line.find("/")
             if pos_slash == 0:
                 # path is absolute 
-                self.enqueue(line.rstrip(), "ENQUEUED")
+                filename = line.rstrip()
             else:
                 # path is relative 
-                self.enqueue(listpath + "/" + line.rstrip(), "ENQUEUED")
+                filename = listpath + "/" + line.rstrip()
+
+            if os.path.exists(filename):
+                self.enqueue(filename, "ENQUEUED")
+            else:
+                log.warn("Unable to find '" + filename + "'")
 
     def build_regexp_list(self, regexp):
         deflist = open(self.listdir + "/default", 'r')
