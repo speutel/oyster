@@ -158,12 +158,12 @@ def __display_play_controls():
     except IOError:
         favmode = 'off'
 
-    print "<tr><td>"
+    print "<tr><td align='center' colspan='2'>"
     __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"), "actionButton")
     __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"), "actionButton")
     __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"), "actionButton")
     print "</td></tr>"
-    print "<tr><td>"
+    print "<tr><td align='center' colspan='2'>"
 
     __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"), "actionButton")
     if favmode == 'on':
@@ -173,9 +173,10 @@ def __display_play_controls():
     print "<a href='extras.py' title='Extras'>"
     print "<img class='actionButton' src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
     print "</td></tr>"
-    print "<tr><td>"
+    print "<tr><td align='center' colspan='2'>"
 
     print "<form action='home.py' method='get'>"
+    print "<img src='themes/" + myconfig['theme'] + "/volume.png' alt='volume'/>"
     print "<input name='vol' class='volslider' type='range' min='0' max='100' value='" + volume + "'/>"
     print "<input class='volsubmit' type='image' src='themes/"+ myconfig['theme'] + "/setvolume.png' alt='&#x2713;'>"
     print "</form>"
@@ -284,7 +285,7 @@ if notVotedReason is not None:
 
 pr_img = "<img title='play reason: " + pr_alt + "' src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
 
-print "<table border='0'>"
+print "<table id='home' border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
 print "</tr>"
 print "<tr><td>"

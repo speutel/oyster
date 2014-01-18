@@ -127,9 +127,14 @@ img {
 }
 
 img.actionButton {
-    width: 40px;
-    margin-left:5px;
-    margin-right:5px;
+    width: 45px;
+    margin-left:8px;
+    margin-right:8px;
+}
+
+table#home {
+    max-width:600px;
+    margin-bottom:2em;
 }
 
 
@@ -198,12 +203,16 @@ input.volslider {
     height: 16px;
     padding: 0px; 
     margin: 0px; 
+    margin-top:1em;
+    background-color:transparent;
 }
 
 input.volsubmit {
     height: 16px;
     padding: 0px; 
     margin: 0px; 
+    margin-top:1em;
+    background-color:transparent;
 }
 
 table#searchoptions {
