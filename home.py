@@ -176,6 +176,7 @@ def __display_play_controls():
     print "<tr><td>"
 
     print "<form action='home.py' method='get'>"
+    print "<img src='themes/" + myconfig['theme'] + "/volume.png' alt='volume'/>"
     print "<input name='vol' class='volslider' type='range' min='0' max='100' value='" + volume + "'/>"
     print "<input class='volsubmit' type='image' src='themes/"+ myconfig['theme'] + "/setvolume.png' alt='&#x2713;'>"
     print "</form>"
