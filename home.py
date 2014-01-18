@@ -134,9 +134,13 @@ def __display_next_random():
 
 def __display_play_controls():
 
-    def __print_action_link(action, title, image, altTag):
+    def __print_action_link(action, title, image, altTag, cssclass=None):
         print "<a href='home.py?action=" + action + "' title='" + title + "'>"
-        print "<img src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
+
+        if cssclass != None:
+            print "<img class='" + cssclass + "'  src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
+        else:
+            print "<img src='themes/" + myconfig['theme'] + "/" + image + "' alt='" + altTag + "'/></a>"
         pass
 
     try:
@@ -154,26 +158,30 @@ def __display_play_controls():
     except IOError:
         favmode = 'off'
 
-    print "<tr><td>"
-    __print_action_link("start", _("Start Oyster"), "play.png", _("Start"))
-    __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"))
-    __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"))
-    if favmode == 'on':
-        __print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on")
-    else:
-        __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off")
-    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"))
-    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"))
-    print "<a href='extras.py' title='Extras'>"
-    print "<img src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
+    print "<tr><td align='center' colspan='2'>"
+    __print_action_link("pause", _("Pause/Unpause"), "pause.png", _("Pause"), "actionButton")
+    __print_action_link("prev", _("Previous Song"), "prev.png", _("Previous Song"), "actionButton")
+    __print_action_link("next", _("Next Song"), "skip.png", _("Skip Song"), "actionButton")
     print "</td></tr>"
+    print "<tr><td align='center' colspan='2'>"
 
-    print "<tr><td>"
-    __print_action_link("voldown", "Lower Volume", "voldown.png", _("Lower Volume"))
-    print "<a href='home.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig[
-        'midvolume'] + "%'>Volume " + volume + "</a>"
-    __print_action_link("volup", "Increase Volume", "volup.png", _("Increase Volume"))
-    print "</td></tr></table>"
+    __print_action_link("stop", _("Stop Oyster"), "stop.png", _("Stop"), "actionButton")
+    if favmode == 'on':
+        __print_action_link("nofavmode", _("Deactivate FAV Mode"), "favmodeon.png", "FAV on", "actionButton")
+    else:
+        __print_action_link("favmode", _("Activate FAV Mode"), "favmodeoff.png", "FAV off", "actionButton")
+    print "<a href='extras.py' title='Extras'>"
+    print "<img class='actionButton' src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
+    print "</td></tr>"
+    print "<tr><td align='center' colspan='2'>"
+
+    print "<form action='home.py' method='get'>"
+    print "<img src='themes/" + myconfig['theme'] + "/volume.png' alt='volume'/>"
+    print "<input name='vol' class='volslider' type='range' min='0' max='100' value='" + volume + "'/>"
+    print "<input class='volsubmit' type='image' src='themes/"+ myconfig['theme'] + "/setvolume.png' alt='&#x2713;'>"
+    print "</form>"
+
+    print "</td></tr>"
 
 cgitb.enable()
 
@@ -198,7 +206,7 @@ else:
 
 if 'vol' in form:
     volumeLevel = form['vol'].value
-    fifocontrol.do_action("volset " + myconfig['midvolume'], filename)
+    fifocontrol.do_action("volset " + volumeLevel, filename)
 
 if os.path.isfile(myconfig['basedir'] + 'status'):
     statusfile = open(myconfig['basedir'] + 'status')
@@ -276,7 +284,7 @@ if notVotedReason is not None:
 
 pr_img = "<img title='play reason: " + pr_alt + "' src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
 
-print "<table border='0'>"
+print "<table id='home' border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
 print "</tr>"
 print "<tr><td>"
