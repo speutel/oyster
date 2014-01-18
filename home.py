@@ -182,7 +182,6 @@ def __display_play_controls():
     print "</form>"
 
     print "</td></tr>"
-    print "</table>"
 
 cgitb.enable()
 
