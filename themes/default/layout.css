@@ -132,6 +132,10 @@ img.actionButton {
     margin-right:5px;
 }
 
+table#home {
+    max-width:600px;
+}
+
 
 table#scoretable {
 	width: 100%;

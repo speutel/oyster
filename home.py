@@ -285,7 +285,7 @@ if notVotedReason is not None:
 
 pr_img = "<img title='play reason: " + pr_alt + "' src='themes/" + myconfig['theme'] + "/" + pr_image + "' alt='" + pr_alt + "' style='margin-right:10px'/>"
 
-print "<table border='0'>"
+print "<table id='home' border='0'>"
 print "<tr><td colspan='2'><strong>" + _('Currently Playing') + ":</strong></td>"
 print "</tr>"
 print "<tr><td>"
