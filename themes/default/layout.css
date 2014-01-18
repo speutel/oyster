@@ -204,6 +204,7 @@ input.volslider {
     padding: 0px; 
     margin: 0px; 
     margin-top:1em;
+    background-color:transparent;
 }
 
 input.volsubmit {
@@ -211,6 +212,7 @@ input.volsubmit {
     padding: 0px; 
     margin: 0px; 
     margin-top:1em;
+    background-color:transparent;
 }
 
 table#searchoptions {
