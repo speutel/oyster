@@ -156,7 +156,7 @@ if search != '' and len(search) >= 3:
     if results:
         common.results = results
         if editplaylist:
-            common.listdir('/', 0, cssclass, 2, urllib.quote(form['playlist'].value))
+            common.listdir('/', 0, cssclass, 2, form['playlist'].value)
         else:
             common.listdir('/', 0, cssclass, 0, playlist)
     else:
