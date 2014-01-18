@@ -173,13 +173,15 @@ def __display_play_controls():
     print "<a href='extras.py' title='Extras'>"
     print "<img class='actionButton' src='themes/" + myconfig['theme'] + "/extras.png' alt='Extras'/></a>"
     print "</td></tr>"
-
     print "<tr><td>"
-    __print_action_link("voldown", "Lower Volume", "voldown.png", _("Lower Volume"))
-    print "<a href='home.py?vol=" + myconfig['midvolume'] + "' title='Set volume to " + myconfig[
-        'midvolume'] + "%'>Volume " + volume + "</a>"
-    __print_action_link("volup", "Increase Volume", "volup.png", _("Increase Volume"))
-    print "</td></tr></table>"
+
+    print "<form action='home.py' method='get'>"
+    print "<input name='vol' class='volslider' type='range' min='0' max='100' value='" + volume + "'/>"
+    print "<input class='volsubmit' type='image' src='themes/"+ myconfig['theme'] + "/setvolume.png' alt='&#x2713;'>"
+    print "</form>"
+
+    print "</td></tr>"
+    print "</table>"
 
 cgitb.enable()
 
@@ -204,7 +206,7 @@ else:
 
 if 'vol' in form:
     volumeLevel = form['vol'].value
-    fifocontrol.do_action("volset " + myconfig['midvolume'], filename)
+    fifocontrol.do_action("volset " + volumeLevel, filename)
 
 if os.path.isfile(myconfig['basedir'] + 'status'):
     statusfile = open(myconfig['basedir'] + 'status')

@@ -63,6 +63,10 @@ def do_action(action, filename):
     if action != 'start' and action != 'addnewlist':
         control = open(myconfig['basedir'] + 'control', 'w')
 
+    if os.path.exists(myconfig['basedir']) and action == 'start' and status != 'paused':
+        # Do not start Oyster multiple times
+        return
+
     # Someone wants to start a paused oyster
     if action == 'start' and status == 'paused':
         control = open(myconfig['basedir'] + 'control', 'w')

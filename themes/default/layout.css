@@ -193,6 +193,19 @@ input#searchsubmit {
     margin-left: 2em;
 }
 
+input.volslider {
+    width: 135px;
+    height: 16px;
+    padding: 0px; 
+    margin: 0px; 
+}
+
+input.volsubmit {
+    height: 16px;
+    padding: 0px; 
+    margin: 0px; 
+}
+
 table#searchoptions {
     width: 100%;
     border: 0px;
