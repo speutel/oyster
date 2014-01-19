@@ -164,7 +164,7 @@ if viewplaylist and 'playlist' in form:
         allfiles.append(line[:-1])
     playlistfile.close()
     common.results = allfiles
-    common.listdir('/', 0, 'file2', 0, urllib.quote(playlist))
+    common.listdir('/', 0, 'file2', 0, playlist)
     print "</div></body></html>"
     sys.exit(0)
 

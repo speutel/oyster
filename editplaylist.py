@@ -171,6 +171,6 @@ import common
 common.results = allfiles
 allfiles = common.sort_results('/')
 
-common.listdir('/', 0, 'file2', 1, urllib.quote(playlist))
+common.listdir('/', 0, 'file2', 1, playlist)
 
 common.html_footer()
