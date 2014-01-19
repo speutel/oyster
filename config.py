@@ -31,7 +31,7 @@ def get_values(filename):
 
     for line in conffile:
         if line[0] in string.letters:
-            key, value = string.split(line[:-1], '=')
+            key, value = string.split(line[:-1], '=', 1)
             if (key[-3:] == 'dir') & (value[-1:] != '/'):
                 value += '/'
             if key == 'partymode':
