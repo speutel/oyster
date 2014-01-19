@@ -379,7 +379,10 @@ class Oyster:
             # wait for sound buffer to get empty (ogg123 exits early) 
             time.sleep(2)
             # self.play(self.filetoplay)
- 
+
+            # Update volume, may have been changed externally
+            self.write_volume()
+
     def __playlog(self, string):
         """ writes the argument string to the right logfile
             (savedir/logs/$playlist) """
@@ -552,6 +555,9 @@ class Oyster:
                 os.kill(self.playerid, signal.SIGTERM)
             except OSError:
                 pass
+
+        # Update volume, may have been changed externally
+        self.write_volume()
 
     def pause(self):
         """ pause playing """
