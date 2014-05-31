@@ -233,32 +233,37 @@ def saveconfig(playlist):
         os.rename(savedir + "config/" + playlist, savedir + "config/" + playlist + ".old")
         oldconfig = open(savedir + "config/" + playlist + ".old")
         remove_afterwards = True
-    else:
+    elif playlist == 'default':
         oldconfig = open(savedir + "conf.sample")
         remove_afterwards = False
+    else:
+        oldconfig = None
+        remove_afterwards = False
+
 
     configfile = open(savedir + "config/" + playlist, 'w')
 
     writtenkeys = []
     keymatcher = re.compile('\A([^#]\w*)=')
 
-    for line in oldconfig.readlines():
-        linematch = keymatcher.match(line[:-1])
-        if linematch is not None:
-            key = linematch.group(1)
-            if key in form:
-                if key == 'partymode':
-                    configfile.write("partymode=True\n")
+    if oldconfig is not None:
+        for line in oldconfig.readlines():
+            linematch = keymatcher.match(line[:-1])
+            if linematch is not None:
+                key = linematch.group(1)
+                if key in form:
+                    if key == 'partymode':
+                        configfile.write("partymode=True\n")
+                    else:
+                        configfile.write(key + "=" + form[key].value + "\n")
+                    writtenkeys.append(key)
+                elif key == 'partymode' and 'partymode' not in form:
+                    configfile.write("partymode=False\n")
+                    writtenkeys.append("partymode")
                 else:
-                    configfile.write(key + "=" + form[key].value + "\n")
-                writtenkeys.append(key)
-            elif key == 'partymode' and 'partymode' not in form:
-                configfile.write("partymode=False\n")
-                writtenkeys.append("partymode")
+                    configfile.write(line)
             else:
                 configfile.write(line)
-        else:
-            configfile.write(line)
 
     # Check if any values did not exist in the original config
 
@@ -273,7 +278,9 @@ def saveconfig(playlist):
             configfile.write("partymode=False\n")
 
     configfile.close()
-    oldconfig.close()
+
+    if oldconfig is not None:
+        oldconfig.close()
 
     if remove_afterwards:
         os.remove(savedir + "config/" + playlist + ".old")

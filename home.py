@@ -241,7 +241,7 @@ playlist = config.get_playlist()
 playreason = info.split()[0]
 
 # Remove playreason from info line
-info = " ".join(info.split()[1:])
+info = re.sub(r'^[A-Z]* ', '', info)
 
 tag = taginfo.get_tag(info)
 

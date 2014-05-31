@@ -147,7 +147,7 @@ else:
 common.navigation_header("Playlists")
 
 if 'action' in form and ('listname' in form or 'newlistname' in form):
-    if form['action'].value is 'confirmdelete':
+    if form['action'].value == 'confirmdelete':
         confirmdelete()
         sys.exit()
     else:
