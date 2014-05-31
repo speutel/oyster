@@ -268,6 +268,8 @@ else:
 info = re.sub('\A' + re.escape(myconfig['mediadir']), '', info)
 info = urllib.quote("/" + info)
 
+print "<br clear='both'/>"
+
 # Get current status of favmode
 
 favfile = open(basedir + 'favmode')
