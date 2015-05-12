@@ -91,7 +91,7 @@ if not common.is_show_admin_controls() and common.is_oyster_running():
     playlist = config.get_playlist()
 
 if 'search' in form:
-    search = form['search'].value
+    search = form['search'].value.strip()
 else:
     search = ''
 
